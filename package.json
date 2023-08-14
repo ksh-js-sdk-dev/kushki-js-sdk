@@ -10,6 +10,7 @@
     "lint:fix": "eslint --fix src/**/*.{ts,tsx}",
     "format": "prettier --write src/**/*.{ts,tsx} --config ./.prettierrc",
     "prepare": "husky install",
+    "tsc:interface": "kushki json2ts",
     "test:unit": "jest",
     "test:coverage": "jest --coverage",
     "test": "npm run test:unit && npm run test:coverage",
@@ -25,6 +26,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@kushki/cli": "1.5.0",
     "@babel/core": "^7.22.10",
     "@babel/preset-env": "^7.22.10",
     "@babel/preset-react": "^7.22.5",

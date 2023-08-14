@@ -1,0 +1,10 @@
+{
+  "errorPrefix": "K",
+  "json2ts": {
+    "output": "./types",
+    "dirs": ["src/schema"],
+    "remote": [
+       "https://s3.amazonaws.com/kushki-static/schemas/usrv-card/v1.6/token_response.json"
+    ]
+  }
+}
