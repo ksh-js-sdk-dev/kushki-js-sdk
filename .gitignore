@@ -1,2 +1,7 @@
 dist
 coverage
+types/
+node_modules/
+.kushki/
+--watch
+.idea
