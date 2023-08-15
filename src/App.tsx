@@ -1,10 +1,12 @@
-import {IkushkiFieldsInstance} from "./repository/IkushkiFieldsInstance.tsx";
-import {KushkiFields} from "./module/KushkiFields.ts";
+import {IKushkiFields} from "./repository/IKushkiFields.tsx";
+import {KushkiFields} from "./module/services/KushkiFields.ts";
 import {KushkiFieldsOptions} from "../types/kushki_fields_options";
 import {TokenResponse} from "../types/remote/token_response";
 
 function App() {
   let token = null
+  let kushkiFieldsInstance: IKushkiFields | null = null
+
   const options : KushkiFieldsOptions = {
       publicCredentialId: "",
       inTest: true,
@@ -27,8 +29,7 @@ function App() {
       }
   }
 
-    const kushkiFieldsInstance : IkushkiFieldsInstance = KushkiFields.init(options);
-
+  KushkiFields.init(options).then( kushkiFieldsCreated => { kushkiFieldsInstance = kushkiFieldsCreated })
 
   return (
     <>
@@ -39,8 +40,11 @@ function App() {
       <div id="expirationDate_id"></div>
       <div id="deferred_id"></div>
       <hr/>
-       <button data-testid="tokenRequestBtn" onClick={() => { kushkiFieldsInstance.requestToken().then( (tokenResponse: TokenResponse) => token = tokenResponse.token )}}> Token Request</button>
-       <h3 data-testid="token">Token: {token}</h3>
+      <button data-testid="tokenRequestBtn" onClick={() => {
+          kushkiFieldsInstance?.requestToken().then((tokenResponse: TokenResponse) => token = tokenResponse.token)
+      }}> Token Request</button>
+          <h3 data-testid="token">Token: {token}</h3>
+
     </>
   );
 }

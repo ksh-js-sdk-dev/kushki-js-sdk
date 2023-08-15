@@ -1,17 +1,20 @@
-import {fireEvent, render, screen} from "@testing-library/react";
+import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import App from "./App.tsx";
+import {KushkiFields} from "./module/services/KushkiFields.ts";
 
 const mockRequestToken= jest.fn().mockResolvedValue({})
-jest.mock("./module/KushkiFields.ts", () =>  ({
-    KushkiFields:{
-      init: jest.fn().mockImplementation(() => ({
-        requestToken: mockRequestToken
-      }))
-    }
-  })
-);
+
+const mockKushkiFieldsInit = jest.fn().mockResolvedValue({
+  requestToken: mockRequestToken
+})
+
+
 
 describe("Tests on <App/> component", () => {
+
+  beforeEach(() => {
+    KushkiFields.init = mockKushkiFieldsInit
+  })
 
   test("Kushki Fields JS - DEMO", () => {
     render(<App />);
@@ -20,12 +23,18 @@ describe("Tests on <App/> component", () => {
     expect(h1Element).toBeDefined();
   });
 
-  test("Kushki Fields JS - DEMO request token", () => {
+  test("Kushki Fields JS - DEMO request token", async () => {
     render(<App />);
-    const button = screen.getByTestId('tokenRequestBtn')
 
-    fireEvent.click(button)
 
-    expect(mockRequestToken).toBeCalled();
+    await waitFor(() => {
+
+      const button = screen.getByTestId('tokenRequestBtn')
+
+      fireEvent.click(button)
+
+      expect(mockRequestToken).toHaveBeenCalledTimes(1);
+    })
+
   });
 });

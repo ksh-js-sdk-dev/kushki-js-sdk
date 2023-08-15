@@ -1,9 +1,8 @@
 import { TokenResponse } from "../../types/remote/token_response";
-import { EnvironmentEnum } from "../infrastructure/EnvironmentEnum.ts";
+import {EnvironmentEnum} from "../infrastructure/EnvironmentEnum.ts";
 
-export interface IkushkiFieldsInstance {
+export interface IKushkiFields {
   readonly baseUrl: EnvironmentEnum;
-
   /**
    * Fetch Token after enter data of card
    * @return TokenResponse .- object with token and security info
