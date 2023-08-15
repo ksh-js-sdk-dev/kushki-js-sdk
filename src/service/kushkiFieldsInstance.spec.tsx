@@ -25,6 +25,8 @@ describe("kushkiFieldsInstance test", () => {
   it("it should build a instance with method requestToken that return a promise", function () {
     const instance = new kushkiFieldsInstance(EnvironmentEnum.uat, options);
 
-    expect(instance.requestToken()).resolves.toEqual({ token: "" });
+    expect(instance.requestToken()).resolves.toEqual({
+      token: "replace by token response"
+    });
   });
 });

@@ -7,10 +7,10 @@ export class KushkiFields {
   kushkiFieldsInstance: IkushkiFieldsInstance;
 
   private constructor(options: KushkiFieldsOptions) {
-    const _baseUrl = this.getBaseUrl(options.inTest);
-    const _options = this.setDefaultValues(options);
+    const baseUrl = this.getBaseUrl(options.inTest);
+    const newOptions = this.setDefaultValues(options);
 
-    this.kushkiFieldsInstance = new kushkiFieldsInstance(_baseUrl, _options);
+    this.kushkiFieldsInstance = new kushkiFieldsInstance(baseUrl, newOptions);
     // TODO: execute render method
   }
 

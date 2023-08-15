@@ -16,6 +16,6 @@ export class kushkiFieldsInstance implements IkushkiFieldsInstance {
     // TODO: remove this console log after to implementation
     console.log(this.baseUrl, this.options);
 
-    return Promise.resolve({ token: "" });
+    return Promise.resolve({ token: "replace by token response" });
   }
 }
