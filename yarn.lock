@@ -1628,7 +1628,7 @@
   resolved "https://registry.yarnpkg.com/@jsdevtools/ono/-/ono-7.1.3.tgz#9df03bbd7c696a5c58885c34aa06da41c8543796"
   integrity sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg==
 
-"@kushki/cli@^1.5.0":
+"@kushki/cli@1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@kushki/cli/-/cli-1.5.0.tgz#c94980ba689ae6fdb7e5a05e0c33858975696b7f"
   integrity sha512-0qAgAQhb3DgGvaSQGqykXhY8xSdCKZKCZ3VqPwEjIlnWSW/IsxpnPxkTmR98j0y0qaYcOdksjHVBmuY0HMto5Q==
