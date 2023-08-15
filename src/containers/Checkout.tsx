@@ -54,6 +54,7 @@ export const CheckoutContainer = () => {
         Token Request
       </button>
       <h3 data-testid="token">Token: {token}</h3>
+      <hr />
     </>
   );
 };

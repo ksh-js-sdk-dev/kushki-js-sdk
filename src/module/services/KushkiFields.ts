@@ -1,7 +1,11 @@
-import { KushkiFieldsOptions } from "../../../types/kushki_fields_options";
+import {
+  Field,
+  KushkiFieldsOptions
+} from "../../../types/kushki_fields_options";
 import { EnvironmentEnum } from "../../infrastructure/EnvironmentEnum.ts";
 import { TokenResponse } from "../../../types/remote/token_response";
 import { IKushkiFields } from "../../repository/IKushkiFields.tsx";
+import KushkiHostedFields from "../zoid.ts";
 
 export class KushkiFields implements IKushkiFields {
   readonly baseUrl: EnvironmentEnum;
@@ -13,10 +17,10 @@ export class KushkiFields implements IKushkiFields {
   }
 
   public static init(options: KushkiFieldsOptions): Promise<KushkiFields> {
-    const kushkiFields = new KushkiFields(options);
+    const kushkiFields: KushkiFields = new KushkiFields(options);
 
     return new Promise<KushkiFields>((resolve) => {
-      // TODO: execute render method and then finish the promise with resolve or reject
+      this.renderFields(options.fields);
       resolve(kushkiFields);
     });
   }
@@ -39,4 +43,18 @@ export class KushkiFields implements IKushkiFields {
       isSubscription: Boolean(options.isSubscription)
     };
   }
+
+  private static renderFields = (optionsFields: {
+    [k: string]: Field;
+  }): void => {
+    const hostedFields: string[] = Object.entries(optionsFields).map(
+      (field: [string, Field]) => {
+        return field[1].selector;
+      }
+    );
+
+    hostedFields.forEach((i: string): void => {
+      KushkiHostedFields({}).render(`#${i}`);
+    });
+  };
 }
