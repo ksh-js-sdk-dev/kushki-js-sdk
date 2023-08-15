@@ -1,5 +1,5 @@
 import { TokenResponse } from "../../types/remote/token_response";
-import {EnvironmentEnum} from "../infrastructure/EnvironmentEnum.ts";
+import { EnvironmentEnum } from "../infrastructure/EnvironmentEnum.ts";
 
 export interface IKushkiFields {
   readonly baseUrl: EnvironmentEnum;
