@@ -3,6 +3,25 @@ import { KushkiFieldsOptions } from "../../types/kushki_fields_options";
 import { TokenResponse } from "../../types/remote/token_response";
 import { KushkiFields } from "../module/services/KushkiFields";
 
+export const checkoutContainerStyles = {
+  button: {
+    borderRadius: "12px",
+    marginLeft: "15px"
+  },
+  contentCheckout: {
+    alignItems: "start",
+    display: "flex",
+    flexDirection: "column",
+    padding: "10px"
+  },
+  contentTitle: {
+    alignItems: "end",
+    display: "flex",
+    marginRight: "250px",
+    width: "100%"
+  }
+};
+
 export const CheckoutContainer = () => {
   let token = null;
   let kushkiFieldsInstance: IKushkiFields | null = null;
@@ -10,20 +29,202 @@ export const CheckoutContainer = () => {
   const options: KushkiFieldsOptions = {
     fields: {
       cardHolderName: {
-        selector: "cardHolderName_id"
+        fieldType: "inputBase",
+        inputType: "text",
+        selector: "cardHolderName_id",
+        styles: {
+          input: {
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          inputActive: {
+            border: "1px solid #1E65AE",
+            borderRadius: "4px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          label: {
+            background: "white",
+            color: "#6D7781",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "12px",
+            fontWeight: "400",
+            left: "10px",
+            paddingLeft: "5px",
+            paddingRight: "5px",
+            position: "absolute",
+            top: "-7px"
+          }
+        }
       },
       cardNumber: {
-        selector: "cardNumber_id"
+        fieldType: "cardNumber",
+        inputType: "number",
+        label: "Número de tarjeta",
+        maxLength: 22,
+        placeholder: "Número de tarjeta",
+        selector: "cardNumber_id",
+        styles: {
+          input: {
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          inputActive: {
+            border: "1px solid #1E65AE",
+            borderRadius: "4px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          label: {
+            background: "white",
+            color: "#6D7781",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "12px",
+            fontWeight: "400",
+            left: "10px",
+            paddingLeft: "5px",
+            paddingRight: "5px",
+            position: "absolute",
+            top: "-7px"
+          }
+        }
       },
       cvv: {
-        selector: "cvv_id"
+        fieldType: "inputBase",
+        inputType: "password",
+        selector: "cvv_id",
+        styles: {
+          input: {
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          inputActive: {
+            border: "1px solid #1E65AE",
+            borderRadius: "4px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          label: {
+            background: "white",
+            color: "#6D7781",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "12px",
+            fontWeight: "400",
+            left: "10px",
+            paddingLeft: "5px",
+            paddingRight: "5px",
+            position: "absolute",
+            top: "-7px"
+          }
+        }
       },
-
       deferred: {
-        selector: "deferred_id"
+        fieldType: "inputBase",
+        inputType: "text",
+        selector: "deferred_id",
+        styles: {
+          input: {
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          inputActive: {
+            border: "1px solid #1E65AE",
+            borderRadius: "4px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          label: {
+            background: "white",
+            color: "#6D7781",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "12px",
+            fontWeight: "400",
+            left: "10px",
+            paddingLeft: "5px",
+            paddingRight: "5px",
+            position: "absolute",
+            top: "-7px"
+          }
+        }
       },
       expirationDate: {
-        selector: "expirationDate_id"
+        fieldType: "inputBase",
+        inputType: "text",
+        selector: "expirationDate_id",
+        styles: {
+          input: {
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          inputActive: {
+            border: "1px solid #1E65AE",
+            borderRadius: "4px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          label: {
+            background: "white",
+            color: "#6D7781",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "12px",
+            fontWeight: "400",
+            left: "10px",
+            paddingLeft: "5px",
+            paddingRight: "5px",
+            position: "absolute",
+            top: "-7px"
+          }
+        }
       }
     },
     inTest: true,
@@ -42,17 +243,28 @@ export const CheckoutContainer = () => {
 
   return (
     <>
-      <h1>Kushki Fields JS - DEMO</h1>
-      <div id="cardHolderName_id"></div>
-      <div id="cardNumber_id"></div>
-      <div id="cvv_id"></div>
-      <div id="expirationDate_id"></div>
-      <div id="deferred_id"></div>
+      <div style={checkoutContainerStyles.contentTitle}>
+        <h1>Kushki Fields JS - DEMO</h1>
+      </div>
+
+      <div style={checkoutContainerStyles.contentCheckout}>
+        <div id="cardHolderName_id"></div>
+        <div id="cardNumber_id"></div>
+        <div id="cvv_id"></div>
+        <div id="expirationDate_id"></div>
+        <div id="deferred_id"></div>
+
+        <button
+          className="mui-btn mui-btn--primary mui-btn--raised"
+          style={checkoutContainerStyles.button}
+          data-testid="tokenRequestBtn"
+          onClick={() => getToken()}
+        >
+          Pagar
+        </button>
+      </div>
+
       <hr />
-      <button data-testid="tokenRequestBtn" onClick={() => getToken()}>
-        {" "}
-        Token Request
-      </button>
       <h3 data-testid="token">Token: {token}</h3>
       <hr />
     </>
