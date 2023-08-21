@@ -1,4 +1,4 @@
-import { CheckoutContainer } from "./containers/Checkout";
+import { CheckoutContainer } from "./containers/Checkout.tsx";
 
 function App() {
   return <CheckoutContainer />;
