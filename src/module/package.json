@@ -1,0 +1,17 @@
+{
+  "name": "kushki-fields-js",
+  "private": false,
+  "version": "0.0.0",
+  "dependencies": {
+    "@krakenjs/zoid": "^10.3.1"
+  },
+  "main": "KFields.umd.js",
+  "module": "KFields.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./KFields.js",
+      "require": "./KFields.umd.cjs"
+    }
+  }
+}

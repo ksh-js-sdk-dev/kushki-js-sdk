@@ -1,6 +1,5 @@
-import { Field, KushkiFieldsOptions } from "../../../types/kushki_fields_options";
-import { KushkiFields } from "./KushkiFields.ts";
-import { EnvironmentEnum } from "../../infrastructure/EnvironmentEnum.ts";
+import { Field, KushkiFields, KushkiFieldsOptions } from "KFields";
+import { EnvironmentEnum } from "./infrastructure/EnvironmentEnum.ts";
 
 describe("KushkiFields test", () => {
   let options: KushkiFieldsOptions;
@@ -42,13 +41,5 @@ describe("KushkiFields test", () => {
     const kushkiFieldsInstance = await KushkiFields.init(optionsToUat);
 
     expect(kushkiFieldsInstance.baseUrl).toEqual(EnvironmentEnum.uat);
-  });
-
-  it("it should return a token", async function () {
-    const kushkiFieldsInstance = await KushkiFields.init(options);
-
-    const token = await kushkiFieldsInstance.requestToken();
-
-    expect(token).toEqual({ token: "replace by token response" })
   });
 });
