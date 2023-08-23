@@ -1,8 +1,8 @@
 import {
   KushkiFields,
+  KushkiFieldsOptions,
   requestToken,
-  TokenResponse,
-  KushkiFieldsOptions
+  TokenResponse
 } from "KFields";
 import { useEffect, useState } from "react";
 
@@ -18,8 +18,8 @@ export const checkoutContainerStyles = {
     padding: "10px"
   },
   contentTitle: {
-    alignItems: "end",
     display: "flex",
+    justifyContent: "center",
     marginRight: "250px",
     width: "100%"
   }
@@ -151,10 +151,10 @@ export const CheckoutContainer = () => {
           }
         }
       },
-      deferred: {
+      expirationDate: {
         fieldType: "inputBase",
         inputType: "text",
-        selector: "deferred_id",
+        selector: "expirationDate_id",
         styles: {
           input: {
             border: "1px solid #ccc",
@@ -190,10 +190,11 @@ export const CheckoutContainer = () => {
           }
         }
       },
-      expirationDate: {
+      // eslint-disable-next-line sort-keys
+      deferred: {
         fieldType: "inputBase",
         inputType: "text",
-        selector: "expirationDate_id",
+        selector: "deferred_id",
         styles: {
           input: {
             border: "1px solid #ccc",
