@@ -3,6 +3,25 @@
   "title": "KushkiFieldsOptions",
   "additionalProperties": false,
   "definitions": {
+    "styles": {
+      "title": "Styles",
+      "additionalProperties": false,
+      "properties": {
+        "input": {
+          "$ref": "#/definitions/cssClass"
+        },
+        "label": {
+          "$ref": "#/definitions/cssClass"
+        },
+        "inputActive": {
+          "$ref": "#/definitions/cssClass"
+        },
+        "container": {
+          "$ref": "#/definitions/cssClass"
+        }
+      },
+      "type": "object"
+    },
     "currency": {
       "title": "Currency",
       "type": "string",
@@ -80,7 +99,16 @@
           "type": "string"
         },
         "styles": {
-          "$ref": "#/definitions/cssClass"
+          "$ref": "#/definitions/styles"
+        },
+        "inputType": {
+          "type": "string"
+        },
+        "fieldType": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
         }
       },
       "required": ["selector"]
@@ -89,7 +117,7 @@
       "title": "CssClass",
       "oneOf": [
         {
-          "additionalProperties": false,
+          "additionalProperties": true,
           "type": "object",
           "properties": {
             "-moz-appearance": {
@@ -123,6 +151,12 @@
               "type": "string"
             },
             "appearance": {
+              "type": "string"
+            },
+            "background": {
+              "type": "string"
+            },
+            "border": {
               "type": "string"
             },
             "box-shadow": {
@@ -271,9 +305,6 @@
       "required": [
         "cardHolderName", "cardNumber", "expirationDate", "cvv"
       ]
-    },
-    "styles": {
-      "$ref": "#/definitions/cssClass"
     }
   },
   "required": [

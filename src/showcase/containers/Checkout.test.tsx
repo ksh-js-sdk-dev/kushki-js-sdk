@@ -8,12 +8,12 @@ import {
 import { KushkiFields, requestToken } from "KFields";
 import { CheckoutContainer } from "./Checkout.tsx";
 
-jest.mock('KFields"', () => {
+jest.mock("KFields", () => {
   return {
-    requestToken: jest.fn(),
     KushkiFields: {
       init: jest.fn()
-    }
+    },
+    requestToken: jest.fn()
   };
 });
 
