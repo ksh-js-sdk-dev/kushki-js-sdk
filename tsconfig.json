@@ -13,14 +13,14 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-
+    "esModuleInterop": true,
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "KFields": ["./src/module/index.ts"],
+      "KFields": ["./src/module/index.ts"]
     }
   },
   "include": ["src"],
