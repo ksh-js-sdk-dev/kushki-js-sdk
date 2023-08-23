@@ -35,14 +35,10 @@ export class KushkiFields {
   private static renderFields = (optionsFields: {
     [k: string]: Field;
   }): void => {
-    const hostedFields: string[] = Object.entries(optionsFields).map(
-      (field: [string, Field]) => {
-        return field[1].selector;
-      }
-    );
-
-    hostedFields.forEach((i: string): void => {
-      KushkiHostedFields({}).render(`#${i}`);
-    });
+    for (const field in optionsFields) {
+      KushkiHostedFields(optionsFields[field]).render(
+        `#${optionsFields[field].selector}`
+      );
+    }
   };
 }
