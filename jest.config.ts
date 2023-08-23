@@ -1,13 +1,14 @@
-import type {Config} from 'jest';
+import type { Config } from "jest";
 
-const config: Config= {
+const config: Config = {
+  preset: "ts-jest",
   testEnvironment: "jest-environment-jsdom",
   setupFilesAfterEnv: ["./jest.setup.js"],
   moduleNameMapper: {
     "\\.(css)$": "identity-obj-proxy",
     "\\.(png)$": "identity-obj-proxy",
     "\\.(svg)$": "identity-obj-proxy",
-    "KFields": "<rootDir>/src/module/index.ts",
+    KFields: "<rootDir>/src/module/index.ts"
   },
   coverageThreshold: {
     global: {
@@ -21,4 +22,3 @@ const config: Config= {
 };
 
 export default config;
-

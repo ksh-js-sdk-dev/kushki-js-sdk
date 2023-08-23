@@ -12,15 +12,15 @@ export const checkoutContainerStyles = {
     marginLeft: "15px"
   },
   contentCheckout: {
-    alignItems: "start",
+    "align-items": "start",
     display: "flex",
-    flexDirection: "column",
+    "flex-direction": "column",
     padding: "10px"
   },
   contentTitle: {
     display: "flex",
-    justifyContent: "center",
-    marginRight: "250px",
+    "justify-content": "center",
+    "margin-right": "250px",
     width: "100%"
   }
 };
@@ -249,11 +249,11 @@ export const CheckoutContainer = () => {
 
   return (
     <>
-      <div style={checkoutContainerStyles.contentTitle}>
+      <div style={checkoutContainerStyles.contentTitle!}>
         <h1>Kushki Fields JS - DEMO</h1>
       </div>
 
-      <div style={checkoutContainerStyles.contentCheckout}>
+      <div style={checkoutContainerStyles.contentCheckout!}>
         <div id="cardHolderName_id"></div>
         <div id="cardNumber_id"></div>
         <div id="cvv_id"></div>
@@ -262,7 +262,7 @@ export const CheckoutContainer = () => {
 
         <button
           className="mui-btn mui-btn--primary mui-btn--raised"
-          style={checkoutContainerStyles.button}
+          style={checkoutContainerStyles.button!}
           data-testid="tokenRequestBtn"
           onClick={() => getToken()}
         >

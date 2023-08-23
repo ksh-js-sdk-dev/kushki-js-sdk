@@ -7,7 +7,7 @@
       "title": "Styles",
       "additionalProperties": false,
       "properties": {
-        "inputActive": {
+        "input": {
           "$ref": "#/definitions/cssClass"
         },
         "label": {
@@ -117,7 +117,7 @@
       "title": "CssClass",
       "oneOf": [
         {
-          "additionalProperties": false,
+          "additionalProperties": true,
           "type": "object",
           "properties": {
             "-moz-appearance": {
@@ -151,6 +151,12 @@
               "type": "string"
             },
             "appearance": {
+              "type": "string"
+            },
+            "background": {
+              "type": "string"
+            },
+            "border": {
               "type": "string"
             },
             "box-shadow": {
