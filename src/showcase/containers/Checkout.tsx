@@ -1,11 +1,14 @@
-import { IKushkiFields } from "../repository/IKushkiFields";
-import { KushkiFieldsOptions } from "../../types/kushki_fields_options";
-import { TokenResponse } from "../../types/remote/token_response";
-import { KushkiFields } from "../module/services/KushkiFields";
+import {
+  KushkiFields,
+  requestToken,
+  TokenResponse,
+  KushkiFieldsOptions
+} from "KFields";
+import { useEffect, useState } from "react";
 
 export const CheckoutContainer = () => {
-  let token = null;
-  let kushkiFieldsInstance: IKushkiFields | null = null;
+  const [token, setToken] = useState<string>("");
+  const [kushkiFields, setKushkiFields] = useState<KushkiFields>();
 
   const options: KushkiFieldsOptions = {
     fields: {
@@ -30,15 +33,17 @@ export const CheckoutContainer = () => {
     publicCredentialId: ""
   };
 
-  KushkiFields.init(options).then((kushkiFieldsCreated) => {
-    kushkiFieldsInstance = kushkiFieldsCreated;
-  });
+  useEffect(() => {
+    KushkiFields.init(options).then((kushkiFieldsCreated) => {
+      setKushkiFields(kushkiFieldsCreated);
+    });
+  }, []);
 
-  function getToken() {
-    kushkiFieldsInstance
-      ?.requestToken()
-      .then((tokenResponse: TokenResponse) => (token = tokenResponse.token));
-  }
+  const getToken = () => {
+    requestToken(kushkiFields!).then((tokenResponse: TokenResponse) =>
+      setToken(tokenResponse.token)
+    );
+  };
 
   return (
     <>
@@ -50,7 +55,6 @@ export const CheckoutContainer = () => {
       <div id="deferred_id"></div>
       <hr />
       <button data-testid="tokenRequestBtn" onClick={() => getToken()}>
-        {" "}
         Token Request
       </button>
       <h3 data-testid="token">Token: {token}</h3>

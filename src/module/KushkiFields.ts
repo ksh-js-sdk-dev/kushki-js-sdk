@@ -1,19 +1,14 @@
-import {
-  Field,
-  KushkiFieldsOptions
-} from "../../../types/kushki_fields_options";
-import { EnvironmentEnum } from "../../infrastructure/EnvironmentEnum.ts";
-import { TokenResponse } from "../../../types/remote/token_response";
-import { IKushkiFields } from "../../repository/IKushkiFields.tsx";
-import KushkiHostedFields from "../zoid.ts";
+import { EnvironmentEnum } from "./infrastructure/EnvironmentEnum.ts";
+import KushkiHostedFields from "./zoid.ts";
+import { Field, KushkiFieldsOptions } from "KFields";
 
-export class KushkiFields implements IKushkiFields {
+export class KushkiFields {
   readonly baseUrl: EnvironmentEnum;
-  private _options: KushkiFieldsOptions;
+  readonly options: KushkiFieldsOptions;
 
   private constructor(options: KushkiFieldsOptions) {
     this.baseUrl = this.getBaseUrl(options.inTest);
-    this._options = this.setDefaultValues(options);
+    this.options = this.setDefaultValues(options);
   }
 
   public static init(options: KushkiFieldsOptions): Promise<KushkiFields> {
@@ -23,13 +18,6 @@ export class KushkiFields implements IKushkiFields {
       this.renderFields(options.fields);
       resolve(kushkiFields);
     });
-  }
-
-  public requestToken(): Promise<TokenResponse> {
-    // TODO: remove this console log after to implementation
-    console.log(this.baseUrl, this._options);
-
-    return Promise.resolve({ token: "replace by token response" });
   }
 
   private getBaseUrl(inTest?: boolean): EnvironmentEnum {

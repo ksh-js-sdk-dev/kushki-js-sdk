@@ -19,6 +19,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "KFields": ["./src/module/index.ts"],
+    }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
