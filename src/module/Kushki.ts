@@ -1,4 +1,4 @@
-import { KushkiOptions } from "./types/kushki_options";
+import { KushkiOptions } from "Kushki";
 import { EnvironmentEnum } from "./infrastructure/EnvironmentEnum.ts";
 
 export class Kushki {

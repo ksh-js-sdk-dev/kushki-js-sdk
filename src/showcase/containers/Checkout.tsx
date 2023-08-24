@@ -1,9 +1,5 @@
-import {
-  KushkiFields,
-  KushkiFieldsOptions,
-  requestToken,
-  TokenResponse
-} from "KFields";
+import { CardOptions, Kushki, TokenResponse } from "Kushki";
+import { Card } from "Kushki/card";
 import { useEffect, useState } from "react";
 
 export const checkoutContainerStyles = {
@@ -12,24 +8,24 @@ export const checkoutContainerStyles = {
     marginLeft: "15px"
   },
   contentCheckout: {
-    "align-items": "start",
+    alignItems: "start",
     display: "flex",
-    "flex-direction": "column",
+    flexDirection: "column" as "column",
     padding: "10px"
   },
   contentTitle: {
     display: "flex",
-    "justify-content": "center",
-    "margin-right": "250px",
+    justifyContent: "center",
+    marginRight: "250px",
     width: "100%"
   }
 };
 
 export const CheckoutContainer = () => {
   const [token, setToken] = useState<string>("");
-  const [kushkiFields, setKushkiFields] = useState<KushkiFields>();
+  const [cardInstance, setCardinstance] = useState<Card>();
 
-  const options: KushkiFieldsOptions = {
+  const options: CardOptions = {
     fields: {
       cardHolderName: {
         fieldType: "inputBase",
@@ -230,21 +226,21 @@ export const CheckoutContainer = () => {
           }
         }
       }
-    },
-    inTest: true,
-    publicCredentialId: ""
+    }
   };
 
   useEffect(() => {
-    KushkiFields.init(options).then((kushkiFieldsCreated) => {
-      setKushkiFields(kushkiFieldsCreated);
+    Kushki.init({ publicCredentialId: "1234" }).then(async (kushkiInstance) => {
+      setCardinstance(await Card.initCardToken(kushkiInstance, options));
     });
   }, []);
 
   const getToken = () => {
-    requestToken(kushkiFields!).then((tokenResponse: TokenResponse) =>
-      setToken(tokenResponse.token)
-    );
+    if (cardInstance) {
+      cardInstance.requestToken().then((token: TokenResponse) => {
+        setToken(token.token);
+      });
+    }
   };
 
   return (

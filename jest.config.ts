@@ -8,7 +8,8 @@ const config: Config = {
     "\\.(css)$": "identity-obj-proxy",
     "\\.(png)$": "identity-obj-proxy",
     "\\.(svg)$": "identity-obj-proxy",
-    KFields: "<rootDir>/src/module/index.ts"
+    "^Kushki$": "<rootDir>/src/module/index.ts",
+    "^Kushki/card$": "<rootDir>/src/module/card/index.ts",
   },
   coverageThreshold: {
     global: {
@@ -18,7 +19,8 @@ const config: Config = {
       statements: 100
     }
   },
-  coverageDirectory: "./coverage"
+  coverageDirectory: "./coverage",
+  coveragePathIgnorePatterns: ["src/showcase/App.tsx"]
 };
 
 export default config;

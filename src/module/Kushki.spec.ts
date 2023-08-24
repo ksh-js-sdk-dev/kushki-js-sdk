@@ -1,6 +1,5 @@
 import { EnvironmentEnum } from "./infrastructure/EnvironmentEnum.ts";
-import { KushkiOptions } from "./types/kushki_options";
-import { Kushki } from "./Kushki.ts";
+import { Kushki, KushkiOptions } from "Kushki";
 
 describe("Kushki - test", () => {
   let options: KushkiOptions;

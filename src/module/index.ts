@@ -1,15 +1,13 @@
 // Main Object
-export { KushkiFields } from "./KushkiFields.ts";
-
-// Services
-export { requestToken } from "./services/CardService.ts";
+export { Kushki } from "./Kushki.ts";
 
 // Types
 export type {
   Currency,
   CssClass,
-  KushkiFieldsOptions,
+  CardOptions,
   Field,
   Amount
-} from "./types/kushki_fields_options";
+} from "./types/card_options";
 export type { TokenResponse } from "./types/remote/token_response";
+export type { KushkiOptions } from "./types/kushki_options";
