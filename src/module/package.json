@@ -5,13 +5,12 @@
   "dependencies": {
     "@krakenjs/zoid": "^10.3.1"
   },
-  "main": "Kushki.umd.js",
-  "module": "Kushki.js",
-  "types": "index.d.ts",
   "exports": {
     ".": {
-      "import": "./Kushki.js",
-      "require": "./Kushki.umd.cjs"
+      "import": "./Kushki.js"
+    },
+    "./card": {
+      "import": "./card/card.js"
     }
   }
 }

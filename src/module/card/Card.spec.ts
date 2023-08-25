@@ -1,5 +1,5 @@
-import { CardOptions, Field, Kushki } from "Kushki";
-import { Card } from "Kushki/card";
+import { Kushki } from "Kushki";
+import { Card, CardOptions, Field } from "Kushki/card";
 
 describe("Card test", () => {
   let kushki: Kushki;
