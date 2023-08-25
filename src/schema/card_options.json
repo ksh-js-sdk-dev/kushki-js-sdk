@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "KushkiFieldsOptions",
+  "title": "CardOptions",
   "additionalProperties": false,
   "definitions": {
     "styles": {
@@ -63,12 +63,7 @@
           "type": "number"
         }
       },
-      "required": [
-        "currency",
-        "subtotalIva",
-        "subtotalIva0",
-        "iva"
-      ],
+      "required": ["currency", "subtotalIva", "subtotalIva0", "iva"],
       "type": "object"
     },
     "field": {
@@ -76,9 +71,7 @@
       "additionalProperties": false,
       "properties": {
         "selector": {
-          "type": [
-            "string"
-          ]
+          "type": "string"
         },
         "placeholder": {
           "type": "string"
@@ -267,12 +260,6 @@
     }
   },
   "properties": {
-    "publicCredentialId": {
-      "type": "string"
-    },
-    "inTest": {
-      "type": "boolean"
-    },
     "amount": {
       "$ref": "#/definitions/amount"
     },
@@ -302,13 +289,9 @@
           "$ref": "#/definitions/field"
         }
       },
-      "required": [
-        "cardHolderName", "cardNumber", "expirationDate", "cvv"
-      ]
+      "required": ["cardHolderName", "cardNumber", "expirationDate", "cvv"]
     }
   },
-  "required": [
-    "publicCredentialId", "fields"
-  ],
+  "required": ["publicCredentialId", "fields"],
   "type": "object"
 }

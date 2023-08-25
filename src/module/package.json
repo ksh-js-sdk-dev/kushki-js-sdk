@@ -5,13 +5,13 @@
   "dependencies": {
     "@krakenjs/zoid": "^10.3.1"
   },
-  "main": "KFields.umd.js",
-  "module": "KFields.js",
+  "main": "Kushki.umd.js",
+  "module": "Kushki.js",
   "types": "index.d.ts",
   "exports": {
     ".": {
-      "import": "./KFields.js",
-      "require": "./KFields.umd.cjs"
+      "import": "./Kushki.js",
+      "require": "./Kushki.umd.cjs"
     }
   }
 }

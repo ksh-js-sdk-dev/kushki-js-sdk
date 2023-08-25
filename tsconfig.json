@@ -20,7 +20,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "KFields": ["./src/module/index.ts"]
+      "Kushki": ["./src/module/index.ts"],
+      "Kushki/card": ["./src/module/card/index.ts"]
     }
   },
   "include": ["src"],
