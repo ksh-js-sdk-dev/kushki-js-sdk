@@ -15,13 +15,12 @@ export default defineConfig({
     tsconfigPaths()
   ],
   build: {
-    sourcemap: true,
     lib: {
-      entry: "src/module/index.ts",
-      name: "KFields",
-      fileName: "KFields",
-      formats: ["cjs", "umd", "es"]
-    },
-    minify: "esbuild"
+      entry: {
+        Kushki: "src/module/index.ts",
+        Card: "src/module/card/index.ts"
+      },
+      formats: ["cjs", "es"]
+    }
   }
 });

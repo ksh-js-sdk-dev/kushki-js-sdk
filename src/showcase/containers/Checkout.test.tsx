@@ -3,47 +3,63 @@ import {
   fireEvent,
   render,
   screen,
+  act,
   waitFor
 } from "@testing-library/react";
-import { KushkiFields, requestToken } from "KFields";
+import { Kushki } from "Kushki";
+import { Card } from "Kushki/card";
+
 import { CheckoutContainer } from "./Checkout.tsx";
 
-jest.mock("KFields", () => {
+jest.mock("Kushki", () => {
   return {
-    KushkiFields: {
+    Kushki: {
       init: jest.fn()
-    },
-    requestToken: jest.fn()
+    }
+  };
+});
+
+jest.mock("Kushki/card", () => {
+  return {
+    Card: {
+      initCardToken: jest.fn()
+    }
   };
 });
 
 describe("Tests on <CheckoutContainer/> component", () => {
   beforeEach(() => {
     cleanup();
-    (KushkiFields.init as jest.Mock).mockResolvedValue({});
-    (requestToken as jest.Mock).mockResolvedValue({
-      token: "replace by token response"
+    (Kushki.init as jest.Mock).mockResolvedValue({});
+    (Card.initCardToken as jest.Mock).mockResolvedValue({
+      requestToken: jest.fn().mockResolvedValue({
+        token: "replace by token response"
+      })
     });
   });
 
-  test("Kushki Fields JS - DEMO", () => {
-    render(<CheckoutContainer />);
+  test("Kushki Fields JS - DEMO", async () => {
+    await act(async () => {
+      render(<CheckoutContainer />);
+    });
+
     const h1Element = screen.getByText("Kushki Fields JS - DEMO");
 
     expect(h1Element).toBeDefined();
   });
 
   test("Kushki Fields JS - DEMO request token", async () => {
-    render(<CheckoutContainer />);
-
-    await waitFor(() => {
-      const button = screen.getByTestId("tokenRequestBtn");
-
-      fireEvent.click(button);
-
-      const label = screen.getByTestId("token");
-
-      expect(label).toBeDefined();
+    await act(async () => {
+      render(<CheckoutContainer />);
     });
+
+    const button = screen.getByTestId("tokenRequestBtn");
+
+    act(() => {
+      fireEvent.click(button);
+    });
+
+    const label = await waitFor(() => screen.getByTestId("token"));
+    expect(label).toBeDefined();
   });
 });
