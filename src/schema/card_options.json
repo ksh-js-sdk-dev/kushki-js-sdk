@@ -68,7 +68,7 @@
     },
     "field": {
       "title": "Field",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "properties": {
         "selector": {
           "type": "string"

@@ -32,12 +32,15 @@ export const CheckoutContainer = () => {
   const [token, setToken] = useState<string>("");
   const [cardInstance, setCardinstance] = useState<Card>();
 
+  /* istanbul ignore next */
   const options: CardOptions = {
     fields: {
       cardHolderName: {
-        fieldType: "inputBase",
+        fieldType: "cardholderName",
         inputType: "text",
         label: "Card holder name",
+        onBlur: (fieldType: string,value: string) => console.log("cardHolderName - onBlur ", fieldType, value),
+        onFocus: (fieldType: string) => console.log("cardHolderName - onFocus  ", fieldType),
         placeholder: "Card holder name",
         selector: "cardHolderName_id",
         styles: {
@@ -259,9 +262,10 @@ export const CheckoutContainer = () => {
   };
 
   useEffect(() => {
-    Kushki.init({ publicCredentialId: "1234" }).then(async (kushkiInstance) => {
-      setCardinstance(await Card.initCardToken(kushkiInstance, options));
-    });
+    Kushki.init({ publicCredentialId: "1234" })
+        .then((kushkiInstance) => Card.initCardToken(kushkiInstance, options))
+        .then(( card : Card ) =>  setCardinstance(card) );
+
   }, []);
 
   const getToken = () => {
