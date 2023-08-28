@@ -1,9 +1,9 @@
 import { CardOptions, Field, Kushki } from "Kushki";
 import { Card } from "Kushki/card";
-import KushkiHostedFields from "../zoid.ts";
+import KushkiHostedFields from "../libs/HostedField.ts";
 
 
-jest.mock("../zoid.ts", () => jest.fn().mockImplementation(
+jest.mock("../libs/HostedField.ts", () => jest.fn().mockImplementation(
     () => ({ render: jest.fn()})
 ));
 
