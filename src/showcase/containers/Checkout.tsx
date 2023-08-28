@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 export const checkoutContainerStyles = {
   button: {
-    "background-color": "#39a1f4",
+    backgroundColor: "#39a1f4",
     border: "none",
     borderRadius: "12px",
     color: "#FFF",
