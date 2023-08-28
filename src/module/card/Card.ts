@@ -1,4 +1,4 @@
-import KushkiHostedFields from "../zoid.ts";
+import KushkiHostedFields from "../libs/HostedField.ts";
 import { CardOptions, Field, Kushki, TokenResponse } from "Kushki";
 import { ICard } from "../repository/ICard.ts";
 
