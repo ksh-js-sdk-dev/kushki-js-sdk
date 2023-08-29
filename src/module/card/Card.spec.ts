@@ -1,7 +1,6 @@
-import { CardOptions, Field, Kushki } from "Kushki";
-import { Card } from "Kushki/card";
+import { Kushki } from "Kushki";
+import { Card, CardOptions, Field } from "Kushki/card";
 import KushkiHostedFields from "../libs/HostedField.ts";
-
 
 jest.mock("../libs/HostedField.ts", () => jest.fn().mockImplementation(
     () => ({ render: jest.fn()})

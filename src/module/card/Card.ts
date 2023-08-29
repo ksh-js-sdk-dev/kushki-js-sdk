@@ -1,11 +1,6 @@
+import { Kushki, TokenResponse } from "Kushki";
+import { CardOptions, Field, CardFieldValues } from "Kushki/card";
 import KushkiHostedFields from "../libs/HostedField.ts";
-import {
-  CardFieldValues,
-  CardOptions,
-  Field,
-  Kushki,
-  TokenResponse
-} from "Kushki";
 import { ICard } from "../repository/ICard.ts";
 import { FieldInstance } from "../types/card_fields_values";
 
