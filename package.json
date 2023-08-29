@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite --c vite.config.ts",
     "build:npm": "tsc && vite build --c vite.config-npm.ts && npm run cp:package",
-    "build:cdn": "tsc && vite build --c vite.config-cdn.ts",
+    "build:cdn": "npx webpack",
     "build": "npm run validate && npm run build:npm && npm run build:cdn",
     "lint": "npm run format && npm run lint:fix && eslint src/**/*.{ts,tsx}",
     "preview": "vite preview",
@@ -68,6 +68,8 @@
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
     "vite-plugin-dts": "^3.5.2",
-    "vite-tsconfig-paths": "^4.2.0"
+    "vite-tsconfig-paths": "^4.2.0",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
   }
 }
