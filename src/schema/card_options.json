@@ -104,7 +104,7 @@
           "type": "string"
         }
       },
-      "required": ["selector"]
+      "required": ["selector", "fieldType"]
     },
     "cssClass": {
       "title": "CssClass",

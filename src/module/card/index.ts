@@ -9,3 +9,4 @@ export type {
     Field,
     Amount
 } from "../types/card_options";
+export type { CardFieldValues } from "../types/card_fields_values";

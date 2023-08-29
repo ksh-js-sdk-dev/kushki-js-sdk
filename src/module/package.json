@@ -2,9 +2,7 @@
   "name": "kushki-fields-js",
   "private": false,
   "version": "0.0.0",
-  "dependencies": {
-    "@krakenjs/zoid": "^10.3.1"
-  },
+  "dependencies": {},
   "exports": {
     ".": {
       "import": "./Kushki.js"
