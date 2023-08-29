@@ -215,7 +215,7 @@ export const CheckoutContainer = () => {
         fieldType: "expirationDate",
         inputType: "text",
         label: "Fecha de vencimiento",
-        placeholder: "Fecha de vencimiento",
+        placeholder: "MM/YY",
         selector: "expirationDate_id",
         styles: {
           container: {
@@ -259,10 +259,9 @@ export const CheckoutContainer = () => {
   };
 
   useEffect(() => {
-    Kushki.init({ publicCredentialId: "1234" })
-        .then(async (kushkiInstance) =>
-            setCardinstance(await Card.initCardToken(kushkiInstance, options)));
-
+    Kushki.init({ publicCredentialId: "1234" }).then(async (kushkiInstance) =>
+      setCardinstance(await Card.initCardToken(kushkiInstance, options))
+    );
   }, []);
 
   const getToken = () => {
@@ -281,10 +280,10 @@ export const CheckoutContainer = () => {
 
       <div style={checkoutContainerStyles.contentCheckout!}>
         <div id="cardHolderName_id"></div>
-        <div id="cardNumber_id" ></div>
-        <div id="expirationDate_id" ></div>
-        <div id="cvv_id" ></div>
-        <div id="deferred_id" ></div>
+        <div id="cardNumber_id"></div>
+        <div id="expirationDate_id"></div>
+        <div id="cvv_id"></div>
+        <div id="deferred_id"></div>
 
         <button
           style={checkoutContainerStyles.button!}
