@@ -27,15 +27,21 @@ jest.mock("Kushki/card", () => {
   };
 });
 
+const mockRequestToken =  jest.fn().mockResolvedValue({
+  token: "replace by token response"
+})
+
+const mockInitCardToken = jest.fn().mockResolvedValue(
+    {
+      requestToken: mockRequestToken
+    }
+)
+
 describe("Tests on <CheckoutContainer/> component", () => {
   beforeEach(() => {
     cleanup();
     (Kushki.init as jest.Mock).mockResolvedValue({});
-    (Card.initCardToken as jest.Mock).mockResolvedValue({
-      requestToken: jest.fn().mockResolvedValue({
-        token: "replace by token response"
-      })
-    });
+    Card.initCardToken = mockInitCardToken
   });
 
   test("Kushki Fields JS - DEMO", async () => {
@@ -46,6 +52,7 @@ describe("Tests on <CheckoutContainer/> component", () => {
     const h1Element = screen.getByText("Kushki Fields JS - DEMO");
 
     expect(h1Element).toBeDefined();
+    expect(mockInitCardToken).toHaveBeenCalled();
   });
 
   test("Kushki Fields JS - DEMO request token", async () => {
@@ -61,5 +68,6 @@ describe("Tests on <CheckoutContainer/> component", () => {
 
     const label = await waitFor(() => screen.getByTestId("token"));
     expect(label).toBeDefined();
+    expect(mockRequestToken).toHaveBeenCalled();
   });
 });

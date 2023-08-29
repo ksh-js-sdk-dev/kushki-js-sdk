@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 export const checkoutContainerStyles = {
   button: {
-    "background-color": "#39a1f4",
+    backgroundColor: "#39a1f4",
     border: "none",
     borderRadius: "12px",
     color: "#FFF",
@@ -35,7 +35,7 @@ export const CheckoutContainer = () => {
   const options: CardOptions = {
     fields: {
       cardHolderName: {
-        fieldType: "inputBase",
+        fieldType: "cardholderName",
         inputType: "text",
         label: "Card holder name",
         placeholder: "Card holder name",
@@ -124,7 +124,7 @@ export const CheckoutContainer = () => {
         }
       },
       cvv: {
-        fieldType: "inputBase",
+        fieldType: "cvv",
         inputType: "password",
         label: "CVV",
         placeholder: "CVV",
@@ -168,7 +168,7 @@ export const CheckoutContainer = () => {
         }
       },
       deferred: {
-        fieldType: "inputBase",
+        fieldType: "deferred",
         inputType: "text",
         label: "Diferido",
         placeholder: "Diferido",
@@ -212,7 +212,7 @@ export const CheckoutContainer = () => {
         }
       },
       expirationDate: {
-        fieldType: "inputBase",
+        fieldType: "expirationDate",
         inputType: "text",
         label: "Fecha de vencimiento",
         placeholder: "Fecha de vencimiento",
@@ -259,9 +259,10 @@ export const CheckoutContainer = () => {
   };
 
   useEffect(() => {
-    Kushki.init({ publicCredentialId: "1234" }).then(async (kushkiInstance) => {
-      setCardinstance(await Card.initCardToken(kushkiInstance, options));
-    });
+    Kushki.init({ publicCredentialId: "1234" })
+        .then(async (kushkiInstance) =>
+            setCardinstance(await Card.initCardToken(kushkiInstance, options)));
+
   }, []);
 
   const getToken = () => {
@@ -280,10 +281,10 @@ export const CheckoutContainer = () => {
 
       <div style={checkoutContainerStyles.contentCheckout!}>
         <div id="cardHolderName_id"></div>
-        <div id="cardNumber_id"></div>
-        <div id="expirationDate_id"></div>
-        <div id="cvv_id"></div>
-        <div id="deferred_id"></div>
+        <div id="cardNumber_id" ></div>
+        <div id="expirationDate_id" ></div>
+        <div id="cvv_id" ></div>
+        <div id="deferred_id" ></div>
 
         <button
           style={checkoutContainerStyles.button!}
