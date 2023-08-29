@@ -1,12 +1,39 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "CardFieldValues",
+  "definitions": {
+    "fieldInstance": {
+      "type": "object",
+      "title": "FieldInstance",
+      "additionalProperties": false,
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "hostedField": {
+          "type": "object"
+        }
+      }
+    }
+  },
   "properties": {
     "cardholderName": {
-      "type": "string"
+      "$ref": "#/definitions/fieldInstance"
     },
     "cardNumber": {
-      "type": "string"
+      "$ref": "#/definitions/fieldInstance"
+    },
+    "cvv": {
+      "$ref": "#/definitions/fieldInstance"
+    },
+    "deferred": {
+      "$ref": "#/definitions/fieldInstance"
+    },
+    "expirationDate": {
+      "$ref": "#/definitions/fieldInstance"
     }
   },
   "type": "object"

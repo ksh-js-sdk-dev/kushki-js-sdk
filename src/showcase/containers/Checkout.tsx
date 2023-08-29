@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 export const checkoutContainerStyles = {
   button: {
-    "background-color": "#39a1f4",
+    backgroundColor: "#39a1f4",
     border: "none",
     borderRadius: "12px",
     color: "#FFF",
@@ -32,15 +32,12 @@ export const CheckoutContainer = () => {
   const [token, setToken] = useState<string>("");
   const [cardInstance, setCardinstance] = useState<Card>();
 
-  /* istanbul ignore next */
   const options: CardOptions = {
     fields: {
       cardHolderName: {
         fieldType: "cardholderName",
         inputType: "text",
         label: "Card holder name",
-        onBlur: (fieldType: string,value: string) => console.log("cardHolderName - onBlur ", fieldType, value),
-        onFocus: (fieldType: string) => console.log("cardHolderName - onFocus  ", fieldType),
         placeholder: "Card holder name",
         selector: "cardHolderName_id",
         styles: {
@@ -127,7 +124,7 @@ export const CheckoutContainer = () => {
         }
       },
       cvv: {
-        fieldType: "inputBase",
+        fieldType: "cvv",
         inputType: "password",
         label: "CVV",
         placeholder: "CVV",
@@ -171,7 +168,7 @@ export const CheckoutContainer = () => {
         }
       },
       deferred: {
-        fieldType: "inputBase",
+        fieldType: "deferred",
         inputType: "text",
         label: "Diferido",
         placeholder: "Diferido",
@@ -215,7 +212,7 @@ export const CheckoutContainer = () => {
         }
       },
       expirationDate: {
-        fieldType: "inputBase",
+        fieldType: "expirationDate",
         inputType: "text",
         label: "Fecha de vencimiento",
         placeholder: "Fecha de vencimiento",
@@ -263,8 +260,8 @@ export const CheckoutContainer = () => {
 
   useEffect(() => {
     Kushki.init({ publicCredentialId: "1234" })
-        .then((kushkiInstance) => Card.initCardToken(kushkiInstance, options))
-        .then(( card : Card ) =>  setCardinstance(card) );
+        .then(async (kushkiInstance) =>
+            setCardinstance(await Card.initCardToken(kushkiInstance, options)));
 
   }, []);
 
@@ -284,10 +281,10 @@ export const CheckoutContainer = () => {
 
       <div style={checkoutContainerStyles.contentCheckout!}>
         <div id="cardHolderName_id"></div>
-        <div id="cardNumber_id"></div>
-        <div id="expirationDate_id"></div>
-        <div id="cvv_id"></div>
-        <div id="deferred_id"></div>
+        <div id="cardNumber_id" ></div>
+        <div id="expirationDate_id" ></div>
+        <div id="cvv_id" ></div>
+        <div id="deferred_id" ></div>
 
         <button
           style={checkoutContainerStyles.button!}

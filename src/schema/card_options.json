@@ -68,7 +68,7 @@
     },
     "field": {
       "title": "Field",
-      "additionalProperties": true,
+      "additionalProperties": false,
       "properties": {
         "selector": {
           "type": "string"
@@ -104,7 +104,7 @@
           "type": "string"
         }
       },
-      "required": ["selector"]
+      "required": ["selector", "fieldType"]
     },
     "cssClass": {
       "title": "CssClass",
