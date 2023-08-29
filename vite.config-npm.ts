@@ -15,7 +15,7 @@ export default defineConfig({
     lib: {
       entry: {
         Kushki: "src/module/index.ts",
-        card: "src/module/card/index.ts"
+        Card: "src/module/card/index.ts"
       }
     },
     rollupOptions: {

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite --c vite.config.ts",
     "build:npm": "tsc && vite build --c vite.config-npm.ts && npm run cp:package",
-    "build:cdn": "npx webpack",
+    "build:cdn": "npx webpack --config webpack-cdn.config.js",
     "build": "npm run validate && npm run build:npm && npm run build:cdn",
     "lint": "npm run format && npm run lint:fix && eslint src/**/*.{ts,tsx}",
     "preview": "vite preview",
