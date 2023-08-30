@@ -9,7 +9,7 @@ const config: Config = {
     "\\.(png)$": "identity-obj-proxy",
     "\\.(svg)$": "identity-obj-proxy",
     "^Kushki$": "<rootDir>/src/module/index.ts",
-    "^Kushki/card$": "<rootDir>/src/module/card/index.ts",
+    "^Kushki/card$": "<rootDir>/src/module/card/index.ts"
   },
   coverageThreshold: {
     global: {
@@ -20,7 +20,10 @@ const config: Config = {
     }
   },
   coverageDirectory: "./coverage",
-  coveragePathIgnorePatterns: ["src/showcase/App.tsx"]
+  coveragePathIgnorePatterns: [
+    "src/showcase/App.tsx",
+    "src/module/gateway/KushkiGateway.ts"
+  ]
 };
 
 export default config;

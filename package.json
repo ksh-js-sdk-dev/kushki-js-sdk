@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@krakenjs/zoid": "^10.3.1",
+    "axios": "^1.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -40,10 +41,12 @@
     "@kushki/cli": "^1.5.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
+    "@types/axios": "^0.14.0",
     "@types/jest": "^29.5.3",
     "@types/node": "^20.5.1",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@types/sinon": "^10.0.16",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
     "@typescript-eslint/parser": "^6.3.0",
     "@vitejs/plugin-react-swc": "^3.3.2",
