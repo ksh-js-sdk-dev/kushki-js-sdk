@@ -17,7 +17,7 @@ export const checkoutContainerStyles = {
   contentCheckout: {
     alignItems: "start",
     display: "flex",
-    flexDirection: "column" as "column",
+    flexDirection: "column" as const,
     padding: "10px"
   },
   contentTitle: {
@@ -79,10 +79,10 @@ export const CheckoutContainer = () => {
         }
       },
       cardNumber: {
+        brandIcon: "amex",
         fieldType: "cardNumber",
         inputType: "number",
         label: "Número de tarjeta",
-        maxLength: 22,
         placeholder: "Número de tarjeta",
         selector: "cardNumber_id",
         styles: {
@@ -215,7 +215,7 @@ export const CheckoutContainer = () => {
         fieldType: "expirationDate",
         inputType: "text",
         label: "Fecha de vencimiento",
-        placeholder: "MM/YY",
+        placeholder: "Fecha de vencimiento",
         selector: "expirationDate_id",
         styles: {
           container: {
@@ -259,9 +259,15 @@ export const CheckoutContainer = () => {
   };
 
   useEffect(() => {
-    Kushki.init({ publicCredentialId: "1234" }).then(async (kushkiInstance) =>
-      setCardinstance(await Card.initCardToken(kushkiInstance, options))
-    );
+    (async () => {
+      const kushkiInstance = await Kushki.init({
+        inTest: true,
+        publicCredentialId: "f24eb8375f114ab3acc440ebfb5f60f3"
+      });
+
+      if (kushkiInstance)
+        setCardinstance(await Card.initCardToken(kushkiInstance, options));
+    })();
   }, []);
 
   const getToken = () => {

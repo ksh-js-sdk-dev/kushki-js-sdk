@@ -102,6 +102,9 @@
         },
         "label": {
           "type": "string"
+        },
+        "brandIcon": {
+          "type": "string"
         }
       },
       "required": ["selector", "fieldType"]
