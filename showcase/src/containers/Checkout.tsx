@@ -1,5 +1,5 @@
-import { Kushki, TokenResponse } from "Kushki";
-import { Card, CardOptions } from "Kushki/card";
+import { Kushki, TokenResponse } from "kushki-js-sdk";
+import { Card, CardOptions } from "kushki-js-sdk/card";
 import { useEffect, useState } from "react";
 
 export const checkoutContainerStyles = {

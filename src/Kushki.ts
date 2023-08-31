@@ -1,5 +1,5 @@
 import { KushkiOptions } from "Kushki";
-import { EnvironmentEnum } from "./infrastructure/EnvironmentEnum.ts";
+import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
 
 export class Kushki {
   private readonly baseUrl: EnvironmentEnum;

@@ -1,10 +1,10 @@
 import { Kushki } from "Kushki";
-import { Card, CardOptions, Field } from "Kushki/card";
-import KushkiHostedFields from "../libs/HostedField.ts";
-import { InputModelEnum } from "../infrastructure/InputModel.enum";
-import * as requestBinInfo from "../gateway/KushkiGateway.ts";
+import { Card, CardOptions, Field } from "./index.ts";
+import KushkiHostedFields from "libs/HostedField.ts";
+import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
+import * as requestBinInfo from "gateway/KushkiGateway.ts";
 
-jest.mock("../libs/HostedField.ts", () =>
+jest.mock("../../libs/HostedField.ts", () =>
   jest
     .fn()
     .mockImplementation(() => ({ render: jest.fn(), updateProps: jest.fn() }))

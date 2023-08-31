@@ -5,32 +5,21 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "baseUrl": ".",
+
+    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "jsx": "react-jsx",
     "esModuleInterop": true,
+    /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "paths": {
-      "Kushki": ["src/index.ts"],
-      "Kushki/card": ["src/module/card/index.ts"],
-      "module/*": ["src/module/*"],
-      "gateway/*": ["src/gateway/*"],
-      "infrastructure/*": ["src/infrastructure/*"],
-      "repository/*": ["src/repository/*"],
-      "service/*": ["src/service/*"],
-      "types/*": ["types/*"],
-      "environment/*": ["src/environments/*"],
-      "utils/*": ["src/utils/*"],
-      "libs/*": ["src/libs/*"],
-      "src/*": ["src/*"]
-    }
   },
-  "exclude": ["node_modules", "showcase"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

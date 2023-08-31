@@ -6,8 +6,8 @@ import {
   act,
   waitFor
 } from "@testing-library/react";
-import { Kushki } from "Kushki";
-import { Card } from "Kushki/card";
+import { Kushki, TokenResponse } from "kushki-js-sdk";
+import { Card, CardOptions } from "kushki-js-sdk/card";
 
 import { CheckoutContainer } from "./Checkout.tsx";
 

@@ -1,10 +1,10 @@
-import KushkiHostedFields from "../libs/HostedField.ts";
+import KushkiHostedFields from "libs/HostedField.ts";
 import { Kushki, TokenResponse } from "Kushki";
-import { CardFieldValues, CardOptions, Field } from "Kushki/card";
-import { ICard } from "../repository/ICard.ts";
-import { FieldInstance } from "../types/card_fields_values";
-import { InputModelEnum } from "../infrastructure/InputModel.enum";
-import { requestBinInfo } from "../gateway/KushkiGateway";
+import { CardFieldValues, CardOptions, Field } from "module/card";
+import { ICard } from "repository/ICard.ts";
+import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
+import { requestBinInfo } from "gateway/KushkiGateway.ts";
+import { FieldInstance } from "types/card_fields_values";
 
 export class Card implements ICard {
   private readonly options: CardOptions;

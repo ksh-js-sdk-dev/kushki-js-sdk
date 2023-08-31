@@ -1,20 +1,22 @@
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { PreRenderedChunk } from "rollup";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     dts({
-      include: ["src/module/"],
-      exclude: ["src/**/*.spec.ts", "src/**/*.spec.tsx"],
+      include: ["src"],
+      exclude: ["src/**/*.spec.ts"],
       copyDtsFiles: true
-    })
+    }),
+    tsconfigPaths()
   ],
   build: {
     lib: {
       entry: {
-        Kushki: "src/module/index.ts",
+        Kushki: "src/index.ts",
         Card: "src/module/card/index.ts"
       }
     },
@@ -23,7 +25,7 @@ export default defineConfig({
         entryFileNames: (chunkInfo: PreRenderedChunk) => {
           if (chunkInfo.name === "Kushki") return "[name].js";
 
-          return "[name]/[name].js";
+          return "module/[name]/[name].js";
         }
       }
     }

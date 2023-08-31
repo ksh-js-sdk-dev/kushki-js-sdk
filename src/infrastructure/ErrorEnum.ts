@@ -1,7 +1,7 @@
 /**
  * ErrorEnum
  */
-import { KushkiErrors } from "./KushkiError";
+import { KushkiErrors } from "infrastructure/KushkiError.ts";
 
 export enum ErrorCode {
   E001 = "E001"

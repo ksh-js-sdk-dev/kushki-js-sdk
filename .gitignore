@@ -6,3 +6,4 @@ node_modules/
 .kushki/
 --watch
 .idea
+yarn-error.log

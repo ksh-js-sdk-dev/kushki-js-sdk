@@ -1,7 +1,7 @@
-import { BinBody } from "../types/bin_body";
-import { BinInfoResponse } from "../types/bin_info_response";
-import { PathEnum } from "../infrastructure/PathEnum";
-import { ERRORS } from "../infrastructure/ErrorEnum";
+import { BinBody } from "types/bin_body";
+import { BinInfoResponse } from "types/bin_info_response";
+import { PathEnum } from "infrastructure/PathEnum.ts";
+import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import axios, { AxiosError } from "axios";
 import { Kushki } from "Kushki";
 

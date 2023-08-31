@@ -6,7 +6,6 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended",
     "plugin:import/typescript",
     "plugin:jsx-a11y/recommended",
     "plugin:@typescript-eslint/recommended",
@@ -32,20 +31,16 @@
     "sourceType": "module"
   },
   "plugins": [
-    "react",
-    "react-hooks",
     "prettier",
     "@typescript-eslint",
     "import"
   ],
   "rules": {
-    "react/react-in-jsx-scope": "off",
     "camelcase": "error",
     "spaced-comment": "error",
     "quotes": ["error", "double"],
     "no-duplicate-imports": "error",
     "no-unused-vars": "off",
-    "react/display-name": ["off"],
     "@typescript-eslint/no-unused-vars": "error",
     "semi": ["error", "always"],
     "no-var": "error",
