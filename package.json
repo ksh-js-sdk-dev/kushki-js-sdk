@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-    "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
-    "dev": "cd ./showcase && vite --c vite.config.ts",
+    "bootstrap": "yarn install && npm run tsc:interface && bootstrap:demo",
+    "bootstrap:demo": "cd ./showcase && yarn install && yarn dev",
     "build:npm": "tsc && vite build --c vite.config-npm.ts && yarn cp:package",
     "build:cdn": "npx webpack --config webpack-cdn.config.js",
     "build": "npm run validate && npm run build:npm && npm run build:cdn",
