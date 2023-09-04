@@ -1,9 +1,18 @@
 import KushkiHostedFields from "libs/HostedField.ts";
 import { Kushki, TokenResponse } from "Kushki";
-import { CardFieldValues, CardOptions, Field } from "module/card";
+import {
+  CardFieldValues,
+  CardOptions,
+  CardTokenRequest,
+  Field
+} from "module/card";
 import { ICard } from "repository/ICard.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import { requestBinInfo, requestToken } from "gateway/KushkiGateway.ts";
+import {
+  requestBinInfo,
+  requestCreateSubscriptionToken,
+  requestToken
+} from "gateway/KushkiGateway.ts";
 import { FieldInstance } from "types/card_fields_values";
 
 export class Card implements ICard {
@@ -44,7 +53,22 @@ export class Card implements ICard {
   }
 
   public async requestToken(): Promise<TokenResponse> {
-    const token: TokenResponse = await requestToken(this.kushkiInstance, {
+    let token: TokenResponse;
+
+    if (this.options.isSubscription) {
+      token = await requestCreateSubscriptionToken(
+        this.kushkiInstance,
+        this.buildTokenBody()
+      );
+    } else {
+      token = await requestToken(this.kushkiInstance, this.buildTokenBody());
+    }
+
+    return Promise.resolve(token);
+  }
+
+  private buildTokenBody(): CardTokenRequest {
+    return {
       card: {
         name: this.inputValues[InputModelEnum.CARDHOLDER_NAME]!.value!,
         number: this.inputValues[InputModelEnum.CARD_NUMBER]!.value!.replace(
@@ -63,12 +87,10 @@ export class Card implements ICard {
       },
       currency: this.options.amount?.currency,
       totalAmount:
-        this.options.amount?.subtotalIva0 +
-        this.options.amount?.subtotalIva +
-        this.options.amount?.iva
-    });
-
-    return Promise.resolve(token);
+        this.options.amount?.subtotalIva0! +
+        this.options.amount?.subtotalIva! +
+        this.options.amount?.iva!
+    };
   }
 
   private setDefaultValues(options: CardOptions): CardOptions {

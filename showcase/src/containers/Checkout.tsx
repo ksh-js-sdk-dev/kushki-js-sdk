@@ -1,5 +1,5 @@
-import { Kushki, TokenResponse } from "kushki-js-sdk";
-import { Card, CardOptions } from "kushki-js-sdk/card";
+import { Kushki, TokenResponse } from "Kushki";
+import { Card, CardOptions } from "Kushki/card";
 import { useEffect, useState } from "react";
 
 export const checkoutContainerStyles = {
@@ -255,7 +255,14 @@ export const CheckoutContainer = () => {
           }
         }
       }
-    }
+    },
+    amount: {
+      subtotalIva0: 10,
+      subtotalIva: 10,
+      iva: 2,
+      currency: "COP"
+    },
+    isSubscription: true
   };
 
   useEffect(() => {

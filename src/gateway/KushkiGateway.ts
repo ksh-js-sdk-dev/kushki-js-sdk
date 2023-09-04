@@ -45,7 +45,30 @@ export const requestToken = async (
   try {
     const url: string = `${kushkiInstance.getBaseUrl()}${PathEnum.card_tokens}`;
 
-    const response = await axios.post(url,body,{
+    const response = await axios.post<TokenResponse>(url,body,{
+      headers: _buildHeaders(kushkiInstance)
+    });
+
+    const tokenResponse: TokenResponse = response.data;
+
+    return Promise.resolve(tokenResponse);
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      throw ERRORS.E002;
+    } else {
+      throw error;
+    }
+  }
+};
+
+export const requestCreateSubscriptionToken = async (
+    kushkiInstance: Kushki,
+    body: CardTokenRequest
+): Promise<TokenResponse> => {
+  try {
+    const url: string = `${kushkiInstance.getBaseUrl()}${PathEnum.card_subscription_tokens}`;
+
+    const response = await axios.post<TokenResponse>(url,body,{
       headers: _buildHeaders(kushkiInstance)
     });
 
