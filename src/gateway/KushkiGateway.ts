@@ -3,7 +3,8 @@ import { BinInfoResponse } from "types/bin_info_response";
 import { PathEnum } from "infrastructure/PathEnum.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import axios, { AxiosError } from "axios";
-import { Kushki } from "Kushki";
+import { Kushki, TokenResponse } from "Kushki";
+import { CardTokenRequest } from "Kushki/card";
 
 function _buildHeaders(kushkiInstance: Kushki) {
   return {
@@ -31,6 +32,29 @@ export const requestBinInfo = async (
   } catch (error) {
     if (error instanceof AxiosError) {
       throw ERRORS.E001;
+    } else {
+      throw error;
+    }
+  }
+};
+
+export const requestToken = async (
+  kushkiInstance: Kushki,
+  body: CardTokenRequest
+): Promise<TokenResponse> => {
+  try {
+    const url: string = `${kushkiInstance.getBaseUrl()}${PathEnum.card_tokens}`;
+
+    const response = await axios.post(url,body,{
+      headers: _buildHeaders(kushkiInstance)
+    });
+
+    const tokenResponse: TokenResponse = response.data;
+
+    return Promise.resolve(tokenResponse);
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      throw ERRORS.E002;
     } else {
       throw error;
     }

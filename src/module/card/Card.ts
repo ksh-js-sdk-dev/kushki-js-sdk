@@ -3,7 +3,7 @@ import { Kushki, TokenResponse } from "Kushki";
 import { CardFieldValues, CardOptions, Field } from "module/card";
 import { ICard } from "repository/ICard.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import { requestBinInfo } from "gateway/KushkiGateway.ts";
+import { requestBinInfo, requestToken } from "gateway/KushkiGateway.ts";
 import { FieldInstance } from "types/card_fields_values";
 
 export class Card implements ICard {
@@ -43,11 +43,32 @@ export class Card implements ICard {
     });
   }
 
-  public requestToken(): Promise<TokenResponse> {
-    // TODO: remove this console log after to implementation
-    console.log(this.options, this.kushkiInstance);
+  public async requestToken(): Promise<TokenResponse> {
+    const token: TokenResponse = await requestToken(this.kushkiInstance, {
+      card: {
+        name: this.inputValues[InputModelEnum.CARDHOLDER_NAME]!.value!,
+        number: this.inputValues[InputModelEnum.CARD_NUMBER]!.value!.replace(
+          /\s+/g,
+          ""
+        ),
+        expiryMonth:
+          this.inputValues[InputModelEnum.EXPIRATION_DATE]?.value?.split(
+            "/"
+          )[0]!,
+        expiryYear:
+          this.inputValues[InputModelEnum.EXPIRATION_DATE]?.value?.split(
+            "/"
+          )[1]!,
+        cvv: this.inputValues[InputModelEnum.CVV]!.value
+      },
+      currency: this.options.amount?.currency,
+      totalAmount:
+        this.options.amount?.subtotalIva0 +
+        this.options.amount?.subtotalIva +
+        this.options.amount?.iva
+    });
 
-    return Promise.resolve({ token: "replace by token response" });
+    return Promise.resolve(token);
   }
 
   private setDefaultValues(options: CardOptions): CardOptions {
@@ -63,6 +84,10 @@ export class Card implements ICard {
       ...this.inputValues,
       [field]: { ...this.inputValues[field], value: value }
     };
+
+    if (field === InputModelEnum.CARD_NUMBER) {
+      this.onChangeCardNumber(field, value);
+    }
   }
 
   private handleOnFocus(field: string, value: string) {
@@ -118,11 +143,6 @@ export class Card implements ICard {
         handleOnBlur: (field: string, value: string) =>
           this.handleOnBlur(field, value)
       };
-
-      if (field.fieldType === InputModelEnum.CARD_NUMBER) {
-        options.handleOnChange = (field: string, value: string) =>
-          this.onChangeCardNumber(field, value);
-      }
 
       const hostedField = KushkiHostedFields(options);
 
