@@ -3,20 +3,26 @@ import { Kushki, TokenResponse } from "Kushki";
 import { CardFieldValues, CardOptions, Field } from "module/card";
 import { ICard } from "repository/ICard.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import { requestBinInfo } from "gateway/KushkiGateway.ts";
 import { FieldInstance } from "types/card_fields_values";
+import "reflect-metadata";
+import { IKushkiGateway } from "repository/IKushkiGateway";
+import { IDENTIFIERS } from "src/constant/Identifiers";
+import { CONTAINER } from "infrastructure/Container";
+import { KushkiGateway } from "gateway/KushkiGateway";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
   private readonly kushkiInstance: Kushki;
   private inputValues: CardFieldValues;
   private currentBin: string;
+  private readonly _gateway: IKushkiGateway;
 
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
     this.options = this.setDefaultValues(options);
     this.kushkiInstance = kushkiInstance;
     this.inputValues = {};
     this.currentBin = "";
+    this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
   }
 
   public static initCardToken(
@@ -82,9 +88,12 @@ export class Card implements ICard {
       this.currentBin = newBin;
 
       try {
-        const { brand } = await requestBinInfo(this.kushkiInstance, {
-          bin: newBin
-        });
+        const { brand } = await this._gateway.requestBinInfo(
+          this.kushkiInstance,
+          {
+            bin: newBin
+          }
+        );
 
         this.inputValues.cardNumber?.hostedField?.updateProps({
           brandIcon: brand
