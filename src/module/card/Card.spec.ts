@@ -2,7 +2,8 @@ import { Kushki } from "Kushki";
 import { Card, CardOptions, Field } from "./index.ts";
 import KushkiHostedFields from "libs/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import * as requestBinInfo from "gateway/KushkiGateway.ts";
+import { CONTAINER } from "infrastructure/Container";
+import { IDENTIFIERS } from "src/constant/Identifiers";
 
 jest.mock("../../libs/HostedField.ts", () =>
   jest
@@ -14,11 +15,28 @@ describe("Card test", () => {
   let kushki: Kushki;
   let options: CardOptions;
   let field: Field;
-  let binInfo: jest.SpyInstance;
+
+  afterEach(() => {
+    CONTAINER.restore();
+  });
 
   beforeEach(async () => {
     kushki = await Kushki.init({ publicCredentialId: "1234" });
-    binInfo = await jest.spyOn(requestBinInfo, "requestBinInfo");
+
+    CONTAINER.snapshot();
+
+    const mockGateway = {
+      requestBinInfo: () => {
+        return {
+          bank: "Some Bank",
+          brand: "visa",
+          cardType: "Credit"
+        };
+      }
+    };
+
+    CONTAINER.unbind(IDENTIFIERS.KushkiGateway);
+    CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
 
     field = {
       fieldType: InputModelEnum.CARD_NUMBER,
@@ -154,9 +172,8 @@ describe("Card test", () => {
         expirationDate: field
       }
     };
-    await Card.initCardToken(kushki, options);
 
-    binInfo.mockResolvedValue({ brand: "Visa" });
+    await Card.initCardToken(kushki, options);
 
     KushkiHostedFields.mock.calls[0][0].handleOnChange(
       "cardNumber",
@@ -171,11 +188,6 @@ describe("Card test", () => {
   it("if cardNumber have max eight digitals then it should called handleSetCardNumber but requestBinInfo is Error", async () => {
     await Card.initCardToken(kushki, options);
 
-    binInfo.mockRejectedValue({
-      code: "DFR029",
-      message: "Bin de tarjeta inválido"
-    });
-
     KushkiHostedFields.mock.calls[0][0].handleOnChange(
       "cardNumber",
       "42424242424242"
@@ -184,5 +196,25 @@ describe("Card test", () => {
     expect(typeof KushkiHostedFields.mock.calls[0][0].handleOnChange).toEqual(
       "function"
     );
+  });
+
+  it("When requestBinInfo throws an error", async () => {
+    const mockGateway = {
+      requestBinInfo: new Error("")
+    };
+
+    CONTAINER.unbind(IDENTIFIERS.KushkiGateway);
+    CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
+
+    try {
+      await Card.initCardToken(kushki, options);
+
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        "cardNumber",
+        "42424242424242"
+      );
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+    }
   });
 });

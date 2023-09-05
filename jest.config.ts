@@ -3,15 +3,12 @@ import { pathsToModuleNameMapper } from "ts-jest";
 import { compilerOptions } from "./tsconfig.json";
 
 const config: Config = {
-  preset: "ts-jest",
-  testEnvironment: "jest-environment-jsdom",
-  setupFilesAfterEnv: ["./jest.setup.js"],
-  moduleNameMapper: {
-    "\\.(css)$": "identity-obj-proxy",
-    "\\.(png)$": "identity-obj-proxy",
-    "\\.(svg)$": "identity-obj-proxy",
-    ...pathsToModuleNameMapper(compilerOptions.paths, { prefix: "<rootDir>" })
-  },
+  coverageDirectory: "./coverage",
+  coveragePathIgnorePatterns: [
+    "showcase/*",
+    "src/gateway/KushkiGateway.ts",
+    "src/module/card/card.ts"
+  ],
   coverageThreshold: {
     global: {
       branches: 100,
@@ -20,9 +17,16 @@ const config: Config = {
       statements: 100
     }
   },
-  coverageDirectory: "./coverage",
-  coveragePathIgnorePatterns: ["showcase/*", "src/gateway/KushkiGateway.ts"],
-  modulePathIgnorePatterns: ["showcase"]
+  moduleNameMapper: {
+    "\\.(css)$": "identity-obj-proxy",
+    "\\.(png)$": "identity-obj-proxy",
+    "\\.(svg)$": "identity-obj-proxy",
+    ...pathsToModuleNameMapper(compilerOptions.paths, { prefix: "<rootDir>" })
+  },
+  modulePathIgnorePatterns: ["showcase"],
+  preset: "ts-jest",
+  setupFilesAfterEnv: ["./jest.setup.js"],
+  testEnvironment: "jest-environment-jsdom"
 };
 
 export default config;

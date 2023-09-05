@@ -2,22 +2,15 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { PreRenderedChunk } from "rollup";
 import tsconfigPaths from "vite-tsconfig-paths";
+import react from "@vitejs/plugin-react-swc";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    dts({
-      include: ["src"],
-      exclude: ["src/**/*.spec.ts"],
-      copyDtsFiles: true
-    }),
-    tsconfigPaths()
-  ],
   build: {
     lib: {
       entry: {
-        Kushki: "src/index.ts",
-        Card: "src/module/card/index.ts"
+        Card: "src/module/card/index.ts",
+        Kushki: "src/index.ts"
       }
     },
     rollupOptions: {
@@ -29,5 +22,14 @@ export default defineConfig({
         }
       }
     }
-  }
+  },
+  plugins: [
+    dts({
+      copyDtsFiles: true,
+      exclude: ["src/**/*.spec.ts"],
+      include: ["src"]
+    }),
+    react({ tsDecorators: true }),
+    tsconfigPaths()
+  ],
 });
