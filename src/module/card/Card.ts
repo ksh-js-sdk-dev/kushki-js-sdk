@@ -52,44 +52,30 @@ export class Card implements ICard {
     });
   }
 
-  public async requestToken(): Promise<TokenResponse> {
-    let token: TokenResponse;
-
-    if (this.options.isSubscription) {
-      token = await requestCreateSubscriptionToken(
+  public requestToken(): Promise<TokenResponse> {
+    if (this.options.isSubscription)
+      return requestCreateSubscriptionToken(
         this.kushkiInstance,
         this.buildTokenBody()
       );
-    } else {
-      token = await requestToken(this.kushkiInstance, this.buildTokenBody());
-    }
-
-    return Promise.resolve(token);
+    else return requestToken(this.kushkiInstance, this.buildTokenBody());
   }
 
   private buildTokenBody(): CardTokenRequest {
+    const { cardholderName, cardNumber, expirationDate, cvv } =
+      this.inputValues;
+    const { amount } = this.options;
+
     return {
       card: {
-        name: this.inputValues[InputModelEnum.CARDHOLDER_NAME]!.value!,
-        number: this.inputValues[InputModelEnum.CARD_NUMBER]!.value!.replace(
-          /\s+/g,
-          ""
-        ),
-        expiryMonth:
-          this.inputValues[InputModelEnum.EXPIRATION_DATE]?.value?.split(
-            "/"
-          )[0]!,
-        expiryYear:
-          this.inputValues[InputModelEnum.EXPIRATION_DATE]?.value?.split(
-            "/"
-          )[1]!,
-        cvv: this.inputValues[InputModelEnum.CVV]!.value
+        name: cardholderName!.value!,
+        number: cardNumber!.value!.replace(/\s+/g, ""),
+        expiryMonth: expirationDate!.value!.split("/")[0]!,
+        expiryYear: expirationDate!.value!.split("/")[1]!,
+        cvv: cvv!.value!
       },
-      currency: this.options.amount?.currency,
-      totalAmount:
-        this.options.amount?.subtotalIva0! +
-        this.options.amount?.subtotalIva! +
-        this.options.amount?.iva!
+      currency: amount!.currency,
+      totalAmount: amount!.subtotalIva0! + amount!.subtotalIva! + amount?.iva!
     };
   }
 
@@ -108,7 +94,7 @@ export class Card implements ICard {
     };
 
     if (field === InputModelEnum.CARD_NUMBER) {
-      this.onChangeCardNumber(field, value);
+      this.onChangeCardNumber(value);
     }
   }
 
@@ -144,9 +130,7 @@ export class Card implements ICard {
     }
   }
 
-  private onChangeCardNumber(field: string, value: string) {
-    if (field !== InputModelEnum.CARD_NUMBER) return;
-
+  private onChangeCardNumber(value: string) {
     const cardNumber: string = value.replace(/ /g, "");
 
     if (cardNumber.length >= 8) this.handleSetCardNumber(cardNumber);

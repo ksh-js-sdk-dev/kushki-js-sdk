@@ -279,9 +279,12 @@ export const CheckoutContainer = () => {
 
   const getToken = () => {
     if (cardInstance) {
-      cardInstance.requestToken().then((token: TokenResponse) => {
-        setToken(token.token);
-      });
+      cardInstance
+        .requestToken()
+        .then((token: TokenResponse) => {
+          setToken(token.token);
+        })
+        .catch((error) => console.log(error));
     }
   };
 

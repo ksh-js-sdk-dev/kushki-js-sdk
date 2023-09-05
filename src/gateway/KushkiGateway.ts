@@ -45,7 +45,7 @@ export const requestToken = async (
   try {
     const url: string = `${kushkiInstance.getBaseUrl()}${PathEnum.card_tokens}`;
 
-    const response = await axios.post<TokenResponse>(url,body,{
+    const response = await axios.post<TokenResponse>(url, body, {
       headers: _buildHeaders(kushkiInstance)
     });
 
@@ -54,21 +54,23 @@ export const requestToken = async (
     return Promise.resolve(tokenResponse);
   } catch (error) {
     if (error instanceof AxiosError) {
-      throw ERRORS.E002;
+      return Promise.reject(ERRORS.E002);
     } else {
-      throw error;
+      return Promise.reject(error);
     }
   }
 };
 
 export const requestCreateSubscriptionToken = async (
-    kushkiInstance: Kushki,
-    body: CardTokenRequest
+  kushkiInstance: Kushki,
+  body: CardTokenRequest
 ): Promise<TokenResponse> => {
   try {
-    const url: string = `${kushkiInstance.getBaseUrl()}${PathEnum.card_subscription_tokens}`;
+    const url: string = `${kushkiInstance.getBaseUrl()}${
+      PathEnum.card_subscription_tokens
+    }`;
 
-    const response = await axios.post<TokenResponse>(url,body,{
+    const response = await axios.post<TokenResponse>(url, body, {
       headers: _buildHeaders(kushkiInstance)
     });
 
@@ -77,9 +79,9 @@ export const requestCreateSubscriptionToken = async (
     return Promise.resolve(tokenResponse);
   } catch (error) {
     if (error instanceof AxiosError) {
-      throw ERRORS.E002;
+      return Promise.reject(ERRORS.E002);
     } else {
-      throw error;
+      return Promise.reject(error);
     }
   }
 };
