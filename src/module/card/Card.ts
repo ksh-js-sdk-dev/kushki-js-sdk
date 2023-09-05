@@ -1,31 +1,28 @@
 import KushkiHostedFields from "libs/HostedField.ts";
-import { Kushki, TokenResponse } from "Kushki";
-import {
-  CardFieldValues,
-  CardOptions,
-  CardTokenRequest,
-  Field
-} from "module/card";
+import { Kushki } from "Kushki";
+import { TokenResponse, CardTokenRequest ,CardFieldValues, CardOptions, Field} from "Kushki/card";
 import { ICard } from "repository/ICard.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import {
-  requestBinInfo,
-  requestCreateSubscriptionToken,
-  requestToken
-} from "gateway/KushkiGateway.ts";
 import { FieldInstance } from "types/card_fields_values";
+import "reflect-metadata";
+import { IKushkiGateway } from "repository/IKushkiGateway";
+import { IDENTIFIERS } from "src/constant/Identifiers";
+import { CONTAINER } from "infrastructure/Container";
+import { KushkiGateway } from "gateway/KushkiGateway";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
   private readonly kushkiInstance: Kushki;
   private inputValues: CardFieldValues;
   private currentBin: string;
+  private readonly _gateway: IKushkiGateway;
 
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
     this.options = this.setDefaultValues(options);
     this.kushkiInstance = kushkiInstance;
     this.inputValues = {};
     this.currentBin = "";
+    this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
   }
 
   public static initCardToken(
@@ -54,17 +51,21 @@ export class Card implements ICard {
 
   public requestToken(): Promise<TokenResponse> {
     if (this.options.isSubscription)
-      return requestCreateSubscriptionToken(
+      return this._gateway.requestCreateSubscriptionToken(
         this.kushkiInstance,
         this.buildTokenBody()
       );
-    else return requestToken(this.kushkiInstance, this.buildTokenBody());
+    else
+      return this._gateway.requestToken(
+        this.kushkiInstance,
+        this.buildTokenBody()
+      );
   }
 
   private buildTokenBody(): CardTokenRequest {
     const { cardholderName, cardNumber, expirationDate, cvv } =
       this.inputValues;
-    const { amount } = this.options;
+    const { currency } = this.options;
 
     return {
       card: {
@@ -74,9 +75,21 @@ export class Card implements ICard {
         expiryYear: expirationDate!.value!.split("/")[1]!,
         cvv: cvv!.value!
       },
-      currency: amount!.currency,
-      totalAmount: amount!.subtotalIva0! + amount!.subtotalIva! + amount?.iva!
+      currency,
+      ...this.buildTotalAmount()
     };
+  }
+
+  private buildTotalAmount() {
+    const { amount } = this.options;
+
+    if (this.options.isSubscription && !amount) return {};
+
+    return (
+      amount && {
+        totalAmount: amount.iva + amount.subtotalIva + amount.subtotalIva0
+      }
+    );
   }
 
   private setDefaultValues(options: CardOptions): CardOptions {
@@ -115,9 +128,12 @@ export class Card implements ICard {
       this.currentBin = newBin;
 
       try {
-        const { brand } = await requestBinInfo(this.kushkiInstance, {
-          bin: newBin
-        });
+        const { brand } = await this._gateway.requestBinInfo(
+          this.kushkiInstance,
+          {
+            bin: newBin
+          }
+        );
 
         this.inputValues.cardNumber?.hostedField?.updateProps({
           brandIcon: brand

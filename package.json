@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-    "bootstrap": "yarn install && npm run tsc:interface && bootstrap:demo",
-    "bootstrap:demo": "cd ./showcase && yarn install && yarn dev",
+    "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
+    "dev": "cd ./showcase && vite --c vite.config.ts",
     "build:npm": "tsc && vite build --c vite.config-npm.ts && yarn cp:package",
     "build:cdn": "npx webpack --config webpack-cdn.config.js",
     "build": "npm run validate && npm run build:npm && npm run build:cdn",
@@ -40,19 +40,24 @@
   },
   "dependencies": {
     "@krakenjs/zoid": "^10.3.1",
-    "axios": "^1.5.0"
+    "axios": "^1.5.0",
+    "inversify": "^6.0.1",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.7",
     "@commitlint/config-conventional": "^17.6.7",
     "@kushki/cli": "^1.5.0",
-    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/jest-dom": "^6.1.2",
+    "@testing-library/react": "^14.0.0",
     "@types/axios": "^0.14.0",
-    "@types/jest": "^29.5.3",
+    "@types/inversify": "^2.0.33",
+    "@types/jest": "^29.5.4",
     "@types/node": "^20.5.1",
     "@types/sinon": "^10.0.16",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
     "@typescript-eslint/parser": "^6.3.0",
+    "@vitejs/plugin-react-swc": "^3.3.2",
     "eslint": "^8.45.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-import-resolver-typescript": "^3.5.5",

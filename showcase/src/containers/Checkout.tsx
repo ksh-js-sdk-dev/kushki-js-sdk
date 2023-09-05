@@ -1,5 +1,5 @@
-import { Kushki, TokenResponse } from "Kushki";
-import { Card, CardOptions } from "Kushki/card";
+import { Kushki } from "Kushki";
+import { Card, CardOptions, TokenResponse } from "Kushki/card";
 import { useEffect, useState } from "react";
 
 export const checkoutContainerStyles = {
@@ -259,10 +259,9 @@ export const CheckoutContainer = () => {
     amount: {
       subtotalIva0: 10,
       subtotalIva: 10,
-      iva: 2,
-      currency: "COP"
+      iva: 2
     },
-    isSubscription: true
+    currency: "COP"
   };
 
   useEffect(() => {
@@ -277,14 +276,14 @@ export const CheckoutContainer = () => {
     })();
   }, []);
 
-  const getToken = () => {
+  const getToken = async () => {
     if (cardInstance) {
-      cardInstance
-        .requestToken()
-        .then((token: TokenResponse) => {
-          setToken(token.token);
-        })
-        .catch((error) => console.log(error));
+      try {
+        const token: TokenResponse = await cardInstance.requestToken();
+        setToken(token.token);
+      } catch (error: any) {
+        setToken(error.message);
+      }
     }
   };
 

@@ -1,87 +1,82 @@
+import "reflect-metadata";
 import { BinBody } from "types/bin_body";
 import { BinInfoResponse } from "types/bin_info_response";
 import { PathEnum } from "infrastructure/PathEnum.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import axios, { AxiosError } from "axios";
-import { Kushki, TokenResponse } from "Kushki";
-import { CardTokenRequest } from "Kushki/card";
+import { Kushki } from "Kushki";
+import { CardTokenRequest, TokenResponse } from "Kushki/card";
+import { IKushkiGateway } from "repository/IKushkiGateway";
+import { injectable } from "inversify";
 
-function _buildHeaders(kushkiInstance: Kushki) {
-  return {
-    "Public-Merchant-Id": kushkiInstance.getPublicCredentialId()
+@injectable()
+export class KushkiGateway implements IKushkiGateway {
+  private readonly _publicHeader: string = "Public-Merchant-Id";
+
+  public requestBinInfo = async (
+    kushkiInstance: Kushki,
+    body: BinBody
+  ): Promise<BinInfoResponse> => {
+    try {
+      const url: string = `${kushkiInstance.getBaseUrl()}${PathEnum.bin_info}${
+        body.bin
+      }`;
+
+      const response = await axios.get(url, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+      });
+
+      const binInfoResponse: BinInfoResponse = response.data;
+
+      return Promise.resolve(binInfoResponse);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        throw ERRORS.E001;
+      } else {
+        throw error;
+      }
+    }
   };
-}
 
-export const requestBinInfo = async (
-  kushkiInstance: Kushki,
-  body: BinBody
-): Promise<BinInfoResponse> => {
-  try {
-    const url: string = `${kushkiInstance.getBaseUrl()}${PathEnum.bin_info}${
-      body.bin
-    }`;
+  public requestToken = async (
+    kushkiInstance: Kushki,
+    body: CardTokenRequest
+  ): Promise<TokenResponse> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${PathEnum.card_token}`;
 
-    const response = await axios({
-      headers: _buildHeaders(kushkiInstance),
-      url
-    });
+    try {
+      const { data } = await axios.post<TokenResponse>(url, body, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+      });
 
-    const binInfoResponse: BinInfoResponse = response.data;
-
-    return Promise.resolve(binInfoResponse);
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      throw ERRORS.E001;
-    } else {
-      throw error;
-    }
-  }
-};
-
-export const requestToken = async (
-  kushkiInstance: Kushki,
-  body: CardTokenRequest
-): Promise<TokenResponse> => {
-  try {
-    const url: string = `${kushkiInstance.getBaseUrl()}${PathEnum.card_tokens}`;
-
-    const response = await axios.post<TokenResponse>(url, body, {
-      headers: _buildHeaders(kushkiInstance)
-    });
-
-    const tokenResponse: TokenResponse = response.data;
-
-    return Promise.resolve(tokenResponse);
-  } catch (error) {
-    if (error instanceof AxiosError) {
+      return Promise.resolve(data);
+    } catch (error) {
       return Promise.reject(ERRORS.E002);
-    } else {
-      return Promise.reject(error);
     }
-  }
-};
+  };
 
-export const requestCreateSubscriptionToken = async (
-  kushkiInstance: Kushki,
-  body: CardTokenRequest
-): Promise<TokenResponse> => {
-  try {
+  public requestCreateSubscriptionToken = async (
+    kushkiInstance: Kushki,
+    body: CardTokenRequest
+  ): Promise<TokenResponse> => {
     const url: string = `${kushkiInstance.getBaseUrl()}${
-      PathEnum.card_subscription_tokens
+      PathEnum.card_subscription_token
     }`;
 
-    const response = await axios.post<TokenResponse>(url, body, {
-      headers: _buildHeaders(kushkiInstance)
-    });
+    try {
+      const { data } = await axios.post<TokenResponse>(url, body, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+      });
 
-    const tokenResponse: TokenResponse = response.data;
-
-    return Promise.resolve(tokenResponse);
-  } catch (error) {
-    if (error instanceof AxiosError) {
+      return Promise.resolve(data);
+    } catch (error) {
       return Promise.reject(ERRORS.E002);
-    } else {
-      return Promise.reject(error);
     }
+  };
+
+  private _buildHeader(mid: string): object {
+    return {
+      [this._publicHeader]: mid
+    };
   }
-};
+}

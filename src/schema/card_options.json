@@ -43,9 +43,6 @@
       "title": "Amount",
       "additionalProperties": false,
       "properties": {
-        "currency": {
-          "$ref": "#/definitions/currency"
-        },
         "subtotalIva": {
           "type": "number",
           "minimum": 0
@@ -63,7 +60,7 @@
           "type": "number"
         }
       },
-      "required": ["currency", "subtotalIva", "subtotalIva0", "iva"],
+      "required": ["subtotalIva", "subtotalIva0", "iva"],
       "type": "object"
     },
     "field": {
@@ -266,6 +263,9 @@
     "amount": {
       "$ref": "#/definitions/amount"
     },
+    "currency": {
+      "$ref": "#/definitions/currency"
+    },
     "isSubscription": {
       "type": "boolean"
     },
@@ -295,6 +295,6 @@
       "required": ["cardHolderName", "cardNumber", "expirationDate", "cvv"]
     }
   },
-  "required": ["publicCredentialId", "fields"],
+  "required": ["publicCredentialId", "currency", "fields"],
   "type": "object"
 }
