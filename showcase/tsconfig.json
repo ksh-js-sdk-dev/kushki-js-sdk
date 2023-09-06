@@ -7,6 +7,7 @@
     "skipLibCheck": true,
 
     /* Bundler mode */
+    "experimentalDecorators": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
@@ -19,7 +20,11 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "Kushki": ["../src"],
+      "Kushki/card": ["../src/module/card"]
+    }
   },
   "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.node.json" }, { "path": "../tsconfig.json" }]
 }

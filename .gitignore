@@ -7,3 +7,4 @@ node_modules/
 --watch
 .idea
 yarn-error.log
+.DS_Store
