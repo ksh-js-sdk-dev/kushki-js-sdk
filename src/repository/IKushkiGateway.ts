@@ -1,6 +1,7 @@
 import { BinInfoResponse } from "types/bin_info_response";
-import { Kushki } from "Kushki";
+import { Kushki, TokenResponse } from "Kushki";
 import { BinBody } from "types/bin_body";
+import { CardTokenRequest } from "Kushki/card";
 
 export interface IKushkiGateway {
   /**
@@ -10,4 +11,20 @@ export interface IKushkiGateway {
     kushkiInstance: Kushki,
     body: BinBody
   ): Promise<BinInfoResponse>;
+
+  /**
+   * Request card Token
+   */
+  requestToken(
+    kushkiInstance: Kushki,
+    body: CardTokenRequest
+  ): Promise<TokenResponse>;
+
+  /**
+   * Request card Subscription Token
+   */
+  requestCreateSubscriptionToken(
+    kushkiInstance: Kushki,
+    body: CardTokenRequest
+  ): Promise<TokenResponse>;
 }

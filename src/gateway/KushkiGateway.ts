@@ -5,6 +5,7 @@ import { PathEnum } from "infrastructure/PathEnum.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import axios, { AxiosError } from "axios";
 import { Kushki } from "Kushki";
+import { CardTokenRequest, TokenResponse } from "Kushki/card";
 import { IKushkiGateway } from "repository/IKushkiGateway";
 import { injectable } from "inversify";
 
@@ -34,6 +35,42 @@ export class KushkiGateway implements IKushkiGateway {
       } else {
         throw error;
       }
+    }
+  };
+
+  public requestToken = async (
+    kushkiInstance: Kushki,
+    body: CardTokenRequest
+  ): Promise<TokenResponse> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${PathEnum.card_token}`;
+
+    try {
+      const { data } = await axios.post<TokenResponse>(url, body, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+      });
+
+      return Promise.resolve(data);
+    } catch (error) {
+      return Promise.reject(ERRORS.E002);
+    }
+  };
+
+  public requestCreateSubscriptionToken = async (
+    kushkiInstance: Kushki,
+    body: CardTokenRequest
+  ): Promise<TokenResponse> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${
+      PathEnum.card_subscription_token
+    }`;
+
+    try {
+      const { data } = await axios.post<TokenResponse>(url, body, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+      });
+
+      return Promise.resolve(data);
+    } catch (error) {
+      return Promise.reject(ERRORS.E002);
     }
   };
 
