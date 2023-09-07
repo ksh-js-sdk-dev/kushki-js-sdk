@@ -257,9 +257,9 @@ export const CheckoutContainer = () => {
       }
     },
     amount: {
-      subtotalIva0: 10,
-      subtotalIva: 10,
-      iva: 2
+      subtotalIva0: 1000,
+      subtotalIva: 1000,
+      iva: 20
     },
     currency: "COP"
   };
@@ -268,7 +268,8 @@ export const CheckoutContainer = () => {
     (async () => {
       const kushkiInstance = await Kushki.init({
         inTest: true,
-        publicCredentialId: "f24eb8375f114ab3acc440ebfb5f60f3"
+        //publicCredentialId: "8c2eaa7bd21e466789c4f08a2dbf26a5"
+        publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1"
       });
 
       if (kushkiInstance)

@@ -1,6 +1,12 @@
 import KushkiHostedFields from "libs/HostedField.ts";
 import { Kushki } from "Kushki";
-import { TokenResponse, CardTokenRequest ,CardFieldValues, CardOptions, Field} from "Kushki/card";
+import {
+  TokenResponse,
+  CardTokenRequest,
+  CardFieldValues,
+  CardOptions,
+  Field
+} from "Kushki/card";
 import { ICard } from "repository/ICard.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { FieldInstance } from "types/card_fields_values";
@@ -9,7 +15,18 @@ import { IKushkiGateway } from "repository/IKushkiGateway";
 import { IDENTIFIERS } from "src/constant/Identifiers";
 import { CONTAINER } from "infrastructure/Container";
 import { KushkiGateway } from "gateway/KushkiGateway";
+import { MerchantSettingsResponse } from "types/merchant_settings_response";
+import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
+import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import { SecureOtpResponse } from "types/secure_otp_response";
 
+declare global {
+  // tslint:disable-next-line
+  interface Window {
+    // tslint:disable-next-line:no-any
+    Cardinal: any;
+  }
+}
 export class Card implements ICard {
   private readonly options: CardOptions;
   private readonly kushkiInstance: Kushki;
@@ -49,31 +66,161 @@ export class Card implements ICard {
     });
   }
 
-  public requestToken(): Promise<TokenResponse> {
+  public async requestToken(): Promise<TokenResponse> {
+    const merchantSettings: MerchantSettingsResponse =
+      await this._gateway.requestMerchantSettings(this.kushkiInstance);
+    const jwt: string | undefined = await this.getJwtIf3dsEnabled(
+      merchantSettings
+    );
+
+    if (jwt) return this.request3DSToken(jwt);
+    else return this.requestTokenGateway();
+  }
+
+  private async request3DSToken(jwt: string) {
+    if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
+    else await import("libs/cardinal/prod");
+
+    const token: TokenResponse = await this.getCardinal3dsToken(jwt);
+
+    return this.validate3dsToken(token);
+  }
+
+  private validate3dsToken(token: TokenResponse) {
+    if (token.security) {
+      if (token.security.authRequired) {
+        if (
+          token.security.acsURL &&
+          token.security.paReq &&
+          token.security.authenticationTransactionId
+        ) {
+          return this.validation3ds(token);
+        } else return Promise.reject(ERRORS.E005);
+      } else return Promise.resolve(token);
+    } else return Promise.reject(ERRORS.E005);
+  }
+
+  private async validation3ds(token: TokenResponse) {
+    if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
+    else await import("libs/cardinal/prod");
+
+    await this.launchCardinal(token);
+
+    if (await this.completeCardinal(token.secureId!))
+      return Promise.resolve(token);
+    else return Promise.reject(ERRORS.E005);
+  }
+
+  private async completeCardinal(secureServiceId: string): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      return window.Cardinal.on("payments.validated", async () => {
+        const secureValidation: SecureOtpResponse =
+          await this._gateway.requestSecureServiceValidation(
+            this.kushkiInstance,
+            {
+              secureServiceId,
+              otpValue: ""
+            }
+          );
+
+        resolve(this.is3dsValid(secureValidation));
+      });
+    });
+  }
+
+  private is3dsValid(secureOtpResponse: SecureOtpResponse): boolean {
+    return (
+      "message" in secureOtpResponse &&
+      ((secureOtpResponse.message === "3DS000" &&
+        secureOtpResponse.code === "ok") ||
+        (secureOtpResponse.code === "3DS000" &&
+          secureOtpResponse.message === "ok"))
+    );
+  }
+
+  private async launchCardinal(token: TokenResponse) {
+    await window.Cardinal.continue(
+      "cca",
+      {
+        AcsUrl: token.security!.acsURL!,
+        Payload: token.security!.paReq!
+      },
+      {
+        OrderDetails: {
+          TransactionId: token.security!.authenticationTransactionId!
+        }
+      }
+    );
+  }
+
+  private async getCardinal3dsToken(jwt: string): Promise<TokenResponse> {
+    return new Promise<TokenResponse>((resolve) => {
+      window.Cardinal.on("payments.setupComplete", async () => {
+        resolve(await this.requestTokenGateway(jwt));
+      });
+    });
+  }
+
+  private async getJwtIf3dsEnabled(
+    merchantSettings: MerchantSettingsResponse
+  ): Promise<string | undefined> {
+    if (merchantSettings.active_3dsecure) {
+      const jwtResponse: CybersourceJwtResponse =
+        await this._gateway.requestCybersourceJwt(this.kushkiInstance);
+      await this.initCardinal(jwtResponse.jwt);
+
+      return jwtResponse.jwt;
+    } else {
+      return undefined;
+    }
+  }
+
+  private async initCardinal(jwt: string) {
+    if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
+    else await import("libs/cardinal/prod");
+
+    this.setUpCardinal(jwt);
+  }
+
+  private setUpCardinal(jwt: string) {
+    window.Cardinal.setup("init", {
+      jwt,
+      order: {
+        Consumer: {
+          Account: {
+            AccountNumber: this.inputValues[InputModelEnum.CARD_NUMBER]?.value
+          }
+        }
+      }
+    });
+  }
+
+  private requestTokenGateway(jwt?: string) {
     if (this.options.isSubscription)
       return this._gateway.requestCreateSubscriptionToken(
         this.kushkiInstance,
-        this.buildTokenBody()
+        this.buildTokenBody(jwt)
       );
-    else
-      return this._gateway.requestToken(
-        this.kushkiInstance,
-        this.buildTokenBody()
-      );
+
+    return this._gateway.requestToken(
+      this.kushkiInstance,
+      this.buildTokenBody(jwt)
+    );
   }
 
-  private buildTokenBody(): CardTokenRequest {
+  private buildTokenBody(jwt?: string): CardTokenRequest {
     const { cardholderName, cardNumber, expirationDate, cvv } =
       this.inputValues;
     const { currency } = this.options;
 
     return {
+      jwt,
       card: {
-        name: cardholderName!.value!,
+        name: "Santy Test", //cardholderName!.value!,
         number: cardNumber!.value!.replace(/\s+/g, ""),
-        expiryMonth: expirationDate!.value!.split("/")[0]!,
-        expiryYear: expirationDate!.value!.split("/")[1]!,
-        cvv: cvv!.value!
+        expiryMonth: "12", // expirationDate!.value!.split("/")[0]!,
+        expiryYear: "34", // expirationDate!.value!.split("/")[1]!,
+        cvv: "123" // cvv!.value!
       },
       currency,
       ...this.buildTotalAmount()

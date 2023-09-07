@@ -4,9 +4,12 @@ import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
 export class Kushki {
   private readonly baseUrl: EnvironmentEnum;
   private readonly publicCredentialId: string;
+  private readonly inTest: boolean | undefined;
+
   constructor(options: KushkiOptions) {
     this.publicCredentialId = options.publicCredentialId;
     this.baseUrl = this.initBaseUrl(options.inTest);
+    this.inTest = options.inTest;
   }
 
   public static init(options: KushkiOptions): Promise<Kushki> {
@@ -23,6 +26,10 @@ export class Kushki {
 
   public getPublicCredentialId(): string {
     return this.publicCredentialId;
+  }
+
+  public isInTest(): boolean | undefined {
+    return this.inTest;
   }
 
   private initBaseUrl(inTest?: boolean): EnvironmentEnum {
