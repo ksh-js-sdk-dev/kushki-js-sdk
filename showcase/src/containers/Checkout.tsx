@@ -1,5 +1,11 @@
 import { Kushki } from "Kushki";
-import { Card, CardOptions, TokenResponse } from "Kushki/card";
+import {
+  Card,
+  CardOptions,
+  Fields,
+  FormValidity,
+  TokenResponse
+} from "Kushki/card";
 import { useEffect, useState } from "react";
 
 export const checkoutContainerStyles = {
@@ -31,8 +37,21 @@ export const checkoutContainerStyles = {
 export const CheckoutContainer = () => {
   const [token, setToken] = useState<string>("");
   const [cardInstance, setCardinstance] = useState<Card>();
+  const [fieldsValidityDemo, setFieldsValidityDemo] = useState<Fields>({
+    cardholderName: { isValid: true },
+    cardNumber: { isValid: true },
+    cvv: { isValid: true },
+    deferred: { isValid: true },
+    expirationDate: { isValid: true }
+  });
 
   const options: CardOptions = {
+    amount: {
+      iva: 2,
+      subtotalIva: 10,
+      subtotalIva0: 10
+    },
+    currency: "COP",
     fields: {
       cardHolderName: {
         fieldType: "cardholderName",
@@ -255,13 +274,7 @@ export const CheckoutContainer = () => {
           }
         }
       }
-    },
-    amount: {
-      subtotalIva0: 10,
-      subtotalIva: 10,
-      iva: 2
-    },
-    currency: "COP"
+    }
   };
 
   useEffect(() => {
@@ -271,8 +284,9 @@ export const CheckoutContainer = () => {
         publicCredentialId: "f24eb8375f114ab3acc440ebfb5f60f3"
       });
 
-      if (kushkiInstance)
+      if (kushkiInstance) {
         setCardinstance(await Card.initCardToken(kushkiInstance, options));
+      }
     })();
   }, []);
 
@@ -280,12 +294,29 @@ export const CheckoutContainer = () => {
     if (cardInstance) {
       try {
         const token: TokenResponse = await cardInstance.requestToken();
+
         setToken(token.token);
       } catch (error: any) {
         setToken(error.message);
       }
     }
   };
+
+  const validError = (fieldsValidity: Fields, fieldType: string): boolean => {
+    return (
+      !fieldsValidity[fieldType].isValid &&
+      fieldsValidity[fieldType].errorType !== undefined
+    );
+  };
+
+  useEffect(() => {
+    if (cardInstance) {
+      cardInstance.onFieldValidity((event: FormValidity) => {
+        console.log("onFieldValidity Checkout Demo", event);
+        setFieldsValidityDemo(event.fields);
+      });
+    }
+  }, [cardInstance]);
 
   return (
     <>
@@ -295,10 +326,35 @@ export const CheckoutContainer = () => {
 
       <div style={checkoutContainerStyles.contentCheckout!}>
         <div id="cardHolderName_id"></div>
+        {validError(fieldsValidityDemo, "cardholderName") && (
+          <div>
+            Error-CardHolderName is{" "}
+            {fieldsValidityDemo.cardholderName.errorType}
+          </div>
+        )}
         <div id="cardNumber_id"></div>
+        {validError(fieldsValidityDemo, "cardNumber") && (
+          <div>
+            Error-CardNumber is {fieldsValidityDemo.cardNumber.errorType}
+          </div>
+        )}
         <div id="expirationDate_id"></div>
+        {validError(fieldsValidityDemo, "expirationDate") && (
+          <div>
+            Error - ExpirationDate is{" "}
+            {fieldsValidityDemo.expirationDate.errorType}
+          </div>
+        )}
         <div id="cvv_id"></div>
+        {validError(fieldsValidityDemo, "cvv") && (
+          <div>Error - Cvv is {fieldsValidityDemo.cvv.errorType}</div>
+        )}
         <div id="deferred_id"></div>
+        {validError(fieldsValidityDemo, "deferred") && (
+          <div>
+            Error - Deferred is {fieldsValidityDemo.deferred!.errorType}
+          </div>
+        )}
 
         <button
           style={checkoutContainerStyles.button!}

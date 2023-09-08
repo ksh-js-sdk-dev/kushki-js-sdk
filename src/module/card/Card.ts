@@ -5,6 +5,7 @@ import {
   CardOptions,
   CardTokenRequest,
   Field,
+  Fields,
   TokenResponse
 } from "Kushki/card";
 import { ICard } from "repository/ICard.ts";
@@ -15,6 +16,9 @@ import { IKushkiGateway } from "repository/IKushkiGateway";
 import { IDENTIFIERS } from "src/constant/Identifiers";
 import { CONTAINER } from "infrastructure/Container";
 import { KushkiGateway } from "gateway/KushkiGateway";
+import { FieldOptions } from "infrastructure/interfaces/FieldOptions.ts";
+import { FieldValidity, FormValidity } from "types/form_validity";
+import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
@@ -22,6 +26,7 @@ export class Card implements ICard {
   private inputValues: CardFieldValues;
   private currentBin: string;
   private readonly _gateway: IKushkiGateway;
+  private readonly listenerFieldValidity: string = "fieldValidity";
 
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
     this.options = this.setDefaultValues(options);
@@ -66,6 +71,16 @@ export class Card implements ICard {
         this.kushkiInstance,
         this.buildTokenBody()
       );
+  }
+
+  public onFieldValidity(event: (fieldEvent: FormValidity) => void): void {
+    window.addEventListener(this.listenerFieldValidity, ((
+      e: CustomEvent<FormValidity>
+    ) => {
+      const fieldEvent: FormValidity = e.detail!;
+
+      event(fieldEvent);
+    }) as EventListener);
   }
 
   private buildTokenBody(): CardTokenRequest {
@@ -127,6 +142,31 @@ export class Card implements ICard {
     value;
   }
 
+  private handleOnValidity(
+    field: InputModelEnum,
+    fieldValidity: FieldValidity
+  ): void {
+    this.inputValues = {
+      ...this.inputValues,
+      [field]: {
+        ...this.inputValues[field],
+        validity: {
+          errorType: fieldValidity.errorType,
+          isValid: fieldValidity.isValid
+        }
+      }
+    };
+
+    const event: CustomEvent<FormValidity> = new CustomEvent<FormValidity>(
+      this.listenerFieldValidity,
+      {
+        detail: this.buildFieldsValidity(this.inputValues)
+      }
+    );
+
+    dispatchEvent(event);
+  }
+
   private async handleSetCardNumber(cardNumber: string) {
     const newBin: string = cardNumber.substring(0, 8);
 
@@ -160,23 +200,30 @@ export class Card implements ICard {
 
   private initFields(optionsFields: { [k: string]: Field }): Promise<void[]> {
     for (const fieldKey in optionsFields) {
-      const field = optionsFields[fieldKey];
-      const options = {
+      const field: Field = optionsFields[fieldKey];
+      const options: FieldOptions = {
         ...field,
+        handleOnBlur: (field: string, value: string) =>
+          this.handleOnBlur(field, value),
         handleOnChange: (field: string, value: string) => {
           return this.handleOnChange(field, value);
         },
         handleOnFocus: (field: string, value: string) =>
           this.handleOnFocus(field, value),
-        handleOnBlur: (field: string, value: string) =>
-          this.handleOnBlur(field, value)
+        handleOnValidity: (
+          field: InputModelEnum,
+          fieldValidity: FieldValidity
+        ) => this.handleOnValidity(field, fieldValidity)
       };
 
       const hostedField = KushkiHostedFields(options);
 
       this.inputValues[field.fieldType] = {
         hostedField,
-        selector: field.selector
+        selector: field.selector,
+        validity: {
+          isValid: false
+        }
       };
     }
 
@@ -215,5 +262,32 @@ export class Card implements ICard {
           field.hostedField?.render(`#${field.selector}`) as Promise<void>
       )
     );
+  };
+
+  private buildFieldsValidity = (
+    inputValues: CardFieldValues
+  ): FormValidity => {
+    const defaultValidity: FieldValidity = {
+      errorType: ErrorTypeEnum.EMPTY,
+      isValid: false
+    };
+    const fieldsValidity: Fields = {
+      cardholderName: defaultValidity,
+      cardNumber: defaultValidity,
+      cvv: defaultValidity,
+      deferred: defaultValidity,
+      expirationDate: defaultValidity
+    };
+
+    for (const inputName in inputValues) {
+      if (Object.values(InputModelEnum).includes(inputName as InputModelEnum)) {
+        fieldsValidity[inputName as keyof Fields] = {
+          errorType: inputValues[inputName].validity.errorType,
+          isValid: inputValues[inputName].validity.isValid
+        };
+      }
+    }
+
+    return { fields: fieldsValidity, isFormValid: false };
   };
 }
