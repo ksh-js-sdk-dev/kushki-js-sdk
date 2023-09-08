@@ -106,7 +106,7 @@ export class KushkiGateway implements IKushkiGateway {
 
       return Promise.resolve(data);
     } catch (error) {
-      return Promise.reject(ERRORS.E003);
+      return Promise.reject(ERRORS.E004);
     }
   };
 
@@ -125,7 +125,7 @@ export class KushkiGateway implements IKushkiGateway {
 
       return Promise.resolve(data);
     } catch (error) {
-      return Promise.reject(ERRORS.E003);
+      return Promise.reject(ERRORS.E006);
     }
   };
 

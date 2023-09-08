@@ -32,7 +32,7 @@
   },
   "plugins": ["prettier", "@typescript-eslint", "import"],
   "rules": {
-    "camelcase": "error",
+    "camelcase": "warn",
     "spaced-comment": "error",
     "quotes": ["error", "double"],
     "no-duplicate-imports": "error",

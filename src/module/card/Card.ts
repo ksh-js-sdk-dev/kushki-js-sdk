@@ -67,14 +67,21 @@ export class Card implements ICard {
   }
 
   public async requestToken(): Promise<TokenResponse> {
-    const merchantSettings: MerchantSettingsResponse =
-      await this._gateway.requestMerchantSettings(this.kushkiInstance);
-    const jwt: string | undefined = await this.getJwtIf3dsEnabled(
-      merchantSettings
-    );
+    try {
+      const merchantSettings: MerchantSettingsResponse =
+        await this._gateway.requestMerchantSettings(this.kushkiInstance);
+      const jwt: string | undefined = await this.getJwtIf3dsEnabled(
+        merchantSettings
+      );
 
-    if (jwt) return this.request3DSToken(jwt);
-    else return this.requestTokenGateway();
+      if (jwt) {
+        const token = await this.request3DSToken(jwt);
+
+        return Promise.resolve(token);
+      } else return this.requestTokenGateway();
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
   private async request3DSToken(jwt: string) {
@@ -87,43 +94,56 @@ export class Card implements ICard {
   }
 
   private validate3dsToken(token: TokenResponse) {
-    if (token.security) {
-      if (token.security.authRequired) {
-        if (
-          token.security.acsURL &&
-          token.security.paReq &&
-          token.security.authenticationTransactionId
-        ) {
-          return this.validation3ds(token);
-        } else return Promise.reject(ERRORS.E005);
-      } else return Promise.resolve(token);
-    } else return Promise.reject(ERRORS.E005);
+    if (this.hasNotNeedAuth(token)) {
+      return Promise.resolve(token);
+    }
+    if (this.hasAllSecurityProperties(token)) return this.validation3ds(token);
+
+    return Promise.reject(ERRORS.E005);
+  }
+
+  private hasAllSecurityProperties(token: TokenResponse): boolean {
+    return !!(token.security &&
+        token.security.authRequired &&
+        token.security.acsURL &&
+        token.security.paReq &&
+        token.security.authenticationTransactionId);
+
+
+  }
+
+  private hasNotNeedAuth(token: TokenResponse): boolean {
+    return !!(token.security && !token.security.authRequired);
   }
 
   private async validation3ds(token: TokenResponse) {
     if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
     else await import("libs/cardinal/prod");
 
-    await this.launchCardinal(token);
+    this.launchCardinal(token);
 
     if (await this.completeCardinal(token.secureId!))
       return Promise.resolve(token);
-    else return Promise.reject(ERRORS.E005);
+    else return Promise.reject(ERRORS.E006);
   }
 
   private async completeCardinal(secureServiceId: string): Promise<boolean> {
-    return new Promise<boolean>((resolve) => {
+    return new Promise<boolean>((resolve, reject) => {
       return window.Cardinal.on("payments.validated", async () => {
-        const secureValidation: SecureOtpResponse =
-          await this._gateway.requestSecureServiceValidation(
-            this.kushkiInstance,
-            {
-              secureServiceId,
-              otpValue: ""
-            }
-          );
+        try {
+          const secureValidation: SecureOtpResponse =
+            await this._gateway.requestSecureServiceValidation(
+              this.kushkiInstance,
+              {
+                secureServiceId,
+                otpValue: ""
+              }
+            );
 
-        resolve(this.is3dsValid(secureValidation));
+          resolve(this.is3dsValid(secureValidation));
+        } catch (error) {
+          reject(error);
+        }
       });
     });
   }
@@ -138,8 +158,8 @@ export class Card implements ICard {
     );
   }
 
-  private async launchCardinal(token: TokenResponse) {
-    await window.Cardinal.continue(
+  private launchCardinal(token: TokenResponse) {
+    window.Cardinal.continue(
       "cca",
       {
         AcsUrl: token.security!.acsURL!,
@@ -154,9 +174,13 @@ export class Card implements ICard {
   }
 
   private async getCardinal3dsToken(jwt: string): Promise<TokenResponse> {
-    return new Promise<TokenResponse>((resolve) => {
+    return new Promise<TokenResponse>((resolve, reject) => {
       window.Cardinal.on("payments.setupComplete", async () => {
-        resolve(await this.requestTokenGateway(jwt));
+        try {
+          resolve(await this.requestTokenGateway(jwt));
+        } catch (error) {
+          reject(error);
+        }
       });
     });
   }
@@ -188,7 +212,9 @@ export class Card implements ICard {
       order: {
         Consumer: {
           Account: {
-            AccountNumber: this.inputValues[InputModelEnum.CARD_NUMBER]?.value
+            AccountNumber: this.inputValues[
+              InputModelEnum.CARD_NUMBER
+            ]?.value!.replace(/\s+/g, "")
           }
         }
       }

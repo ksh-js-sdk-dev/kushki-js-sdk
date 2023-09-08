@@ -9,6 +9,7 @@ export enum ErrorCode {
   E003 = "E003",
   E004 = "E004",
   E005 = "E005",
+  E006 = "E006"
 }
 
 export const ERRORS: KushkiErrors = {
@@ -31,5 +32,9 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E005]: {
     code: ErrorCode.E005,
     message: "Campos 3DS inválidos"
+  },
+  [ErrorCode.E006]: {
+    code: ErrorCode.E006,
+    message: "Error en solicitud de validación de token"
   }
 };

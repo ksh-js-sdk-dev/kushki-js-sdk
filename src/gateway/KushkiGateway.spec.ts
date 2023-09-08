@@ -6,6 +6,10 @@ import { IDENTIFIERS } from "src/constant/Identifiers";
 import { Mock } from "ts-mockery";
 import { Kushki } from "Kushki";
 import { EnvironmentEnum } from "infrastructure/EnvironmentEnum";
+import { MerchantSettingsResponse } from "types/merchant_settings_response";
+import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
+import { SecureOtpResponse } from "types/secure_otp_response";
+import { SecureOtpRequest } from "types/secure_otp_request";
 
 jest.mock("axios");
 
@@ -143,6 +147,112 @@ describe("KushkiGateway - Test", () => {
         );
       } catch (error: any) {
         expect(error.code).toEqual("E002");
+      }
+    });
+  });
+
+  describe("requestMerchantSettings - Test", () => {
+    const mockMerchantSettings: MerchantSettingsResponse = {
+      country: "Ecuador",
+      merchant_name: "Test",
+      merchantName: "Test",
+      processor_name: "Test",
+      prodBaconKey: "123",
+      sandboxBaconKey: "123"
+    };
+
+    it("when called requestMerchantSettings return data on success", async () => {
+      const axiosGetSpy = jest.fn(() => {
+        return Promise.resolve({
+          data: mockMerchantSettings
+        });
+      });
+
+      jest.spyOn(axios, "get").mockImplementation(axiosGetSpy);
+
+      const merchantResponse: MerchantSettingsResponse =
+        await kushkiGateway.requestMerchantSettings(mockKushki);
+
+      expect(merchantResponse).toEqual(mockMerchantSettings);
+    });
+
+    it("When requestMerchantSettings throws an AxiosError", async () => {
+      jest.spyOn(axios, "get").mockRejectedValue(new AxiosError(""));
+
+      try {
+        await kushkiGateway.requestMerchantSettings(mockKushki);
+      } catch (error: any) {
+        expect(error.code).toEqual("E003");
+      }
+    });
+  });
+
+  describe("requestCybersourceJwt - Test", () => {
+    const mockCybersourceJwt: CybersourceJwtResponse = {
+      jwt: "1234567890"
+    };
+
+    it("when called requestCybersourceJwt return data on success", async () => {
+      const axiosGetSpy = jest.fn(() => {
+        return Promise.resolve({
+          data: mockCybersourceJwt
+        });
+      });
+
+      jest.spyOn(axios, "get").mockImplementation(axiosGetSpy);
+
+      const jwtResponse: CybersourceJwtResponse =
+        await kushkiGateway.requestCybersourceJwt(mockKushki);
+
+      expect(jwtResponse).toEqual(mockCybersourceJwt);
+    });
+
+    it("When requestCybersourceJwt throws an AxiosError", async () => {
+      jest.spyOn(axios, "get").mockRejectedValue(new AxiosError(""));
+
+      try {
+        await kushkiGateway.requestCybersourceJwt(mockKushki);
+      } catch (error: any) {
+        expect(error.code).toEqual("E004");
+      }
+    });
+  });
+
+  describe("requestSecureServiceValidation - Test", () => {
+    const mockSecureOtpResponse: SecureOtpResponse = { isValid: true };
+    const secureOtpBody: SecureOtpRequest = {
+      otpValue: "string098765432",
+      secureServiceId: "12345678i9"
+    };
+
+    it("when called requestSecureServiceValidation return data on success", async () => {
+      const axiosPostSpy = jest.fn(() => {
+        return Promise.resolve({
+          data: mockSecureOtpResponse
+        });
+      });
+
+      jest.spyOn(axios, "post").mockImplementation(axiosPostSpy);
+
+      const secureOtpResponse: SecureOtpResponse =
+        await kushkiGateway.requestSecureServiceValidation(
+          mockKushki,
+          secureOtpBody
+        );
+
+      expect(secureOtpResponse).toEqual(mockSecureOtpResponse);
+    });
+
+    it("When requestSecureServiceValidation throws an AxiosError", async () => {
+      jest.spyOn(axios, "post").mockRejectedValue(new AxiosError(""));
+
+      try {
+        await kushkiGateway.requestSecureServiceValidation(
+          mockKushki,
+          secureOtpBody
+        );
+      } catch (error: any) {
+        expect(error.code).toEqual("E006");
       }
     });
   });
