@@ -1,6 +1,12 @@
 import KushkiHostedFields from "libs/HostedField.ts";
 import { Kushki } from "Kushki";
-import { TokenResponse, CardTokenRequest ,CardFieldValues, CardOptions, Field} from "Kushki/card";
+import {
+  CardFieldValues,
+  CardOptions,
+  CardTokenRequest,
+  Field,
+  TokenResponse
+} from "Kushki/card";
 import { ICard } from "repository/ICard.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { FieldInstance } from "types/card_fields_values";
@@ -69,11 +75,11 @@ export class Card implements ICard {
 
     return {
       card: {
-        name: cardholderName!.value!,
-        number: cardNumber!.value!.replace(/\s+/g, ""),
+        cvv: cvv!.value!,
         expiryMonth: expirationDate!.value!.split("/")[0]!,
         expiryYear: expirationDate!.value!.split("/")[1]!,
-        cvv: cvv!.value!
+        name: cardholderName!.value!,
+        number: cardNumber!.value!.replace(/\s+/g, "")
       },
       currency,
       ...this.buildTotalAmount()
