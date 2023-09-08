@@ -17,7 +17,7 @@ import { IDENTIFIERS } from "src/constant/Identifiers";
 import { CONTAINER } from "infrastructure/Container";
 import { KushkiGateway } from "gateway/KushkiGateway";
 import { FieldOptions } from "infrastructure/interfaces/FieldOptions.ts";
-import { FieldValidity, FormValidity } from "types/fields_validity";
+import { FieldValidity, FormValidity } from "types/form_validity";
 import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
 
 export class Card implements ICard {

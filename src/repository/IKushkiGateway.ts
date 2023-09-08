@@ -1,7 +1,7 @@
 import { BinInfoResponse } from "types/bin_info_response";
-import { Kushki, TokenResponse } from "Kushki";
+import { Kushki } from "Kushki";
 import { BinBody } from "types/bin_body";
-import { CardTokenRequest } from "Kushki/card";
+import { CardTokenRequest, TokenResponse } from "Kushki/card";
 
 export interface IKushkiGateway {
   /**

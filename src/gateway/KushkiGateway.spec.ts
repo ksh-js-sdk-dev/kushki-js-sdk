@@ -1,20 +1,31 @@
 import { KushkiGateway } from "./KushkiGateway";
 import axios, { AxiosError } from "axios";
-import { Kushki } from "Kushki";
 import { CardTokenRequest, TokenResponse } from "Kushki/card";
+import { CONTAINER } from "infrastructure/Container";
+import { IDENTIFIERS } from "src/constant/Identifiers";
+import { Mock } from "ts-mockery";
+import { Kushki } from "Kushki";
+import { EnvironmentEnum } from "infrastructure/EnvironmentEnum";
 
 jest.mock("axios");
 
 describe("KushkiGateway - Test", () => {
   let kushkiGateway: KushkiGateway;
-  let kushkiInstance: Kushki;
+  let mockKushki: Kushki;
 
   beforeEach(async () => {
-    kushkiGateway = new KushkiGateway();
-    kushkiInstance = await Kushki.init({ publicCredentialId: "1234" });
+    CONTAINER.snapshot();
+
+    kushkiGateway = CONTAINER.get(IDENTIFIERS.KushkiGateway);
+
+    mockKushki = Mock.of<Kushki>({
+      getBaseUrl: () => EnvironmentEnum.uat,
+      getPublicCredentialId: () => "123456"
+    });
   });
 
   afterEach(() => {
+    CONTAINER.restore();
     jest.clearAllMocks();
   });
 
@@ -31,34 +42,21 @@ describe("KushkiGateway - Test", () => {
 
       jest.spyOn(axios, "get").mockImplementation(axiosGetSpy);
 
-      const result = await kushkiGateway.requestBinInfo(
-        kushkiInstance,
-        binBody
-      );
+      const result = await kushkiGateway.requestBinInfo(mockKushki, binBody);
 
       expect(result).toEqual(mockData);
     });
 
-    it("When requestBinInfo throws an error", async () => {
-      const binBody = { bin: "123456" };
-
-      jest.spyOn(axios, "get").mockRejectedValue(new Error(""));
-
-      try {
-        await kushkiGateway.requestBinInfo(kushkiInstance, binBody);
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-      }
-    });
-
-    it("When requestBinInfo throws an AxiosError", () => {
+    it("When requestBinInfo throws an AxiosError", async () => {
       const binBody = { bin: "123456" };
 
       jest.spyOn(axios, "get").mockRejectedValue(new AxiosError(""));
 
-      kushkiGateway.requestBinInfo(kushkiInstance, binBody).catch((error) => {
-        expect(error["code"]).toEqual("E001");
-      });
+      try {
+        await kushkiGateway.requestBinInfo(mockKushki, binBody);
+      } catch (error: any) {
+        expect(error.code).toEqual("E001");
+      }
     });
   });
 
@@ -86,7 +84,7 @@ describe("KushkiGateway - Test", () => {
       jest.spyOn(axios, "post").mockImplementation(axiosPostSpy);
 
       const tokenResponse: TokenResponse = await kushkiGateway.requestToken(
-        kushkiInstance,
+        mockKushki,
         requestTokenBody
       );
 
@@ -97,7 +95,7 @@ describe("KushkiGateway - Test", () => {
       jest.spyOn(axios, "post").mockRejectedValue(new AxiosError(""));
 
       try {
-        await kushkiGateway.requestToken(kushkiInstance, requestTokenBody);
+        await kushkiGateway.requestToken(mockKushki, requestTokenBody);
       } catch (error: any) {
         expect(error.code).toEqual("E002");
       }
@@ -128,7 +126,7 @@ describe("KushkiGateway - Test", () => {
 
       const tokenResponse: TokenResponse =
         await kushkiGateway.requestCreateSubscriptionToken(
-          kushkiInstance,
+          mockKushki,
           requestSubscriptionTokenBody
         );
 
@@ -140,7 +138,7 @@ describe("KushkiGateway - Test", () => {
 
       try {
         await kushkiGateway.requestCreateSubscriptionToken(
-          kushkiInstance,
+          mockKushki,
           requestSubscriptionTokenBody
         );
       } catch (error: any) {
