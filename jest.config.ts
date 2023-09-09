@@ -4,11 +4,7 @@ import { compilerOptions } from "./tsconfig.json";
 
 const config: Config = {
   coverageDirectory: "./coverage",
-  coveragePathIgnorePatterns: [
-    "showcase/*",
-    "src/gateway/KushkiGateway.ts",
-    "src/module/card/card.ts"
-  ],
+  coveragePathIgnorePatterns: ["showcase/*"],
   coverageThreshold: {
     global: {
       branches: 100,

@@ -16,6 +16,13 @@ describe("Card test", () => {
   let options: CardOptions;
   let field: Field;
 
+  const mockInputFieldCardNumber = () => {
+    KushkiHostedFields.mock.calls[0][0].handleOnChange(
+      InputModelEnum.CARD_NUMBER,
+      "4242424242424242"
+    );
+  };
+
   afterEach(() => {
     CONTAINER.restore();
   });
@@ -44,6 +51,12 @@ describe("Card test", () => {
     };
 
     options = {
+      amount: {
+        iva: 1,
+        subtotalIva: 10,
+        subtotalIva0: 10
+      },
+      currency: "USD",
       fields: {
         cardHolderName: field,
         cardNumber: field,
@@ -66,12 +79,7 @@ describe("Card test", () => {
     KushkiHostedFields.mock.calls[0][0].handleOnFocus("cardholderName", "test");
     KushkiHostedFields.mock.calls[0][0].handleOnBlur("cardholderName", "test");
 
-    const token = await cardInstance.requestToken();
-
-    // TODO: refactor test when call to API is finished, mock gateway and check data of request
-    expect(token).toEqual({
-      token: "replace by token response"
-    });
+    expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
   });
 
   it("should set handleOnChange as callback in KushkiHostedFields", async () => {
@@ -91,11 +99,12 @@ describe("Card test", () => {
 
   it("should throw error when element not exist in mehtod initCardToken", async () => {
     field = {
-      fieldType: "",
+      fieldType: "cardNumber",
       selector: "id_test_not_created"
     };
 
     options = {
+      currency: "USD",
       fields: {
         cardHolderName: field,
         cardNumber: field,
@@ -109,93 +118,16 @@ describe("Card test", () => {
     );
   });
 
-  it("should set handleOnChange as callback in KushkiHostedField when is cardholderName", async () => {
-    field = {
-      fieldType: InputModelEnum.CARDHOLDER_NAME,
-      selector: "id_test"
-    };
-
-    options = {
-      fields: {
-        cardHolderName: field,
-        cardNumber: field,
-        cvv: field,
-        expirationDate: field
-      }
-    };
-    await Card.initCardToken(kushki, options);
-
-    KushkiHostedFields.mock.calls[0][0].handleOnChange(
-      "cardholderName",
-      "test"
-    );
-
-    expect(typeof KushkiHostedFields.mock.calls[0][0].handleOnChange).toEqual(
-      "function"
-    );
-  });
-
-  it("should set onChageCardNumber as callback in KushkiHostedField when is cardNumber", async () => {
-    field = {
-      fieldType: InputModelEnum.CARD_NUMBER,
-      selector: "id_test"
-    };
-
-    options = {
-      fields: {
-        cardHolderName: field,
-        cardNumber: field,
-        cvv: field,
-        expirationDate: field
-      }
-    };
-    await Card.initCardToken(kushki, options);
-
-    KushkiHostedFields.mock.calls[0][0].handleOnChange("cardNumber", "4242");
-
-    expect(typeof KushkiHostedFields.mock.calls[0][0].handleOnChange).toEqual(
-      "function"
-    );
-  });
-
   it("if cardNumber have max eight digitals then it should called handleSetCardNumber but requestBinInfo is Success", async () => {
-    field = {
-      fieldType: InputModelEnum.CARD_NUMBER,
-      selector: "id_test"
-    };
-
-    options = {
-      fields: {
-        cardHolderName: field,
-        cardNumber: field,
-        cvv: field,
-        expirationDate: field
-      }
-    };
-
     await Card.initCardToken(kushki, options);
 
-    KushkiHostedFields.mock.calls[0][0].handleOnChange(
-      "cardNumber",
-      "42424242424242"
-    );
+    mockInputFieldCardNumber();
 
-    expect(typeof KushkiHostedFields.mock.calls[0][0].handleOnChange).toEqual(
-      "function"
-    );
-  });
-
-  it("if cardNumber have max eight digitals then it should called handleSetCardNumber but requestBinInfo is Error", async () => {
-    await Card.initCardToken(kushki, options);
-
-    KushkiHostedFields.mock.calls[0][0].handleOnChange(
-      "cardNumber",
-      "42424242424242"
-    );
-
-    expect(typeof KushkiHostedFields.mock.calls[0][0].handleOnChange).toEqual(
-      "function"
-    );
+    if (KushkiHostedFields.mock.lastCall) {
+      expect(KushkiHostedFields.mock.lastCall[0].fieldType).toEqual(
+        InputModelEnum.CARD_NUMBER
+      );
+    }
   });
 
   it("When requestBinInfo throws an error", async () => {
@@ -209,12 +141,123 @@ describe("Card test", () => {
     try {
       await Card.initCardToken(kushki, options);
 
-      KushkiHostedFields.mock.calls[0][0].handleOnChange(
-        "cardNumber",
-        "42424242424242"
-      );
+      mockInputFieldCardNumber();
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
     }
+  });
+
+  describe("requestToken - Test", () => {
+    const tokenMock = "1234567890";
+
+    beforeEach(() => {
+      const mockGateway = {
+        requestCreateSubscriptionToken: () => ({
+          token: tokenMock
+        }),
+        requestToken: () => ({
+          token: tokenMock
+        })
+      };
+
+      CONTAINER.unbind(IDENTIFIERS.KushkiGateway);
+      CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
+    });
+
+    const mockInputFields = () => {
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        InputModelEnum.CARDHOLDER_NAME,
+        "test"
+      );
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        InputModelEnum.CARD_NUMBER,
+        "4242 4242 4242 4242"
+      );
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        InputModelEnum.EXPIRATION_DATE,
+        "12/34"
+      );
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        InputModelEnum.CVV,
+        "123"
+      );
+    };
+
+    it("it should execute Card token request and return token", async () => {
+      const cardInstance = await Card.initCardToken(kushki, options);
+
+      mockInputFields();
+
+      const response = await cardInstance.requestToken();
+
+      expect(response.token).toEqual(tokenMock);
+    });
+
+    it("it should execute Card Subscription token request and return token", async () => {
+      options.isSubscription = true;
+      delete options.amount;
+
+      const cardInstance = await Card.initCardToken(kushki, options);
+
+      mockInputFields();
+
+      const response = await cardInstance.requestToken();
+
+      expect(response.token).toEqual(tokenMock);
+    });
+  });
+
+  describe("onFieldValidity - Test", () => {
+    const mockInputsFields = (): void => {
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        InputModelEnum.CARDHOLDER_NAME,
+        "test"
+      );
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        InputModelEnum.CARD_NUMBER,
+        "4242 4242 4242 4242"
+      );
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        InputModelEnum.EXPIRATION_DATE,
+        "12/34"
+      );
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        InputModelEnum.CVV,
+        "123"
+      );
+    };
+
+    it("when call onFieldValidity, should set successful input value", async () => {
+      const cardInstance = await Card.initCardToken(kushki, options);
+
+      mockInputsFields();
+
+      cardInstance.onFieldValidity((e) => {
+        e;
+      });
+
+      expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
+    });
+
+    it("when call handleOnChange should call handleOnValidity successful", async () => {
+      const cardInstance = await Card.initCardToken(kushki, options);
+
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        "cardholderName",
+        "test"
+      );
+      KushkiHostedFields.mock.calls[0][0].handleOnValidity(
+        InputModelEnum.CARDHOLDER_NAME,
+        {
+          isValid: false
+        }
+      );
+
+      expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
+
+      expect(
+        typeof KushkiHostedFields.mock.calls[0][0].handleOnValidity
+      ).toEqual("function");
+    });
   });
 });

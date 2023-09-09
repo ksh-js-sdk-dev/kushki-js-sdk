@@ -1,4 +1,5 @@
-import { TokenResponse } from "../index.ts";
+import { TokenResponse } from "Kushki/card";
+
 export interface ICard {
   /**
    * Fetch Token after enter data of card
