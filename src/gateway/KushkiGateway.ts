@@ -8,6 +8,7 @@ import { Kushki } from "Kushki";
 import { CardTokenRequest, TokenResponse } from "Kushki/card";
 import { IKushkiGateway } from "repository/IKushkiGateway";
 import { injectable } from "inversify";
+import { MerchantSettingsResponse } from "types/merchant_settings_response";
 
 @injectable()
 export class KushkiGateway implements IKushkiGateway {
@@ -67,6 +68,26 @@ export class KushkiGateway implements IKushkiGateway {
       return Promise.resolve(data);
     } catch (error) {
       return Promise.reject(ERRORS.E002);
+    }
+  };
+
+  public requestMerchantSettings = async (
+    kushkiInstance: Kushki
+  ): Promise<MerchantSettingsResponse> => {
+    try {
+      const url: string = `${kushkiInstance.getBaseUrl()}${
+        PathEnum.merchant_settings
+      }`;
+
+      const response = await axios.get(url, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+      });
+
+      const merchantSettingsResponse: MerchantSettingsResponse = response.data;
+
+      return Promise.resolve(merchantSettingsResponse);
+    } catch (error) {
+      return Promise.reject(ERRORS.E003);
     }
   };
 

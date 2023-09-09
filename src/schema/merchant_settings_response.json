@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "MerchantSettingsResponse",
+  "definitions": {
+    "processorSettings": {
+      "type": "object",
+      "properties": {
+        "card": {
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+              "processorName": {
+                "type": "string"
+              }
+            },
+            "required": ["processorName"]
+          }
+        },
+        "cash": {
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+              "processorName": {
+                "type": "string"
+              }
+            },
+            "required": ["processorName"]
+          }
+        },
+        "transfer": {
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+              "processorName": {
+                "type": "string"
+              }
+            },
+            "required": ["processorName"]
+          }
+        },
+        "payouts-cash": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "processorName": {
+                "type": "string"
+              }
+            },
+            "required": ["processorName"]
+          }
+        },
+        "payouts-transfer": {
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+              "processorName": {
+                "type": "string"
+              }
+            },
+            "required": ["processorName"]
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "processors": {
+      "$ref": "#/definitions/processorSettings"
+    },
+    "processor_name": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "sandboxBaconKey": {
+      "type": ["string", "null"]
+    },
+    "prodBaconKey": {
+      "type": ["string", "null"]
+    },
+    "merchant_name": {
+      "type": "string"
+    },
+    "sandboxEnable": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "processor_name",
+    "country",
+    "sandboxBaconKey",
+    "prodBaconKey",
+    "merchant_name"
+  ],
+  "type": "object"
+}

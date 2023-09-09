@@ -146,4 +146,39 @@ describe("KushkiGateway - Test", () => {
       }
     });
   });
+
+  describe("merchantSettings - Test", () => {
+    it("when called merchantSettings return data on success", async () => {
+      const mockData = {
+        country: "Ecuador",
+        merchantName: "ipsum dolor",
+        processorName: "exercitation deserunt velit",
+        prodBaconKey: null,
+        sandboxBaconKey: null,
+        sandboxEnable: false
+      };
+
+      const axiosGetSpy = jest.fn(() => {
+        return Promise.resolve({
+          data: mockData
+        });
+      });
+
+      jest.spyOn(axios, "get").mockImplementation(axiosGetSpy);
+
+      const result = await kushkiGateway.requestMerchantSettings(mockKushki);
+
+      expect(result).toEqual(mockData);
+    });
+
+    it("When merchantSettings throws an AxiosError", async () => {
+      jest.spyOn(axios, "get").mockRejectedValue(new AxiosError(""));
+
+      try {
+        await kushkiGateway.requestMerchantSettings(mockKushki);
+      } catch (error: any) {
+        expect(error.code).toEqual("E003");
+      }
+    });
+  });
 });

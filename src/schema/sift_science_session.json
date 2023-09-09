@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SiftScienceAntiFraudSessionResponse",
+  "additionalProperties": false,
+  "properties": {
+    "sessionId": {
+      "type": ["string", "null"]
+    }
+  },
+  "required": ["sessionId"],
+  "type": "object"
+}
