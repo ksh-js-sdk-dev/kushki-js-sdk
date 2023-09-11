@@ -16,6 +16,18 @@ import { IKushkiGateway } from "repository/IKushkiGateway";
 import { IDENTIFIERS } from "src/constant/Identifiers";
 import { CONTAINER } from "infrastructure/Container";
 import { KushkiGateway } from "gateway/KushkiGateway";
+import { MerchantSettingsResponse } from "types/merchant_settings_response";
+import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
+import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import { SecureOtpResponse } from "types/secure_otp_response";
+
+declare global {
+  // tslint:disable-next-line
+  interface Window {
+    // tslint:disable-next-line:no-any
+    Cardinal: any;
+  }
+}
 import { FieldOptions } from "infrastructure/interfaces/FieldOptions.ts";
 import { FieldValidity, FormValidity } from "types/form_validity";
 import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
@@ -60,17 +72,172 @@ export class Card implements ICard {
     });
   }
 
-  public requestToken(): Promise<TokenResponse> {
+  public async requestToken(): Promise<TokenResponse> {
+    try {
+      const merchantSettings: MerchantSettingsResponse =
+        await this._gateway.requestMerchantSettings(this.kushkiInstance);
+      const jwt: string | undefined = await this.getJwtIf3dsEnabled(
+        merchantSettings
+      );
+
+      if (jwt) {
+        const token = await this.request3DSToken(jwt);
+
+        return Promise.resolve(token);
+      } else return this.requestTokenGateway();
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  private async request3DSToken(jwt: string) {
+    if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
+    else await import("libs/cardinal/prod");
+
+    const token: TokenResponse = await this.getCardinal3dsToken(jwt);
+
+    return this.validate3dsToken(token);
+  }
+
+  private validate3dsToken(token: TokenResponse) {
+    if (this.hasNotNeedAuth(token)) {
+      return Promise.resolve(token);
+    }
+    if (this.hasAllSecurityProperties(token)) return this.validation3ds(token);
+
+    return Promise.reject(ERRORS.E005);
+  }
+
+  private hasAllSecurityProperties(token: TokenResponse): boolean {
+    return !!(
+      token.security &&
+      token.security.authRequired &&
+      token.security.acsURL &&
+      token.security.paReq &&
+      token.security.authenticationTransactionId
+    );
+  }
+
+  private hasNotNeedAuth(token: TokenResponse): boolean {
+    return !!(token.security && !token.security.authRequired);
+  }
+
+  private async validation3ds(token: TokenResponse) {
+    if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
+    else await import("libs/cardinal/prod");
+
+    this.launchCardinal(token);
+
+    if (await this.completeCardinal(token.secureId!))
+      return Promise.resolve(token);
+    else return Promise.reject(ERRORS.E006);
+  }
+
+  private async completeCardinal(secureServiceId: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      return window.Cardinal.on("payments.validated", async () => {
+        try {
+          const secureValidation: SecureOtpResponse =
+            await this._gateway.requestSecureServiceValidation(
+              this.kushkiInstance,
+              {
+                secureServiceId,
+                otpValue: ""
+              }
+            );
+
+          resolve(this.is3dsValid(secureValidation));
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+  }
+
+  private is3dsValid(secureOtpResponse: SecureOtpResponse): boolean {
+    return (
+      "message" in secureOtpResponse &&
+      ((secureOtpResponse.message === "3DS000" &&
+        secureOtpResponse.code === "ok") ||
+        (secureOtpResponse.code === "3DS000" &&
+          secureOtpResponse.message === "ok"))
+    );
+  }
+
+  private launchCardinal(token: TokenResponse) {
+    window.Cardinal.continue(
+      "cca",
+      {
+        AcsUrl: token.security!.acsURL!,
+        Payload: token.security!.paReq!
+      },
+      {
+        OrderDetails: {
+          TransactionId: token.security!.authenticationTransactionId!
+        }
+      }
+    );
+  }
+
+  private async getCardinal3dsToken(jwt: string): Promise<TokenResponse> {
+    return new Promise<TokenResponse>((resolve, reject) => {
+      window.Cardinal.on("payments.setupComplete", async () => {
+        try {
+          resolve(await this.requestTokenGateway(jwt));
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+  }
+
+  private async getJwtIf3dsEnabled(
+    merchantSettings: MerchantSettingsResponse
+  ): Promise<string | undefined> {
+    if (merchantSettings.active_3dsecure) {
+      const jwtResponse: CybersourceJwtResponse =
+        await this._gateway.requestCybersourceJwt(this.kushkiInstance);
+      await this.initCardinal(jwtResponse.jwt);
+
+      return jwtResponse.jwt;
+    } else {
+      return undefined;
+    }
+  }
+
+  private async initCardinal(jwt: string) {
+    if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
+    else await import("libs/cardinal/prod");
+
+    this.setUpCardinal(jwt);
+  }
+
+  private setUpCardinal(jwt: string) {
+    window.Cardinal.setup("init", {
+      jwt,
+      order: {
+        Consumer: {
+          Account: {
+            AccountNumber: this.inputValues[
+              InputModelEnum.CARD_NUMBER
+            ]?.value!.replace(/\s+/g, "")
+          }
+        }
+      }
+    });
+  }
+
+  private requestTokenGateway(jwt?: string) {
     if (this.options.isSubscription)
       return this._gateway.requestCreateSubscriptionToken(
         this.kushkiInstance,
-        this.buildTokenBody()
+        this.buildTokenBody(jwt)
       );
-    else
-      return this._gateway.requestToken(
-        this.kushkiInstance,
-        this.buildTokenBody()
-      );
+
+    return this._gateway.requestToken(
+      this.kushkiInstance,
+      this.buildTokenBody(jwt)
+    );
   }
 
   public onFieldValidity(event: (fieldEvent: FormValidity) => void): void {
@@ -83,12 +250,13 @@ export class Card implements ICard {
     }) as EventListener);
   }
 
-  private buildTokenBody(): CardTokenRequest {
+  private buildTokenBody(jwt?: string): CardTokenRequest {
     const { cardholderName, cardNumber, expirationDate, cvv } =
       this.inputValues;
     const { currency } = this.options;
 
     return {
+      jwt,
       card: {
         cvv: cvv!.value!,
         expiryMonth: expirationDate!.value!.split("/")[0]!,
