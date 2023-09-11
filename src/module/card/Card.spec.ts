@@ -188,6 +188,7 @@ describe("Card test", () => {
         default: jest.fn()
       }));
       window.Cardinal = {};
+      window.Cardinal.off = jest.fn();
       window.Cardinal.setup = jest.fn();
       window.Cardinal.continue = jest.fn();
       window.Cardinal.on = jest
@@ -317,7 +318,12 @@ describe("Card test", () => {
     it("it should execute Card 3ds token UAT throw error: E005, for token incomplete", async () => {
       await initKushki(true);
       mockKushkiGateway(true, {
-        token: tokenMock
+        token: tokenMock,
+        security: {
+          authRequired: true,
+          paReq: "req",
+          authenticationTransactionId: "1234"
+        }
       });
 
       const cardInstance = await Card.initCardToken(kushki, options);
