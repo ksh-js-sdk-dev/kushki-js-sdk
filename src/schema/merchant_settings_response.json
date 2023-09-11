@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "MerchantSettingsResponse",
+  "definitions": {
+    "Processor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "processorName": {
+          "type": "string"
+        }
+      },
+      "required": ["processorName"]
+    },
+    "ProcessorSettings": {
+      "type": "object",
+      "properties": {
+        "card": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Processor"
+          }
+        },
+        "cash": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Processor"
+          }
+        },
+        "transfer": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Processor"
+          }
+        },
+        "payouts-cash": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Processor"
+          }
+        },
+        "payouts-transfer": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Processor"
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "merchantName": {
+      "type": "string"
+    },
+    "active_3dsecure": {
+      "type": "boolean"
+    },
+    "processors": {
+      "$ref": "#/definitions/ProcessorSettings"
+    },
+    "processor_name": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "sandboxBaconKey": {
+      "type": ["string", "null"]
+    },
+    "prodBaconKey": {
+      "type": ["string", "null"]
+    },
+    "merchant_name": {
+      "type": "string"
+    },
+    "sandboxEnable": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "processor_name",
+    "country",
+    "sandboxBaconKey",
+    "prodBaconKey",
+    "merchant_name"
+  ],
+  "type": "object"
+}
