@@ -2,6 +2,21 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "CardFieldValues",
   "definitions": {
+    "fieldValidity": {
+      "type": "object",
+      "title": "FieldValidity",
+      "additionalProperties": false,
+      "properties": {
+        "isValid": {
+          "type": "boolean"
+        },
+        "errorType": {
+          "type": "string",
+          "enum": ["empty", "invalid"]
+        }
+      },
+      "required": ["isValid"]
+    },
     "fieldInstance": {
       "type": "object",
       "title": "FieldInstance",
@@ -15,8 +30,12 @@
         },
         "hostedField": {
           "type": "object"
+        },
+        "validity": {
+          "$ref": "#/definitions/fieldValidity"
         }
-      }
+      },
+      "required": ["selector", "validity"]
     }
   },
   "properties": {

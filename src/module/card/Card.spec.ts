@@ -105,7 +105,7 @@ describe("Card test", () => {
 
   it("should throw error when element not exist in mehtod initCardToken", async () => {
     field = {
-      fieldType: "",
+      fieldType: "cardNumber",
       selector: "id_test_not_created"
     };
 
@@ -404,6 +404,60 @@ describe("Card test", () => {
       } catch (error: any) {
         expect(error.code).toEqual("E002");
       }
+    });
+  });
+
+  describe("onFieldValidity - Test", () => {
+    const mockInputsFields = (): void => {
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        InputModelEnum.CARDHOLDER_NAME,
+        "test"
+      );
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        InputModelEnum.CARD_NUMBER,
+        "4242 4242 4242 4242"
+      );
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        InputModelEnum.EXPIRATION_DATE,
+        "12/34"
+      );
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        InputModelEnum.CVV,
+        "123"
+      );
+    };
+
+    it("when call onFieldValidity, should set successful input value", async () => {
+      const cardInstance = await Card.initCardToken(kushki, options);
+
+      mockInputsFields();
+
+      cardInstance.onFieldValidity((e) => {
+        e;
+      });
+
+      expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
+    });
+
+    it("when call handleOnChange should call handleOnValidity successful", async () => {
+      const cardInstance = await Card.initCardToken(kushki, options);
+
+      KushkiHostedFields.mock.calls[0][0].handleOnChange(
+        "cardholderName",
+        "test"
+      );
+      KushkiHostedFields.mock.calls[0][0].handleOnValidity(
+        InputModelEnum.CARDHOLDER_NAME,
+        {
+          isValid: false
+        }
+      );
+
+      expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
+
+      expect(
+        typeof KushkiHostedFields.mock.calls[0][0].handleOnValidity
+      ).toEqual("function");
     });
   });
 });

@@ -63,6 +63,22 @@
       "required": ["subtotalIva", "subtotalIva0", "iva"],
       "type": "object"
     },
+    "inputType": {
+      "title": "InputTypeEnum",
+      "type": "string",
+      "enum": ["number", "text", "password"]
+    },
+    "fieldType": {
+      "title": "FieldTypeEnum",
+      "type": "string",
+      "enum": [
+        "cardNumber",
+        "cardholderName",
+        "cvv",
+        "deferred",
+        "expirationDate"
+      ]
+    },
     "field": {
       "title": "Field",
       "additionalProperties": false,
@@ -92,10 +108,10 @@
           "$ref": "#/definitions/styles"
         },
         "inputType": {
-          "type": "string"
+          "$ref": "#/definitions/inputType"
         },
         "fieldType": {
-          "type": "string"
+          "$ref": "#/definitions/fieldType"
         },
         "label": {
           "type": "string"
