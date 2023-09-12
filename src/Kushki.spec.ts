@@ -1,5 +1,6 @@
 import { EnvironmentEnum } from "./infrastructure/EnvironmentEnum.ts";
 import { Kushki, KushkiOptions } from "./index.ts";
+import { SiftScienceEnum } from "infrastructure/SiftScienceEnum";
 
 describe("Kushki - test", () => {
   let options: KushkiOptions;
@@ -23,6 +24,7 @@ describe("Kushki - test", () => {
     expect(kushkiInstance.getPublicCredentialId()).toEqual(
       options.publicCredentialId
     );
+    expect(kushkiInstance.getEnvironmentSift()).toEqual(SiftScienceEnum.uat);
   });
 
   it("when init with isTes in false must return prod url", async () => {
@@ -37,5 +39,6 @@ describe("Kushki - test", () => {
     expect(kushkiInstance.getPublicCredentialId()).toEqual(
       options.publicCredentialId
     );
+    expect(kushkiInstance.getEnvironmentSift()).toEqual(SiftScienceEnum.prod);
   });
 });

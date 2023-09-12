@@ -1,15 +1,17 @@
 import { KushkiOptions } from "Kushki";
 import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
+import { SiftScienceEnum } from "infrastructure/SiftScienceEnum";
 
 export class Kushki {
   private readonly baseUrl: EnvironmentEnum;
   private readonly publicCredentialId: string;
   private readonly inTest: boolean | undefined;
-
+  private readonly environmentSift: string;
   constructor(options: KushkiOptions) {
     this.publicCredentialId = options.publicCredentialId;
     this.baseUrl = this.initBaseUrl(options.inTest);
     this.inTest = options.inTest;
+    this.environmentSift = this.initEnvironmentSift(options.inTest);
   }
 
   public static init(options: KushkiOptions): Promise<Kushki> {
@@ -28,11 +30,19 @@ export class Kushki {
     return this.publicCredentialId;
   }
 
+  public getEnvironmentSift(): string {
+    return this.environmentSift;
+  }
+
   public isInTest(): boolean | undefined {
     return this.inTest;
   }
 
   private initBaseUrl(inTest?: boolean): EnvironmentEnum {
     return inTest ? EnvironmentEnum.uat : EnvironmentEnum.prod;
+  }
+
+  private initEnvironmentSift(inTest?: boolean): SiftScienceEnum {
+    return inTest ? SiftScienceEnum.uat : SiftScienceEnum.prod;
   }
 }

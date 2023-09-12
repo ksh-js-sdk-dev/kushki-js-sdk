@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SiftScienceObject",
+  "properties": {
+    "userId": {
+      "type": ["string", "null"]
+    },
+    "sessionId": {
+      "type": ["string", "null"]
+    }
+  },
+  "required": ["userId", "sessionId"],
+  "type": "object"
+}
