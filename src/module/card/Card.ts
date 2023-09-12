@@ -90,12 +90,15 @@ export class Card implements ICard {
       const merchantSettings: MerchantSettingsResponse =
         await this._gateway.requestMerchantSettings(this.kushkiInstance);
 
+      const card_value: string = this.inputValues.cardNumber!.value!.replace(
+        /\s+/g,
+        ""
+      );
+
       const scienceSession: SiftScienceObject =
         this._siftScienceService.createSiftScienceSession(
-          this.getBinFromCreditCardNumberSift(
-            this.inputValues.cardNumber!.value!
-          ),
-          this.inputValues.cardNumber!.value!.slice(-4),
+          this.getBinFromCreditCardNumberSift(card_value),
+          card_value.slice(-4),
           this.kushkiInstance,
           merchantSettings
         );
@@ -565,9 +568,7 @@ export class Card implements ICard {
   };
 
   private getBinFromCreditCardNumberSift(value: string): string {
-    const card_value: string = value.replace(/\D/g, "");
-
-    return card_value.slice(
+    return value.slice(
       CREDIT_CARD_ESPECIFICATIONS.cardInitialBinPlace,
       CREDIT_CARD_ESPECIFICATIONS.cardFinalBinPlaceSift
     );
