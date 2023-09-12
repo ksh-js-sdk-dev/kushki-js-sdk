@@ -41,7 +41,7 @@ export class Card implements ICard {
   private inputValues: CardFieldValues;
   private currentBin: string;
   private readonly _gateway: IKushkiGateway;
-  private readonly _siftScience: ISiftScienceService;
+  private readonly _siftScienceService: ISiftScienceService;
   private readonly listenerFieldValidity: string = "fieldValidity";
 
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
@@ -50,7 +50,7 @@ export class Card implements ICard {
     this.inputValues = {};
     this.currentBin = "";
     this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
-    this._siftScience = CONTAINER.get<ISiftScienceService>(
+    this._siftScienceService = CONTAINER.get<ISiftScienceService>(
       IDENTIFIERS.SiftScienceService
     );
   }
@@ -81,23 +81,39 @@ export class Card implements ICard {
 
   public async requestToken(): Promise<TokenResponse> {
     try {
+      const { isFormValid } = this.getFormValidity();
+
+      if (!isFormValid) {
+        return Promise.reject(ERRORS.E007);
+      }
+
       const merchantSettings: MerchantSettingsResponse =
         await this._gateway.requestMerchantSettings(this.kushkiInstance);
 
       const scienceSession: SiftScienceObject =
-        this._getScienceSession(merchantSettings);
+        this._siftScienceService.createSiftScienceSession(
+          this.getBinFromCreditCardNumberSift(
+            this.inputValues.cardNumber!.value!
+          ),
+          this.inputValues.cardNumber!.value!.slice(-4),
+          this.kushkiInstance,
+          merchantSettings
+        );
 
       const jwt: string | undefined = await this.getJwtIf3dsEnabled(
         merchantSettings
       );
 
-      if (jwt) {
+      if (jwt && !merchantSettings.sandboxEnable) {
         const token = await this.request3DSToken(jwt, scienceSession);
 
         return Promise.resolve(token);
       } else return this.requestTokenGateway(jwt, scienceSession);
     } catch (error) {
       return Promise.reject(error);
+    } finally {
+      window.Cardinal.off("payments.setupComplete");
+      window.Cardinal.off("payments.validated");
     }
   }
 
@@ -105,9 +121,6 @@ export class Card implements ICard {
     jwt: string,
     scienceSession?: SiftScienceObject
   ) {
-    if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
-    else await import("libs/cardinal/prod");
-
     const token: TokenResponse = await this.getCardinal3dsToken(
       jwt,
       scienceSession
@@ -117,10 +130,10 @@ export class Card implements ICard {
   }
 
   private validate3dsToken(token: TokenResponse) {
-    if (this.hasNotNeedAuth(token)) {
+    if (this.tokenNotNeedsAuth(token)) {
       return Promise.resolve(token);
     }
-    if (this.hasAllSecurityProperties(token)) return this.validation3ds(token);
+    if (this.hasAllSecurityProperties(token)) return this.validate3DS(token);
 
     return Promise.reject(ERRORS.E005);
   }
@@ -135,14 +148,17 @@ export class Card implements ICard {
     );
   }
 
-  private hasNotNeedAuth(token: TokenResponse): boolean {
-    return !!(token.security && !token.security.authRequired);
+  private tokenNotNeedsAuth(token: TokenResponse): boolean {
+    return (
+      !!(
+        token.security &&
+        (!token.security.authRequired ||
+          +token.security.specificationVersion < 2)
+      ) || !token.security
+    );
   }
 
-  private async validation3ds(token: TokenResponse) {
-    if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
-    else await import("libs/cardinal/prod");
-
+  private async validate3DS(token: TokenResponse) {
     this.launchCardinal(token);
 
     if (await this.completeCardinal(token.secureId!))
@@ -200,15 +216,34 @@ export class Card implements ICard {
     jwt: string,
     scienceSession?: SiftScienceObject
   ): Promise<TokenResponse> {
-    return new Promise<TokenResponse>((resolve, reject) => {
-      window.Cardinal.on("payments.setupComplete", async () => {
+    return new Promise<TokenResponse>(async (resolve, reject) => {
+      const requestToken = async () => {
         try {
           resolve(await this.requestTokenGateway(jwt, scienceSession));
         } catch (error) {
           reject(error);
         }
-      });
+      };
+
+      if (await this.isCardinalInitialized()) {
+        await requestToken();
+      } else
+        window.Cardinal.on("payments.setupComplete", async () => {
+          await requestToken();
+        });
     });
+  }
+
+  private async isCardinalInitialized(): Promise<boolean> {
+    try {
+      const cardinalStatus = await window.Cardinal.complete({
+        Status: "Success"
+      });
+
+      return !!cardinalStatus;
+    } catch (error) {
+      return false;
+    }
   }
 
   private async getJwtIf3dsEnabled(
@@ -230,22 +265,29 @@ export class Card implements ICard {
     if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
     else await import("libs/cardinal/prod");
 
-    this.setUpCardinal(jwt);
+    await this.setupCardinal(jwt);
   }
 
-  private setUpCardinal(jwt: string) {
-    window.Cardinal.setup("init", {
-      jwt,
-      order: {
-        Consumer: {
-          Account: {
-            AccountNumber: this.inputValues[
-              InputModelEnum.CARD_NUMBER
-            ]?.value!.replace(/\s+/g, "")
+  private async setupCardinal(jwt: string) {
+    const accountNumber = this.inputValues[
+      InputModelEnum.CARD_NUMBER
+    ]?.value!.replace(/\s+/g, "");
+
+    if (await this.isCardinalInitialized()) {
+      window.Cardinal.trigger("accountNumber.update", accountNumber);
+      window.Cardinal.trigger("jwt.update", jwt);
+    } else {
+      window.Cardinal.setup("init", {
+        jwt,
+        order: {
+          Consumer: {
+            Account: {
+              AccountNumber: accountNumber
+            }
           }
         }
-      }
-    });
+      });
+    }
   }
 
   private requestTokenGateway(
@@ -274,6 +316,27 @@ export class Card implements ICard {
     }) as EventListener);
   }
 
+  public getFormValidity(): FormValidity {
+    let formValid: boolean = true;
+
+    for (const inputName in this.inputValues) {
+      const validityProps: FieldValidity = this.inputValues[inputName].validity;
+      const isInputInValid: boolean = !validityProps.isValid;
+      const isErrorTypeValid: boolean = Boolean(validityProps.errorType);
+
+      if (isInputInValid) formValid = false;
+      if (isInputInValid && !isErrorTypeValid)
+        validityProps.errorType = ErrorTypeEnum.EMPTY;
+    }
+
+    const eventFormValidity: CustomEvent<FormValidity> =
+      this.buildEventFormValidity(this.inputValues);
+
+    dispatchEvent(eventFormValidity);
+
+    return this.buildFieldsValidity(this.inputValues, formValid);
+  }
+
   private buildTokenBody(
     jwt?: string,
     scienceSession?: SiftScienceObject
@@ -290,7 +353,7 @@ export class Card implements ICard {
         expiryMonth: expirationDate!.value!.split("/")[0]!,
         expiryYear: expirationDate!.value!.split("/")[1]!,
         name: cardholderName!.value!,
-        number: cardNumber ? cardNumber!.value!.replace(/\s+/g, "") : ""
+        number: cardNumber!.value!.replace(/\s+/g, "")
       },
       currency,
       ...this.buildTotalAmount()
@@ -323,7 +386,7 @@ export class Card implements ICard {
       [field]: { ...this.inputValues[field], value: value }
     };
 
-    if (field === InputModelEnum.CARD_NUMBER && value !== undefined) {
+    if (field === InputModelEnum.CARD_NUMBER) {
       this.onChangeCardNumber(value);
     }
   }
@@ -353,11 +416,8 @@ export class Card implements ICard {
       }
     };
 
-    const event: CustomEvent<FormValidity> = new CustomEvent<FormValidity>(
-      this.listenerFieldValidity,
-      {
-        detail: this.buildFieldsValidity(this.inputValues)
-      }
+    const event: CustomEvent<FormValidity> = this.buildEventFormValidity(
+      this.inputValues
     );
 
     dispatchEvent(event);
@@ -389,7 +449,7 @@ export class Card implements ICard {
   }
 
   private onChangeCardNumber(value: string) {
-    const cardNumber: string = value?.replace(/ /g, "");
+    const cardNumber: string = value.replace(/ /g, "");
 
     if (cardNumber.length >= 8) this.handleSetCardNumber(cardNumber);
   }
@@ -421,6 +481,16 @@ export class Card implements ICard {
           isValid: false
         }
       };
+
+      // TODO : tobe defined validation in Deferred Hu
+      if (field.fieldType === "deferred")
+        this.inputValues[field.fieldType] = {
+          hostedField,
+          selector: field.selector,
+          validity: {
+            isValid: true
+          }
+        };
     }
 
     this.hideContainers();
@@ -461,17 +531,16 @@ export class Card implements ICard {
   };
 
   private buildFieldsValidity = (
-    inputValues: CardFieldValues
+    inputValues: CardFieldValues,
+    isFormValid?: boolean
   ): FormValidity => {
     const defaultValidity: FieldValidity = {
-      errorType: ErrorTypeEnum.EMPTY,
       isValid: false
     };
     const fieldsValidity: Fields = {
       cardholderName: defaultValidity,
       cardNumber: defaultValidity,
       cvv: defaultValidity,
-      deferred: defaultValidity,
       expirationDate: defaultValidity
     };
 
@@ -484,29 +553,16 @@ export class Card implements ICard {
       }
     }
 
-    return { fields: fieldsValidity, isFormValid: false };
+    return { fields: fieldsValidity, isFormValid: isFormValid ?? false };
   };
 
-  private _getScienceSession(
-    merchantSettings: MerchantSettingsResponse
-  ): SiftScienceObject {
-    if (
-      this.inputValues.cardNumber &&
-      this.inputValues.cardNumber.value !== undefined
-    )
-      return this._siftScience.createSiftScienceSession(
-        this.getBinFromCreditCardNumberSift(this.inputValues.cardNumber.value),
-        this.inputValues.cardNumber.value.slice(-4),
-        this.kushkiInstance,
-        merchantSettings
-      );
-
-    /* istanbul ignore next */
-    return {
-      sessionId: null,
-      userId: null
-    };
-  }
+  private buildEventFormValidity = (
+    inputValues: CardFieldValues
+  ): CustomEvent<FormValidity> => {
+    return new CustomEvent<FormValidity>(this.listenerFieldValidity, {
+      detail: this.buildFieldsValidity(inputValues)
+    });
+  };
 
   private getBinFromCreditCardNumberSift(value: string): string {
     const card_value: string = value.replace(/\D/g, "");

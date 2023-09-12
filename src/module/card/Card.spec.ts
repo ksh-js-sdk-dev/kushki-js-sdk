@@ -26,7 +26,7 @@ describe("Card test", () => {
   };
 
   const initKushki = async (inTest?: boolean) => {
-    kushki = await Kushki.init({ publicCredentialId: "1234", inTest });
+    kushki = await Kushki.init({ inTest, publicCredentialId: "1234" });
   };
 
   afterEach(() => {
@@ -86,6 +86,24 @@ describe("Card test", () => {
     KushkiHostedFields.mock.calls[0][0].handleOnBlur("cardholderName", "test");
 
     expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
+  });
+
+  it("it should set isValid as true when deferred is an option field", async () => {
+    options = {
+      ...options,
+      fields: {
+        ...options.fields,
+        deferred: {
+          fieldType: InputModelEnum.DEFERRED,
+          selector: "id_test"
+        }
+      }
+    };
+    const cardInstance = await Card.initCardToken(kushki, options);
+
+    expect(cardInstance["inputValues"].deferred!.validity.isValid).toEqual(
+      true
+    );
   });
 
   it("should set handleOnChange as callback in KushkiHostedFields", async () => {
@@ -189,7 +207,7 @@ describe("Card test", () => {
       );
     };
 
-    const mockCardinal = () => {
+    const mockCardinal = (complete: any = undefined) => {
       jest.mock("libs/cardinal/prod", () => ({
         default: jest.fn()
       }));
@@ -197,6 +215,7 @@ describe("Card test", () => {
         default: jest.fn()
       }));
       window.Cardinal = {};
+      window.Cardinal.off = jest.fn();
       window.Cardinal.setup = jest.fn();
       window.Cardinal.continue = jest.fn();
       window.Cardinal.on = jest
@@ -204,6 +223,8 @@ describe("Card test", () => {
         .mockImplementation((_: string, callback: () => void) => {
           callback();
         });
+      window.Cardinal.complete = complete;
+      window.Cardinal.trigger = jest.fn();
     };
 
     beforeEach(() => {
@@ -230,21 +251,34 @@ describe("Card test", () => {
       );
     };
 
+    const mockValidityInputs = () => {
+      KushkiHostedFields.mock.calls[0][0].handleOnValidity(
+        InputModelEnum.CARDHOLDER_NAME,
+        {
+          isValid: true
+        }
+      );
+      KushkiHostedFields.mock.calls[0][0].handleOnValidity(InputModelEnum.CVV, {
+        isValid: true
+      });
+      KushkiHostedFields.mock.calls[0][0].handleOnValidity(
+        InputModelEnum.EXPIRATION_DATE,
+        {
+          isValid: true
+        }
+      );
+      KushkiHostedFields.mock.calls[0][0].handleOnValidity(
+        InputModelEnum.CARD_NUMBER,
+        {
+          isValid: true
+        }
+      );
+    };
+
     it("it should execute Card token request and return token", async () => {
       const cardInstance = await Card.initCardToken(kushki, options);
 
-      mockInputFields();
-
-      cardInstance["inputValues"].cardNumber = undefined;
-
-      const response = await cardInstance.requestToken();
-
-      expect(response.token).toEqual(tokenMock);
-    });
-
-    it("it should execute Card token request and return token", async () => {
-      const cardInstance = await Card.initCardToken(kushki, options);
-
+      mockValidityInputs();
       mockInputFields();
 
       const response = await cardInstance.requestToken();
@@ -258,6 +292,7 @@ describe("Card test", () => {
 
       const cardInstance = await Card.initCardToken(kushki, options);
 
+      mockValidityInputs();
       mockInputFields();
 
       const response = await cardInstance.requestToken();
@@ -278,6 +313,7 @@ describe("Card test", () => {
 
       const cardInstance = await Card.initCardToken(kushki, options);
 
+      mockValidityInputs();
       mockInputFields();
 
       const response = await cardInstance.requestToken();
@@ -307,6 +343,7 @@ describe("Card test", () => {
 
       const cardInstance = await Card.initCardToken(kushki, options);
 
+      mockValidityInputs();
       mockInputFields();
 
       const response = await cardInstance.requestToken();
@@ -316,6 +353,7 @@ describe("Card test", () => {
 
     it("it should execute Card 3ds token UAT without modal validation", async () => {
       await initKushki(true);
+      mockCardinal(jest.fn());
       mockKushkiGateway(true, {
         token: tokenMock,
         security: {
@@ -328,6 +366,29 @@ describe("Card test", () => {
 
       const cardInstance = await Card.initCardToken(kushki, options);
 
+      mockValidityInputs();
+      mockInputFields();
+
+      const response = await cardInstance.requestToken();
+
+      expect(response.token).toEqual(tokenMock);
+    });
+
+    it("it should execute Card 3ds token PROD for retry", async () => {
+      mockCardinal(jest.fn().mockReturnValue({}));
+      mockKushkiGateway(true, {
+        token: tokenMock,
+        security: {
+          authRequired: true,
+          acsURL: "url",
+          paReq: "req",
+          authenticationTransactionId: "1234"
+        }
+      });
+
+      const cardInstance = await Card.initCardToken(kushki, options);
+
+      mockValidityInputs();
       mockInputFields();
 
       const response = await cardInstance.requestToken();
@@ -338,17 +399,42 @@ describe("Card test", () => {
     it("it should execute Card 3ds token UAT throw error: E005, for token incomplete", async () => {
       await initKushki(true);
       mockKushkiGateway(true, {
-        token: tokenMock
+        token: tokenMock,
+        security: {
+          authRequired: true,
+          paReq: "req",
+          authenticationTransactionId: "1234"
+        }
       });
 
       const cardInstance = await Card.initCardToken(kushki, options);
 
+      mockValidityInputs();
       mockInputFields();
 
       try {
         await cardInstance.requestToken();
       } catch (error: any) {
         expect(error.code).toEqual("E005");
+      }
+    });
+
+    it("it should execute Card token UAT with error: E007, for invalid field", async () => {
+      const cardInstance = await Card.initCardToken(kushki, options);
+
+      mockValidityInputs();
+      KushkiHostedFields.mock.calls[0][0].handleOnValidity(
+        InputModelEnum.CARDHOLDER_NAME,
+        {
+          isValid: false
+        }
+      );
+      mockInputFields();
+
+      try {
+        await cardInstance.requestToken();
+      } catch (error: any) {
+        expect(error.code).toEqual("E007");
       }
     });
 
@@ -373,6 +459,7 @@ describe("Card test", () => {
 
       const cardInstance = await Card.initCardToken(kushki, options);
 
+      mockValidityInputs();
       mockInputFields();
 
       try {
@@ -400,6 +487,7 @@ describe("Card test", () => {
 
       const cardInstance = await Card.initCardToken(kushki, options);
 
+      mockValidityInputs();
       mockInputFields();
 
       try {
@@ -418,6 +506,7 @@ describe("Card test", () => {
 
       const cardInstance = await Card.initCardToken(kushki, options);
 
+      mockValidityInputs();
       mockInputFields();
 
       try {

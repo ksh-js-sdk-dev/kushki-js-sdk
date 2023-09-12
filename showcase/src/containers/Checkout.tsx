@@ -47,11 +47,11 @@ export const CheckoutContainer = () => {
 
   const options: CardOptions = {
     amount: {
-      iva: 2,
-      subtotalIva: 1000,
-      subtotalIva0: 10
+      iva: 26,
+      subtotalIva: 26,
+      subtotalIva0: 0
     },
-    currency: "COP",
+    currency: "USD",
     fields: {
       cardHolderName: {
         fieldType: "cardholderName",
@@ -274,14 +274,15 @@ export const CheckoutContainer = () => {
           }
         }
       }
-    },
+    }
   };
 
   useEffect(() => {
     (async () => {
       const kushkiInstance = await Kushki.init({
         inTest: true,
-        publicCredentialId: "40f9e34568fa40e39e15c5dddb607075"
+        // publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
+        publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
       });
 
       if (kushkiInstance) {
@@ -309,6 +310,12 @@ export const CheckoutContainer = () => {
     );
   };
 
+  const customMessageValidity = (field: string, errorType: string) => {
+    if (errorType === "empty") return `The field ${field} is required`;
+
+    return `Error-${field} is ${errorType}`;
+  };
+
   useEffect(() => {
     if (cardInstance) {
       cardInstance.onFieldValidity((event: FormValidity) => {
@@ -328,31 +335,43 @@ export const CheckoutContainer = () => {
         <div id="cardHolderName_id"></div>
         {validError(fieldsValidityDemo, "cardholderName") && (
           <div>
-            Error-CardHolderName is{" "}
-            {fieldsValidityDemo.cardholderName.errorType}
+            {customMessageValidity(
+              "cardholderName",
+              fieldsValidityDemo.cardholderName.errorType!
+            )}
           </div>
         )}
         <div id="cardNumber_id"></div>
         {validError(fieldsValidityDemo, "cardNumber") && (
           <div>
-            Error-CardNumber is {fieldsValidityDemo.cardNumber.errorType}
+            {customMessageValidity(
+              "cardNumber",
+              fieldsValidityDemo.cardNumber.errorType!
+            )}
           </div>
         )}
         <div id="expirationDate_id"></div>
         {validError(fieldsValidityDemo, "expirationDate") && (
           <div>
-            Error - ExpirationDate is{" "}
-            {fieldsValidityDemo.expirationDate.errorType}
+            {customMessageValidity(
+              "expirationDate",
+              fieldsValidityDemo.expirationDate.errorType!
+            )}
           </div>
         )}
         <div id="cvv_id"></div>
         {validError(fieldsValidityDemo, "cvv") && (
-          <div>Error - Cvv is {fieldsValidityDemo.cvv.errorType}</div>
+          <div>
+            {customMessageValidity("cvv", fieldsValidityDemo.cvv.errorType!)}
+          </div>
         )}
         <div id="deferred_id"></div>
         {validError(fieldsValidityDemo, "deferred") && (
           <div>
-            Error - Deferred is {fieldsValidityDemo.deferred!.errorType}
+            {customMessageValidity(
+              "deferred",
+              fieldsValidityDemo.deferred!.errorType!
+            )}
           </div>
         )}
 
