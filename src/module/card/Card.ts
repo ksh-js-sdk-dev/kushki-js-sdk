@@ -52,20 +52,14 @@ export class Card implements ICard {
     kushkiInstance: Kushki,
     options: CardOptions
   ): Promise<Card> {
-    return new Promise<Card>((resolve, reject) => {
+    return new Promise<Card>(async (resolve, reject) => {
       try {
         const card: Card = new Card(kushkiInstance, options);
 
-        card
-          .initFields(options.fields)
-          .then(() => {
-            card.showContainers();
-            resolve(card);
-          })
-          .catch(
-            /* istanbul ignore next */
-            (expect) => reject(expect)
-          );
+        await card.initFields(options.fields);
+
+        card.showContainers();
+        resolve(card);
       } catch (error) {
         reject(error);
       }
@@ -95,8 +89,10 @@ export class Card implements ICard {
     } catch (error) {
       return Promise.reject(error);
     } finally {
-      window.Cardinal.off("payments.setupComplete");
-      window.Cardinal.off("payments.validated");
+      if (window.Cardinal) {
+        window.Cardinal.off("payments.setupComplete");
+        window.Cardinal.off("payments.validated");
+      }
     }
   }
 
@@ -215,7 +211,6 @@ export class Card implements ICard {
       });
 
       return !!cardinalStatus;
-
     } catch (error) {
       return false;
     }
