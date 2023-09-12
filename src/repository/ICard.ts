@@ -1,4 +1,4 @@
-import { TokenResponse } from "Kushki/card";
+import { FormValidity, TokenResponse } from "Kushki/card";
 
 export interface ICard {
   /**
@@ -7,4 +7,10 @@ export interface ICard {
    * @throws KushkiErrorResponse .- object with code and message of error
    */
   requestToken(): Promise<TokenResponse>;
+
+  /**
+   * Get validation form
+   * @return FormValidity .- object with form inputs information validation
+   */
+  getFormValidity(): FormValidity;
 }
