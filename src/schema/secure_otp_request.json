@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SecureOtpRequest",
+  "type": "object",
+  "oneOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "secureServiceId": {
+          "type": "string"
+        },
+        "otpValue": {
+          "type": "string"
+        },
+        "secureService": {
+          "type": "string"
+        }
+      },
+      "required": ["secureServiceId", "otpValue"]
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "secureServiceId": {
+          "type": "string"
+        },
+        "secureService": {
+          "type": "string"
+        },
+        "confrontaInfo": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "confrontaBiometrics": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "cityCode": {
+                  "type": "string"
+                },
+                "stateCode": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "expeditionDate": {
+                  "type": "string"
+                }
+              },
+              "required": ["cityCode", "stateCode", "phone", "expeditionDate"]
+            }
+          },
+          "required": ["confrontaBiometrics"]
+        }
+      },
+      "required": ["secureServiceId", "otpValue", "confrontaInfo"]
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "secureServiceId": {
+          "type": "string"
+        },
+        "secureService": {
+          "type": "string"
+        },
+        "confrontaInfo": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "questionnaireCode": {
+              "type": "string"
+            },
+            "answers": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "answer": {
+                    "type": "string"
+                  }
+                },
+                "required": ["id", "answer"]
+              }
+            }
+          },
+          "required": ["questionnaireCode", "answers"]
+        }
+      },
+      "required": ["secureServiceId", "confrontaInfo"]
+    }
+  ]
+}

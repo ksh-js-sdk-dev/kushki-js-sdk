@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SecureOtpResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "isValid": {
+          "type": "boolean"
+        }
+      },
+      "required": ["isValid"]
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": ["code", "message"]
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "questionnaireCode": {
+          "type": "string"
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["id", "text"]
+                }
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": ["text", "options", "id"]
+          }
+        }
+      },
+      "required": ["code", "message", "questionnaireCode", "questions"]
+    }
+  ]
+}

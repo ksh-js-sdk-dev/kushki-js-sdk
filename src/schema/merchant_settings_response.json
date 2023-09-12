@@ -2,80 +2,61 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "MerchantSettingsResponse",
   "definitions": {
-    "processorSettings": {
+    "Processor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "processorName": {
+          "type": "string"
+        }
+      },
+      "required": ["processorName"]
+    },
+    "ProcessorSettings": {
       "type": "object",
       "properties": {
         "card": {
           "type": "array",
           "items": {
-            "additionalProperties": false,
-            "type": "object",
-            "properties": {
-              "processorName": {
-                "type": "string"
-              }
-            },
-            "required": ["processorName"]
+            "$ref": "#/definitions/Processor"
           }
         },
         "cash": {
           "type": "array",
           "items": {
-            "additionalProperties": false,
-            "type": "object",
-            "properties": {
-              "processorName": {
-                "type": "string"
-              }
-            },
-            "required": ["processorName"]
+            "$ref": "#/definitions/Processor"
           }
         },
         "transfer": {
           "type": "array",
           "items": {
-            "additionalProperties": false,
-            "type": "object",
-            "properties": {
-              "processorName": {
-                "type": "string"
-              }
-            },
-            "required": ["processorName"]
+            "$ref": "#/definitions/Processor"
           }
         },
         "payouts-cash": {
           "type": "array",
           "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "processorName": {
-                "type": "string"
-              }
-            },
-            "required": ["processorName"]
+            "$ref": "#/definitions/Processor"
           }
         },
         "payouts-transfer": {
           "type": "array",
           "items": {
-            "additionalProperties": false,
-            "type": "object",
-            "properties": {
-              "processorName": {
-                "type": "string"
-              }
-            },
-            "required": ["processorName"]
+            "$ref": "#/definitions/Processor"
           }
         }
       }
     }
   },
   "properties": {
+    "merchantName": {
+      "type": "string"
+    },
+    "active_3dsecure": {
+      "type": "boolean"
+    },
     "processors": {
-      "$ref": "#/definitions/processorSettings"
+      "$ref": "#/definitions/ProcessorSettings"
     },
     "processor_name": {
       "type": "string"

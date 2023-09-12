@@ -7,12 +7,22 @@ import { Mock } from "ts-mockery";
 import { EnvironmentEnum } from "infrastructure/EnvironmentEnum";
 import { ISiftScienceService } from "repository/ISiftScienceService";
 import { IDENTIFIERS } from "src/constant/Identifiers";
+import { MerchantSettingsResponse } from "types/merchant_settings_response";
+import { SiftScienceEnum } from "infrastructure/SiftScienceEnum";
 
 describe("SiftScience Gateway - ", () => {
   let siftScienceService: ISiftScienceService;
   let mockKushki: Kushki;
   const processor: string = "kushki";
   const clientIdentification: string = "2014098375";
+  const merchantSettingsResponse: MerchantSettingsResponse = {
+    country: "Ecuador",
+    merchant_name: "ipsum dolor",
+    processor_name: "exercitation deserunt velit",
+    prodBaconKey: "hello123",
+    sandboxBaconKey: null,
+    sandboxEnable: false
+  };
 
   afterEach(() => {
     CONTAINER.restore();
@@ -23,52 +33,22 @@ describe("SiftScience Gateway - ", () => {
 
     mockKushki = Mock.of<Kushki>({
       getBaseUrl: () => EnvironmentEnum.prod,
-      getPublicCredentialId: () => "123456"
+      getEnvironmentSift: () => SiftScienceEnum.prod,
+      getPublicCredentialId: () => "123456",
+      isInTest: () => false
     });
   });
 
-  function unbindBind(
-    identifier: symbol,
-    mockObject: object | (() => void)
-  ): void {
-    CONTAINER.unbind(identifier);
-    CONTAINER.bind(identifier).toConstantValue(mockObject);
-  }
-
   it("test createSiftScienceSession request with environment uat - success", async () => {
-    const mockSiftScience = {
-      createSiftScienceSession: () => {
-        return {
-          sessionId: "447a1ca8-c4e2-11ec-9d64-0242ac120002",
-          userId: "123456"
-        };
-      }
-    };
-
-    const kushkiGatewayMock = {
-      requestMerchantSettings: () => {
-        return {
-          country: "Ecuador",
-          merchantName: "ipsum dolor",
-          processorName: "exercitation deserunt velit",
-          prodBaconKey: "hello123",
-          sandboxBaconKey: null,
-          sandboxEnable: false
-        };
-      }
-    };
-
-    unbindBind(IDENTIFIERS.KushkiGateway, kushkiGatewayMock);
-    unbindBind(IDENTIFIERS.SiftScienceService, mockSiftScience);
-
     siftScienceService = CONTAINER.get<ISiftScienceService>(
       IDENTIFIERS.SiftScienceService
     );
 
-    const data = await siftScienceService.createSiftScienceSession(
+    const data = siftScienceService.createSiftScienceSession(
       processor,
       clientIdentification,
-      mockKushki
+      mockKushki,
+      merchantSettingsResponse
     );
 
     expect(data).toHaveProperty("userId");
@@ -76,31 +56,6 @@ describe("SiftScience Gateway - ", () => {
   });
 
   it("test createSiftScienceSession request with environment prod - success", async () => {
-    const mockSiftScience = {
-      createSiftScienceSession: () => {
-        return {
-          sessionId: "447a1ca8-c4e2-11ec-9d64-0242ac120002",
-          userId: "123456"
-        };
-      }
-    };
-
-    const kushkiGatewayMock = {
-      requestMerchantSettings: () => {
-        return {
-          country: "Ecuador",
-          merchantName: "ipsum dolor",
-          processorName: "exercitation deserunt velit",
-          prodBaconKey: "hello123",
-          sandboxBaconKey: null,
-          sandboxEnable: false
-        };
-      }
-    };
-
-    unbindBind(IDENTIFIERS.KushkiGateway, kushkiGatewayMock);
-    unbindBind(IDENTIFIERS.SiftScienceService, mockSiftScience);
-
     siftScienceService = CONTAINER.get<ISiftScienceService>(
       IDENTIFIERS.SiftScienceService
     );
@@ -108,7 +63,8 @@ describe("SiftScience Gateway - ", () => {
     const data = await siftScienceService.createSiftScienceSession(
       processor,
       clientIdentification,
-      mockKushki
+      mockKushki,
+      merchantSettingsResponse
     );
 
     expect(data).toHaveProperty("userId");
@@ -116,39 +72,21 @@ describe("SiftScience Gateway - ", () => {
   });
 
   it("test createSiftScienceSession request - without env", async () => {
-    const mockSiftScience = {
-      createSiftScienceSession: () => {
-        return {
-          sessionId: null,
-          userId: null
-        };
-      }
+    const merchantSettings = {
+      ...merchantSettingsResponse,
+      prodBaconKey: "",
+      sandboxBaconKey: null
     };
-
-    const kushkiGatewayMock = {
-      requestMerchantSettings: () => {
-        return {
-          country: "Ecuador",
-          merchantName: "ipsum dolor",
-          processorName: "exercitation deserunt velit",
-          prodBaconKey: "hello123",
-          sandboxBaconKey: null,
-          sandboxEnable: false
-        };
-      }
-    };
-
-    unbindBind(IDENTIFIERS.KushkiGateway, kushkiGatewayMock);
-    unbindBind(IDENTIFIERS.SiftScienceService, mockSiftScience);
 
     siftScienceService = CONTAINER.get<ISiftScienceService>(
       IDENTIFIERS.SiftScienceService
     );
 
-    const data = await siftScienceService.createSiftScienceSession(
+    const data = siftScienceService.createSiftScienceSession(
       processor,
       clientIdentification,
-      mockKushki
+      mockKushki,
+      merchantSettings
     );
 
     expect(data).toHaveProperty("userId", null);

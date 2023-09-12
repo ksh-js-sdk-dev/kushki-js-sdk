@@ -1,8 +1,9 @@
 /**
  * Interface Sift Science Service file.
  */
-import { SiftScienceAntiFraudSessionResponse } from "types/sift_science_session";
 import { Kushki } from "Kushki";
+import { MerchantSettingsResponse } from "types/merchant_settings_response";
+import { SiftScienceObject } from "types/sift_science_object";
 
 export interface ISiftScienceService {
   /**
@@ -11,6 +12,8 @@ export interface ISiftScienceService {
   createSiftScienceSession(
     processor: string,
     clientIdentification: string,
-    kushkiInstance: Kushki
-  ): Promise<SiftScienceAntiFraudSessionResponse>;
+    kushkiInstance: Kushki,
+    merchantSettingsResponse: MerchantSettingsResponse,
+    userId?: string
+  ): SiftScienceObject;
 }

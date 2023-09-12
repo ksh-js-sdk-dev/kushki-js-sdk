@@ -16,9 +16,24 @@ import { IKushkiGateway } from "repository/IKushkiGateway";
 import { IDENTIFIERS } from "src/constant/Identifiers";
 import { CONTAINER } from "infrastructure/Container";
 import { KushkiGateway } from "gateway/KushkiGateway";
+import { MerchantSettingsResponse } from "types/merchant_settings_response";
+import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
+import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import { SecureOtpResponse } from "types/secure_otp_response";
+
+declare global {
+  // tslint:disable-next-line
+  interface Window {
+    // tslint:disable-next-line:no-any
+    Cardinal: any;
+  }
+}
 import { FieldOptions } from "infrastructure/interfaces/FieldOptions.ts";
 import { FieldValidity, FormValidity } from "types/form_validity";
 import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
+import { ISiftScienceService } from "repository/ISiftScienceService";
+import { CREDIT_CARD_ESPECIFICATIONS } from "src/constant/CreditCardEspecifications";
+import { SiftScienceObject } from "types/sift_science_object";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
@@ -26,6 +41,7 @@ export class Card implements ICard {
   private inputValues: CardFieldValues;
   private currentBin: string;
   private readonly _gateway: IKushkiGateway;
+  private readonly _siftScience: ISiftScienceService;
   private readonly listenerFieldValidity: string = "fieldValidity";
 
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
@@ -34,6 +50,9 @@ export class Card implements ICard {
     this.inputValues = {};
     this.currentBin = "";
     this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
+    this._siftScience = CONTAINER.get<ISiftScienceService>(
+      IDENTIFIERS.SiftScienceService
+    );
   }
 
   public static initCardToken(
@@ -60,17 +79,189 @@ export class Card implements ICard {
     });
   }
 
-  public requestToken(): Promise<TokenResponse> {
+  public async requestToken(): Promise<TokenResponse> {
+    try {
+      const merchantSettings: MerchantSettingsResponse =
+        await this._gateway.requestMerchantSettings(this.kushkiInstance);
+
+      const scienceSession: SiftScienceObject =
+        this._getScienceSession(merchantSettings);
+
+      const jwt: string | undefined = await this.getJwtIf3dsEnabled(
+        merchantSettings
+      );
+
+      if (jwt) {
+        const token = await this.request3DSToken(jwt, scienceSession);
+
+        return Promise.resolve(token);
+      } else return this.requestTokenGateway(jwt, scienceSession);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  private async request3DSToken(
+    jwt: string,
+    scienceSession?: SiftScienceObject
+  ) {
+    if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
+    else await import("libs/cardinal/prod");
+
+    const token: TokenResponse = await this.getCardinal3dsToken(
+      jwt,
+      scienceSession
+    );
+
+    return this.validate3dsToken(token);
+  }
+
+  private validate3dsToken(token: TokenResponse) {
+    if (this.hasNotNeedAuth(token)) {
+      return Promise.resolve(token);
+    }
+    if (this.hasAllSecurityProperties(token)) return this.validation3ds(token);
+
+    return Promise.reject(ERRORS.E005);
+  }
+
+  private hasAllSecurityProperties(token: TokenResponse): boolean {
+    return !!(
+      token.security &&
+      token.security.authRequired &&
+      token.security.acsURL &&
+      token.security.paReq &&
+      token.security.authenticationTransactionId
+    );
+  }
+
+  private hasNotNeedAuth(token: TokenResponse): boolean {
+    return !!(token.security && !token.security.authRequired);
+  }
+
+  private async validation3ds(token: TokenResponse) {
+    if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
+    else await import("libs/cardinal/prod");
+
+    this.launchCardinal(token);
+
+    if (await this.completeCardinal(token.secureId!))
+      return Promise.resolve(token);
+    else return Promise.reject(ERRORS.E006);
+  }
+
+  private async completeCardinal(secureServiceId: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      return window.Cardinal.on("payments.validated", async () => {
+        try {
+          const secureValidation: SecureOtpResponse =
+            await this._gateway.requestSecureServiceValidation(
+              this.kushkiInstance,
+              {
+                secureServiceId,
+                otpValue: ""
+              }
+            );
+
+          resolve(this.is3dsValid(secureValidation));
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+  }
+
+  private is3dsValid(secureOtpResponse: SecureOtpResponse): boolean {
+    return (
+      "message" in secureOtpResponse &&
+      ((secureOtpResponse.message === "3DS000" &&
+        secureOtpResponse.code === "ok") ||
+        (secureOtpResponse.code === "3DS000" &&
+          secureOtpResponse.message === "ok"))
+    );
+  }
+
+  private launchCardinal(token: TokenResponse) {
+    window.Cardinal.continue(
+      "cca",
+      {
+        AcsUrl: token.security!.acsURL!,
+        Payload: token.security!.paReq!
+      },
+      {
+        OrderDetails: {
+          TransactionId: token.security!.authenticationTransactionId!
+        }
+      }
+    );
+  }
+
+  private async getCardinal3dsToken(
+    jwt: string,
+    scienceSession?: SiftScienceObject
+  ): Promise<TokenResponse> {
+    return new Promise<TokenResponse>((resolve, reject) => {
+      window.Cardinal.on("payments.setupComplete", async () => {
+        try {
+          resolve(await this.requestTokenGateway(jwt, scienceSession));
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+  }
+
+  private async getJwtIf3dsEnabled(
+    merchantSettings: MerchantSettingsResponse
+  ): Promise<string | undefined> {
+    if (merchantSettings.active_3dsecure) {
+      const jwtResponse: CybersourceJwtResponse =
+        await this._gateway.requestCybersourceJwt(this.kushkiInstance);
+
+      await this.initCardinal(jwtResponse.jwt);
+
+      return jwtResponse.jwt;
+    } else {
+      return undefined;
+    }
+  }
+
+  private async initCardinal(jwt: string) {
+    if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
+    else await import("libs/cardinal/prod");
+
+    this.setUpCardinal(jwt);
+  }
+
+  private setUpCardinal(jwt: string) {
+    window.Cardinal.setup("init", {
+      jwt,
+      order: {
+        Consumer: {
+          Account: {
+            AccountNumber: this.inputValues[
+              InputModelEnum.CARD_NUMBER
+            ]?.value!.replace(/\s+/g, "")
+          }
+        }
+      }
+    });
+  }
+
+  private requestTokenGateway(
+    jwt?: string,
+    scienceSession?: SiftScienceObject
+  ) {
     if (this.options.isSubscription)
       return this._gateway.requestCreateSubscriptionToken(
         this.kushkiInstance,
-        this.buildTokenBody()
+        this.buildTokenBody(jwt, scienceSession)
       );
-    else
-      return this._gateway.requestToken(
-        this.kushkiInstance,
-        this.buildTokenBody()
-      );
+
+    return this._gateway.requestToken(
+      this.kushkiInstance,
+      this.buildTokenBody(jwt, scienceSession)
+    );
   }
 
   public onFieldValidity(event: (fieldEvent: FormValidity) => void): void {
@@ -83,18 +274,23 @@ export class Card implements ICard {
     }) as EventListener);
   }
 
-  private buildTokenBody(): CardTokenRequest {
+  private buildTokenBody(
+    jwt?: string,
+    scienceSession?: SiftScienceObject
+  ): CardTokenRequest {
     const { cardholderName, cardNumber, expirationDate, cvv } =
       this.inputValues;
     const { currency } = this.options;
 
     return {
+      ...scienceSession,
+      jwt,
       card: {
         cvv: cvv!.value!,
         expiryMonth: expirationDate!.value!.split("/")[0]!,
         expiryYear: expirationDate!.value!.split("/")[1]!,
         name: cardholderName!.value!,
-        number: cardNumber!.value!.replace(/\s+/g, "")
+        number: cardNumber ? cardNumber!.value!.replace(/\s+/g, "") : ""
       },
       currency,
       ...this.buildTotalAmount()
@@ -127,7 +323,7 @@ export class Card implements ICard {
       [field]: { ...this.inputValues[field], value: value }
     };
 
-    if (field === InputModelEnum.CARD_NUMBER) {
+    if (field === InputModelEnum.CARD_NUMBER && value !== undefined) {
       this.onChangeCardNumber(value);
     }
   }
@@ -193,7 +389,7 @@ export class Card implements ICard {
   }
 
   private onChangeCardNumber(value: string) {
-    const cardNumber: string = value.replace(/ /g, "");
+    const cardNumber: string = value?.replace(/ /g, "");
 
     if (cardNumber.length >= 8) this.handleSetCardNumber(cardNumber);
   }
@@ -290,4 +486,34 @@ export class Card implements ICard {
 
     return { fields: fieldsValidity, isFormValid: false };
   };
+
+  private _getScienceSession(
+    merchantSettings: MerchantSettingsResponse
+  ): SiftScienceObject {
+    if (
+      this.inputValues.cardNumber &&
+      this.inputValues.cardNumber.value !== undefined
+    )
+      return this._siftScience.createSiftScienceSession(
+        this.getBinFromCreditCardNumberSift(this.inputValues.cardNumber.value),
+        this.inputValues.cardNumber.value.slice(-4),
+        this.kushkiInstance,
+        merchantSettings
+      );
+
+    /* istanbul ignore next */
+    return {
+      sessionId: null,
+      userId: null
+    };
+  }
+
+  private getBinFromCreditCardNumberSift(value: string): string {
+    const card_value: string = value.replace(/\D/g, "");
+
+    return card_value.slice(
+      CREDIT_CARD_ESPECIFICATIONS.cardInitialBinPlace,
+      CREDIT_CARD_ESPECIFICATIONS.cardFinalBinPlaceSift
+    );
+  }
 }
