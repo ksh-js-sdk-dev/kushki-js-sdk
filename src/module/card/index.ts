@@ -12,4 +12,9 @@ export type {
 export type { CardFieldValues } from "types/card_fields_values";
 export type { CardTokenRequest } from "types/card_token_request";
 export type { TokenResponse } from "types/remote/token_response";
-export type { Fields, FieldValidity, FormValidity } from "types/form_validity";
+export type {
+  Fields,
+  FieldValidity,
+  FormValidity,
+  ErrorTypeEnum
+} from "types/form_validity";

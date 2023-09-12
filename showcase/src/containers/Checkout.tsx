@@ -4,7 +4,8 @@ import {
   CardOptions,
   Fields,
   FormValidity,
-  TokenResponse
+  TokenResponse,
+  ErrorTypeEnum
 } from "Kushki/card";
 import { useEffect, useState } from "react";
 
@@ -310,7 +311,7 @@ export const CheckoutContainer = () => {
     );
   };
 
-  const customMessageValidity = (field: string, errorType: string) => {
+  const customMessageValidity = (field: string, errorType: ErrorTypeEnum) => {
     if (errorType === "empty") return `The field ${field} is required`;
 
     return `Error-${field} is ${errorType}`;
