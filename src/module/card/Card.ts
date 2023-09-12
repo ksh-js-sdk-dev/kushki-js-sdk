@@ -74,6 +74,12 @@ export class Card implements ICard {
 
   public async requestToken(): Promise<TokenResponse> {
     try {
+      const { isFormValid } = this.getFormValidity();
+
+      if (!isFormValid) {
+        return Promise.reject(ERRORS.E007);
+      }
+
       const merchantSettings: MerchantSettingsResponse =
         await this._gateway.requestMerchantSettings(this.kushkiInstance);
       const jwt: string | undefined = await this.getJwtIf3dsEnabled(
@@ -197,6 +203,7 @@ export class Card implements ICard {
     if (merchantSettings.active_3dsecure) {
       const jwtResponse: CybersourceJwtResponse =
         await this._gateway.requestCybersourceJwt(this.kushkiInstance);
+
       await this.initCardinal(jwtResponse.jwt);
 
       return jwtResponse.jwt;
@@ -248,6 +255,27 @@ export class Card implements ICard {
 
       event(fieldEvent);
     }) as EventListener);
+  }
+
+  public getFormValidity(): FormValidity {
+    let formValid: boolean = true;
+
+    for (const inputName in this.inputValues) {
+      const validityProps: FieldValidity = this.inputValues[inputName].validity;
+      const isInputInValid: boolean = !validityProps.isValid;
+      const isErrorTypeValid: boolean = Boolean(validityProps.errorType);
+
+      if (isInputInValid) formValid = false;
+      if (isInputInValid && !isErrorTypeValid)
+        validityProps.errorType = ErrorTypeEnum.EMPTY;
+    }
+
+    const eventFormValidity: CustomEvent<FormValidity> =
+      this.buildEventFormValidity(this.inputValues);
+
+    dispatchEvent(eventFormValidity);
+
+    return this.buildFieldsValidity(this.inputValues, formValid);
   }
 
   private buildTokenBody(jwt?: string): CardTokenRequest {
@@ -325,11 +353,8 @@ export class Card implements ICard {
       }
     };
 
-    const event: CustomEvent<FormValidity> = new CustomEvent<FormValidity>(
-      this.listenerFieldValidity,
-      {
-        detail: this.buildFieldsValidity(this.inputValues)
-      }
+    const event: CustomEvent<FormValidity> = this.buildEventFormValidity(
+      this.inputValues
     );
 
     dispatchEvent(event);
@@ -393,6 +418,16 @@ export class Card implements ICard {
           isValid: false
         }
       };
+
+      // TODO : tobe defined validation in Deferred Hu
+      if (field.fieldType === "deferred")
+        this.inputValues[field.fieldType] = {
+          hostedField,
+          selector: field.selector,
+          validity: {
+            isValid: true
+          }
+        };
     }
 
     this.hideContainers();
@@ -433,17 +468,16 @@ export class Card implements ICard {
   };
 
   private buildFieldsValidity = (
-    inputValues: CardFieldValues
+    inputValues: CardFieldValues,
+    isFormValid?: boolean
   ): FormValidity => {
     const defaultValidity: FieldValidity = {
-      errorType: ErrorTypeEnum.EMPTY,
       isValid: false
     };
     const fieldsValidity: Fields = {
       cardholderName: defaultValidity,
       cardNumber: defaultValidity,
       cvv: defaultValidity,
-      deferred: defaultValidity,
       expirationDate: defaultValidity
     };
 
@@ -456,6 +490,14 @@ export class Card implements ICard {
       }
     }
 
-    return { fields: fieldsValidity, isFormValid: false };
+    return { fields: fieldsValidity, isFormValid: isFormValid ?? false };
+  };
+
+  private buildEventFormValidity = (
+    inputValues: CardFieldValues
+  ): CustomEvent<FormValidity> => {
+    return new CustomEvent<FormValidity>(this.listenerFieldValidity, {
+      detail: this.buildFieldsValidity(inputValues)
+    });
   };
 }

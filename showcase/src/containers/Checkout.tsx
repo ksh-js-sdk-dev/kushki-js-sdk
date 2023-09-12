@@ -274,7 +274,7 @@ export const CheckoutContainer = () => {
           }
         }
       }
-    },
+    }
   };
 
   useEffect(() => {
@@ -309,6 +309,12 @@ export const CheckoutContainer = () => {
     );
   };
 
+  const customMessageValidity = (field: string, errorType: string) => {
+    if (errorType === "empty") return `The field ${field} is required`;
+
+    return `Error-${field} is ${errorType}`;
+  };
+
   useEffect(() => {
     if (cardInstance) {
       cardInstance.onFieldValidity((event: FormValidity) => {
@@ -328,31 +334,43 @@ export const CheckoutContainer = () => {
         <div id="cardHolderName_id"></div>
         {validError(fieldsValidityDemo, "cardholderName") && (
           <div>
-            Error-CardHolderName is{" "}
-            {fieldsValidityDemo.cardholderName.errorType}
+            {customMessageValidity(
+              "cardholderName",
+              fieldsValidityDemo.cardholderName.errorType!
+            )}
           </div>
         )}
         <div id="cardNumber_id"></div>
         {validError(fieldsValidityDemo, "cardNumber") && (
           <div>
-            Error-CardNumber is {fieldsValidityDemo.cardNumber.errorType}
+            {customMessageValidity(
+              "cardNumber",
+              fieldsValidityDemo.cardNumber.errorType!
+            )}
           </div>
         )}
         <div id="expirationDate_id"></div>
         {validError(fieldsValidityDemo, "expirationDate") && (
           <div>
-            Error - ExpirationDate is{" "}
-            {fieldsValidityDemo.expirationDate.errorType}
+            {customMessageValidity(
+              "expirationDate",
+              fieldsValidityDemo.expirationDate.errorType!
+            )}
           </div>
         )}
         <div id="cvv_id"></div>
         {validError(fieldsValidityDemo, "cvv") && (
-          <div>Error - Cvv is {fieldsValidityDemo.cvv.errorType}</div>
+          <div>
+            {customMessageValidity("cvv", fieldsValidityDemo.cvv.errorType!)}
+          </div>
         )}
         <div id="deferred_id"></div>
         {validError(fieldsValidityDemo, "deferred") && (
           <div>
-            Error - Deferred is {fieldsValidityDemo.deferred!.errorType}
+            {customMessageValidity(
+              "deferred",
+              fieldsValidityDemo.deferred!.errorType!
+            )}
           </div>
         )}
 
