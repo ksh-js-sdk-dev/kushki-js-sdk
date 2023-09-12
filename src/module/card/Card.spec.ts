@@ -307,7 +307,8 @@ describe("Card test", () => {
           authRequired: true,
           acsURL: "url",
           paReq: "req",
-          authenticationTransactionId: "1234"
+          authenticationTransactionId: "1234",
+          specificationVersion: "2.0.1"
         }
       });
 
@@ -332,7 +333,8 @@ describe("Card test", () => {
             authRequired: true,
             acsURL: "url",
             paReq: "req",
-            authenticationTransactionId: "1234"
+            authenticationTransactionId: "1234",
+            specificationVersion: "2.0.1"
           }
         },
         {
@@ -382,7 +384,8 @@ describe("Card test", () => {
           authRequired: true,
           acsURL: "url",
           paReq: "req",
-          authenticationTransactionId: "1234"
+          authenticationTransactionId: "1234",
+          specificationVersion: "2.0.1"
         }
       });
 
@@ -448,7 +451,8 @@ describe("Card test", () => {
             authRequired: true,
             acsURL: "url",
             paReq: "req",
-            authenticationTransactionId: "1234"
+            authenticationTransactionId: "1234",
+            specificationVersion: "2.0.1"
           }
         },
         {
@@ -479,7 +483,8 @@ describe("Card test", () => {
             authRequired: true,
             acsURL: "url",
             paReq: "req",
-            authenticationTransactionId: "1234"
+            authenticationTransactionId: "1234",
+            specificationVersion: "2.0.1"
           }
         },
         Promise.reject(ERRORS.E006)

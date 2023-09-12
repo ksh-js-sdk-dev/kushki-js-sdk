@@ -143,17 +143,14 @@ export class Card implements ICard {
       token.security.authRequired &&
       token.security.acsURL &&
       token.security.paReq &&
-      token.security.authenticationTransactionId
+      token.security.authenticationTransactionId &&
+      +token.security.specificationVersion.split(".")[0] >= 2
     );
   }
 
   private tokenNotNeedsAuth(token: TokenResponse): boolean {
     return (
-      !!(
-        token.security &&
-        (!token.security.authRequired ||
-          +token.security.specificationVersion < 2)
-      ) || !token.security
+      !!(token.security && !token.security.authRequired) || !token.security
     );
   }
 
