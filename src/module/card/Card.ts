@@ -208,8 +208,8 @@ export class Card implements ICard {
         Status: "Success"
       });
 
-      if (cardinalStatus) return true;
-      return false;
+      return !!cardinalStatus;
+
     } catch (error) {
       return false;
     }
@@ -233,10 +233,10 @@ export class Card implements ICard {
     if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
     else await import("libs/cardinal/prod");
 
-    await this.setUpCardinal(jwt);
+    await this.setupCardinal(jwt);
   }
 
-  private async setUpCardinal(jwt: string) {
+  private async setupCardinal(jwt: string) {
     const accountNumber = this.inputValues[
       InputModelEnum.CARD_NUMBER
     ]?.value!.replace(/\s+/g, "");
