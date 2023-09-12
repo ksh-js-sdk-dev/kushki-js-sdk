@@ -76,6 +76,7 @@ export class Card implements ICard {
     try {
       const merchantSettings: MerchantSettingsResponse =
         await this._gateway.requestMerchantSettings(this.kushkiInstance);
+
       const jwt: string | undefined = await this.getJwtIf3dsEnabled(
         merchantSettings
       );
@@ -87,23 +88,23 @@ export class Card implements ICard {
       } else return this.requestTokenGateway();
     } catch (error) {
       return Promise.reject(error);
+    } finally {
+      window.Cardinal.off("payments.setupComplete");
+      window.Cardinal.off("payments.validated");
     }
   }
 
   private async request3DSToken(jwt: string) {
-    if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
-    else await import("libs/cardinal/prod");
-
     const token: TokenResponse = await this.getCardinal3dsToken(jwt);
 
     return this.validate3dsToken(token);
   }
 
   private validate3dsToken(token: TokenResponse) {
-    if (this.hasNotNeedAuth(token)) {
+    if (this.tokenNotNeedsAuth(token)) {
       return Promise.resolve(token);
     }
-    if (this.hasAllSecurityProperties(token)) return this.validation3ds(token);
+    if (this.hasAllSecurityProperties(token)) return this.validate3DS(token);
 
     return Promise.reject(ERRORS.E005);
   }
@@ -118,14 +119,17 @@ export class Card implements ICard {
     );
   }
 
-  private hasNotNeedAuth(token: TokenResponse): boolean {
-    return !!(token.security && !token.security.authRequired);
+  private tokenNotNeedsAuth(token: TokenResponse): boolean {
+    return (
+      !!(
+        token.security &&
+        (!token.security.authRequired ||
+          +token.security.specificationVersion < 2)
+      ) || !token.security
+    );
   }
 
-  private async validation3ds(token: TokenResponse) {
-    if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
-    else await import("libs/cardinal/prod");
-
+  private async validate3DS(token: TokenResponse) {
     this.launchCardinal(token);
 
     if (await this.completeCardinal(token.secureId!))
@@ -180,15 +184,35 @@ export class Card implements ICard {
   }
 
   private async getCardinal3dsToken(jwt: string): Promise<TokenResponse> {
-    return new Promise<TokenResponse>((resolve, reject) => {
-      window.Cardinal.on("payments.setupComplete", async () => {
+    return new Promise<TokenResponse>(async (resolve, reject) => {
+      const requestToken = async () => {
         try {
           resolve(await this.requestTokenGateway(jwt));
         } catch (error) {
           reject(error);
         }
-      });
+      };
+
+      if (await this.isCardinalInitialized()) {
+        await requestToken();
+      } else
+        window.Cardinal.on("payments.setupComplete", async () => {
+          await requestToken();
+        });
     });
+  }
+
+  private async isCardinalInitialized(): Promise<boolean> {
+    try {
+      const cardinalStatus = await window.Cardinal.complete({
+        Status: "Success"
+      });
+
+      return !!cardinalStatus;
+
+    } catch (error) {
+      return false;
+    }
   }
 
   private async getJwtIf3dsEnabled(
@@ -209,22 +233,29 @@ export class Card implements ICard {
     if (this.kushkiInstance.isInTest()) await import("libs/cardinal/staging");
     else await import("libs/cardinal/prod");
 
-    this.setUpCardinal(jwt);
+    await this.setupCardinal(jwt);
   }
 
-  private setUpCardinal(jwt: string) {
-    window.Cardinal.setup("init", {
-      jwt,
-      order: {
-        Consumer: {
-          Account: {
-            AccountNumber: this.inputValues[
-              InputModelEnum.CARD_NUMBER
-            ]?.value!.replace(/\s+/g, "")
+  private async setupCardinal(jwt: string) {
+    const accountNumber = this.inputValues[
+      InputModelEnum.CARD_NUMBER
+    ]?.value!.replace(/\s+/g, "");
+
+    if (await this.isCardinalInitialized()) {
+      window.Cardinal.trigger("accountNumber.update", accountNumber);
+      window.Cardinal.trigger("jwt.update", jwt);
+    } else {
+      window.Cardinal.setup("init", {
+        jwt,
+        order: {
+          Consumer: {
+            Account: {
+              AccountNumber: accountNumber
+            }
           }
         }
-      }
-    });
+      });
+    }
   }
 
   private requestTokenGateway(jwt?: string) {
