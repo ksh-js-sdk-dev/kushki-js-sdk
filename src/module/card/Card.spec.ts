@@ -88,24 +88,6 @@ describe("Card test", () => {
     expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
   });
 
-  it("it should set isValid as true when deferred is an option field", async () => {
-    options = {
-      ...options,
-      fields: {
-        ...options.fields,
-        deferred: {
-          fieldType: InputModelEnum.DEFERRED,
-          selector: "id_test"
-        }
-      }
-    };
-    const cardInstance = await Card.initCardToken(kushki, options);
-
-    expect(cardInstance["inputValues"].deferred!.validity.isValid).toEqual(
-      true
-    );
-  });
-
   it("should set handleOnChange as callback in KushkiHostedFields", async () => {
     await Card.initCardToken(kushki, options);
 

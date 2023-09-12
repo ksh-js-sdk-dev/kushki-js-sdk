@@ -79,6 +79,42 @@
         "expirationDate"
       ]
     },
+    "selectOptions": {
+      "title": "SelectOptions",
+      "additionalProperties": false,
+      "properties": {
+        "styles": {
+          "$ref": "#/definitions/styles"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "hiddenLabel": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      }
+    },
+    "deferredInputs": {
+      "title": "DeferredInputs",
+      "additionalProperties": false,
+      "properties": {
+        "deferredCheckbox": {
+          "$ref": "#/definitions/selectOptions"
+        },
+        "deferredType": {
+          "$ref": "#/definitions/selectOptions"
+        },
+        "months": {
+          "$ref": "#/definitions/selectOptions"
+        },
+        "graceMonths": {
+          "$ref": "#/definitions/selectOptions"
+        }
+      }
+    },
     "field": {
       "title": "Field",
       "additionalProperties": false,
@@ -118,6 +154,9 @@
         },
         "brandIcon": {
           "type": "string"
+        },
+        "deferredInputs": {
+          "$ref": "#/definitions/deferredInputs"
         }
       },
       "required": ["selector", "fieldType"]

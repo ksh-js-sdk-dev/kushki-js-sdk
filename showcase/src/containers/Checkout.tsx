@@ -188,6 +188,148 @@ export const CheckoutContainer = () => {
         }
       },
       deferred: {
+        deferredInputs: {
+          deferredCheckbox: {
+            label: "Quiero pagar en cuotas",
+            styles: {
+              container: {
+                position: "relative",
+                marginBottom: "20px",
+                gridRow: "1",
+                gridColumns: "1"
+              },
+              input: {
+                borderRadius: "10px",
+                padding: "10px",
+                border: "1px solid #ccc",
+                width: "18px",
+                height: "18px"
+              },
+              inputActive: {
+                borderRadius: "10px",
+                padding: "10px",
+                border: "1px solid #ccc",
+                width: "18px",
+                height: "18px"
+              },
+              label: {
+                background: "white",
+                color: "#293036",
+                fontFamily: "IBM Plex sans",
+                fontWeight: "500",
+                paddingLeft: "5px",
+                paddingRight: "5px",
+              }
+            }
+          },
+          deferredType: {
+            label: "Tipos de diferido",
+            placeholder: "Tipos de diferido",
+            hiddenLabel: "deferred Type",
+            styles: {
+              container: {
+                position: "relative",
+                marginBottom: "20px",
+                gridRow: "2",
+                gridColumns: "1"
+              },
+              input: {
+                fontFamily: "IBM Plex sans-serif",
+                width: "350px",
+                padding: "10px",
+                outline: "none",
+                fontSize: "18px",
+                fontWeight: "400",
+                borderRadius: "10px",
+                border: "1px solid #ccc",
+              },
+              label: {
+                background: "white",
+                color: "#6D7781",
+                fontFamily: "IBM Plex sans-serif",
+                fontSize: "12px",
+                fontWeight: "400",
+                left: "16px",
+                paddingLeft: "5px",
+                paddingRight: "5px",
+                position: "absolute",
+                top: "-7px"
+              }
+            }
+          },
+          months: {
+            label: "Meses",
+            placeholder: "Meses",
+            hiddenLabel: "Meses",
+            styles: {
+              container: {
+                position: "relative",
+                marginBottom: "20px",
+                width: "175px",
+                gridRow: "3",
+                gridColumns: "1"
+              },
+              input: {
+                fontFamily: "IBM Plex sans-serif",
+                width: "175px",
+                padding: "10px",
+                outline: "none",
+                fontSize: "18px",
+                fontWeight: "400",
+                borderRadius: "10px",
+                border: "1px solid #ccc",
+              },
+              label: {
+                background: "white",
+                color: "#6D7781",
+                fontFamily: "IBM Plex sans-serif",
+                fontSize: "12px",
+                fontWeight: "400",
+                left: "16px",
+                paddingLeft: "5px",
+                paddingRight: "5px",
+                position: "absolute",
+                top: "-7px"
+              }
+            }
+          },
+          graceMonths: {
+            label: "Meses de gracia",
+            placeholder: "Meses de gracia",
+            hiddenLabel: "Meses de gracia",
+            styles: {
+              container: {
+                position: "relative",
+                marginBottom: "20px",
+                width: "175px",
+                gridRow: "3",
+                gridColumns: "1"
+              },
+              input: {
+                fontFamily: "IBM Plex sans-serif",
+                width: "175px",
+                padding: "10px",
+                outline: "none",
+                fontSize: "18px",
+                fontWeight: "400",
+                borderRadius: "10px",
+                border: "1px solid #ccc",
+              },
+              label: {
+                background: "white",
+                color: "#6D7781",
+                fontFamily: "IBM Plex sans-serif",
+                fontSize: "12px",
+                fontWeight: "400",
+                left: "16px",
+                paddingLeft: "5px",
+                paddingRight: "5px",
+                position: "absolute",
+                top: "-7px"
+              }
+            }
+          }
+        },
         fieldType: "deferred",
         inputType: "text",
         label: "Diferido",
@@ -195,7 +337,10 @@ export const CheckoutContainer = () => {
         selector: "deferred_id",
         styles: {
           container: {
-            position: "relative"
+            position: "relative",
+            display: "grid",
+            gridTemplateColumns: "50%",
+            gridTemplateRows: "1fr"
           },
           input: {
             border: "1px solid #ccc",
@@ -275,14 +420,14 @@ export const CheckoutContainer = () => {
           }
         }
       }
-    }
+    },
   };
 
   useEffect(() => {
     (async () => {
       const kushkiInstance = await Kushki.init({
         inTest: true,
-        // publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
+        //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
         publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
       });
 
@@ -304,10 +449,10 @@ export const CheckoutContainer = () => {
     }
   };
 
-  const validError = (fieldsValidity: Fields, fieldType: string): boolean => {
+  const validError = (fieldsValidity: Fields, fieldType: keyof Fields): boolean => {
     return (
-      !fieldsValidity[fieldType].isValid &&
-      fieldsValidity[fieldType].errorType !== undefined
+      !fieldsValidity[fieldType]?.isValid &&
+      fieldsValidity[fieldType]?.errorType !== undefined
     );
   };
 

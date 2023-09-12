@@ -1,5 +1,10 @@
 import KushkiHostedFields from "libs/HostedField.ts";
-import { Kushki } from "Kushki";
+import {
+  Kushki,
+  DeferredByBinResponse,
+  DeferredInputValues,
+  FieldInstance
+} from "Kushki";
 import {
   CardFieldValues,
   CardOptions,
@@ -10,7 +15,6 @@ import {
 } from "Kushki/card";
 import { ICard } from "repository/ICard.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import { FieldInstance } from "types/card_fields_values";
 import "reflect-metadata";
 import { IKushkiGateway } from "repository/IKushkiGateway";
 import { IDENTIFIERS } from "src/constant/Identifiers";
@@ -34,6 +38,8 @@ import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
 import { ISiftScienceService } from "repository/ISiftScienceService";
 import { CREDIT_CARD_ESPECIFICATIONS } from "src/constant/CreditCardEspecifications";
 import { SiftScienceObject } from "types/sift_science_object";
+import { BinInfoResponse } from "types/bin_info_response";
+import {DeferredValues} from "types/card_fields_values";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
@@ -66,6 +72,8 @@ export class Card implements ICard {
         await card.initFields(options.fields);
 
         card.showContainers();
+
+        await card.hideDeferredOptions();
         resolve(card);
       } catch (error) {
         reject(error);
@@ -84,7 +92,7 @@ export class Card implements ICard {
       const merchantSettings: MerchantSettingsResponse =
         await this._gateway.requestMerchantSettings(this.kushkiInstance);
 
-      const card_value: string = this.inputValues.cardNumber!.value!.replace(
+      const card_value: string = this.inputValues.cardNumber!.value!.toString().replace(
         /\s+/g,
         ""
       );
@@ -268,7 +276,7 @@ export class Card implements ICard {
   private async setupCardinal(jwt: string) {
     const accountNumber = this.inputValues[
       InputModelEnum.CARD_NUMBER
-    ]?.value!.replace(/\s+/g, "");
+    ]?.value!.toString().replace(/\s+/g, "");
 
     if (await this.isCardinalInitialized()) {
       window.Cardinal.trigger("accountNumber.update", accountNumber);
@@ -342,19 +350,33 @@ export class Card implements ICard {
       this.inputValues;
     const { currency } = this.options;
 
+    const deferredValues = this.getDeferredValues();
+
     return {
       ...scienceSession,
       jwt,
       card: {
-        cvv: cvv!.value!,
-        expiryMonth: expirationDate!.value!.split("/")[0]!,
-        expiryYear: expirationDate!.value!.split("/")[1]!,
-        name: cardholderName!.value!,
-        number: cardNumber!.value!.replace(/\s+/g, "")
+        cvv: String(cvv!.value!),
+        expiryMonth: String(expirationDate!.value!).split("/")[0]!,
+        expiryYear: String(expirationDate!.value!).split("/")[1]!,
+        name: String(cardholderName!.value!),
+        number: String(cardNumber!.value!).replace(/\s+/g, "")
       },
       currency,
+      isDeferred: deferredValues.isDeferred,
+      months: deferredValues.months,
       ...this.buildTotalAmount()
     };
+  }
+  /* istanbul ignore next */
+  private getDeferredValues = () : DeferredValues  => {
+    if(!this.inputValues.deferred || !this.inputValues.deferred.value)
+      return {};
+
+    if(typeof this.inputValues.deferred.value !== "object")
+      return {};
+
+    return this.inputValues.deferred.value;
   }
 
   private buildTotalAmount() {
@@ -427,22 +449,45 @@ export class Card implements ICard {
       this.currentBin = newBin;
 
       try {
-        const { brand } = await this._gateway.requestBinInfo(
-          this.kushkiInstance,
-          {
+        const { brand, cardType }: BinInfoResponse =
+          await this._gateway.requestBinInfo(this.kushkiInstance, {
             bin: newBin
-          }
-        );
+          });
 
         this.inputValues.cardNumber?.hostedField?.updateProps({
           brandIcon: brand
         });
+        /* istanbul ignore next */
+        if (cardType === "credit" && !this.options.isSubscription)
+          this._gateway
+            .requestDeferredInfo(this.kushkiInstance, {
+              bin: newBin
+            })
+            .then(
+              (deferredOptions: DeferredByBinResponse[]) =>
+                this.inputValues.deferred?.hostedField?.updateProps({
+                  deferredOptions
+                })
+            )
+            .then(() => this.inputValues.deferred?.hostedField?.show());
       } catch (error) {
         this.inputValues.cardNumber?.hostedField?.updateProps({
           brandIcon: ""
         });
       }
     }
+  }
+  /* istanbul ignore next */
+  private onChangeDeferred(values: DeferredInputValues) {
+    this.inputValues.deferred!.value = values;
+  }
+  /* istanbul ignore next */
+  private onFocusDeferred(values: DeferredInputValues) {
+    values;
+  }
+  /* istanbul ignore next */
+  private onBlurDeferred(values: DeferredInputValues) {
+    values;
   }
 
   private onChangeCardNumber(value: string) {
@@ -451,23 +496,35 @@ export class Card implements ICard {
     if (cardNumber.length >= 8) this.handleSetCardNumber(cardNumber);
   }
 
+  private buildFieldOptions(field: Field) {
+    const options: FieldOptions = {
+      ...field,
+      handleOnChange: (field: string, value: string) => {
+        return this.handleOnChange(field, value);
+      },
+      handleOnFocus: (field, value: string) => this.handleOnFocus(field, value),
+      handleOnBlur: (field: string, value: string) =>
+        this.handleOnBlur(field, value),
+      handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
+        this.handleOnValidity(field, fieldValidity)
+    };
+    /* istanbul ignore next */
+    if (field.fieldType === InputModelEnum.DEFERRED) {
+      options.handleOnChange = (values: DeferredInputValues) =>
+        this.onChangeDeferred(values);
+      options.handleOnFocus = (values: DeferredInputValues) =>
+        this.onFocusDeferred(values);
+      options.handleOnBlur = (values: DeferredInputValues) =>
+        this.onBlurDeferred(values);
+    }
+
+    return options;
+  }
+
   private initFields(optionsFields: { [k: string]: Field }): Promise<void[]> {
     for (const fieldKey in optionsFields) {
-      const field: Field = optionsFields[fieldKey];
-      const options: FieldOptions = {
-        ...field,
-        handleOnBlur: (field: string, value: string) =>
-          this.handleOnBlur(field, value),
-        handleOnChange: (field: string, value: string) => {
-          return this.handleOnChange(field, value);
-        },
-        handleOnFocus: (field: string, value: string) =>
-          this.handleOnFocus(field, value),
-        handleOnValidity: (
-          field: InputModelEnum,
-          fieldValidity: FieldValidity
-        ) => this.handleOnValidity(field, fieldValidity)
-      };
+      const field = optionsFields[fieldKey];
+      const options = this.buildFieldOptions(field);
 
       const hostedField = KushkiHostedFields(options);
 
@@ -480,6 +537,7 @@ export class Card implements ICard {
       };
 
       // TODO : tobe defined validation in Deferred Hu
+      /* istanbul ignore next */
       if (field.fieldType === "deferred")
         this.inputValues[field.fieldType] = {
           hostedField,
@@ -522,7 +580,7 @@ export class Card implements ICard {
     return Promise.all(
       Object.values<FieldInstance>(this.inputValues).map(
         (field) =>
-          field.hostedField?.render(`#${field.selector}`) as Promise<void>
+          field!.hostedField?.render(`#${field!.selector}`) as Promise<void>
       )
     );
   };
@@ -532,12 +590,14 @@ export class Card implements ICard {
     isFormValid?: boolean
   ): FormValidity => {
     const defaultValidity: FieldValidity = {
+      errorType: ErrorTypeEnum.EMPTY,
       isValid: false
     };
     const fieldsValidity: Fields = {
       cardholderName: defaultValidity,
       cardNumber: defaultValidity,
       cvv: defaultValidity,
+      deferred: defaultValidity,
       expirationDate: defaultValidity
     };
 
@@ -567,4 +627,29 @@ export class Card implements ICard {
       CREDIT_CARD_ESPECIFICATIONS.cardFinalBinPlaceSift
     );
   }
+  /* istanbul ignore next */
+  private hideDeferredOptions = (): Promise<void> => {
+    if (!this.inputValues.deferred) return Promise.resolve();
+
+    return new Promise<void>((resolve, reject) => {
+      try {
+        this.resizeField(400, 300, this.inputValues.deferred)
+          .then(() => this.inputValues.deferred?.hostedField?.hide())
+          .then(() => resolve())
+          .catch((error: any) => reject(error));
+      } catch (exception) {
+        reject(exception);
+      }
+    });
+  };
+  /* istanbul ignore next */
+  private resizeField = (
+    width: number,
+    height: number,
+    field?: FieldInstance
+  ): Promise<void> => {
+    if (!field) return Promise.resolve();
+
+    return field.hostedField?.resize({ width, height });
+  };
 }

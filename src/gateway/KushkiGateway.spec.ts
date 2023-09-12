@@ -64,6 +64,35 @@ describe("KushkiGateway - Test", () => {
     });
   });
 
+  it("when called requestDeferredInfo return data on success", async () => {
+    const mockData = { brand: "Visa" };
+    const binBody = { bin: "123456" };
+
+    const axiosGetSpy = jest.fn(() => {
+      return Promise.resolve({
+        data: mockData
+      });
+    });
+
+    jest.spyOn(axios, "get").mockImplementation(axiosGetSpy);
+
+    const result = await kushkiGateway.requestDeferredInfo(mockKushki, binBody);
+
+    expect(result).toEqual(mockData);
+  });
+
+  it("When requestDeferredInfo throws an AxiosError", async () => {
+    const binBody = { bin: "123456" };
+
+    jest.spyOn(axios, "get").mockRejectedValue(new AxiosError(""));
+
+    try {
+      await kushkiGateway.requestDeferredInfo(mockKushki, binBody);
+    } catch (error: any) {
+      expect(error.code).toEqual("E001");
+    }
+  });
+
   describe("requestToken - Test", () => {
     const mockToken: TokenResponse = { token: "123456789" };
     const requestTokenBody: CardTokenRequest = {
