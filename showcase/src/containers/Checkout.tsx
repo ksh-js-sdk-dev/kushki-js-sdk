@@ -48,11 +48,11 @@ export const CheckoutContainer = () => {
 
   const options: CardOptions = {
     amount: {
-      iva: 2,
-      subtotalIva: 1000,
-      subtotalIva0: 10
+      iva: 26,
+      subtotalIva: 26,
+      subtotalIva0: 0
     },
-    currency: "COP",
+    currency: "USD",
     fields: {
       cardHolderName: {
         fieldType: "cardholderName",
@@ -282,7 +282,8 @@ export const CheckoutContainer = () => {
     (async () => {
       const kushkiInstance = await Kushki.init({
         inTest: true,
-        publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1"
+        // publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
+        publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
       });
 
       if (kushkiInstance) {

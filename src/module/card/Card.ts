@@ -31,6 +31,9 @@ declare global {
 import { FieldOptions } from "infrastructure/interfaces/FieldOptions.ts";
 import { FieldValidity, FormValidity } from "types/form_validity";
 import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
+import { ISiftScienceService } from "repository/ISiftScienceService";
+import { CREDIT_CARD_ESPECIFICATIONS } from "src/constant/CreditCardEspecifications";
+import { SiftScienceObject } from "types/sift_science_object";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
@@ -38,6 +41,7 @@ export class Card implements ICard {
   private inputValues: CardFieldValues;
   private currentBin: string;
   private readonly _gateway: IKushkiGateway;
+  private readonly _siftScienceService: ISiftScienceService;
   private readonly listenerFieldValidity: string = "fieldValidity";
 
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
@@ -46,6 +50,9 @@ export class Card implements ICard {
     this.inputValues = {};
     this.currentBin = "";
     this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
+    this._siftScienceService = CONTAINER.get<ISiftScienceService>(
+      IDENTIFIERS.SiftScienceService
+    );
   }
 
   public static initCardToken(
@@ -77,15 +84,28 @@ export class Card implements ICard {
       const merchantSettings: MerchantSettingsResponse =
         await this._gateway.requestMerchantSettings(this.kushkiInstance);
 
+      const card_value: string = this.inputValues.cardNumber!.value!.replace(
+        /\s+/g,
+        ""
+      );
+
+      const scienceSession: SiftScienceObject =
+        this._siftScienceService.createSiftScienceSession(
+          this.getBinFromCreditCardNumberSift(card_value),
+          card_value.slice(-4),
+          this.kushkiInstance,
+          merchantSettings
+        );
+
       const jwt: string | undefined = await this.getJwtIf3dsEnabled(
         merchantSettings
       );
 
-      if (jwt) {
-        const token = await this.request3DSToken(jwt);
+      if (jwt && !merchantSettings.sandboxEnable) {
+        const token = await this.request3DSToken(jwt, scienceSession);
 
         return Promise.resolve(token);
-      } else return this.requestTokenGateway();
+      } else return this.requestTokenGateway(jwt, scienceSession);
     } catch (error) {
       return Promise.reject(error);
     } finally {
@@ -96,8 +116,14 @@ export class Card implements ICard {
     }
   }
 
-  private async request3DSToken(jwt: string) {
-    const token: TokenResponse = await this.getCardinal3dsToken(jwt);
+  private async request3DSToken(
+    jwt: string,
+    scienceSession?: SiftScienceObject
+  ) {
+    const token: TokenResponse = await this.getCardinal3dsToken(
+      jwt,
+      scienceSession
+    );
 
     return this.validate3dsToken(token);
   }
@@ -185,11 +211,14 @@ export class Card implements ICard {
     );
   }
 
-  private async getCardinal3dsToken(jwt: string): Promise<TokenResponse> {
+  private async getCardinal3dsToken(
+    jwt: string,
+    scienceSession?: SiftScienceObject
+  ): Promise<TokenResponse> {
     return new Promise<TokenResponse>(async (resolve, reject) => {
       const requestToken = async () => {
         try {
-          resolve(await this.requestTokenGateway(jwt));
+          resolve(await this.requestTokenGateway(jwt, scienceSession));
         } catch (error) {
           reject(error);
         }
@@ -260,16 +289,19 @@ export class Card implements ICard {
     }
   }
 
-  private requestTokenGateway(jwt?: string) {
+  private requestTokenGateway(
+    jwt?: string,
+    scienceSession?: SiftScienceObject
+  ) {
     if (this.options.isSubscription)
       return this._gateway.requestCreateSubscriptionToken(
         this.kushkiInstance,
-        this.buildTokenBody(jwt)
+        this.buildTokenBody(jwt, scienceSession)
       );
 
     return this._gateway.requestToken(
       this.kushkiInstance,
-      this.buildTokenBody(jwt)
+      this.buildTokenBody(jwt, scienceSession)
     );
   }
 
@@ -304,12 +336,16 @@ export class Card implements ICard {
     return this.buildFieldsValidity(this.inputValues, formValid);
   }
 
-  private buildTokenBody(jwt?: string): CardTokenRequest {
+  private buildTokenBody(
+    jwt?: string,
+    scienceSession?: SiftScienceObject
+  ): CardTokenRequest {
     const { cardholderName, cardNumber, expirationDate, cvv } =
       this.inputValues;
     const { currency } = this.options;
 
     return {
+      ...scienceSession,
       jwt,
       card: {
         cvv: cvv!.value!,
@@ -526,4 +562,11 @@ export class Card implements ICard {
       detail: this.buildFieldsValidity(inputValues)
     });
   };
+
+  private getBinFromCreditCardNumberSift(value: string): string {
+    return value.slice(
+      CREDIT_CARD_ESPECIFICATIONS.cardInitialBinPlace,
+      CREDIT_CARD_ESPECIFICATIONS.cardFinalBinPlaceSift
+    );
+  }
 }

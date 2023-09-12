@@ -194,8 +194,17 @@ describe("Card test", () => {
         requestSecureServiceValidation: () => secureValidation
       };
 
+      const mockSiftService = {
+        createSiftScienceSession: () => ({ sessionId: "abc", userId: "123" })
+      };
+
       CONTAINER.unbind(IDENTIFIERS.KushkiGateway);
       CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
+
+      CONTAINER.unbind(IDENTIFIERS.SiftScienceService);
+      CONTAINER.bind(IDENTIFIERS.SiftScienceService).toConstantValue(
+        mockSiftService
+      );
     };
 
     const mockCardinal = (complete: any = undefined) => {
@@ -303,6 +312,7 @@ describe("Card test", () => {
       });
 
       const cardInstance = await Card.initCardToken(kushki, options);
+
       mockValidityInputs();
       mockInputFields();
 
@@ -332,6 +342,7 @@ describe("Card test", () => {
       );
 
       const cardInstance = await Card.initCardToken(kushki, options);
+
       mockValidityInputs();
       mockInputFields();
 
@@ -354,6 +365,7 @@ describe("Card test", () => {
       });
 
       const cardInstance = await Card.initCardToken(kushki, options);
+
       mockValidityInputs();
       mockInputFields();
 
@@ -396,6 +408,7 @@ describe("Card test", () => {
       });
 
       const cardInstance = await Card.initCardToken(kushki, options);
+
       mockValidityInputs();
       mockInputFields();
 
