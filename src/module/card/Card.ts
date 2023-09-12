@@ -249,7 +249,8 @@ export class Card implements ICard {
       const jwtResponse: CybersourceJwtResponse =
         await this._gateway.requestCybersourceJwt(this.kushkiInstance);
 
-      await this.initCardinal(jwtResponse.jwt);
+      if (!merchantSettings.sandboxEnable)
+        await this.initCardinal(jwtResponse.jwt);
 
       return jwtResponse.jwt;
     } else {
