@@ -39,7 +39,7 @@ import { ISiftScienceService } from "repository/ISiftScienceService";
 import { CREDIT_CARD_ESPECIFICATIONS } from "src/constant/CreditCardEspecifications";
 import { SiftScienceObject } from "types/sift_science_object";
 import { BinInfoResponse } from "types/bin_info_response";
-import {DeferredValues} from "types/card_fields_values";
+import { DeferredValues } from "types/card_fields_values";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
@@ -92,10 +92,9 @@ export class Card implements ICard {
       const merchantSettings: MerchantSettingsResponse =
         await this._gateway.requestMerchantSettings(this.kushkiInstance);
 
-      const card_value: string = this.inputValues.cardNumber!.value!.toString().replace(
-        /\s+/g,
-        ""
-      );
+      const card_value: string = this.inputValues
+        .cardNumber!.value!.toString()
+        .replace(/\s+/g, "");
 
       const scienceSession: SiftScienceObject =
         this._siftScienceService.createSiftScienceSession(
@@ -274,9 +273,9 @@ export class Card implements ICard {
   }
 
   private async setupCardinal(jwt: string) {
-    const accountNumber = this.inputValues[
-      InputModelEnum.CARD_NUMBER
-    ]?.value!.toString().replace(/\s+/g, "");
+    const accountNumber = this.inputValues[InputModelEnum.CARD_NUMBER]
+      ?.value!.toString()
+      .replace(/\s+/g, "");
 
     if (await this.isCardinalInitialized()) {
       window.Cardinal.trigger("accountNumber.update", accountNumber);
@@ -368,16 +367,15 @@ export class Card implements ICard {
       ...this.buildTotalAmount()
     };
   }
-  /* istanbul ignore next */
-  private getDeferredValues = () : DeferredValues  => {
-    if(!this.inputValues.deferred || !this.inputValues.deferred.value)
+
+  private getDeferredValues = (): DeferredValues => {
+    if (!this.inputValues.deferred || !this.inputValues.deferred.value)
       return {};
 
-    if(typeof this.inputValues.deferred.value !== "object")
-      return {};
+    if (typeof this.inputValues.deferred.value !== "object") return {};
 
     return this.inputValues.deferred.value;
-  }
+  };
 
   private buildTotalAmount() {
     const { amount } = this.options;
@@ -477,15 +475,15 @@ export class Card implements ICard {
       }
     }
   }
-  /* istanbul ignore next */
+
   private onChangeDeferred(values: DeferredInputValues) {
     this.inputValues.deferred!.value = values;
   }
-  /* istanbul ignore next */
+
   private onFocusDeferred(values: DeferredInputValues) {
     values;
   }
-  /* istanbul ignore next */
+
   private onBlurDeferred(values: DeferredInputValues) {
     values;
   }
@@ -508,7 +506,7 @@ export class Card implements ICard {
       handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
         this.handleOnValidity(field, fieldValidity)
     };
-    /* istanbul ignore next */
+
     if (field.fieldType === InputModelEnum.DEFERRED) {
       options.handleOnChange = (values: DeferredInputValues) =>
         this.onChangeDeferred(values);
@@ -535,18 +533,10 @@ export class Card implements ICard {
           isValid: false
         }
       };
-
-      // TODO : tobe defined validation in Deferred Hu
-      /* istanbul ignore next */
-      if (field.fieldType === "deferred")
-        this.inputValues[field.fieldType] = {
-          hostedField,
-          selector: field.selector,
-          validity: {
-            isValid: true
-          }
-        };
     }
+
+    if (this.inputValues.deferred)
+      this.inputValues.deferred.validity = { isValid: true };
 
     this.hideContainers();
 
@@ -627,27 +617,24 @@ export class Card implements ICard {
       CREDIT_CARD_ESPECIFICATIONS.cardFinalBinPlaceSift
     );
   }
-  /* istanbul ignore next */
+
   private hideDeferredOptions = (): Promise<void> => {
     if (!this.inputValues.deferred) return Promise.resolve();
 
     return new Promise<void>((resolve, reject) => {
-      try {
-        this.resizeField(400, 300, this.inputValues.deferred)
-          .then(() => this.inputValues.deferred?.hostedField?.hide())
-          .then(() => resolve())
-          .catch((error: any) => reject(error));
-      } catch (exception) {
-        reject(exception);
-      }
+      this.resizeField(400, 300, this.inputValues.deferred)
+        .then(() => this.inputValues.deferred?.hostedField?.hide())
+        .then(() => resolve())
+        .catch((error: any) => reject(error));
     });
   };
-  /* istanbul ignore next */
+
   private resizeField = (
     width: number,
     height: number,
     field?: FieldInstance
   ): Promise<void> => {
+    /* istanbul ignore next*/
     if (!field) return Promise.resolve();
 
     return field.hostedField?.resize({ width, height });

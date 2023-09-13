@@ -1,7 +1,7 @@
 import { FieldTypeEnum, InputTypeEnum, Styles } from "types/card_options";
 import { FieldValidity } from "types/card_fields_values";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import {DeferredInputValues} from "types/deferred_input_values";
+import { DeferredInputValues } from "types/deferred_input_values";
 
 export type OnPropsCallback = (
   props: (fieldOptions: FieldOptions) => void
@@ -21,9 +21,15 @@ export interface FieldOptions {
   label?: string;
   styles?: Styles;
   globalStyles?: Styles;
-  handleOnChange: ((fieldType: string, value: string) => void) | ((value: DeferredInputValues) => void);
-  handleOnBlur?: ((fieldType: string, value: string) => void) | ((value: DeferredInputValues) => void);
-  handleOnFocus?: ((fieldType: string, value: string) => void) | ((value: DeferredInputValues) => void);
+  handleOnChange:
+    | ((fieldType: string, value: string) => void)
+    | ((value: DeferredInputValues) => void);
+  handleOnBlur?:
+    | ((fieldType: string, value: string) => void)
+    | ((value: DeferredInputValues) => void);
+  handleOnFocus?:
+    | ((fieldType: string, value: string) => void)
+    | ((value: DeferredInputValues) => void);
   handleOnValidity?: (
     fieldType: InputModelEnum,
     fieldValidity: FieldValidity
