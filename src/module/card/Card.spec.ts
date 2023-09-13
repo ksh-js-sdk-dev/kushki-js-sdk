@@ -10,7 +10,13 @@ import { ERRORS } from "infrastructure/ErrorEnum.ts";
 jest.mock("../../libs/HostedField.ts", () =>
   jest
     .fn()
-    .mockImplementation(() => ({ render: jest.fn(), updateProps: jest.fn() }))
+    .mockImplementation(() => ({
+      render: jest.fn(),
+      updateProps: jest.fn(),
+      resize: jest.fn().mockResolvedValue({}),
+      hide: jest.fn().mockResolvedValue({}),
+      show: jest.fn().mockResolvedValue({}),
+    }))
 );
 
 describe("Card test", () => {
@@ -30,6 +36,13 @@ describe("Card test", () => {
   };
 
   afterEach(() => {
+    KushkiHostedFields.mockImplementation(() => ({
+      render: jest.fn(),
+      updateProps: jest.fn(),
+      resize: jest.fn().mockResolvedValue({}),
+      hide: jest.fn().mockResolvedValue({}),
+      show: jest.fn().mockResolvedValue({}),
+    }))
     CONTAINER.restore();
   });
 
@@ -88,24 +101,6 @@ describe("Card test", () => {
     expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
   });
 
-  it("it should set isValid as true when deferred is an option field", async () => {
-    options = {
-      ...options,
-      fields: {
-        ...options.fields,
-        deferred: {
-          fieldType: InputModelEnum.DEFERRED,
-          selector: "id_test"
-        }
-      }
-    };
-    const cardInstance = await Card.initCardToken(kushki, options);
-
-    expect(cardInstance["inputValues"].deferred!.validity.isValid).toEqual(
-      true
-    );
-  });
-
   it("should set handleOnChange as callback in KushkiHostedFields", async () => {
     await Card.initCardToken(kushki, options);
 
@@ -121,7 +116,62 @@ describe("Card test", () => {
     );
   });
 
-  it("should throw error when element not exist in mehtod initCardToken", async () => {
+  it('should render deferred input',  async () => {
+    options.fields.deferred = {
+      fieldType: InputModelEnum.DEFERRED,
+      selector: "id_test"
+    };
+
+    const cardInstance = await Card.initCardToken(kushki, options);
+
+    const deferredValue = {
+      creditType: "all",
+      graceMonths: 0,
+      isDeferred: true,
+      months: 0
+    }
+
+    KushkiHostedFields.mock.calls[4][0].handleOnChange(deferredValue);
+    KushkiHostedFields.mock.calls[4][0].handleOnBlur(deferredValue);
+    KushkiHostedFields.mock.calls[4][0].handleOnFocus(deferredValue);
+
+    expect(cardInstance["inputValues"].deferred!.value).toEqual(deferredValue)
+  });
+
+  it('should render deferred input but hide input failed',  () => {
+    KushkiHostedFields.mockImplementation(() => ({
+      render: jest.fn(),
+      updateProps: jest.fn(),
+      resize: jest.fn().mockResolvedValue({}),
+      hide: jest.fn().mockRejectedValue("throw exception")
+    }))
+
+    options.fields.deferred = {
+      fieldType: InputModelEnum.DEFERRED,
+      selector: "id_test"
+    };
+
+    Card.initCardToken(kushki, options).catch(error => expect(error).toEqual("throw exception"))
+  });
+
+
+  it('should render deferred input but resize input failed',  () => {
+    KushkiHostedFields.mockImplementation(() => ({
+      render: jest.fn(),
+      updateProps: jest.fn(),
+      resize: jest.fn().mockRejectedValue("throw exception"),
+      hide: jest.fn().mockResolvedValue({})
+    }))
+
+    options.fields.deferred = {
+      fieldType: InputModelEnum.DEFERRED,
+      selector: "id_test"
+    };
+
+    Card.initCardToken(kushki, options).catch(error => expect(error).toEqual("throw exception"))
+  });
+
+  it("should throw error when element not exist in method initCardToken", async () => {
     field = {
       fieldType: "cardNumber",
       selector: "id_test_not_created"
@@ -283,6 +333,52 @@ describe("Card test", () => {
 
       const response = await cardInstance.requestToken();
 
+      expect(response.token).toEqual(tokenMock);
+    });
+
+    it("it should execute Card token request but deferred values are incorrect", async () => {
+      options.fields.deferred = {
+        fieldType: InputModelEnum.DEFERRED,
+        selector: "id_test"
+      };
+
+      const cardInstance = await Card.initCardToken(kushki, options);
+
+      mockValidityInputs();
+      mockInputFields();
+
+      KushkiHostedFields.mock.calls[4][0].handleOnChange("incorrect value");
+
+      const response = await cardInstance.requestToken();
+
+      expect(KushkiHostedFields.mock.calls[4][0].fieldType).toEqual(InputModelEnum.DEFERRED)
+      expect(response.token).toEqual(tokenMock);
+    });
+
+    it("it should execute Card token request but deferred values are correct", async () => {
+      options.fields.deferred = {
+        fieldType: InputModelEnum.DEFERRED,
+        selector: "id_test"
+      };
+
+      const cardInstance = await Card.initCardToken(kushki, options);
+
+      const deferredValue = {
+        creditType: "all",
+        graceMonths: 0,
+        isDeferred: true,
+        months: 0
+      }
+
+      mockValidityInputs();
+      mockInputFields();
+
+      KushkiHostedFields.mock.calls[4][0].handleOnChange(deferredValue);
+
+      const response = await cardInstance.requestToken();
+
+      expect(KushkiHostedFields.mock.calls[4][0].fieldType).toEqual(InputModelEnum.DEFERRED)
+      expect(cardInstance["inputValues"].deferred!.value).toEqual(deferredValue)
       expect(response.token).toEqual(tokenMock);
     });
 

@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://ksh/BinInfoResponse",
+  "title": "DeferredByBinResponse",
+  "additionalProperties": false,
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "months": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "monthsOfGrace": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "name": {
+        "type": "string"
+      },
+      "type": {
+        "type": "string"
+      }
+    }
+  }
+}

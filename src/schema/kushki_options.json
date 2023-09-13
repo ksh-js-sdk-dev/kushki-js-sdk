@@ -10,8 +10,6 @@
       "type": "boolean"
     }
   },
-  "required": [
-    "publicCredentialId"
-  ],
+  "required": ["publicCredentialId"],
   "type": "object"
 }

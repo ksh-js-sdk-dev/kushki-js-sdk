@@ -2,6 +2,24 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "CardFieldValues",
   "definitions": {
+    "deferredValues": {
+      "type": "object",
+      "title": "DeferredValues",
+      "properties": {
+        "isDeferred": {
+          "type": "boolean"
+        },
+        "graceMonths": {
+          "type": "number"
+        },
+        "months": {
+          "type": "number"
+        },
+        "creditType": {
+          "type": "string"
+        }
+      }
+    },
     "fieldValidity": {
       "type": "object",
       "title": "FieldValidity",
@@ -26,7 +44,17 @@
           "type": "string"
         },
         "value": {
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/deferredValues"
+            }
+          ]
         },
         "hostedField": {
           "type": "object"
@@ -51,7 +79,7 @@
     "deferred": {
       "$ref": "#/definitions/fieldInstance"
     },
-    "expirationDate": {
+    "creditType": {
       "$ref": "#/definitions/fieldInstance"
     }
   },
