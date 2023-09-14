@@ -249,6 +249,7 @@ export class Payment implements IPayment {
     jwt: string,
     scienceSession?: SiftScienceObject
   ): Promise<TokenResponse> {
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise<TokenResponse>(async (resolve, reject) => {
       const requestToken = async () => {
         try {
@@ -353,7 +354,6 @@ export class Payment implements IPayment {
 
     return {
       ...scienceSession,
-      jwt,
       card: {
         cvv: String(cvv!.value!),
         expiryMonth: String(expirationDate!.value!).split("/")[0]!,
@@ -363,6 +363,7 @@ export class Payment implements IPayment {
       },
       currency,
       isDeferred: deferredValues.isDeferred,
+      jwt,
       months: deferredValues.months,
       ...this.buildTotalAmount()
     };
@@ -497,12 +498,12 @@ export class Payment implements IPayment {
   private buildFieldOptions(field: Field) {
     const options: FieldOptions = {
       ...field,
+      handleOnBlur: (field: string, value: string) =>
+        this.handleOnBlur(field, value),
       handleOnChange: (field: string, value: string) => {
         return this.handleOnChange(field, value);
       },
       handleOnFocus: (field, value: string) => this.handleOnFocus(field, value),
-      handleOnBlur: (field: string, value: string) =>
-        this.handleOnBlur(field, value),
       handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
         this.handleOnValidity(field, fieldValidity)
     };
@@ -637,6 +638,6 @@ export class Payment implements IPayment {
     /* istanbul ignore next*/
     if (!field) return Promise.resolve();
 
-    return field.hostedField?.resize({ width, height });
+    return field.hostedField?.resize({ height, width });
   };
 }
