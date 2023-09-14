@@ -7,13 +7,13 @@ import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 
-jest.mock("../../libs/HostedField.ts", () =>
+jest.mock("../libs/HostedField.ts", () =>
   jest.fn().mockImplementation(() => ({
-    render: jest.fn(),
-    updateProps: jest.fn(),
-    resize: jest.fn().mockResolvedValue({}),
     hide: jest.fn().mockResolvedValue({}),
-    show: jest.fn().mockResolvedValue({})
+    render: jest.fn(),
+    resize: jest.fn().mockResolvedValue({}),
+    show: jest.fn().mockResolvedValue({}),
+    updateProps: jest.fn()
   }))
 );
 
@@ -35,11 +35,11 @@ describe("Payment test", () => {
 
   afterEach(() => {
     KushkiHostedFields.mockImplementation(() => ({
-      render: jest.fn(),
-      updateProps: jest.fn(),
-      resize: jest.fn().mockResolvedValue({}),
       hide: jest.fn().mockResolvedValue({}),
-      show: jest.fn().mockResolvedValue({})
+      render: jest.fn(),
+      resize: jest.fn().mockResolvedValue({}),
+      show: jest.fn().mockResolvedValue({}),
+      updateProps: jest.fn()
     }));
     CONTAINER.restore();
   });
@@ -82,7 +82,7 @@ describe("Payment test", () => {
       }
     };
 
-    document.body.innerHTML = '<div id="id_test">my div</div>';
+    document.body.innerHTML = "<div id='id_test'>my div</div>";
     KushkiHostedFields.mockClear();
   });
 
@@ -138,10 +138,10 @@ describe("Payment test", () => {
 
   it("should render deferred input but hide input failed", () => {
     KushkiHostedFields.mockImplementation(() => ({
+      hide: jest.fn().mockRejectedValue("throw exception"),
       render: jest.fn(),
-      updateProps: jest.fn(),
       resize: jest.fn().mockResolvedValue({}),
-      hide: jest.fn().mockRejectedValue("throw exception")
+      updateProps: jest.fn()
     }));
 
     options.fields.deferred = {
@@ -156,10 +156,10 @@ describe("Payment test", () => {
 
   it("should render deferred input but resize input failed", () => {
     KushkiHostedFields.mockImplementation(() => ({
+      hide: jest.fn().mockResolvedValue({}),
       render: jest.fn(),
-      updateProps: jest.fn(),
       resize: jest.fn().mockRejectedValue("throw exception"),
-      hide: jest.fn().mockResolvedValue({})
+      updateProps: jest.fn()
     }));
 
     options.fields.deferred = {
@@ -229,20 +229,20 @@ describe("Payment test", () => {
       is3ds?: boolean,
       token: TokenResponse | Promise<TokenResponse> = { token: tokenMock },
       secureValidation: SecureOtpResponse | Promise<SecureOtpResponse> = {
-        message: "ok",
-        code: "3DS000"
+        code: "3DS000",
+        message: "ok"
       }
     ) => {
       const mockGateway = {
         requestCreateSubscriptionToken: () => token,
-        requestToken: () => token,
-        requestMerchantSettings: () => ({
-          active_3dsecure: is3ds
-        }),
         requestCybersourceJwt: () => ({
           jwt: "1234567890"
         }),
-        requestSecureServiceValidation: () => secureValidation
+        requestMerchantSettings: () => ({
+          active_3dsecure: is3ds
+        }),
+        requestSecureServiceValidation: () => secureValidation,
+        requestToken: () => token
       };
 
       const mockSiftService = {
@@ -405,14 +405,14 @@ describe("Payment test", () => {
 
     it("it should execute Payment 3ds token PROD with modal validation", async () => {
       mockKushkiGateway(true, {
-        token: tokenMock,
         security: {
-          authRequired: true,
           acsURL: "url",
-          paReq: "req",
           authenticationTransactionId: "1234",
+          authRequired: true,
+          paReq: "req",
           specificationVersion: "2.0.1"
-        }
+        },
+        token: tokenMock
       });
 
       const cardInstance = await Payment.initCardToken(kushki, options);
@@ -431,18 +431,18 @@ describe("Payment test", () => {
       mockKushkiGateway(
         true,
         {
-          token: tokenMock,
           security: {
-            authRequired: true,
             acsURL: "url",
-            paReq: "req",
             authenticationTransactionId: "1234",
+            authRequired: true,
+            paReq: "req",
             specificationVersion: "2.0.1"
-          }
+          },
+          token: tokenMock
         },
         {
-          message: "3DS000",
-          code: "ok"
+          code: "ok",
+          message: "3DS000"
         }
       );
 
@@ -460,13 +460,13 @@ describe("Payment test", () => {
       await initKushki(true);
       mockCardinal(jest.fn());
       mockKushkiGateway(true, {
-        token: tokenMock,
         security: {
-          authRequired: false,
           acsURL: "url",
-          paReq: "req",
-          authenticationTransactionId: "1234"
-        }
+          authenticationTransactionId: "1234",
+          authRequired: false,
+          paReq: "req"
+        },
+        token: tokenMock
       });
 
       const cardInstance = await Payment.initCardToken(kushki, options);
@@ -482,14 +482,14 @@ describe("Payment test", () => {
     it("it should execute Payment 3ds token PROD for retry", async () => {
       mockCardinal(jest.fn().mockReturnValue({}));
       mockKushkiGateway(true, {
-        token: tokenMock,
         security: {
-          authRequired: true,
           acsURL: "url",
-          paReq: "req",
           authenticationTransactionId: "1234",
+          authRequired: true,
+          paReq: "req",
           specificationVersion: "2.0.1"
-        }
+        },
+        token: tokenMock
       });
 
       const cardInstance = await Payment.initCardToken(kushki, options);
@@ -505,12 +505,12 @@ describe("Payment test", () => {
     it("it should execute Payment 3ds token UAT throw error: E005, for token incomplete", async () => {
       await initKushki(true);
       mockKushkiGateway(true, {
-        token: tokenMock,
         security: {
+          authenticationTransactionId: "1234",
           authRequired: true,
-          paReq: "req",
-          authenticationTransactionId: "1234"
-        }
+          paReq: "req"
+        },
+        token: tokenMock
       });
 
       const cardInstance = await Payment.initCardToken(kushki, options);
@@ -549,18 +549,18 @@ describe("Payment test", () => {
       mockKushkiGateway(
         true,
         {
-          token: tokenMock,
           security: {
-            authRequired: true,
             acsURL: "url",
-            paReq: "req",
             authenticationTransactionId: "1234",
+            authRequired: true,
+            paReq: "req",
             specificationVersion: "2.0.1"
-          }
+          },
+          token: tokenMock
         },
         {
-          message: "fail",
-          code: "ok"
+          code: "ok",
+          message: "fail"
         }
       );
 
@@ -581,14 +581,14 @@ describe("Payment test", () => {
       mockKushkiGateway(
         true,
         {
-          token: tokenMock,
           security: {
-            authRequired: true,
             acsURL: "url",
-            paReq: "req",
             authenticationTransactionId: "1234",
+            authRequired: true,
+            paReq: "req",
             specificationVersion: "2.0.1"
-          }
+          },
+          token: tokenMock
         },
         Promise.reject(ERRORS.E006)
       );
@@ -608,8 +608,8 @@ describe("Payment test", () => {
     it("it should execute Payment 3ds token UAT throw error: E005, for requestToken", async () => {
       await initKushki(true);
       mockKushkiGateway(true, Promise.reject(ERRORS.E002), {
-        message: "fail",
-        code: "ok"
+        code: "ok",
+        message: "fail"
       });
 
       const cardInstance = await Payment.initCardToken(kushki, options);
