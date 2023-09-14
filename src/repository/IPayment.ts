@@ -1,6 +1,6 @@
-import { FormValidity, TokenResponse } from "Kushki/card";
+import { FormValidity, TokenResponse } from "src/module";
 
-export interface ICard {
+export interface IPayment {
   /**
    * Create token for payment
    * @return TokenResponse object with token and security info

@@ -7,7 +7,7 @@ import { KushkiGateway } from "gateway/KushkiGateway";
 import { Container } from "inversify";
 import { IDENTIFIERS } from "src/constant/Identifiers";
 import { ISiftScienceService } from "repository/ISiftScienceService";
-import { SiftScienceService } from "module/service/SiftScienceService";
+import { SiftScienceService } from "src/service/SiftScienceService";
 
 const CONTAINER: Container = new Container();
 

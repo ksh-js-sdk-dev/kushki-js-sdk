@@ -1,14 +1,14 @@
 /**
  * SiftScienceService Unit Tests
  */
-import { CONTAINER } from "infrastructure/Container";
+import { CONTAINER } from "infrastructure/Container.ts";
 import { Kushki } from "Kushki";
 import { Mock } from "ts-mockery";
-import { EnvironmentEnum } from "infrastructure/EnvironmentEnum";
-import { ISiftScienceService } from "repository/ISiftScienceService";
-import { IDENTIFIERS } from "src/constant/Identifiers";
+import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
+import { ISiftScienceService } from "repository/ISiftScienceService.ts";
+import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
-import { SiftScienceEnum } from "infrastructure/SiftScienceEnum";
+import { SiftScienceEnum } from "infrastructure/SiftScienceEnum.ts";
 
 describe("SiftScience Gateway - ", () => {
   let siftScienceService: ISiftScienceService;

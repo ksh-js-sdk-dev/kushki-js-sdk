@@ -1,25 +1,23 @@
 import { Kushki } from "Kushki";
-import { Card, CardOptions, Field, TokenResponse } from "./index.ts";
+import { CardOptions, Field, Payment, TokenResponse } from "./index.ts";
 import KushkiHostedFields from "libs/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import { CONTAINER } from "infrastructure/Container";
-import { IDENTIFIERS } from "src/constant/Identifiers";
+import { CONTAINER } from "infrastructure/Container.ts";
+import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 
 jest.mock("../../libs/HostedField.ts", () =>
-  jest
-    .fn()
-    .mockImplementation(() => ({
-      render: jest.fn(),
-      updateProps: jest.fn(),
-      resize: jest.fn().mockResolvedValue({}),
-      hide: jest.fn().mockResolvedValue({}),
-      show: jest.fn().mockResolvedValue({}),
-    }))
+  jest.fn().mockImplementation(() => ({
+    render: jest.fn(),
+    updateProps: jest.fn(),
+    resize: jest.fn().mockResolvedValue({}),
+    hide: jest.fn().mockResolvedValue({}),
+    show: jest.fn().mockResolvedValue({})
+  }))
 );
 
-describe("Card test", () => {
+describe("Payment test", () => {
   let kushki: Kushki;
   let options: CardOptions;
   let field: Field;
@@ -41,8 +39,8 @@ describe("Card test", () => {
       updateProps: jest.fn(),
       resize: jest.fn().mockResolvedValue({}),
       hide: jest.fn().mockResolvedValue({}),
-      show: jest.fn().mockResolvedValue({}),
-    }))
+      show: jest.fn().mockResolvedValue({})
+    }));
     CONTAINER.restore();
   });
 
@@ -88,8 +86,8 @@ describe("Card test", () => {
     KushkiHostedFields.mockClear();
   });
 
-  it("it should return base URL of uat when Card has property inTest equal to true", async () => {
-    const cardInstance = await Card.initCardToken(kushki, options);
+  it("it should return base URL of uat when Payment has property inTest equal to true", async () => {
+    const cardInstance = await Payment.initCardToken(kushki, options);
 
     KushkiHostedFields.mock.calls[0][0].handleOnChange(
       "cardholderName",
@@ -102,7 +100,7 @@ describe("Card test", () => {
   });
 
   it("should set handleOnChange as callback in KushkiHostedFields", async () => {
-    await Card.initCardToken(kushki, options);
+    await Payment.initCardToken(kushki, options);
 
     expect(KushkiHostedFields).toHaveBeenCalledTimes(4);
     expect(KushkiHostedFields.mock.calls[0][0].selector).toEqual(
@@ -116,59 +114,62 @@ describe("Card test", () => {
     );
   });
 
-  it('should render deferred input',  async () => {
+  it("should render deferred input", async () => {
     options.fields.deferred = {
       fieldType: InputModelEnum.DEFERRED,
       selector: "id_test"
     };
 
-    const cardInstance = await Card.initCardToken(kushki, options);
+    const cardInstance = await Payment.initCardToken(kushki, options);
 
     const deferredValue = {
       creditType: "all",
       graceMonths: 0,
       isDeferred: true,
       months: 0
-    }
+    };
 
     KushkiHostedFields.mock.calls[4][0].handleOnChange(deferredValue);
     KushkiHostedFields.mock.calls[4][0].handleOnBlur(deferredValue);
     KushkiHostedFields.mock.calls[4][0].handleOnFocus(deferredValue);
 
-    expect(cardInstance["inputValues"].deferred!.value).toEqual(deferredValue)
+    expect(cardInstance["inputValues"].deferred!.value).toEqual(deferredValue);
   });
 
-  it('should render deferred input but hide input failed',  () => {
+  it("should render deferred input but hide input failed", () => {
     KushkiHostedFields.mockImplementation(() => ({
       render: jest.fn(),
       updateProps: jest.fn(),
       resize: jest.fn().mockResolvedValue({}),
       hide: jest.fn().mockRejectedValue("throw exception")
-    }))
+    }));
 
     options.fields.deferred = {
       fieldType: InputModelEnum.DEFERRED,
       selector: "id_test"
     };
 
-    Card.initCardToken(kushki, options).catch(error => expect(error).toEqual("throw exception"))
+    Payment.initCardToken(kushki, options).catch((error) =>
+      expect(error).toEqual("throw exception")
+    );
   });
 
-
-  it('should render deferred input but resize input failed',  () => {
+  it("should render deferred input but resize input failed", () => {
     KushkiHostedFields.mockImplementation(() => ({
       render: jest.fn(),
       updateProps: jest.fn(),
       resize: jest.fn().mockRejectedValue("throw exception"),
       hide: jest.fn().mockResolvedValue({})
-    }))
+    }));
 
     options.fields.deferred = {
       fieldType: InputModelEnum.DEFERRED,
       selector: "id_test"
     };
 
-    Card.initCardToken(kushki, options).catch(error => expect(error).toEqual("throw exception"))
+    Payment.initCardToken(kushki, options).catch((error) =>
+      expect(error).toEqual("throw exception")
+    );
   });
 
   it("should throw error when element not exist in method initCardToken", async () => {
@@ -187,13 +188,13 @@ describe("Card test", () => {
       }
     };
 
-    await expect(Card.initCardToken(kushki, options)).rejects.toThrow(
+    await expect(Payment.initCardToken(kushki, options)).rejects.toThrow(
       "element don't exist"
     );
   });
 
   it("if cardNumber have max eight digitals then it should called handleSetCardNumber but requestBinInfo is Success", async () => {
-    await Card.initCardToken(kushki, options);
+    await Payment.initCardToken(kushki, options);
 
     mockInputFieldCardNumber();
 
@@ -213,7 +214,7 @@ describe("Card test", () => {
     CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
 
     try {
-      await Card.initCardToken(kushki, options);
+      await Payment.initCardToken(kushki, options);
 
       mockInputFieldCardNumber();
     } catch (error) {
@@ -325,8 +326,8 @@ describe("Card test", () => {
       );
     };
 
-    it("it should execute Card token request and return token", async () => {
-      const cardInstance = await Card.initCardToken(kushki, options);
+    it("it should execute Payment token request and return token", async () => {
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
       mockInputFields();
@@ -336,13 +337,13 @@ describe("Card test", () => {
       expect(response.token).toEqual(tokenMock);
     });
 
-    it("it should execute Card token request but deferred values are incorrect", async () => {
+    it("it should execute Payment token request but deferred values are incorrect", async () => {
       options.fields.deferred = {
         fieldType: InputModelEnum.DEFERRED,
         selector: "id_test"
       };
 
-      const cardInstance = await Card.initCardToken(kushki, options);
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
       mockInputFields();
@@ -351,24 +352,26 @@ describe("Card test", () => {
 
       const response = await cardInstance.requestToken();
 
-      expect(KushkiHostedFields.mock.calls[4][0].fieldType).toEqual(InputModelEnum.DEFERRED)
+      expect(KushkiHostedFields.mock.calls[4][0].fieldType).toEqual(
+        InputModelEnum.DEFERRED
+      );
       expect(response.token).toEqual(tokenMock);
     });
 
-    it("it should execute Card token request but deferred values are correct", async () => {
+    it("it should execute Payment token request but deferred values are correct", async () => {
       options.fields.deferred = {
         fieldType: InputModelEnum.DEFERRED,
         selector: "id_test"
       };
 
-      const cardInstance = await Card.initCardToken(kushki, options);
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       const deferredValue = {
         creditType: "all",
         graceMonths: 0,
         isDeferred: true,
         months: 0
-      }
+      };
 
       mockValidityInputs();
       mockInputFields();
@@ -377,16 +380,20 @@ describe("Card test", () => {
 
       const response = await cardInstance.requestToken();
 
-      expect(KushkiHostedFields.mock.calls[4][0].fieldType).toEqual(InputModelEnum.DEFERRED)
-      expect(cardInstance["inputValues"].deferred!.value).toEqual(deferredValue)
+      expect(KushkiHostedFields.mock.calls[4][0].fieldType).toEqual(
+        InputModelEnum.DEFERRED
+      );
+      expect(cardInstance["inputValues"].deferred!.value).toEqual(
+        deferredValue
+      );
       expect(response.token).toEqual(tokenMock);
     });
 
-    it("it should execute Card Subscription token request and return token", async () => {
+    it("it should execute Payment Subscription token request and return token", async () => {
       options.isSubscription = true;
       delete options.amount;
 
-      const cardInstance = await Card.initCardToken(kushki, options);
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
       mockInputFields();
@@ -396,7 +403,7 @@ describe("Card test", () => {
       expect(response.token).toEqual(tokenMock);
     });
 
-    it("it should execute Card 3ds token PROD with modal validation", async () => {
+    it("it should execute Payment 3ds token PROD with modal validation", async () => {
       mockKushkiGateway(true, {
         token: tokenMock,
         security: {
@@ -408,7 +415,7 @@ describe("Card test", () => {
         }
       });
 
-      const cardInstance = await Card.initCardToken(kushki, options);
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
       mockInputFields();
@@ -418,7 +425,7 @@ describe("Card test", () => {
       expect(response.token).toEqual(tokenMock);
     });
 
-    it("it should execute Card Subscription 3ds token PROD with modal validation", async () => {
+    it("it should execute Payment Subscription 3ds token PROD with modal validation", async () => {
       options.isSubscription = true;
 
       mockKushkiGateway(
@@ -439,7 +446,7 @@ describe("Card test", () => {
         }
       );
 
-      const cardInstance = await Card.initCardToken(kushki, options);
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
       mockInputFields();
@@ -449,7 +456,7 @@ describe("Card test", () => {
       expect(response.token).toEqual(tokenMock);
     });
 
-    it("it should execute Card 3ds token UAT without modal validation", async () => {
+    it("it should execute Payment 3ds token UAT without modal validation", async () => {
       await initKushki(true);
       mockCardinal(jest.fn());
       mockKushkiGateway(true, {
@@ -462,7 +469,7 @@ describe("Card test", () => {
         }
       });
 
-      const cardInstance = await Card.initCardToken(kushki, options);
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
       mockInputFields();
@@ -472,7 +479,7 @@ describe("Card test", () => {
       expect(response.token).toEqual(tokenMock);
     });
 
-    it("it should execute Card 3ds token PROD for retry", async () => {
+    it("it should execute Payment 3ds token PROD for retry", async () => {
       mockCardinal(jest.fn().mockReturnValue({}));
       mockKushkiGateway(true, {
         token: tokenMock,
@@ -485,7 +492,7 @@ describe("Card test", () => {
         }
       });
 
-      const cardInstance = await Card.initCardToken(kushki, options);
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
       mockInputFields();
@@ -495,7 +502,7 @@ describe("Card test", () => {
       expect(response.token).toEqual(tokenMock);
     });
 
-    it("it should execute Card 3ds token UAT throw error: E005, for token incomplete", async () => {
+    it("it should execute Payment 3ds token UAT throw error: E005, for token incomplete", async () => {
       await initKushki(true);
       mockKushkiGateway(true, {
         token: tokenMock,
@@ -506,7 +513,7 @@ describe("Card test", () => {
         }
       });
 
-      const cardInstance = await Card.initCardToken(kushki, options);
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
       mockInputFields();
@@ -518,8 +525,8 @@ describe("Card test", () => {
       }
     });
 
-    it("it should execute Card token UAT with error: E007, for invalid field", async () => {
-      const cardInstance = await Card.initCardToken(kushki, options);
+    it("it should execute Payment token UAT with error: E007, for invalid field", async () => {
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
       KushkiHostedFields.mock.calls[0][0].handleOnValidity(
@@ -537,7 +544,7 @@ describe("Card test", () => {
       }
     });
 
-    it("it should execute Card 3ds token UAT throw error: E006, for SecureServiceValidation", async () => {
+    it("it should execute Payment 3ds token UAT throw error: E006, for SecureServiceValidation", async () => {
       await initKushki(true);
       mockKushkiGateway(
         true,
@@ -557,7 +564,7 @@ describe("Card test", () => {
         }
       );
 
-      const cardInstance = await Card.initCardToken(kushki, options);
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
       mockInputFields();
@@ -569,7 +576,7 @@ describe("Card test", () => {
       }
     });
 
-    it("it should execute Card 3ds token UAT throw error: E006, for SecureServiceValidation request fail", async () => {
+    it("it should execute Payment 3ds token UAT throw error: E006, for SecureServiceValidation request fail", async () => {
       await initKushki(true);
       mockKushkiGateway(
         true,
@@ -586,7 +593,7 @@ describe("Card test", () => {
         Promise.reject(ERRORS.E006)
       );
 
-      const cardInstance = await Card.initCardToken(kushki, options);
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
       mockInputFields();
@@ -598,14 +605,14 @@ describe("Card test", () => {
       }
     });
 
-    it("it should execute Card 3ds token UAT throw error: E005, for requestToken", async () => {
+    it("it should execute Payment 3ds token UAT throw error: E005, for requestToken", async () => {
       await initKushki(true);
       mockKushkiGateway(true, Promise.reject(ERRORS.E002), {
         message: "fail",
         code: "ok"
       });
 
-      const cardInstance = await Card.initCardToken(kushki, options);
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
       mockInputFields();
@@ -639,7 +646,7 @@ describe("Card test", () => {
     };
 
     it("when call onFieldValidity, should set successful input value", async () => {
-      const cardInstance = await Card.initCardToken(kushki, options);
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockInputsFields();
 
@@ -651,7 +658,7 @@ describe("Card test", () => {
     });
 
     it("when call handleOnChange should call handleOnValidity successful", async () => {
-      const cardInstance = await Card.initCardToken(kushki, options);
+      const cardInstance = await Payment.initCardToken(kushki, options);
 
       KushkiHostedFields.mock.calls[0][0].handleOnChange(
         "cardholderName",

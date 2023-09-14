@@ -1,6 +1,6 @@
 import { KushkiGateway } from "./KushkiGateway";
 import axios, { AxiosError } from "axios";
-import { CardTokenRequest, TokenResponse } from "Kushki/card";
+import { CardTokenRequest, TokenResponse } from "src/module";
 import { CONTAINER } from "infrastructure/Container";
 import { IDENTIFIERS } from "src/constant/Identifiers";
 import { Mock } from "ts-mockery";

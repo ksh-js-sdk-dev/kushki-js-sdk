@@ -1,7 +1,7 @@
 import { BinInfoResponse } from "types/bin_info_response";
 import { DeferredByBinResponse, Kushki } from "Kushki";
 import { BinBody } from "types/bin_body";
-import { CardTokenRequest, TokenResponse } from "Kushki/card";
+import { CardTokenRequest, TokenResponse } from "src/module";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import { SecureOtpRequest } from "types/secure_otp_request";

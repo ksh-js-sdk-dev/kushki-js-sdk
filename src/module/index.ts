@@ -1,5 +1,5 @@
 // Main Object
-export { Card } from "./Card.ts";
+export { Payment } from "./Payment.ts";
 
 // Types
 export type {

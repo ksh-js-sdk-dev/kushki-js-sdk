@@ -1,12 +1,12 @@
 import { Kushki } from "Kushki";
 import {
-  Card,
+  Payment,
   CardOptions,
   Fields,
   FormValidity,
   TokenResponse,
   ErrorTypeEnum
-} from "Kushki/card";
+} from "../../../src/module";
 import { useEffect, useState } from "react";
 
 export const checkoutContainerStyles = {
@@ -37,7 +37,7 @@ export const checkoutContainerStyles = {
 
 export const CheckoutContainer = () => {
   const [token, setToken] = useState<string>("");
-  const [cardInstance, setCardinstance] = useState<Card>();
+  const [cardInstance, setCardinstance] = useState<Payment>();
   const [fieldsValidityDemo, setFieldsValidityDemo] = useState<Fields>({
     cardholderName: { isValid: true },
     cardNumber: { isValid: true },
@@ -57,8 +57,8 @@ export const CheckoutContainer = () => {
       cardHolderName: {
         fieldType: "cardholderName",
         inputType: "text",
-        label: "Card holder name",
-        placeholder: "Card holder name",
+        label: "Payment holder name",
+        placeholder: "Payment holder name",
         selector: "cardHolderName_id",
         styles: {
           container: {
@@ -432,7 +432,7 @@ export const CheckoutContainer = () => {
       });
 
       if (kushkiInstance) {
-        setCardinstance(await Card.initCardToken(kushkiInstance, options));
+        setCardinstance(await Payment.initCardToken(kushkiInstance, options));
       }
     })();
   }, []);
