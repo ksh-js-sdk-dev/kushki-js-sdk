@@ -32,6 +32,7 @@ import { FieldValidity, FormValidity } from "types/form_validity";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { SiftScienceObject } from "types/sift_science_object";
+import { FieldTypeEnum } from "types/card_options";
 
 declare global {
   // tslint:disable-next-line
@@ -49,6 +50,9 @@ export class Payment implements IPayment {
   private readonly _gateway: IKushkiGateway;
   private readonly _siftScienceService: ISiftScienceService;
   private readonly listenerFieldValidity: string = "fieldValidity";
+  private readonly listenerFieldFocus: string = "fieldFocus";
+  private readonly listenerFieldBlur: string = "fieldBlur";
+  private readonly listenerFieldSubmit: string = "fieldSubmit";
 
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
     this.options = this.setDefaultValues(options);
@@ -122,14 +126,56 @@ export class Payment implements IPayment {
     }
   }
 
-  public onFieldValidity(event: (fieldEvent: FormValidity) => void): void {
-    window.addEventListener(this.listenerFieldValidity, ((
-      e: CustomEvent<FormValidity>
-    ) => {
-      const fieldEvent: FormValidity = e.detail!;
+  public onFieldValidity(
+    event: (fieldEvent: FormValidity | FieldValidity) => void,
+    fieldType?: FieldTypeEnum
+  ): void {
+    this.addEventListener(this.listenerFieldValidity, event, fieldType);
+  }
 
-      event(fieldEvent);
-    }) as EventListener);
+  public reset(fieldType: FieldTypeEnum): Promise<void> {
+    if (Object.values(InputModelEnum).includes(fieldType as InputModelEnum)) {
+      this.inputValues[fieldType]?.hostedField?.updateProps({
+        reset: true
+      });
+
+      return Promise.resolve();
+    } else {
+      return Promise.reject(ERRORS.E009);
+    }
+  }
+
+  public focus(fieldType: FieldTypeEnum): Promise<void> {
+    if (Object.values(InputModelEnum).includes(fieldType as InputModelEnum)) {
+      this.inputValues[fieldType]?.hostedField?.updateProps({
+        isActivedFocus: true
+      });
+
+      return Promise.resolve();
+    } else {
+      return Promise.reject(ERRORS.E008);
+    }
+  }
+
+  public onFieldFocus(
+    event: (fieldEvent: FormValidity | FieldValidity) => void,
+    fieldType?: FieldTypeEnum
+  ): void {
+    this.addEventListener(this.listenerFieldFocus, event, fieldType);
+  }
+
+  public onFieldBlur(
+    event: (fieldEvent: FormValidity | FieldValidity) => void,
+    fieldType?: FieldTypeEnum
+  ): void {
+    this.addEventListener(this.listenerFieldBlur, event, fieldType);
+  }
+
+  public onFieldSubmit(
+    event: (fieldEvent: FormValidity | FieldValidity) => void,
+    fieldType?: FieldTypeEnum
+  ): void {
+    this.addEventListener(this.listenerFieldSubmit, event, fieldType);
   }
 
   public getFormValidity(): FormValidity {
@@ -146,11 +192,11 @@ export class Payment implements IPayment {
     }
 
     const eventFormValidity: CustomEvent<FormValidity> =
-      this.buildEventFormValidity(this.inputValues);
+      this.buildEventFormValidity(this.inputValues, undefined);
 
     dispatchEvent(eventFormValidity);
 
-    return this.buildFieldsValidity(this.inputValues, formValid);
+    return this.buildFieldsValidity(this.inputValues, undefined, formValid);
   }
 
   private async request3DSToken(
@@ -409,14 +455,42 @@ export class Payment implements IPayment {
     }
   }
 
-  private handleOnFocus(field: string, value: string) {
-    field;
-    value;
+  private createCustomEvent(listener: string, fieldType: string) {
+    const event: CustomEvent<FormValidity> = new CustomEvent<FormValidity>(
+      listener,
+      {
+        detail: this.buildFieldsValidity(
+          this.inputValues,
+          fieldType as FieldTypeEnum
+        )
+      }
+    );
+
+    dispatchEvent(event);
+
+    const eventField: CustomEvent<FormValidity> = new CustomEvent<FormValidity>(
+      `${listener}${fieldType}`,
+      {
+        detail: this.buildFieldsValidity(
+          this.inputValues,
+          fieldType as FieldTypeEnum
+        )
+      }
+    );
+
+    dispatchEvent(eventField);
   }
 
-  private handleOnBlur(field: string, value: string) {
-    field;
-    value;
+  private handleOnFocus(fieldType: string) {
+    this.createCustomEvent(this.listenerFieldFocus, fieldType);
+  }
+
+  private handleOnKeyUp(fieldType: string) {
+    this.createCustomEvent(this.listenerFieldSubmit, fieldType);
+  }
+
+  private handleOnBlur(fieldType: string) {
+    this.createCustomEvent(this.listenerFieldBlur, fieldType);
   }
 
   private handleOnValidity(
@@ -435,10 +509,23 @@ export class Payment implements IPayment {
     };
 
     const event: CustomEvent<FormValidity> = this.buildEventFormValidity(
-      this.inputValues
+      this.inputValues,
+      field
     );
 
     dispatchEvent(event);
+
+    const eventField: CustomEvent<FormValidity> = new CustomEvent<FormValidity>(
+      `${this.listenerFieldValidity}${field}`,
+      {
+        detail: this.buildFieldsValidity(
+          this.inputValues,
+          field as FieldTypeEnum
+        )
+      }
+    );
+
+    dispatchEvent(eventField);
   }
 
   private async handleSetCardNumber(cardNumber: string) {
@@ -498,12 +585,12 @@ export class Payment implements IPayment {
   private buildFieldOptions(field: Field) {
     const options: FieldOptions = {
       ...field,
-      handleOnBlur: (field: string, value: string) =>
-        this.handleOnBlur(field, value),
+      handleOnBlur: (field: string) => this.handleOnBlur(field),
       handleOnChange: (field: string, value: string) => {
         return this.handleOnChange(field, value);
       },
-      handleOnFocus: (field, value: string) => this.handleOnFocus(field, value),
+      handleOnFocus: (field: string) => this.handleOnFocus(field),
+      handleOnKeyUp: (field: string) => this.handleOnKeyUp(field),
       handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
         this.handleOnValidity(field, fieldValidity)
     };
@@ -578,6 +665,7 @@ export class Payment implements IPayment {
 
   private buildFieldsValidity = (
     inputValues: CardFieldValues,
+    field?: FieldTypeEnum,
     isFormValid?: boolean
   ): FormValidity => {
     const defaultValidity: FieldValidity = {
@@ -593,7 +681,10 @@ export class Payment implements IPayment {
     };
 
     for (const inputName in inputValues) {
-      if (Object.values(InputModelEnum).includes(inputName as InputModelEnum)) {
+      if (
+        Object.values(InputModelEnum).includes(inputName as InputModelEnum) &&
+        inputValues[inputName].validity
+      ) {
         fieldsValidity[inputName as keyof Fields] = {
           errorType: inputValues[inputName].validity.errorType,
           isValid: inputValues[inputName].validity.isValid
@@ -601,14 +692,19 @@ export class Payment implements IPayment {
       }
     }
 
-    return { fields: fieldsValidity, isFormValid: isFormValid ?? false };
+    return {
+      fields: fieldsValidity,
+      isFormValid: isFormValid ?? false,
+      triggeredBy: field
+    };
   };
 
   private buildEventFormValidity = (
-    inputValues: CardFieldValues
+    inputValues: CardFieldValues,
+    field?: FieldTypeEnum
   ): CustomEvent<FormValidity> => {
     return new CustomEvent<FormValidity>(this.listenerFieldValidity, {
-      detail: this.buildFieldsValidity(inputValues)
+      detail: this.buildFieldsValidity(inputValues, field)
     });
   };
 
@@ -640,4 +736,22 @@ export class Payment implements IPayment {
 
     return field.hostedField?.resize({ height, width });
   };
+
+  private addEventListener(
+    listener: string,
+    event: (fieldEvent: FormValidity | FieldValidity) => void,
+    fieldType?: FieldTypeEnum
+  ): void {
+    if (fieldType) {
+      window.addEventListener(`${listener}${fieldType}`, ((
+        e: CustomEvent<FormValidity>
+      ) => {
+        event(e.detail!.fields![fieldType as keyof Fields] || e.detail!);
+      }) as EventListener);
+    } else {
+      window.addEventListener(listener, ((e: CustomEvent<FormValidity>) => {
+        event(e.detail!);
+      }) as EventListener);
+    }
+  }
 }

@@ -1,13 +1,14 @@
 import { Kushki } from "Kushki";
 import {
-  Payment,
   CardOptions,
+  ErrorTypeEnum,
   Fields,
   FormValidity,
-  TokenResponse,
-  ErrorTypeEnum
+  Payment,
+  TokenResponse
 } from "../../../src/module";
 import { useEffect, useState } from "react";
+import { TableDemoField } from "../components/TableDemoField";
 
 export const checkoutContainerStyles = {
   button: {
@@ -32,6 +33,19 @@ export const checkoutContainerStyles = {
     justifyContent: "center",
     marginRight: "250px",
     width: "100%"
+  },
+  table: {
+    width: "100%"
+  },
+  td: {
+    padding: "8px",
+    textAlign: "center",
+    width: "50%"
+  },
+  th: {
+    padding: "8px",
+    textAlign: "center",
+    width: "50%"
   }
 };
 
@@ -45,6 +59,32 @@ export const CheckoutContainer = () => {
     deferred: { isValid: true },
     expirationDate: { isValid: true }
   });
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [errorsTypes, setErrorsTypes] = useState<string>("");
+  const [validFields, setValidFields] = useState<string>("");
+  const [triggeredByFields, setTriggeredBy] = useState<string>("");
+
+  const [focusCardHolderName, setFocusCardHolderName] = useState<string>("");
+  const [validityCardHolderName, setValidityCardHolderName] =
+    useState<string>("");
+  const [submitCardHolderName, setSubmitCardHolderName] = useState<string>("");
+  const [blurCardHolderName, setBlurCardHolderName] = useState<string>("");
+
+  const [focusCardNumber, setFocusCardNumber] = useState<string>("");
+  const [validityCardNumber, setValidityCardNumber] = useState<string>("");
+  const [blurCardNumber, setBlurCardNumber] = useState<string>("");
+  const [submitCardNumber, setSubmitCardNumber] = useState<string>("");
+
+  const [focusExpirationDate, setFocusExpirationDate] = useState<string>("");
+  const [validityExpirationDate, setValidityExpirationDate] =
+    useState<string>("");
+  const [submitExpirationDate, setSubmitExpirationDate] = useState<string>("");
+  const [blurExpirationDate, setBlurExpirationDate] = useState<string>("");
+
+  const [focusCvv, setFocusCvv] = useState<string>("");
+  const [validityCvv, setValidityCvv] = useState<string>("");
+  const [submitCvv, setSubmitCvv] = useState<string>("");
+  const [blurCvv, setBlurCvv] = useState<string>("");
 
   const options: CardOptions = {
     amount: {
@@ -99,7 +139,6 @@ export const CheckoutContainer = () => {
         }
       },
       cardNumber: {
-        brandIcon: "amex",
         fieldType: "cardNumber",
         inputType: "number",
         label: "Número de tarjeta",
@@ -218,7 +257,7 @@ export const CheckoutContainer = () => {
                 fontFamily: "IBM Plex sans",
                 fontWeight: "500",
                 paddingLeft: "5px",
-                paddingRight: "5px",
+                paddingRight: "5px"
               }
             }
           },
@@ -241,7 +280,7 @@ export const CheckoutContainer = () => {
                 fontSize: "18px",
                 fontWeight: "400",
                 borderRadius: "10px",
-                border: "1px solid #ccc",
+                border: "1px solid #ccc"
               },
               label: {
                 background: "white",
@@ -277,7 +316,7 @@ export const CheckoutContainer = () => {
                 fontSize: "18px",
                 fontWeight: "400",
                 borderRadius: "10px",
-                border: "1px solid #ccc",
+                border: "1px solid #ccc"
               },
               label: {
                 background: "white",
@@ -313,7 +352,7 @@ export const CheckoutContainer = () => {
                 fontSize: "18px",
                 fontWeight: "400",
                 borderRadius: "10px",
-                border: "1px solid #ccc",
+                border: "1px solid #ccc"
               },
               label: {
                 background: "white",
@@ -420,14 +459,14 @@ export const CheckoutContainer = () => {
           }
         }
       }
-    },
+    }
   };
 
   useEffect(() => {
     (async () => {
       const kushkiInstance = await Kushki.init({
         inTest: true,
-        //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
+        // publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
         publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
       });
 
@@ -442,6 +481,8 @@ export const CheckoutContainer = () => {
       try {
         const token: TokenResponse = await cardInstance.requestToken();
 
+        await cardInstance.reset("cardholderName");
+
         setToken(token.token);
       } catch (error: any) {
         setToken(error.message);
@@ -449,7 +490,10 @@ export const CheckoutContainer = () => {
     }
   };
 
-  const validError = (fieldsValidity: Fields, fieldType: keyof Fields): boolean => {
+  const validError = (
+    fieldsValidity: Fields,
+    fieldType: keyof Fields
+  ): boolean => {
     return (
       !fieldsValidity[fieldType]?.isValid &&
       fieldsValidity[fieldType]?.errorType !== undefined
@@ -462,12 +506,51 @@ export const CheckoutContainer = () => {
     return `Error-${field} is ${errorType}`;
   };
 
+  const buildErrorsTypesFields = (fieldsValidity: Fields) => {
+    let result = "";
+
+    for (const key in fieldsValidity) {
+      if (fieldsValidity.hasOwnProperty(key)) {
+        const errorType = fieldsValidity[key].errorType || "success";
+
+        result += `${key} : ${errorType}\n`;
+      }
+    }
+
+    setErrorsTypes(result);
+  };
+
+  const buildInfoValidFields = (fieldsValidity: Fields) => {
+    let result = "";
+
+    for (const key in fieldsValidity) {
+      if (fieldsValidity.hasOwnProperty(key)) {
+        const isValid = fieldsValidity[key].isValid || "false";
+
+        result += `${key} : ${isValid}\n`;
+      }
+    }
+
+    setValidFields(result);
+  };
+
   useEffect(() => {
     if (cardInstance) {
       cardInstance.onFieldValidity((event: FormValidity) => {
-        console.log("onFieldValidity Checkout Demo", event);
+        setIsFormValid(event.isFormValid);
         setFieldsValidityDemo(event.fields);
+        buildErrorsTypesFields(event.fields);
+        buildInfoValidFields(event.fields);
+        setTriggeredBy(event.triggeredBy!);
       });
+
+      (async () => {
+        try {
+          // await cardInstance.focus("cardholderName");
+        } catch (error: any) {
+          console.log("error", error);
+        }
+      })();
     }
   }, [cardInstance]);
 
@@ -533,6 +616,51 @@ export const CheckoutContainer = () => {
       <hr />
       <h3 data-testid="token">Token: {token}</h3>
       <hr />
+
+      <table border="1" style={checkoutContainerStyles.table}>
+        <tr>
+          <th style={checkoutContainerStyles.th}>Evento</th>
+          <th style={checkoutContainerStyles.th}>Campo</th>
+        </tr>
+        <tr>
+          <td style={checkoutContainerStyles.td}>isFormValid</td>
+          <td style={checkoutContainerStyles.td}>{isFormValid.toString()}</td>
+        </tr>
+        <tr>
+          <td style={checkoutContainerStyles.td}>isValid</td>
+          <td style={checkoutContainerStyles.td}>{validFields}</td>
+        </tr>
+        <tr>
+          <td style={checkoutContainerStyles.td}>errorType</td>
+          <td style={checkoutContainerStyles.td}>{errorsTypes}</td>
+        </tr>
+        <tr>
+          <td style={checkoutContainerStyles.td}>triggeredBy</td>
+          <td style={checkoutContainerStyles.td}>{triggeredByFields}</td>
+        </tr>
+      </table>
+      <br />
+      {cardInstance && (
+        <TableDemoField
+          fieldType="cardholderName"
+          cardInstance={cardInstance}
+        />
+      )}
+      <br />
+      {cardInstance && (
+        <TableDemoField fieldType="cardNumber" cardInstance={cardInstance} />
+      )}
+      <br />
+      {cardInstance && (
+        <TableDemoField
+          fieldType="expirationDate"
+          cardInstance={cardInstance}
+        />
+      )}
+      <br />
+      {cardInstance && (
+        <TableDemoField fieldType="cvv" cardInstance={cardInstance} />
+      )}
     </>
   );
 };

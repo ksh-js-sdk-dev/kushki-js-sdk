@@ -30,6 +30,9 @@ export interface FieldOptions {
   handleOnFocus?:
     | ((fieldType: string, value: string) => void)
     | ((value: DeferredInputValues) => void);
+  handleOnKeyUp?:
+    | ((fieldType: string, value: string) => void)
+    | ((value: DeferredInputValues) => void);
   handleOnValidity?: (
     fieldType: InputModelEnum,
     fieldValidity: FieldValidity
