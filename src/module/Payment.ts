@@ -32,6 +32,7 @@ import { FieldValidity, FormValidity } from "types/form_validity";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { SiftScienceObject } from "types/sift_science_object";
+import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 
 declare global {
   // tslint:disable-next-line
@@ -108,8 +109,12 @@ export class Payment implements IPayment {
         merchantSettings
       );
 
-      if (jwt && !merchantSettings.sandboxEnable) {
-        return await this.request3DSToken(jwt, scienceSession);
+      if (jwt) {
+        return await this.request3DSToken(
+          jwt,
+          merchantSettings.sandboxEnable,
+          scienceSession
+        );
       } else return await this.requestTokenGateway(jwt, scienceSession);
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
@@ -155,33 +160,47 @@ export class Payment implements IPayment {
 
   private async request3DSToken(
     jwt: string,
+    isSandboxEnabled?: boolean,
     scienceSession?: SiftScienceObject
-  ) {
-    const token: TokenResponse = await this.getCardinal3dsToken(
-      jwt,
-      scienceSession
-    );
+  ): Promise<TokenResponse> {
+    let token: TokenResponse;
 
-    return this.validate3dsToken(token);
+    if (isSandboxEnabled)
+      token = await this.requestTokenGateway(jwt, scienceSession);
+    else token = await this.getCardinal3dsToken(jwt, scienceSession);
+
+    return this.validate3dsToken(token, isSandboxEnabled);
   }
 
-  private validate3dsToken(token: TokenResponse) {
+  private validate3dsToken(
+    token: TokenResponse,
+    isSandboxEnabled?: boolean
+  ): Promise<TokenResponse> {
     if (this.tokenNotNeedsAuth(token)) {
       return Promise.resolve(token);
     }
-    if (this.hasAllSecurityProperties(token)) return this.validate3DS(token);
+    if (this.hasAllSecurityProperties(token, isSandboxEnabled))
+      return this.validate3DS(token, isSandboxEnabled);
 
     return Promise.reject(ERRORS.E005);
   }
 
-  private hasAllSecurityProperties(token: TokenResponse): boolean {
+  private hasAllSecurityProperties(
+    token: TokenResponse,
+    isSandboxEnabled?: boolean
+  ): boolean {
+    const validateVersion = (): boolean =>
+      isSandboxEnabled
+        ? true
+        : +token.security!.specificationVersion.split(".")[0] >= 2;
+
     return !!(
       token.security &&
       token.security.authRequired &&
-      token.security.acsURL &&
-      token.security.paReq &&
+      token.security.acsURL !== undefined &&
+      token.security.paReq !== undefined &&
       token.security.authenticationTransactionId &&
-      +token.security.specificationVersion.split(".")[0] >= 2
+      validateVersion()
     );
   }
 
@@ -191,17 +210,23 @@ export class Payment implements IPayment {
     );
   }
 
-  private async validate3DS(token: TokenResponse) {
-    this.launchCardinal(token);
+  private async validate3DS(
+    token: TokenResponse,
+    isSandboxEnabled?: boolean
+  ): Promise<TokenResponse> {
+    this.launchPaymentValidation(token, isSandboxEnabled);
 
-    if (await this.completeCardinal(token.secureId!))
+    if (await this.completePaymentValidation(token.secureId!, isSandboxEnabled))
       return Promise.resolve(token);
     else return Promise.reject(ERRORS.E006);
   }
 
-  private async completeCardinal(secureServiceId: string): Promise<boolean> {
+  private async completePaymentValidation(
+    secureServiceId: string,
+    isSandboxEnabled?: boolean
+  ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      return window.Cardinal.on("payments.validated", async () => {
+      const secureValidation = async () => {
         try {
           const secureValidation: SecureOtpResponse =
             await this._gateway.requestSecureServiceValidation(
@@ -216,7 +241,20 @@ export class Payment implements IPayment {
         } catch (error) {
           reject(error);
         }
-      });
+      };
+
+      if (isSandboxEnabled)
+        KushkiCardinalSandbox.on(
+          "payments.validated",
+          async (isErrorFlow?: boolean) => {
+            if (isErrorFlow === true) reject(ERRORS.E005);
+            else await secureValidation();
+          }
+        );
+      else
+        window.Cardinal.on("payments.validated", async () => {
+          await secureValidation();
+        });
     });
   }
 
@@ -230,19 +268,36 @@ export class Payment implements IPayment {
     );
   }
 
-  private launchCardinal(token: TokenResponse) {
-    window.Cardinal.continue(
-      "cca",
-      {
-        AcsUrl: token.security!.acsURL!,
-        Payload: token.security!.paReq!
-      },
-      {
-        OrderDetails: {
-          TransactionId: token.security!.authenticationTransactionId!
+  private launchPaymentValidation(
+    token: TokenResponse,
+    isSandboxEnabled?: boolean
+  ) {
+    if (isSandboxEnabled)
+      KushkiCardinalSandbox.continue(
+        "cca",
+        {
+          AcsUrl: token.security!.acsURL!,
+          Payload: token.security!.paReq!
+        },
+        {
+          OrderDetails: {
+            TransactionId: token.security!.authenticationTransactionId!
+          }
         }
-      }
-    );
+      );
+    else
+      window.Cardinal.continue(
+        "cca",
+        {
+          AcsUrl: token.security!.acsURL!,
+          Payload: token.security!.paReq!
+        },
+        {
+          OrderDetails: {
+            TransactionId: token.security!.authenticationTransactionId!
+          }
+        }
+      );
   }
 
   private async getCardinal3dsToken(
@@ -287,8 +342,8 @@ export class Payment implements IPayment {
       const jwtResponse: CybersourceJwtResponse =
         await this._gateway.requestCybersourceJwt(this.kushkiInstance);
 
-      if (!merchantSettings.sandboxEnable)
-        await this.initCardinal(jwtResponse.jwt);
+      if (merchantSettings.sandboxEnable) KushkiCardinalSandbox.init();
+      else await this.initCardinal(jwtResponse.jwt);
 
       return jwtResponse.jwt;
     } else {
