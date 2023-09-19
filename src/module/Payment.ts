@@ -523,7 +523,7 @@ export class Payment implements IPayment {
 
     if (this.currentBin !== newBin) {
       this.currentBin = newBin;
-
+      this.currentBinHasDeferredOptions = false;
       try {
         const { brand, cardType }: BinInfoResponse =
           await this._gateway.requestBinInfo(this.kushkiInstance, {
@@ -580,10 +580,7 @@ export class Payment implements IPayment {
 
     if (cardNumber.length >= this.BIN_LENGTH)
       this.handleSetCardNumber(cardNumber);
-    else {
-      this.currentBinHasDeferredOptions = false;
-      this.inputValues.deferred?.hostedField?.hide();
-    }
+    else this.inputValues.deferred?.hostedField?.hide();
   }
 
   private buildFieldOptions(field: Field) {
