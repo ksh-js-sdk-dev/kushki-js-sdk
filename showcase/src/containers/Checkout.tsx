@@ -51,8 +51,13 @@ export const CheckoutContainer = () => {
       iva: 26,
       subtotalIva: 26,
       subtotalIva0: 0
+      // 3ds amount
+      // iva: 0,
+      // subtotalIva: 0,
+      // subtotalIva0: 10000
     },
     currency: "USD",
+    // currency: "COP", // 3ds currency
     fields: {
       cardHolderName: {
         fieldType: "cardholderName",
@@ -218,7 +223,7 @@ export const CheckoutContainer = () => {
                 fontFamily: "IBM Plex sans",
                 fontWeight: "500",
                 paddingLeft: "5px",
-                paddingRight: "5px",
+                paddingRight: "5px"
               }
             }
           },
@@ -241,7 +246,7 @@ export const CheckoutContainer = () => {
                 fontSize: "18px",
                 fontWeight: "400",
                 borderRadius: "10px",
-                border: "1px solid #ccc",
+                border: "1px solid #ccc"
               },
               label: {
                 background: "white",
@@ -277,7 +282,7 @@ export const CheckoutContainer = () => {
                 fontSize: "18px",
                 fontWeight: "400",
                 borderRadius: "10px",
-                border: "1px solid #ccc",
+                border: "1px solid #ccc"
               },
               label: {
                 background: "white",
@@ -313,7 +318,7 @@ export const CheckoutContainer = () => {
                 fontSize: "18px",
                 fontWeight: "400",
                 borderRadius: "10px",
-                border: "1px solid #ccc",
+                border: "1px solid #ccc"
               },
               label: {
                 background: "white",
@@ -420,15 +425,15 @@ export const CheckoutContainer = () => {
           }
         }
       }
-    },
+    }
   };
 
   useEffect(() => {
     (async () => {
       const kushkiInstance = await Kushki.init({
         inTest: true,
-        //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
-        publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
+        publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
+        //publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
       });
 
       if (kushkiInstance) {
@@ -449,7 +454,10 @@ export const CheckoutContainer = () => {
     }
   };
 
-  const validError = (fieldsValidity: Fields, fieldType: keyof Fields): boolean => {
+  const validError = (
+    fieldsValidity: Fields,
+    fieldType: keyof Fields
+  ): boolean => {
     return (
       !fieldsValidity[fieldType]?.isValid &&
       fieldsValidity[fieldType]?.errorType !== undefined
@@ -476,7 +484,7 @@ export const CheckoutContainer = () => {
       <div style={checkoutContainerStyles.contentTitle!}>
         <h1>Kushki Fields JS - DEMO</h1>
       </div>
-
+      <p>Tarjeta 3DS: 4000000000002503</p>
       <div style={checkoutContainerStyles.contentCheckout!}>
         <div id="cardHolderName_id"></div>
         {validError(fieldsValidityDemo, "cardholderName") && (
