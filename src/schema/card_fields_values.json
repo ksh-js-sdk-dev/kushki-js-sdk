@@ -79,7 +79,7 @@
     "deferred": {
       "$ref": "#/definitions/fieldInstance"
     },
-    "creditType": {
+    "expirationDate": {
       "$ref": "#/definitions/fieldInstance"
     }
   },
