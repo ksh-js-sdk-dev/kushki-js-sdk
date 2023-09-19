@@ -3,7 +3,10 @@ import { CONTAINER } from "infrastructure/Container.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import { FieldOptions } from "infrastructure/interfaces/FieldOptions.ts";
+import {
+  FieldOptions,
+  IFrameBus
+} from "infrastructure/interfaces/FieldOptions.ts";
 import {
   DeferredByBinResponse,
   DeferredInputValues,
@@ -32,6 +35,8 @@ import { FieldValidity, FormValidity } from "types/form_validity";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { SiftScienceObject } from "types/sift_science_object";
+import { CountryEnum } from "infrastructure/CountryEnum.ts";
+import IFramesBusService from "service/IframesBusService.ts";
 
 declare global {
   // tslint:disable-next-line
@@ -46,19 +51,24 @@ export class Payment implements IPayment {
   private readonly kushkiInstance: Kushki;
   private inputValues: CardFieldValues;
   private currentBin: string;
+  private currentBinHasDeferredOptions: boolean;
+  private dataBusesHostedFields: IFrameBus;
   private readonly _gateway: IKushkiGateway;
   private readonly _siftScienceService: ISiftScienceService;
   private readonly listenerFieldValidity: string = "fieldValidity";
+  private readonly BIN_LENGTH = 8;
 
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
     this.options = this.setDefaultValues(options);
     this.kushkiInstance = kushkiInstance;
     this.inputValues = {};
     this.currentBin = "";
+    this.currentBinHasDeferredOptions = false;
     this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
     this._siftScienceService = CONTAINER.get<ISiftScienceService>(
       IDENTIFIERS.SiftScienceService
     );
+    this.dataBusesHostedFields = IFramesBusService();
   }
 
   public static async initCardToken(
@@ -109,8 +119,17 @@ export class Payment implements IPayment {
       );
 
       if (jwt && !merchantSettings.sandboxEnable) {
-        return await this.request3DSToken(jwt, scienceSession);
-      } else return await this.requestTokenGateway(jwt, scienceSession);
+        return await this.request3DSToken(
+          jwt,
+          merchantSettings,
+          scienceSession
+        );
+      } else
+        return await this.requestTokenGateway(
+          merchantSettings,
+          jwt,
+          scienceSession
+        );
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
       throw error;
@@ -143,6 +162,8 @@ export class Payment implements IPayment {
       if (isInputInValid) formValid = false;
       if (isInputInValid && !isErrorTypeValid)
         validityProps.errorType = ErrorTypeEnum.EMPTY;
+
+      if (inputName === "deferred") formValid = this.validateDeferredValues();
     }
 
     const eventFormValidity: CustomEvent<FormValidity> =
@@ -155,10 +176,12 @@ export class Payment implements IPayment {
 
   private async request3DSToken(
     jwt: string,
+    merchantSettings: MerchantSettingsResponse,
     scienceSession?: SiftScienceObject
   ) {
     const token: TokenResponse = await this.getCardinal3dsToken(
       jwt,
+      merchantSettings,
       scienceSession
     );
 
@@ -247,23 +270,33 @@ export class Payment implements IPayment {
 
   private async getCardinal3dsToken(
     jwt: string,
+    merchantSettings: MerchantSettingsResponse,
     scienceSession?: SiftScienceObject
   ): Promise<TokenResponse> {
-    return new Promise<TokenResponse>(async (resolve, reject) => {
+    return new Promise<TokenResponse>((resolve, reject) => {
       const requestToken = async () => {
         try {
-          resolve(await this.requestTokenGateway(jwt, scienceSession));
+          resolve(
+            await this.requestTokenGateway(
+              merchantSettings,
+              jwt,
+              scienceSession
+            )
+          );
         } catch (error) {
           reject(error);
         }
       };
 
-      if (await this.isCardinalInitialized()) {
-        await requestToken();
-      } else
-        window.Cardinal.on("payments.setupComplete", async () => {
+      this.isCardinalInitialized().then(async (isCardinalInitialized) => {
+        if (isCardinalInitialized) {
           await requestToken();
-        });
+        } else {
+          window.Cardinal.on("payments.setupComplete", async () => {
+            await requestToken();
+          });
+        }
+      });
     });
   }
 
@@ -326,34 +359,35 @@ export class Payment implements IPayment {
   }
 
   private requestTokenGateway(
+    merchantSettings: MerchantSettingsResponse,
     jwt?: string,
     scienceSession?: SiftScienceObject
   ) {
     if (this.options.isSubscription)
       return this._gateway.requestCreateSubscriptionToken(
         this.kushkiInstance,
-        this.buildTokenBody(jwt, scienceSession)
+        this.buildTokenBody(merchantSettings, jwt, scienceSession)
       );
 
     return this._gateway.requestToken(
       this.kushkiInstance,
-      this.buildTokenBody(jwt, scienceSession)
+      this.buildTokenBody(merchantSettings, jwt, scienceSession)
     );
   }
 
   private buildTokenBody(
+    merchantSettings: MerchantSettingsResponse,
     jwt?: string,
     scienceSession?: SiftScienceObject
   ): CardTokenRequest {
     const { cardholderName, cardNumber, expirationDate, cvv } =
       this.inputValues;
     const { currency } = this.options;
-
-    const deferredValues = this.getDeferredValues();
+    const deferredValues =
+      this.buildGetDeferredValuesToRequestToken(merchantSettings);
 
     return {
       ...scienceSession,
-      jwt,
       card: {
         cvv: String(cvv!.value!),
         expiryMonth: String(expirationDate!.value!).split("/")[0]!,
@@ -362,8 +396,8 @@ export class Payment implements IPayment {
         number: String(cardNumber!.value!).replace(/\s+/g, "")
       },
       currency,
-      isDeferred: deferredValues.isDeferred,
-      months: deferredValues.months,
+      jwt,
+      ...deferredValues,
       ...this.buildTotalAmount()
     };
   }
@@ -375,6 +409,52 @@ export class Payment implements IPayment {
     if (typeof this.inputValues.deferred.value !== "object") return {};
 
     return this.inputValues.deferred.value;
+  };
+
+  private buildGetDeferredValuesToRequestToken = (
+    merchantSettings: MerchantSettingsResponse
+  ): DeferredValues => {
+    const deferredValuesToRequestToken: DeferredValues = {};
+    const deferredValues = this.getDeferredValues();
+
+    if (deferredValues.isDeferred)
+      deferredValuesToRequestToken.isDeferred = deferredValues.isDeferred;
+
+    if (
+      merchantSettings.country === CountryEnum.CHL &&
+      deferredValues.isDeferred
+    )
+      deferredValuesToRequestToken.months = deferredValues.months;
+
+    return deferredValuesToRequestToken;
+  };
+  private validateDeferredValues = (): boolean => {
+    let deferredValuesAreValid: boolean = true;
+
+    if (!this.inputValues.deferred || !this.inputValues.deferred.value)
+      return deferredValuesAreValid;
+
+    const deferredValues: DeferredValues = this.getDeferredValues();
+
+    if (!deferredValues.isDeferred) {
+      this.inputValues.deferred.validity.isValid = deferredValuesAreValid;
+
+      return deferredValuesAreValid;
+    }
+
+    const deferredMonthsIsSelected: boolean = deferredValues.months !== 0;
+
+    deferredValuesAreValid =
+      Boolean(deferredValues.isDeferred) && deferredMonthsIsSelected;
+
+    this.inputValues.deferred.validity.isValid = deferredValuesAreValid;
+
+    if (!deferredValuesAreValid) {
+      this.inputValues.deferred.validity.errorType =
+        ErrorTypeEnum.DEFERRED_MONTHS_REQUERED;
+    }
+
+    return deferredValuesAreValid;
   };
 
   private buildTotalAmount() {
@@ -455,24 +535,33 @@ export class Payment implements IPayment {
         this.inputValues.cardNumber?.hostedField?.updateProps({
           brandIcon: brand
         });
-        /* istanbul ignore next */
-        if (cardType === "credit" && !this.options.isSubscription)
-          this._gateway
-            .requestDeferredInfo(this.kushkiInstance, {
+
+        if (cardType !== "credit")
+          await this.inputValues.deferred?.hostedField?.hide();
+
+        if (cardType === "credit" && !this.options.isSubscription) {
+          const deferredOptions: DeferredByBinResponse[] =
+            await this._gateway.requestDeferredInfo(this.kushkiInstance, {
               bin: newBin
-            })
-            .then(
-              (deferredOptions: DeferredByBinResponse[]) =>
-                this.inputValues.deferred?.hostedField?.updateProps({
-                  deferredOptions
-                })
-            )
-            .then(() => this.inputValues.deferred?.hostedField?.show());
+            });
+
+          await this.inputValues.deferred?.hostedField?.updateProps({
+            deferredOptions
+          });
+
+          this.currentBinHasDeferredOptions =
+            Array.isArray(deferredOptions) && deferredOptions.length > 0;
+          if (this.currentBinHasDeferredOptions)
+            await this.inputValues.deferred?.hostedField?.show();
+          else await this.inputValues.deferred?.hostedField?.hide();
+        }
       } catch (error) {
         this.inputValues.cardNumber?.hostedField?.updateProps({
           brandIcon: ""
         });
       }
+    } else if (this.currentBinHasDeferredOptions) {
+      await this.inputValues.deferred?.hostedField?.show();
     }
   }
 
@@ -491,18 +580,24 @@ export class Payment implements IPayment {
   private onChangeCardNumber(value: string) {
     const cardNumber: string = value.replace(/ /g, "");
 
-    if (cardNumber.length >= 8) this.handleSetCardNumber(cardNumber);
+    if (cardNumber.length >= this.BIN_LENGTH)
+      this.handleSetCardNumber(cardNumber);
+    else {
+      this.currentBinHasDeferredOptions = false;
+      this.inputValues.deferred?.hostedField?.hide();
+    }
   }
 
   private buildFieldOptions(field: Field) {
     const options: FieldOptions = {
       ...field,
+      bus: this.dataBusesHostedFields,
+      handleOnBlur: (field: string, value: string) =>
+        this.handleOnBlur(field, value),
       handleOnChange: (field: string, value: string) => {
         return this.handleOnChange(field, value);
       },
       handleOnFocus: (field, value: string) => this.handleOnFocus(field, value),
-      handleOnBlur: (field: string, value: string) =>
-        this.handleOnBlur(field, value),
       handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
         this.handleOnValidity(field, fieldValidity)
     };
@@ -619,24 +714,15 @@ export class Payment implements IPayment {
   }
 
   private hideDeferredOptions = (): Promise<void> => {
-    if (!this.inputValues.deferred) return Promise.resolve();
+    if (!this.inputValues.deferred || !this.inputValues.deferred?.hostedField)
+      return Promise.resolve();
 
     return new Promise<void>((resolve, reject) => {
-      this.resizeField(400, 300, this.inputValues.deferred)
+      this.inputValues.deferred?.hostedField
+        ?.resize({ height: 200, width: 400 })
         .then(() => this.inputValues.deferred?.hostedField?.hide())
         .then(() => resolve())
         .catch((error: any) => reject(error));
     });
-  };
-
-  private resizeField = (
-    width: number,
-    height: number,
-    field?: FieldInstance
-  ): Promise<void> => {
-    /* istanbul ignore next*/
-    if (!field) return Promise.resolve();
-
-    return field.hostedField?.resize({ width, height });
   };
 }

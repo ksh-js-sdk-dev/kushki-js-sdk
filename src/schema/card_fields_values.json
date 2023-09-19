@@ -30,7 +30,7 @@
         },
         "errorType": {
           "type": "string",
-          "enum": ["empty", "invalid"]
+          "enum": ["empty", "invalid", "number of months required"]
         }
       },
       "required": ["isValid"]

@@ -4,10 +4,10 @@ import {
   CardOptions,
   Fields,
   FormValidity,
-  TokenResponse,
-  ErrorTypeEnum
+  TokenResponse
 } from "../../../src/module";
 import { useEffect, useState } from "react";
+import { ErrorTypeEnum } from "../../../src/infrastructure/ErrorTypeEnum.ts";
 
 export const checkoutContainerStyles = {
   button: {
@@ -52,7 +52,7 @@ export const CheckoutContainer = () => {
       subtotalIva: 26,
       subtotalIva0: 0
     },
-    currency: "USD",
+    currency: "CLP",
     fields: {
       cardHolderName: {
         fieldType: "cardholderName",
@@ -218,7 +218,7 @@ export const CheckoutContainer = () => {
                 fontFamily: "IBM Plex sans",
                 fontWeight: "500",
                 paddingLeft: "5px",
-                paddingRight: "5px",
+                paddingRight: "5px"
               }
             }
           },
@@ -241,7 +241,7 @@ export const CheckoutContainer = () => {
                 fontSize: "18px",
                 fontWeight: "400",
                 borderRadius: "10px",
-                border: "1px solid #ccc",
+                border: "1px solid #ccc"
               },
               label: {
                 background: "white",
@@ -277,7 +277,7 @@ export const CheckoutContainer = () => {
                 fontSize: "18px",
                 fontWeight: "400",
                 borderRadius: "10px",
-                border: "1px solid #ccc",
+                border: "1px solid #ccc"
               },
               label: {
                 background: "white",
@@ -313,7 +313,7 @@ export const CheckoutContainer = () => {
                 fontSize: "18px",
                 fontWeight: "400",
                 borderRadius: "10px",
-                border: "1px solid #ccc",
+                border: "1px solid #ccc"
               },
               label: {
                 background: "white",
@@ -420,7 +420,7 @@ export const CheckoutContainer = () => {
           }
         }
       }
-    },
+    }
   };
 
   useEffect(() => {
@@ -428,7 +428,8 @@ export const CheckoutContainer = () => {
       const kushkiInstance = await Kushki.init({
         inTest: true,
         //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
-        publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
+        //publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
+        publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
       });
 
       if (kushkiInstance) {
@@ -449,7 +450,10 @@ export const CheckoutContainer = () => {
     }
   };
 
-  const validError = (fieldsValidity: Fields, fieldType: keyof Fields): boolean => {
+  const validError = (
+    fieldsValidity: Fields,
+    fieldType: keyof Fields
+  ): boolean => {
     return (
       !fieldsValidity[fieldType]?.isValid &&
       fieldsValidity[fieldType]?.errorType !== undefined
@@ -483,7 +487,7 @@ export const CheckoutContainer = () => {
           <div>
             {customMessageValidity(
               "cardholderName",
-              fieldsValidityDemo.cardholderName.errorType!
+              fieldsValidityDemo.cardholderName.errorType! as ErrorTypeEnum
             )}
           </div>
         )}
@@ -492,7 +496,7 @@ export const CheckoutContainer = () => {
           <div>
             {customMessageValidity(
               "cardNumber",
-              fieldsValidityDemo.cardNumber.errorType!
+              fieldsValidityDemo.cardNumber.errorType! as ErrorTypeEnum
             )}
           </div>
         )}
@@ -501,14 +505,17 @@ export const CheckoutContainer = () => {
           <div>
             {customMessageValidity(
               "expirationDate",
-              fieldsValidityDemo.expirationDate.errorType!
+              fieldsValidityDemo.expirationDate.errorType! as ErrorTypeEnum
             )}
           </div>
         )}
         <div id="cvv_id"></div>
         {validError(fieldsValidityDemo, "cvv") && (
           <div>
-            {customMessageValidity("cvv", fieldsValidityDemo.cvv.errorType!)}
+            {customMessageValidity(
+              "cvv",
+              fieldsValidityDemo.cvv.errorType! as ErrorTypeEnum
+            )}
           </div>
         )}
         <div id="deferred_id"></div>
@@ -516,7 +523,7 @@ export const CheckoutContainer = () => {
           <div>
             {customMessageValidity(
               "deferred",
-              fieldsValidityDemo.deferred!.errorType!
+              fieldsValidityDemo.deferred!.errorType! as ErrorTypeEnum
             )}
           </div>
         )}
