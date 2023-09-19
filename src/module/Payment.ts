@@ -97,7 +97,7 @@ export class Payment implements IPayment {
         .cardNumber!.value!.toString()
         .replace(/\s+/g, "");
 
-      const scienceSession: SiftScienceObject =
+      const siftScienceSession: SiftScienceObject =
         this._siftScienceService.createSiftScienceSession(
           this.getBinFromCreditCardNumberSift(cardValue),
           cardValue.slice(-4),
@@ -113,9 +113,9 @@ export class Payment implements IPayment {
         return await this.request3DSToken(
           jwt,
           merchantSettings.sandboxEnable,
-          scienceSession
+          siftScienceSession
         );
-      } else return await this.requestTokenGateway(jwt, scienceSession);
+      } else return await this.requestTokenGateway(jwt, siftScienceSession);
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
       throw error;
@@ -161,13 +161,13 @@ export class Payment implements IPayment {
   private async request3DSToken(
     jwt: string,
     isSandboxEnabled?: boolean,
-    scienceSession?: SiftScienceObject
+    siftScienceSession?: SiftScienceObject
   ): Promise<TokenResponse> {
     let token: TokenResponse;
 
     if (isSandboxEnabled)
-      token = await this.requestTokenGateway(jwt, scienceSession);
-    else token = await this.getCardinal3dsToken(jwt, scienceSession);
+      token = await this.requestTokenGateway(jwt, siftScienceSession);
+    else token = await this.getCardinal3dsToken(jwt, siftScienceSession);
 
     return this.validate3dsToken(token, isSandboxEnabled);
   }
@@ -226,6 +226,7 @@ export class Payment implements IPayment {
     isSandboxEnabled?: boolean
   ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
+      const onPaymentEvent: string = "payments.validated";
       const secureValidation = async () => {
         try {
           const secureValidation: SecureOtpResponse =
@@ -245,14 +246,14 @@ export class Payment implements IPayment {
 
       if (isSandboxEnabled)
         KushkiCardinalSandbox.on(
-          "payments.validated",
+          onPaymentEvent,
           async (isErrorFlow?: boolean) => {
-            if (isErrorFlow === true) reject(ERRORS.E005);
+            if (isErrorFlow) reject(ERRORS.E005);
             else await secureValidation();
           }
         );
       else
-        window.Cardinal.on("payments.validated", async () => {
+        window.Cardinal.on(onPaymentEvent, async () => {
           await secureValidation();
         });
     });
@@ -272,43 +273,36 @@ export class Payment implements IPayment {
     token: TokenResponse,
     isSandboxEnabled?: boolean
   ) {
+    const continueEvent: string = "cca";
+    const ccaParameters = {
+      AcsUrl: token.security!.acsURL!,
+      Payload: token.security!.paReq!
+    };
+    const ccaOrderDetails = {
+      OrderDetails: {
+        TransactionId: token.security!.authenticationTransactionId!
+      }
+    };
+
     if (isSandboxEnabled)
       KushkiCardinalSandbox.continue(
-        "cca",
-        {
-          AcsUrl: token.security!.acsURL!,
-          Payload: token.security!.paReq!
-        },
-        {
-          OrderDetails: {
-            TransactionId: token.security!.authenticationTransactionId!
-          }
-        }
+        continueEvent,
+        ccaParameters,
+        ccaOrderDetails
       );
     else
-      window.Cardinal.continue(
-        "cca",
-        {
-          AcsUrl: token.security!.acsURL!,
-          Payload: token.security!.paReq!
-        },
-        {
-          OrderDetails: {
-            TransactionId: token.security!.authenticationTransactionId!
-          }
-        }
-      );
+      window.Cardinal.continue(continueEvent, ccaParameters, ccaOrderDetails);
   }
 
   private async getCardinal3dsToken(
     jwt: string,
-    scienceSession?: SiftScienceObject
+    siftScienceSession?: SiftScienceObject
   ): Promise<TokenResponse> {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<TokenResponse>(async (resolve, reject) => {
       const requestToken = async () => {
         try {
-          resolve(await this.requestTokenGateway(jwt, scienceSession));
+          resolve(await this.requestTokenGateway(jwt, siftScienceSession));
         } catch (error) {
           reject(error);
         }
@@ -383,23 +377,23 @@ export class Payment implements IPayment {
 
   private requestTokenGateway(
     jwt?: string,
-    scienceSession?: SiftScienceObject
+    siftScienceSession?: SiftScienceObject
   ) {
     if (this.options.isSubscription)
       return this._gateway.requestCreateSubscriptionToken(
         this.kushkiInstance,
-        this.buildTokenBody(jwt, scienceSession)
+        this.buildTokenBody(jwt, siftScienceSession)
       );
 
     return this._gateway.requestToken(
       this.kushkiInstance,
-      this.buildTokenBody(jwt, scienceSession)
+      this.buildTokenBody(jwt, siftScienceSession)
     );
   }
 
   private buildTokenBody(
     jwt?: string,
-    scienceSession?: SiftScienceObject
+    siftScienceSession?: SiftScienceObject
   ): CardTokenRequest {
     const { cardholderName, cardNumber, expirationDate, cvv } =
       this.inputValues;
@@ -408,7 +402,7 @@ export class Payment implements IPayment {
     const deferredValues = this.getDeferredValues();
 
     return {
-      ...scienceSession,
+      ...siftScienceSession,
       card: {
         cvv: String(cvv!.value!),
         expiryMonth: String(expirationDate!.value!).split("/")[0]!,
