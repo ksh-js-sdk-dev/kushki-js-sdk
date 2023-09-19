@@ -273,7 +273,8 @@ export class Payment implements IPayment {
     merchantSettings: MerchantSettingsResponse,
     scienceSession?: SiftScienceObject
   ): Promise<TokenResponse> {
-    return new Promise<TokenResponse>((resolve, reject) => {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<TokenResponse>(async (resolve, reject) => {
       const requestToken = async () => {
         try {
           resolve(
@@ -288,15 +289,12 @@ export class Payment implements IPayment {
         }
       };
 
-      this.isCardinalInitialized().then(async (isCardinalInitialized) => {
-        if (isCardinalInitialized) {
+      if (await this.isCardinalInitialized()) {
+        await requestToken();
+      } else
+        window.Cardinal.on("payments.setupComplete", async () => {
           await requestToken();
-        } else {
-          window.Cardinal.on("payments.setupComplete", async () => {
-            await requestToken();
-          });
-        }
-      });
+        });
     });
   }
 
