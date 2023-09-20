@@ -10,8 +10,8 @@ export type OnPropsCallback = (
 type FnRecipeMessage = (data: object) => void;
 
 export interface IFrameBus {
-  emit :  (event: string, data: object) => void;
-  on : (event: string, fnRecipeMessage: FnRecipeMessage) => void;
+  emit: (event: string, data: object) => void;
+  on: (event: string, fnRecipeMessage: FnRecipeMessage) => void;
 }
 export interface FieldOptions {
   inputType?: InputTypeEnum;

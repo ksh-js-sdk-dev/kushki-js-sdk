@@ -20,6 +20,7 @@ import {
   CardTokenRequest,
   Field,
   Fields,
+  CardTokenResponse,
   TokenResponse
 } from "module/index.ts";
 import "reflect-metadata";
@@ -37,6 +38,7 @@ import { SecureOtpResponse } from "types/secure_otp_response";
 import { SiftScienceObject } from "types/sift_science_object";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
 import IFramesBusService from "service/IframesBusService.ts";
+import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 
 declare global {
   // tslint:disable-next-line
@@ -106,7 +108,7 @@ export class Payment implements IPayment {
         .cardNumber!.value!.toString()
         .replace(/\s+/g, "");
 
-      const scienceSession: SiftScienceObject =
+      const siftScienceSession: SiftScienceObject =
         this._siftScienceService.createSiftScienceSession(
           this.getBinFromCreditCardNumberSift(cardValue),
           cardValue.slice(-4),
@@ -118,17 +120,17 @@ export class Payment implements IPayment {
         merchantSettings
       );
 
-      if (jwt && !merchantSettings.sandboxEnable) {
+      if (jwt) {
         return await this.request3DSToken(
           jwt,
           merchantSettings,
-          scienceSession
+          siftScienceSession
         );
       } else
         return await this.requestTokenGateway(
           merchantSettings,
           jwt,
-          scienceSession
+          siftScienceSession
         );
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
@@ -177,54 +179,82 @@ export class Payment implements IPayment {
   private async request3DSToken(
     jwt: string,
     merchantSettings: MerchantSettingsResponse,
-    scienceSession?: SiftScienceObject
-  ) {
-    const token: TokenResponse = await this.getCardinal3dsToken(
-      jwt,
-      merchantSettings,
-      scienceSession
-    );
+    siftScienceSession?: SiftScienceObject
+  ): Promise<TokenResponse> {
+    let token: TokenResponse;
 
-    return this.validate3dsToken(token);
+    if (merchantSettings.sandboxEnable)
+      token = await this.requestTokenGateway(
+        merchantSettings,
+        jwt,
+        siftScienceSession
+      );
+    else
+      token = await this.getCardinal3dsToken(
+        jwt,
+        merchantSettings,
+        siftScienceSession
+      );
+
+    return this.validate3dsToken(token, merchantSettings.sandboxEnable);
   }
 
-  private validate3dsToken(token: TokenResponse) {
+  private validate3dsToken(
+    token: TokenResponse,
+    isSandboxEnabled?: boolean
+  ): Promise<TokenResponse> {
     if (this.tokenNotNeedsAuth(token)) {
       return Promise.resolve(token);
     }
-    if (this.hasAllSecurityProperties(token)) return this.validate3DS(token);
+    if (this.hasAllSecurityProperties(token, isSandboxEnabled))
+      return this.validate3DS(token, isSandboxEnabled);
 
     return Promise.reject(ERRORS.E005);
   }
 
-  private hasAllSecurityProperties(token: TokenResponse): boolean {
+  private hasAllSecurityProperties(
+    token: CardTokenResponse,
+    isSandboxEnabled?: boolean
+  ): boolean {
+    const validateVersion = (): boolean =>
+      isSandboxEnabled
+        ? true
+        : +token.security!.specificationVersion.split(".")[0] >= 2;
+
     return !!(
       token.security &&
       token.security.authRequired &&
-      token.security.acsURL &&
-      token.security.paReq &&
+      token.security.acsURL !== undefined &&
+      token.security.paReq !== undefined &&
       token.security.authenticationTransactionId &&
-      +token.security.specificationVersion.split(".")[0] >= 2
+      validateVersion()
     );
   }
 
-  private tokenNotNeedsAuth(token: TokenResponse): boolean {
+  private tokenNotNeedsAuth(token: CardTokenResponse): boolean {
     return (
       !!(token.security && !token.security.authRequired) || !token.security
     );
   }
 
-  private async validate3DS(token: TokenResponse) {
-    this.launchCardinal(token);
+  private async validate3DS(
+    token: CardTokenResponse,
+    isSandboxEnabled?: boolean
+  ): Promise<TokenResponse> {
+    this.launchPaymentValidation(token, isSandboxEnabled);
 
-    if (await this.completeCardinal(token.secureId!))
+    if (await this.completePaymentValidation(token.secureId!, isSandboxEnabled))
       return Promise.resolve(token);
     else return Promise.reject(ERRORS.E006);
   }
 
-  private async completeCardinal(secureServiceId: string): Promise<boolean> {
+  private async completePaymentValidation(
+    secureServiceId: string,
+    isSandboxEnabled?: boolean
+  ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      return window.Cardinal.on("payments.validated", async () => {
+      const onPaymentEvent: string = "payments.validated";
+      const secureValidation = async () => {
         try {
           const secureValidation: SecureOtpResponse =
             await this._gateway.requestSecureServiceValidation(
@@ -239,7 +269,20 @@ export class Payment implements IPayment {
         } catch (error) {
           reject(error);
         }
-      });
+      };
+
+      if (isSandboxEnabled)
+        KushkiCardinalSandbox.on(
+          onPaymentEvent,
+          async (isErrorFlow?: boolean) => {
+            if (isErrorFlow) reject(ERRORS.E005);
+            else await secureValidation();
+          }
+        );
+      else
+        window.Cardinal.on(onPaymentEvent, async () => {
+          await secureValidation();
+        });
     });
   }
 
@@ -253,25 +296,35 @@ export class Payment implements IPayment {
     );
   }
 
-  private launchCardinal(token: TokenResponse) {
-    window.Cardinal.continue(
-      "cca",
-      {
-        AcsUrl: token.security!.acsURL!,
-        Payload: token.security!.paReq!
-      },
-      {
-        OrderDetails: {
-          TransactionId: token.security!.authenticationTransactionId!
-        }
+  private launchPaymentValidation(
+    token: CardTokenResponse,
+    isSandboxEnabled?: boolean
+  ) {
+    const continueEvent: string = "cca";
+    const ccaParameters = {
+      AcsUrl: token.security!.acsURL!,
+      Payload: token.security!.paReq!
+    };
+    const ccaOrderDetails = {
+      OrderDetails: {
+        TransactionId: token.security!.authenticationTransactionId!
       }
-    );
+    };
+
+    if (isSandboxEnabled)
+      KushkiCardinalSandbox.continue(
+        continueEvent,
+        ccaParameters,
+        ccaOrderDetails
+      );
+    else
+      window.Cardinal.continue(continueEvent, ccaParameters, ccaOrderDetails);
   }
 
   private async getCardinal3dsToken(
     jwt: string,
     merchantSettings: MerchantSettingsResponse,
-    scienceSession?: SiftScienceObject
+    siftScienceSession?: SiftScienceObject
   ): Promise<TokenResponse> {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<TokenResponse>(async (resolve, reject) => {
@@ -281,7 +334,7 @@ export class Payment implements IPayment {
             await this.requestTokenGateway(
               merchantSettings,
               jwt,
-              scienceSession
+              siftScienceSession
             )
           );
         } catch (error) {
@@ -317,8 +370,8 @@ export class Payment implements IPayment {
       const jwtResponse: CybersourceJwtResponse =
         await this._gateway.requestCybersourceJwt(this.kushkiInstance);
 
-      if (!merchantSettings.sandboxEnable)
-        await this.initCardinal(jwtResponse.jwt);
+      if (merchantSettings.sandboxEnable) KushkiCardinalSandbox.init();
+      else await this.initCardinal(jwtResponse.jwt);
 
       return jwtResponse.jwt;
     } else {
@@ -356,27 +409,40 @@ export class Payment implements IPayment {
     }
   }
 
-  private requestTokenGateway(
+  private async requestTokenGateway(
     merchantSettings: MerchantSettingsResponse,
     jwt?: string,
-    scienceSession?: SiftScienceObject
-  ) {
-    if (this.options.isSubscription)
-      return this._gateway.requestCreateSubscriptionToken(
+    siftScienceSession?: SiftScienceObject
+  ): Promise<TokenResponse> {
+    let cardTokenResponse: CardTokenResponse;
+
+    try {
+      if (this.options.isSubscription)
+        cardTokenResponse = await this._gateway.requestCreateSubscriptionToken(
+          this.kushkiInstance,
+          this.buildTokenBody(merchantSettings, jwt, siftScienceSession)
+        );
+
+      cardTokenResponse = await this._gateway.requestToken(
         this.kushkiInstance,
-        this.buildTokenBody(merchantSettings, jwt, scienceSession)
+        this.buildTokenBody(merchantSettings, jwt, siftScienceSession)
       );
 
-    return this._gateway.requestToken(
-      this.kushkiInstance,
-      this.buildTokenBody(merchantSettings, jwt, scienceSession)
-    );
+      const deferredValues: DeferredValues = this.getDeferredValues();
+
+      return Promise.resolve({
+        token: cardTokenResponse.token,
+        deferred: deferredValues
+      });
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
   private buildTokenBody(
     merchantSettings: MerchantSettingsResponse,
     jwt?: string,
-    scienceSession?: SiftScienceObject
+    siftScienceSession?: SiftScienceObject
   ): CardTokenRequest {
     const { cardholderName, cardNumber, expirationDate, cvv } =
       this.inputValues;
@@ -385,7 +451,7 @@ export class Payment implements IPayment {
       this.buildGetDeferredValuesToRequestToken(merchantSettings);
 
     return {
-      ...scienceSession,
+      ...siftScienceSession,
       card: {
         cvv: String(cvv!.value!),
         expiryMonth: String(expirationDate!.value!).split("/")[0]!,

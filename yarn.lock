@@ -324,11 +324,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@braintree/uuid@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@braintree/uuid/-/uuid-0.1.0.tgz#ab9355015a7fb0e25cf3c2ff9cd32ece8ea304b0"
-  integrity sha512-YvZJdlNcK5EnR+7M8AjgEAf4Qx696+FOSYlPfy5ePn80vODtVAUU0FxHnzKZC0og1VbDNQDDiwhthR65D4Na0g==
-
 "@commitlint/cli@^17.6.7":
   version "17.7.1"
   resolved "https://registry.yarnpkg.com/@commitlint/cli/-/cli-17.7.1.tgz#f3ab35bd38d82fcd4ab03ec5a1e9db26d57fe1b0"
@@ -975,6 +970,11 @@
     "@krakenjs/cross-domain-utils" "^3.0.0"
     "@krakenjs/post-robot" "^11.0.0"
     "@krakenjs/zalgo-promise" "^2.0.0"
+
+"@kushki/cardinal-sandbox-js@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@kushki/cardinal-sandbox-js/-/cardinal-sandbox-js-1.0.4.tgz#9fa6934419bb6fb969b27f634cd1eef051143d0c"
+  integrity sha512-Mobzd4YiU9+Pvfmg+nP/b2INV+PkFnx1GTZyYzVg5b1A94QVKoaRP+ubd28AYgZSBwHhJ0yrwk5BMIdxjr7eUg==
 
 "@kushki/cli@^1.5.0":
   version "1.5.0"
@@ -3370,13 +3370,6 @@ form-data@^4.0.0:
     asynckit "^0.4.0"
     combined-stream "^1.0.8"
     mime-types "^2.1.12"
-
-framebus@^5.2.1:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/framebus/-/framebus-5.2.1.tgz#6b7468191c020e28ee339c15561d4bd12864c636"
-  integrity sha512-K6pw+M2wNBuOhEoFrmMbf1O+fm7PnNDIfA9y0KpAyQzXRIJ420szGgJ/dI2Ikz0XG+5VfspLqA72M6bXhuyKIQ==
-  dependencies:
-    "@braintree/uuid" "^0.1.0"
 
 fs-extra@^11.0.0:
   version "11.1.1"

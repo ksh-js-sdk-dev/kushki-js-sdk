@@ -49,10 +49,14 @@ export const CheckoutContainer = () => {
   const options: CardOptions = {
     amount: {
       iva: 26,
-      subtotalIva: 26,
+      subtotalIva: 260000,
       subtotalIva0: 0
+      // 3ds amount
+      // iva: 0,
+      // subtotalIva: 0,
+      // subtotalIva0: 10000
     },
-    currency: "CLP",
+    currency: "COP",
     fields: {
       cardHolderName: {
         fieldType: "cardholderName",
@@ -427,9 +431,9 @@ export const CheckoutContainer = () => {
     (async () => {
       const kushkiInstance = await Kushki.init({
         inTest: true,
-        //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
+        publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
         //publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
-        publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
+        // publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
       });
 
       if (kushkiInstance) {
@@ -480,7 +484,7 @@ export const CheckoutContainer = () => {
       <div style={checkoutContainerStyles.contentTitle!}>
         <h1>Kushki Fields JS - DEMO</h1>
       </div>
-
+      <p>Tarjeta 3DS: 4000000000002503</p>
       <div style={checkoutContainerStyles.contentCheckout!}>
         <div id="cardHolderName_id"></div>
         {validError(fieldsValidityDemo, "cardholderName") && (

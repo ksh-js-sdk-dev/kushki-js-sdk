@@ -1,11 +1,12 @@
 import { Kushki } from "Kushki";
-import { CardOptions, Field, Payment, TokenResponse } from "./index.ts";
+import { CardOptions, CardTokenResponse, Field, Payment } from "./index.ts";
 import KushkiHostedFields from "libs/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { CONTAINER } from "infrastructure/Container.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
 import { DeferredValues } from "types/card_fields_values";
@@ -314,12 +315,15 @@ describe("Payment test", () => {
 
     const mockKushkiGateway = (
       is3ds?: boolean,
-      token: TokenResponse | Promise<TokenResponse> = { token: tokenMock },
+      token: CardTokenResponse | Promise<CardTokenResponse> = {
+        token: tokenMock
+      },
       secureValidation: SecureOtpResponse | Promise<SecureOtpResponse> = {
         code: "3DS000",
         message: "ok"
       },
-      merchantSettingsResponse: MerchantSettingsResponse = merchantSettingsResponseDefault
+      merchantSettingsResponse: MerchantSettingsResponse = merchantSettingsResponseDefault,
+      isSandboxEnabled: boolean = false
     ) => {
       const mockGateway = {
         requestCreateSubscriptionToken: () => token,
@@ -328,7 +332,8 @@ describe("Payment test", () => {
         }),
         requestMerchantSettings: () => ({
           ...merchantSettingsResponse,
-          active_3dsecure: is3ds
+          active_3dsecure: is3ds,
+          sandboxEnable: isSandboxEnabled
         }),
         requestSecureServiceValidation: () => secureValidation,
         requestToken: () => token
@@ -367,6 +372,18 @@ describe("Payment test", () => {
       window.Cardinal.trigger = jest.fn();
     };
 
+    const mockSandbox = (isError?: boolean) => {
+      jest.spyOn(KushkiCardinalSandbox, "init");
+      jest.spyOn(KushkiCardinalSandbox, "continue");
+      jest
+        .spyOn(KushkiCardinalSandbox, "on")
+        .mockImplementation(
+          (_: string, callback: (isErrorFlow?: boolean) => void) => {
+            callback(isError);
+          }
+        );
+    };
+
     beforeEach(() => {
       deferredValueDefault = {
         creditType: "all",
@@ -376,6 +393,7 @@ describe("Payment test", () => {
       };
       mockKushkiGateway();
       mockCardinal();
+      mockSandbox();
     });
 
     const mockInputFields = () => {
@@ -829,6 +847,71 @@ describe("Payment test", () => {
         await cardInstance.requestToken();
       } catch (error: any) {
         expect(error.code).toEqual("E002");
+      }
+    });
+
+    it("it should execute Payment 3ds SANDBOX token with modal validation", async () => {
+      mockKushkiGateway(
+        true,
+        {
+          security: {
+            acsURL: "url",
+            authenticationTransactionId: "1234",
+            authRequired: true,
+            paReq: "req",
+            specificationVersion: "2.0.1"
+          },
+          token: tokenMock
+        },
+        {
+          code: "3DS000",
+          message: "ok"
+        },
+        merchantSettingsResponseDefault,
+        true
+      );
+
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      mockValidityInputs();
+      mockInputFields();
+
+      const response = await cardInstance.requestToken();
+
+      expect(response.token).toEqual(tokenMock);
+    });
+
+    it("it should execute Payment 3ds SANDBOX token with ERROR on payment validation", async () => {
+      mockSandbox(true);
+      mockKushkiGateway(
+        true,
+        {
+          security: {
+            acsURL: "url.com",
+            authenticationTransactionId: "1234",
+            authRequired: true,
+            paReq: "req",
+            specificationVersion: "2.0.1"
+          },
+          token: tokenMock
+        },
+        {
+          code: "3DS000",
+          message: "ok"
+        },
+        merchantSettingsResponseDefault,
+        true
+      );
+
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      mockValidityInputs();
+      mockInputFields();
+
+      try {
+        await cardInstance.requestToken();
+      } catch (error: any) {
+        expect(error.code).toEqual("E005");
       }
     });
   });
