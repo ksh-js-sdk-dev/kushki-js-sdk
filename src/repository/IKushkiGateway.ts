@@ -1,5 +1,5 @@
 import { BinInfoResponse } from "types/bin_info_response";
-import { DeferredByBinResponse, Kushki } from "Kushki";
+import { DeferredByBinOptionsResponse, Kushki } from "Kushki";
 import { BinBody } from "types/bin_body";
 import { CardTokenRequest, CardTokenResponse } from "src/module";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
@@ -24,7 +24,7 @@ export interface IKushkiGateway {
   requestDeferredInfo(
     kushkiInstance: Kushki,
     body: BinBody
-  ): Promise<DeferredByBinResponse[]>;
+  ): Promise<DeferredByBinOptionsResponse[]>;
   /**
    * Request card Token
    */

@@ -4,7 +4,7 @@ import { BinInfoResponse } from "types/bin_info_response";
 import { PathEnum } from "infrastructure/PathEnum.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import axios from "axios";
-import { DeferredByBinResponse, Kushki } from "Kushki";
+import { DeferredByBinOptionsResponse, Kushki } from "Kushki";
 import { CardTokenRequest, CardTokenResponse } from "src/module";
 import { IKushkiGateway } from "repository/IKushkiGateway";
 import { injectable } from "inversify";
@@ -41,7 +41,7 @@ export class KushkiGateway implements IKushkiGateway {
   public requestDeferredInfo = async (
     kushkiInstance: Kushki,
     body: BinBody
-  ): Promise<DeferredByBinResponse[]> => {
+  ): Promise<DeferredByBinOptionsResponse[]> => {
     try {
       const url: string = `${kushkiInstance.getBaseUrl()}${
         PathEnum.deferred_info
@@ -51,7 +51,8 @@ export class KushkiGateway implements IKushkiGateway {
         headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
       });
 
-      const deferredInfoResponse: DeferredByBinResponse[] = response.data;
+      const deferredInfoResponse: DeferredByBinOptionsResponse[] =
+        response.data;
 
       return Promise.resolve(deferredInfoResponse);
     } catch (error) {

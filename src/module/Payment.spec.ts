@@ -802,7 +802,7 @@ describe("Payment test", () => {
       }
     });
 
-    it("it should execute Payment 3ds token UAT throw error: E006, for SecureServiceValidation request fail", async () => {
+    it("it should execute Payment 3ds token UAT throw error: E006, for request SecureServiceValidation failed", async () => {
       await initKushki(true);
       mockKushkiGateway(
         true,
@@ -816,8 +816,26 @@ describe("Payment test", () => {
           },
           token: tokenMock
         },
-        Promise.reject(ERRORS.E006)
+        Promise.reject(
+          "unexpected error when was called API to request SecureServiceValidation"
+        )
       );
+
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      mockValidityInputs();
+      mockInputFields();
+
+      try {
+        await cardInstance.requestToken();
+      } catch (error: any) {
+        expect(error.code).toEqual("E006");
+      }
+    });
+
+    it("it should execute Payment 3ds token UAT throw error: E006, for SecureServiceValidation request fail", async () => {
+      await initKushki(true);
+      mockKushkiGateway(true, Promise.reject(ERRORS.E006));
 
       const cardInstance = await Payment.initCardToken(kushki, options);
 

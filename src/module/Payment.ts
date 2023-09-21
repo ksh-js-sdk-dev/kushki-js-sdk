@@ -3,12 +3,9 @@ import { CONTAINER } from "infrastructure/Container.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
+import { FieldOptions } from "infrastructure/interfaces/FieldOptions.ts";
 import {
-  FieldOptions,
-  IFrameBus
-} from "infrastructure/interfaces/FieldOptions.ts";
-import {
-  DeferredByBinResponse,
+  DeferredByBinOptionsResponse,
   DeferredInputValues,
   FieldInstance,
   Kushki
@@ -18,9 +15,9 @@ import {
   CardFieldValues,
   CardOptions,
   CardTokenRequest,
+  CardTokenResponse,
   Field,
   Fields,
-  CardTokenResponse,
   TokenResponse
 } from "module/index.ts";
 import "reflect-metadata";
@@ -37,7 +34,6 @@ import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { SiftScienceObject } from "types/sift_science_object";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
-import IFramesBusService from "service/IframesBusService.ts";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 
 declare global {
@@ -54,7 +50,6 @@ export class Payment implements IPayment {
   private inputValues: CardFieldValues;
   private currentBin: string;
   private currentBinHasDeferredOptions: boolean;
-  private dataBusesHostedFields: IFrameBus;
   private readonly _gateway: IKushkiGateway;
   private readonly _siftScienceService: ISiftScienceService;
   private readonly listenerFieldValidity: string = "fieldValidity";
@@ -70,7 +65,6 @@ export class Payment implements IPayment {
     this._siftScienceService = CONTAINER.get<ISiftScienceService>(
       IDENTIFIERS.SiftScienceService
     );
-    this.dataBusesHostedFields = IFramesBusService();
   }
 
   public static async initCardToken(
@@ -126,12 +120,21 @@ export class Payment implements IPayment {
           merchantSettings,
           siftScienceSession
         );
-      } else
-        return await this.requestTokenGateway(
-          merchantSettings,
-          jwt,
-          siftScienceSession
-        );
+      } else {
+        const cardTokenResponse: CardTokenResponse =
+          await this.requestTokenGateway(
+            merchantSettings,
+            jwt,
+            siftScienceSession
+          );
+
+        const deferredValues: DeferredValues = this.getDeferredValues();
+
+        return Promise.resolve({
+          deferred: deferredValues,
+          token: cardTokenResponse.token
+        });
+      }
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
       throw error;
@@ -181,7 +184,7 @@ export class Payment implements IPayment {
     merchantSettings: MerchantSettingsResponse,
     siftScienceSession?: SiftScienceObject
   ): Promise<TokenResponse> {
-    let token: TokenResponse;
+    let token: CardTokenResponse;
 
     if (merchantSettings.sandboxEnable)
       token = await this.requestTokenGateway(
@@ -199,15 +202,26 @@ export class Payment implements IPayment {
     return this.validate3dsToken(token, merchantSettings.sandboxEnable);
   }
 
-  private validate3dsToken(
-    token: TokenResponse,
+  private async validate3dsToken(
+    cardTokenResponse: CardTokenResponse,
     isSandboxEnabled?: boolean
   ): Promise<TokenResponse> {
-    if (this.tokenNotNeedsAuth(token)) {
-      return Promise.resolve(token);
+    const deferredValues: DeferredValues = this.getDeferredValues();
+
+    if (this.tokenNotNeedsAuth(cardTokenResponse)) {
+      return Promise.resolve({
+        deferred: deferredValues,
+        token: cardTokenResponse.token
+      });
     }
-    if (this.hasAllSecurityProperties(token, isSandboxEnabled))
-      return this.validate3DS(token, isSandboxEnabled);
+    if (this.hasAllSecurityProperties(cardTokenResponse, isSandboxEnabled)) {
+      await this.validate3DS(cardTokenResponse, isSandboxEnabled);
+
+      return Promise.resolve({
+        deferred: deferredValues,
+        token: cardTokenResponse.token
+      });
+    }
 
     return Promise.reject(ERRORS.E005);
   }
@@ -240,7 +254,7 @@ export class Payment implements IPayment {
   private async validate3DS(
     token: CardTokenResponse,
     isSandboxEnabled?: boolean
-  ): Promise<TokenResponse> {
+  ): Promise<CardTokenResponse> {
     this.launchPaymentValidation(token, isSandboxEnabled);
 
     if (await this.completePaymentValidation(token.secureId!, isSandboxEnabled))
@@ -267,7 +281,7 @@ export class Payment implements IPayment {
 
           resolve(this.is3dsValid(secureValidation));
         } catch (error) {
-          reject(error);
+          reject(ERRORS.E006);
         }
       };
 
@@ -413,27 +427,18 @@ export class Payment implements IPayment {
     merchantSettings: MerchantSettingsResponse,
     jwt?: string,
     siftScienceSession?: SiftScienceObject
-  ): Promise<TokenResponse> {
-    let cardTokenResponse: CardTokenResponse;
-
+  ): Promise<CardTokenResponse> {
     try {
       if (this.options.isSubscription)
-        cardTokenResponse = await this._gateway.requestCreateSubscriptionToken(
+        return await this._gateway.requestCreateSubscriptionToken(
           this.kushkiInstance,
           this.buildTokenBody(merchantSettings, jwt, siftScienceSession)
         );
 
-      cardTokenResponse = await this._gateway.requestToken(
+      return await this._gateway.requestToken(
         this.kushkiInstance,
         this.buildTokenBody(merchantSettings, jwt, siftScienceSession)
       );
-
-      const deferredValues: DeferredValues = this.getDeferredValues();
-
-      return Promise.resolve({
-        token: cardTokenResponse.token,
-        deferred: deferredValues
-      });
     } catch (error) {
       return Promise.reject(error);
     }
@@ -604,24 +609,31 @@ export class Payment implements IPayment {
           await this.inputValues.deferred?.hostedField?.hide();
 
         if (cardType === "credit" && !this.options.isSubscription) {
-          const deferredOptions: DeferredByBinResponse[] =
+          const deferredResponse: DeferredByBinOptionsResponse[] =
             await this._gateway.requestDeferredInfo(this.kushkiInstance, {
               bin: newBin
             });
 
           await this.inputValues.deferred?.hostedField?.updateProps({
-            deferredOptions
+            deferredOptions: {
+              bin: newBin,
+              options: deferredResponse
+            }
           });
 
           this.currentBinHasDeferredOptions =
-            Array.isArray(deferredOptions) && deferredOptions.length > 0;
+            Array.isArray(deferredResponse) && deferredResponse.length > 0;
           if (this.currentBinHasDeferredOptions)
             await this.inputValues.deferred?.hostedField?.show();
           else await this.inputValues.deferred?.hostedField?.hide();
         }
       } catch (error) {
         this.inputValues.cardNumber?.hostedField?.updateProps({
-          brandIcon: ""
+          brandIcon: "",
+          deferredOptions: {
+            bin: newBin,
+            options: []
+          }
         });
       }
     } else if (this.currentBinHasDeferredOptions) {
@@ -646,13 +658,20 @@ export class Payment implements IPayment {
 
     if (cardNumber.length >= this.BIN_LENGTH)
       this.handleSetCardNumber(cardNumber);
-    else this.inputValues.deferred?.hostedField?.hide();
+    else {
+      this.inputValues.deferred?.hostedField?.updateProps({
+        deferredOptions: {
+          bin: cardNumber,
+          options: []
+        }
+      });
+      this.inputValues.deferred?.hostedField?.hide();
+    }
   }
 
   private buildFieldOptions(field: Field) {
     const options: FieldOptions = {
       ...field,
-      bus: this.dataBusesHostedFields,
       handleOnBlur: (field: string, value: string) =>
         this.handleOnBlur(field, value),
       handleOnChange: (field: string, value: string) => {

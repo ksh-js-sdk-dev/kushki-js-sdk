@@ -56,7 +56,7 @@ export const CheckoutContainer = () => {
       // subtotalIva: 0,
       // subtotalIva0: 10000
     },
-    currency: "COP",
+    currency: "USD",
     fields: {
       cardHolderName: {
         fieldType: "cardholderName",
@@ -431,9 +431,9 @@ export const CheckoutContainer = () => {
     (async () => {
       const kushkiInstance = await Kushki.init({
         inTest: true,
-        publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
+        //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
         //publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
-        // publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
+        publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
       });
 
       if (kushkiInstance) {
@@ -446,7 +446,6 @@ export const CheckoutContainer = () => {
     if (cardInstance) {
       try {
         const token: TokenResponse = await cardInstance.requestToken();
-
         setToken(token.token);
       } catch (error: any) {
         setToken(error.message);
