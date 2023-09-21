@@ -76,7 +76,8 @@
         "cardholderName",
         "cvv",
         "deferred",
-        "expirationDate"
+        "expirationDate",
+        "otp"
       ]
     },
     "selectOptions": {
@@ -344,6 +345,9 @@
           "$ref": "#/definitions/field"
         },
         "deferred": {
+          "$ref": "#/definitions/field"
+        },
+        "otp": {
           "$ref": "#/definitions/field"
         }
       },

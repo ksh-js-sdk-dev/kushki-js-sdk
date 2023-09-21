@@ -3,5 +3,6 @@ export enum InputModelEnum {
   CARDHOLDER_NAME = "cardholderName",
   CVV = "cvv",
   DEFERRED = "deferred",
-  EXPIRATION_DATE = "expirationDate"
+  EXPIRATION_DATE = "expirationDate",
+  OTP = "otp"
 }

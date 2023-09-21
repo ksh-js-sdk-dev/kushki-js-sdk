@@ -35,6 +35,9 @@ import { SecureOtpResponse } from "types/secure_otp_response";
 import { SiftScienceObject } from "types/sift_science_object";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
+import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
+import { OTPEnum } from "infrastructure/OTPEnum.ts";
+import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
 
 declare global {
   // tslint:disable-next-line
@@ -54,6 +57,8 @@ export class Payment implements IPayment {
   private readonly _siftScienceService: ISiftScienceService;
   private readonly listenerFieldValidity: string = "fieldValidity";
   private readonly BIN_LENGTH = 8;
+  private readonly otpValidation: string = "otpValidation";
+  private readonly otpInputOTP: string = "onInputOTP";
 
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
     this.options = this.setDefaultValues(options);
@@ -80,6 +85,7 @@ export class Payment implements IPayment {
       payment.showContainers();
 
       await payment.hideDeferredOptions();
+      await payment.hideOTPInput();
 
       return payment;
     } catch (error) {
@@ -127,8 +133,17 @@ export class Payment implements IPayment {
             jwt,
             siftScienceSession
           );
-
         const deferredValues: DeferredValues = this.getDeferredValues();
+
+        const inputOTPValidation: TokenResponse | undefined =
+          await this.validInputOTP(
+            cardTokenResponse.token,
+            deferredValues,
+            cardTokenResponse.secureService,
+            cardTokenResponse.secureId
+          );
+
+        if (inputOTPValidation !== undefined) return inputOTPValidation;
 
         return Promise.resolve({
           deferred: deferredValues,
@@ -153,6 +168,31 @@ export class Payment implements IPayment {
       const fieldEvent: FormValidity = e.detail!;
 
       event(fieldEvent);
+    }) as EventListener);
+  }
+
+  public onOTPValidation(
+    onRequired: () => void,
+    onError: (error: KushkiErrorAttr) => void,
+    onSuccess: () => void
+  ): void {
+    window.addEventListener(this.otpValidation, ((
+      e: CustomEvent<{ otp: OTPEventEnum }>
+    ) => {
+      const fieldEvent: { otp: OTPEventEnum } = e.detail!;
+
+      const errorOTP = ERRORS.E008;
+
+      const eventActions: Record<
+        OTPEventEnum,
+        (error?: KushkiErrorAttr) => void
+      > = {
+        [OTPEventEnum.SUCCESS]: onSuccess,
+        [OTPEventEnum.ERROR]: () => onError(errorOTP),
+        [OTPEventEnum.REQUIRED]: onRequired
+      };
+
+      eventActions[fieldEvent.otp]();
     }) as EventListener);
   }
 
@@ -545,7 +585,29 @@ export class Payment implements IPayment {
     };
   }
 
-  private handleOnChange(field: string, value: string) {
+  private async handleOnChangeOTP(field: string, value: string) {
+    this.inputValues = {
+      ...this.inputValues,
+      [field]: { ...this.inputValues[field], value: value }
+    };
+
+    if (
+      this.inputValues.otp?.value !== undefined &&
+      this.inputValues.otp?.value.toString().length === 3
+    ) {
+      const event: CustomEvent<{ otpValue: string }> = new CustomEvent<{
+        otpValue: string;
+      }>(this.otpInputOTP, {
+        detail: {
+          otpValue: this.inputValues.otp.value as string
+        }
+      });
+
+      dispatchEvent(event);
+    }
+  }
+
+  private async handleOnChange(field: string, value: string) {
     /* istanbul ignore next*/
     this.inputValues = {
       ...this.inputValues,
@@ -691,6 +753,10 @@ export class Payment implements IPayment {
         this.onBlurDeferred(values);
     }
 
+    if (field.fieldType === InputModelEnum.OTP)
+      options.handleOnChange = (field: string, value: string) =>
+        this.handleOnChangeOTP(field, value);
+
     return options;
   }
 
@@ -710,8 +776,12 @@ export class Payment implements IPayment {
       };
     }
 
-    if (this.inputValues.deferred)
+    if (this.inputValues.deferred) {
       this.inputValues.deferred.validity = { isValid: true };
+    }
+    if (this.inputValues.otp) {
+      this.inputValues.otp.validity = { isValid: true };
+    }
 
     this.hideContainers();
 
@@ -767,7 +837,10 @@ export class Payment implements IPayment {
     };
 
     for (const inputName in inputValues) {
-      if (Object.values(InputModelEnum).includes(inputName as InputModelEnum)) {
+      if (
+        Object.values(InputModelEnum).includes(inputName as InputModelEnum) &&
+        inputName !== InputModelEnum.OTP
+      ) {
         fieldsValidity[inputName as keyof Fields] = {
           errorType: inputValues[inputName].validity.errorType,
           isValid: inputValues[inputName].validity.isValid
@@ -804,5 +877,123 @@ export class Payment implements IPayment {
         .then(() => resolve())
         .catch((error: any) => reject(error));
     });
+  };
+
+  private async getOtpInput(secureId: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      let countTries = 0;
+
+      window.addEventListener(this.otpInputOTP, (async (
+        e: CustomEvent<{ otpValue: string }>
+      ): Promise<void> => {
+        countTries += 1;
+
+        if (countTries <= 3) {
+          const otpInputValue: { otpValue: string } = e.detail!;
+
+          const resultValidationOTP = await this.validationOTP(
+            otpInputValue.otpValue,
+            secureId
+          );
+
+          if (resultValidationOTP) resolve(true);
+          /* istanbul ignore next*/
+          if (!resultValidationOTP) {
+            this.dispatchEventOTPValidation(OTPEventEnum.ERROR);
+          }
+          /* istanbul ignore next*/
+          if (!resultValidationOTP && countTries === 3) {
+            reject(ERRORS.E008);
+          }
+        }
+      }) as unknown as EventListener);
+    });
+  }
+
+  private async validInputOTP(
+    token: string,
+    deferredValues: DeferredValues,
+    secureService?: string,
+    secureId?: string
+  ): Promise<TokenResponse | undefined> {
+    const hasOTP: boolean =
+      secureService === OTPEnum.secureService && secureId !== "";
+
+    if (hasOTP) {
+      this.showOtpAndHideInputs();
+      const otpInputSuccess: boolean = await this.getOtpInput(secureId!);
+
+      if (otpInputSuccess) {
+        this.dispatchEventOTPValidation(OTPEventEnum.SUCCESS);
+
+        return Promise.resolve({
+          deferred: deferredValues,
+          token: token
+        });
+      }
+    }
+
+    return undefined;
+  }
+
+  /* istanbul ignore next*/
+  private async validationOTP(
+    otpValue: string,
+    secureId: string
+  ): Promise<boolean> {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        const secureOTPResponse: SecureOtpResponse =
+          await this._gateway.requestSecureServiceValidation(
+            this.kushkiInstance,
+            {
+              otpValue: otpValue ?? "",
+              secureService: OTPEnum.secureService,
+              secureServiceId: secureId
+            }
+          );
+
+        if (
+          "code" in secureOTPResponse &&
+          secureOTPResponse.code === OTPEnum.secureCodeSuccess
+        )
+          resolve(true);
+        else {
+          this.dispatchEventOTPValidation(OTPEventEnum.ERROR);
+          resolve(false);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  private hideOTPInput = (): Promise<void> => {
+    if (!this.inputValues.otp) return Promise.resolve();
+
+    return this.inputValues.otp?.hostedField?.hide();
+  };
+
+  private buildEventOtpValidation = (
+    inputOtp: OTPEventEnum
+  ): CustomEvent<{ otp: OTPEventEnum }> => {
+    return new CustomEvent<{ otp: OTPEventEnum }>(this.otpValidation, {
+      detail: {
+        otp: inputOtp
+      }
+    });
+  };
+
+  private showOtpAndHideInputs = (): void => {
+    this.dispatchEventOTPValidation(OTPEventEnum.REQUIRED);
+    this.inputValues.otp?.hostedField?.show();
+  };
+
+  private dispatchEventOTPValidation = (eventOTP: OTPEventEnum) => {
+    const eventOtpValidity: CustomEvent<{ otp: OTPEventEnum }> =
+      this.buildEventOtpValidation(eventOTP);
+
+    dispatchEvent(eventOtpValidity);
   };
 }
