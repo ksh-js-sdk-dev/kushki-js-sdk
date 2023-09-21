@@ -8,6 +8,7 @@ import {
 } from "../../../src/module";
 import { useEffect, useState } from "react";
 import { ErrorTypeEnum } from "../../../src/infrastructure/ErrorTypeEnum.ts";
+import { DeferredValuesResponse } from "../../../types/token_response";
 
 export const checkoutContainerStyles = {
   button: {
@@ -37,6 +38,9 @@ export const checkoutContainerStyles = {
 
 export const CheckoutContainer = () => {
   const [token, setToken] = useState<string>("");
+  const [deferredValues, setDeferredValues] = useState<
+    DeferredValuesResponse | undefined
+  >({});
   const [cardInstance, setCardinstance] = useState<Payment>();
   const [fieldsValidityDemo, setFieldsValidityDemo] = useState<Fields>({
     cardholderName: { isValid: true },
@@ -56,7 +60,7 @@ export const CheckoutContainer = () => {
       // subtotalIva: 0,
       // subtotalIva0: 10000
     },
-    currency: "USD",
+    currency: "CLP",
     fields: {
       cardHolderName: {
         fieldType: "cardholderName",
@@ -447,6 +451,7 @@ export const CheckoutContainer = () => {
       try {
         const token: TokenResponse = await cardInstance.requestToken();
         setToken(token.token);
+        setDeferredValues(token.deferred);
       } catch (error: any) {
         setToken(error.message);
       }
@@ -541,7 +546,25 @@ export const CheckoutContainer = () => {
       </div>
 
       <hr />
-      <h3 data-testid="token">Token: {token}</h3>
+      <h3 data-testid="token">Token: {token} </h3>
+      <hr />
+      <section>
+        <h4>Options de diferido:</h4>
+        <ul>
+          <li>
+            {" "}
+            <b>tipo de crédito:</b> {deferredValues?.creditType}
+          </li>
+          <li>
+            {" "}
+            <b>mes:</b> {deferredValues?.months}{" "}
+          </li>
+          <li>
+            {" "}
+            <b>meses de gracia:</b> {deferredValues?.graceMonths}{" "}
+          </li>
+        </ul>
+      </section>
       <hr />
     </>
   );

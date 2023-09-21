@@ -168,7 +168,8 @@ export class Payment implements IPayment {
       if (isInputInValid && !isErrorTypeValid)
         validityProps.errorType = ErrorTypeEnum.EMPTY;
 
-      if (inputName === "deferred") formValid = this.validateDeferredValues();
+      if (inputName === InputModelEnum.DEFERRED)
+        formValid = this.validateDeferredValues();
     }
 
     const eventFormValidity: CustomEvent<FormValidity> =
@@ -497,6 +498,7 @@ export class Payment implements IPayment {
 
     return deferredValuesToRequestToken;
   };
+
   private validateDeferredValues = (): boolean => {
     let deferredValuesAreValid: boolean = true;
 
