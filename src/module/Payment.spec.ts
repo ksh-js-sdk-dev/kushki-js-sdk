@@ -1,5 +1,5 @@
 import { Kushki } from "Kushki";
-import { CardOptions, Field, Payment, TokenResponse } from "./index.ts";
+import { CardOptions, CardTokenResponse, Field, Payment } from "./index.ts";
 import KushkiHostedFields from "libs/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { CONTAINER } from "infrastructure/Container.ts";
@@ -7,10 +7,16 @@ import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
+import { MerchantSettingsResponse } from "types/merchant_settings_response";
+import { CountryEnum } from "infrastructure/CountryEnum.ts";
+import { DeferredValues } from "types/card_fields_values";
+import { BinInfoResponse } from "types/bin_info_response";
+
+const mockKushkiHostedFieldsHide = jest.fn().mockResolvedValue({});
 
 jest.mock("../libs/HostedField.ts", () =>
   jest.fn().mockImplementation(() => ({
-    hide: jest.fn().mockResolvedValue({}),
+    hide: mockKushkiHostedFieldsHide,
     render: jest.fn(),
     resize: jest.fn().mockResolvedValue({}),
     show: jest.fn().mockResolvedValue({}),
@@ -18,10 +24,31 @@ jest.mock("../libs/HostedField.ts", () =>
   }))
 );
 
+const merchantSettingsResponseDefault: MerchantSettingsResponse = {
+  country: "",
+  merchant_name: "",
+  processor_name: "",
+  prodBaconKey: "",
+  sandboxBaconKey: ""
+};
+
 describe("Payment test", () => {
   let kushki: Kushki;
   let options: CardOptions;
   let field: Field;
+  let mockRequestDeferredInfo = jest.fn().mockResolvedValue([
+    {
+      months: ["1"],
+      monthsOfGrace: ["1"],
+      name: "",
+      type: "all"
+    }
+  ]);
+  const binInfoResponseDefault: BinInfoResponse = {
+    bank: "Some Bank",
+    brand: "visa",
+    cardType: "credit"
+  };
 
   const mockInputFieldCardNumber = () => {
     KushkiHostedFields.mock.calls[0][0].handleOnChange(
@@ -43,25 +70,27 @@ describe("Payment test", () => {
       updateProps: jest.fn()
     }));
     CONTAINER.restore();
+    mockRequestDeferredInfo.mockClear();
   });
+
+  const initMocksGateway = (binInfoResponse = {}) => {
+    const mockGateway = {
+      requestBinInfo: () => {
+        return { ...binInfoResponseDefault, ...binInfoResponse };
+      },
+      requestDeferredInfo: mockRequestDeferredInfo
+    };
+
+    CONTAINER.unbind(IDENTIFIERS.KushkiGateway);
+    CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
+  };
 
   beforeEach(async () => {
     await initKushki();
 
     CONTAINER.snapshot();
 
-    const mockGateway = {
-      requestBinInfo: () => {
-        return {
-          bank: "Some Bank",
-          brand: "visa",
-          cardType: "Credit"
-        };
-      }
-    };
-
-    CONTAINER.unbind(IDENTIFIERS.KushkiGateway);
-    CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
+    initMocksGateway();
 
     field = {
       fieldType: InputModelEnum.CARD_NUMBER,
@@ -194,7 +223,7 @@ describe("Payment test", () => {
     );
   });
 
-  it("if cardNumber have max eight digitals then it should called handleSetCardNumber but requestBinInfo is Success", async () => {
+  it("if cardNumber have max eight digits then it should called handleSetCardNumber but requestBinInfo is Success", async () => {
     await Payment.initCardToken(kushki, options);
 
     mockInputFieldCardNumber();
@@ -204,6 +233,63 @@ describe("Payment test", () => {
         InputModelEnum.CARD_NUMBER
       );
     }
+  });
+
+  it("should hide deferred input because bin of card number hasn't deferred options", async function () {
+    mockRequestDeferredInfo = jest.fn().mockResolvedValue([]);
+
+    initMocksGateway();
+
+    await Payment.initCardToken(kushki, options);
+
+    mockInputFieldCardNumber();
+
+    expect(KushkiHostedFields).toHaveBeenCalled();
+  });
+
+  it("should show deferred input because bin of card number don't change", async function () {
+    const paymentInstance = await Payment.initCardToken(kushki, options);
+
+    paymentInstance["currentBin"] = "42424242";
+    paymentInstance["currentBinHasDeferredOptions"] = true;
+
+    KushkiHostedFields.mock.calls[0][0].handleOnChange(
+      InputModelEnum.CARD_NUMBER,
+      "42424242"
+    );
+
+    expect(KushkiHostedFields).toHaveBeenCalledTimes(4);
+  });
+
+  it("shouldn't call API bin info and deferred options", async function () {
+    const paymentInstance = await Payment.initCardToken(kushki, options);
+
+    KushkiHostedFields.mock.calls[0][0].handleOnChange(
+      InputModelEnum.CARD_NUMBER,
+      "424242"
+    );
+
+    expect(paymentInstance["currentBinHasDeferredOptions"]).toEqual(false);
+  });
+
+  it("shouldn't verify deferred options because token is to subscription", async function () {
+    options.isSubscription = true;
+
+    await Payment.initCardToken(kushki, options);
+
+    mockInputFieldCardNumber();
+
+    expect(mockRequestDeferredInfo).not.toHaveBeenCalled();
+  });
+
+  it("shouldn't verify deferred options because bin of card number is debit", async function () {
+    initMocksGateway({ cardType: "debit" });
+
+    await Payment.initCardToken(kushki, options);
+
+    mockInputFieldCardNumber();
+
+    expect(mockRequestDeferredInfo).not.toHaveBeenCalled();
   });
 
   it("When requestBinInfo throws an error", async () => {
@@ -225,14 +311,18 @@ describe("Payment test", () => {
 
   describe("requestToken - Test", () => {
     const tokenMock = "1234567890";
+    let deferredValueDefault: DeferredValues;
 
     const mockKushkiGateway = (
       is3ds?: boolean,
-      token: TokenResponse | Promise<TokenResponse> = { token: tokenMock },
+      token: CardTokenResponse | Promise<CardTokenResponse> = {
+        token: tokenMock
+      },
       secureValidation: SecureOtpResponse | Promise<SecureOtpResponse> = {
         code: "3DS000",
         message: "ok"
       },
+      merchantSettingsResponse: MerchantSettingsResponse = merchantSettingsResponseDefault,
       isSandboxEnabled: boolean = false
     ) => {
       const mockGateway = {
@@ -241,6 +331,7 @@ describe("Payment test", () => {
           jwt: "1234567890"
         }),
         requestMerchantSettings: () => ({
+          ...merchantSettingsResponse,
           active_3dsecure: is3ds,
           sandboxEnable: isSandboxEnabled
         }),
@@ -294,6 +385,12 @@ describe("Payment test", () => {
     };
 
     beforeEach(() => {
+      deferredValueDefault = {
+        creditType: "all",
+        graceMonths: 0,
+        isDeferred: true,
+        months: 1
+      };
       mockKushkiGateway();
       mockCardinal();
       mockSandbox();
@@ -353,6 +450,27 @@ describe("Payment test", () => {
       expect(response.token).toEqual(tokenMock);
     });
 
+    it("it should execute Payment token request but deferred values is undefined", async () => {
+      options.fields.deferred = {
+        fieldType: InputModelEnum.DEFERRED,
+        selector: "id_test"
+      };
+
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      mockValidityInputs();
+      mockInputFields();
+
+      KushkiHostedFields.mock.calls[4][0].handleOnChange(undefined);
+
+      const response = await cardInstance.requestToken();
+
+      expect(KushkiHostedFields.mock.calls[4][0].fieldType).toEqual(
+        InputModelEnum.DEFERRED
+      );
+      expect(response.token).toEqual(tokenMock);
+    });
+
     it("it should execute Payment token request but deferred values are incorrect", async () => {
       options.fields.deferred = {
         fieldType: InputModelEnum.DEFERRED,
@@ -364,7 +482,30 @@ describe("Payment test", () => {
       mockValidityInputs();
       mockInputFields();
 
-      KushkiHostedFields.mock.calls[4][0].handleOnChange("incorrect value");
+      KushkiHostedFields.mock.calls[4][0].handleOnChange(
+        "incorrect type of value"
+      );
+
+      const response = await cardInstance.requestToken();
+
+      expect(KushkiHostedFields.mock.calls[4][0].fieldType).toEqual(
+        InputModelEnum.DEFERRED
+      );
+      expect(response.token).toEqual(tokenMock);
+    });
+
+    it("it should execute Payment token request but isDeferred is false", async () => {
+      options.fields.deferred = {
+        fieldType: InputModelEnum.DEFERRED,
+        selector: "id_test"
+      };
+
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      mockValidityInputs();
+      mockInputFields();
+
+      KushkiHostedFields.mock.calls[4][0].handleOnChange({ isDeferred: false });
 
       const response = await cardInstance.requestToken();
 
@@ -382,11 +523,80 @@ describe("Payment test", () => {
 
       const cardInstance = await Payment.initCardToken(kushki, options);
 
+      mockValidityInputs();
+      mockInputFields();
+
+      KushkiHostedFields.mock.calls[4][0].handleOnChange(deferredValueDefault);
+
+      const response = await cardInstance.requestToken();
+
+      expect(KushkiHostedFields.mock.calls[4][0].fieldType).toEqual(
+        InputModelEnum.DEFERRED
+      );
+      expect(cardInstance["inputValues"].deferred!.value).toEqual(
+        deferredValueDefault
+      );
+      expect(response.token).toEqual(tokenMock);
+    });
+
+    it("it shouldn't execute Payment token request but deferred values are required", async () => {
+      options.fields.deferred = {
+        fieldType: InputModelEnum.DEFERRED,
+        selector: "id_test"
+      };
+
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      mockValidityInputs();
+      mockInputFields();
+
+      deferredValueDefault.isDeferred = true;
+      deferredValueDefault.months = 0;
+      KushkiHostedFields.mock.calls[4][0].handleOnChange(deferredValueDefault);
+
+      cardInstance.requestToken().catch((error) =>
+        expect(error).toEqual({
+          code: "E007",
+          message: "Error en la validación del formulario"
+        })
+      );
+    });
+
+    it("it should execute Payment token request but deferred values and country chile", async () => {
+      options.fields.deferred = {
+        fieldType: InputModelEnum.DEFERRED,
+        selector: "id_test"
+      };
+
+      mockKushkiGateway(
+        true,
+        {
+          security: {
+            acsURL: "url",
+            authenticationTransactionId: "1234",
+            authRequired: true,
+            paReq: "req",
+            specificationVersion: "2.0.1"
+          },
+          token: tokenMock
+        },
+        {
+          code: "ok",
+          message: "3DS000"
+        },
+        {
+          ...merchantSettingsResponseDefault,
+          country: CountryEnum.CHL
+        }
+      );
+
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
       const deferredValue = {
         creditType: "all",
         graceMonths: 0,
         isDeferred: true,
-        months: 0
+        months: 1
       };
 
       mockValidityInputs();
@@ -592,7 +802,7 @@ describe("Payment test", () => {
       }
     });
 
-    it("it should execute Payment 3ds token UAT throw error: E006, for SecureServiceValidation request fail", async () => {
+    it("it should execute Payment 3ds token UAT throw error: E006, for request SecureServiceValidation failed", async () => {
       await initKushki(true);
       mockKushkiGateway(
         true,
@@ -606,8 +816,26 @@ describe("Payment test", () => {
           },
           token: tokenMock
         },
-        Promise.reject(ERRORS.E006)
+        Promise.reject(
+          "unexpected error when was called API to request SecureServiceValidation"
+        )
       );
+
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      mockValidityInputs();
+      mockInputFields();
+
+      try {
+        await cardInstance.requestToken();
+      } catch (error: any) {
+        expect(error.code).toEqual("E006");
+      }
+    });
+
+    it("it should execute Payment 3ds token UAT throw error: E006, for SecureServiceValidation request fail", async () => {
+      await initKushki(true);
+      mockKushkiGateway(true, Promise.reject(ERRORS.E006));
 
       const cardInstance = await Payment.initCardToken(kushki, options);
 
@@ -657,6 +885,7 @@ describe("Payment test", () => {
           code: "3DS000",
           message: "ok"
         },
+        merchantSettingsResponseDefault,
         true
       );
 
@@ -688,6 +917,7 @@ describe("Payment test", () => {
           code: "3DS000",
           message: "ok"
         },
+        merchantSettingsResponseDefault,
         true
       );
 

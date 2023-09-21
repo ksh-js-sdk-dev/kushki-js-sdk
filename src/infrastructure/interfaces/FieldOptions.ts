@@ -6,6 +6,7 @@ import { DeferredInputValues } from "types/deferred_input_values";
 export type OnPropsCallback = (
   props: (fieldOptions: FieldOptions) => void
 ) => void;
+
 export interface FieldOptions {
   inputType?: InputTypeEnum;
   fieldType: FieldTypeEnum;

@@ -1,6 +1,6 @@
 import { KushkiGateway } from "./KushkiGateway";
 import axios, { AxiosError } from "axios";
-import { CardTokenRequest, TokenResponse } from "src/module";
+import { CardTokenRequest, CardTokenResponse } from "src/module";
 import { CONTAINER } from "infrastructure/Container";
 import { IDENTIFIERS } from "src/constant/Identifiers";
 import { Mock } from "ts-mockery";
@@ -94,7 +94,7 @@ describe("KushkiGateway - Test", () => {
   });
 
   describe("requestToken - Test", () => {
-    const mockToken: TokenResponse = { token: "123456789" };
+    const mockToken: CardTokenResponse = { token: "123456789" };
     const requestTokenBody: CardTokenRequest = {
       card: {
         cvv: "123",
@@ -116,7 +116,7 @@ describe("KushkiGateway - Test", () => {
 
       jest.spyOn(axios, "post").mockImplementation(axiosPostSpy);
 
-      const tokenResponse: TokenResponse = await kushkiGateway.requestToken(
+      const tokenResponse: CardTokenResponse = await kushkiGateway.requestToken(
         mockKushki,
         requestTokenBody
       );
@@ -136,7 +136,7 @@ describe("KushkiGateway - Test", () => {
   });
 
   describe("requestCreateSubscriptionToken - Test", () => {
-    const mockToken: TokenResponse = { token: "123456789" };
+    const mockToken: CardTokenResponse = { token: "123456789" };
     const requestSubscriptionTokenBody: CardTokenRequest = {
       card: {
         cvv: "123",
@@ -157,7 +157,7 @@ describe("KushkiGateway - Test", () => {
 
       jest.spyOn(axios, "post").mockImplementation(axiosPostSpy);
 
-      const tokenResponse: TokenResponse =
+      const tokenResponse: CardTokenResponse =
         await kushkiGateway.requestCreateSubscriptionToken(
           mockKushki,
           requestSubscriptionTokenBody
