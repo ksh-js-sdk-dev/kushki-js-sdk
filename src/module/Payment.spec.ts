@@ -1085,14 +1085,14 @@ describe("Payment test", () => {
       );
     });
 
-    it("should create custom event when called to handleOnKeyUp", async () => {
+    it("should create custom event when called to handleOnSubmit", async () => {
       await Payment.initCardToken(kushki, options);
 
-      KushkiHostedFields.mock.calls[0][0].handleOnKeyUp(
+      KushkiHostedFields.mock.calls[0][0].handleOnSubmit(
         InputModelEnum.CARDHOLDER_NAME
       );
 
-      expect(typeof KushkiHostedFields.mock.calls[0][0].handleOnKeyUp).toEqual(
+      expect(typeof KushkiHostedFields.mock.calls[0][0].handleOnSubmit).toEqual(
         "function"
       );
       expect(dispatchEventSpy).toHaveBeenCalledTimes(2);

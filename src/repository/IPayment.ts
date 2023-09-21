@@ -17,17 +17,17 @@ export interface IPayment {
   requestToken(): Promise<TokenResponse>;
 
   /**
-   * This event is emitted when the field validity (validited).
+   * This event is emitted when the field validity changes
    *
    * @function
-   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is validited.
-   * @param {FieldTypeEnum} [fieldType] - The type of form field (optional).
+   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is validited
+   * @param {FieldTypeEnum} [fieldType] - The type of form field (optional)
    * @returns {void}
    *
    * @typedef {("cardNumber" | "cardholderName" | "cvv" | "deferred" | "expirationDate")} FieldTypeEnum
    *
    * @example
-   * // Example 1: Handling a basic form focus event
+   * // Example 1: Handling a basic form validity event
    * onFieldValidity((event: FormValidity) => {
    *   // Implement your logic to handle the form submission here
    *   if (event.isFormValid) {
@@ -65,18 +65,18 @@ export interface IPayment {
   getFormValidity(): FormValidity;
 
   /**
-   * This event is emitted when the field focus (focused).
+   * This event is emitted when the field gains focus
    *
    * @function
-   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is focused..
-   * @param {FieldTypeEnum} [fieldType] - The type of form field (optional).
+   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is focused
+   * @param {FieldTypeEnum} [fieldType] - The type of form field (optional)
    * @returns {void}
    *
    * @typedef {("cardNumber" | "cardholderName" | "cvv" | "deferred" | "expirationDate")} FieldTypeEnum
    *
    * @example
    * // Example 1: Handling a basic form focus event
-   * onFieldSubmit((event: FormValidity) => {
+   * onFieldFocus((event: FormValidity) => {
    *   // Implement your logic to handle the form submission here
    *   if (event.isFormValid) {
    *     console.log("Form submitted valid", event);
@@ -87,7 +87,7 @@ export interface IPayment {
    *
    * @example
    * // Example 2: Handling a specific type of field focus event
-   * onFieldSubmit((event: FieldValidity) => {
+   * onFieldFocus((event: FieldValidity) => {
    *   // Implement your logic to handle the specific field type here
    *   if (event.isValid) {
    *     console.log("Form field is valid", event);
@@ -103,17 +103,17 @@ export interface IPayment {
   ): void;
 
   /**
-   * This event is emitted when the field loses focus (blurred).
+   * This event is emitted when the field loses focus
    * @function
-   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is blurred.
-   * @param {FieldTypeEnum} [fieldType] - The type of form field (optional).
+   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is blurred
+   * @param {FieldTypeEnum} [fieldType] - The type of form field (optional)
    * @returns {void}
    *
    * @typedef {("cardNumber" | "cardholderName" | "cvv" | "deferred" | "expirationDate")} FieldTypeEnum
    *
    * @example
    * // Example 1: Handling a basic form blur event
-   * onFieldSubmit((event: FormValidity) => {
+   * onFieldBlur((event: FormValidity) => {
    *   // Implement your logic to handle the form submission here
    *   if (event.isFormValid) {
    *     console.log("Form submitted valid", event);
@@ -124,7 +124,7 @@ export interface IPayment {
    *
    * @example
    * // Example 2: Handling a specific type of field blur event
-   * onFieldSubmit((event: FieldValidity) => {
+   * onFieldBlur((event: FieldValidity) => {
    *   // Implement your logic to handle the specific field type here
    *   if (event.isValid) {
    *     console.log("Form field is valid", event);
@@ -142,14 +142,14 @@ export interface IPayment {
   /**
    * This event is emitted when the field has submit
    * @function
-   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is submitted.
-   * @param {FieldTypeEnum} [fieldType] - The type of form field (optional).
+   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is submitted
+   * @param {FieldTypeEnum} [fieldType] - The type of form field (optional)
    * @returns {void}
    *
    * @typedef {("cardNumber" | "cardholderName" | "cvv" | "deferred" | "expirationDate")} FieldTypeEnum
    *
    * @example
-   * // Example 1: Handling a basic form submission
+   * // Example 1: Handling a basic form submit field
    * onFieldSubmit((event: FormValidity) => {
    *   // Implement your logic to handle the form submission here
    *   if (event.isFormValid) {
@@ -177,9 +177,9 @@ export interface IPayment {
   ): void;
 
   /**
-   * Asynchronously focuses on a form field of the specified type.
+   * Asynchronously focuses on a form field of the specified type
    *
-   * @param {FieldTypeEnum} fieldType - The type of form field to focus on.
+   * @param {FieldTypeEnum} fieldType - The type of form field to focus on
    * @returns {Promise<void>}
    *
    * @typedef {("cardNumber" | "cardholderName" | "cvv" | "deferred" | "expirationDate")} FieldTypeEnum
@@ -197,9 +197,9 @@ export interface IPayment {
   focus(fieldType: FieldTypeEnum): Promise<void>;
 
   /**
-   * Asynchronously resets a form field of the specified type to its default state.
+   * Asynchronously resets a form field of the specified type to its default state
    *
-   * @param {FieldTypeEnum} fieldType - The type of form field to reset.
+   * @param {FieldTypeEnum} fieldType - The type of form field to reset
    * @returns {Promise<void>}
    *
    * @typedef {("cardNumber" | "cardholderName" | "cvv" | "deferred" | "expirationDate")} FieldTypeEnum

@@ -31,7 +31,7 @@ export interface FieldOptions {
   handleOnFocus?:
     | ((fieldType: string, value: string) => void)
     | ((value: DeferredInputValues) => void);
-  handleOnKeyUp?:
+  handleOnSubmit?:
     | ((fieldType: string, value: string) => void)
     | ((value: DeferredInputValues) => void);
   handleOnValidity?: (

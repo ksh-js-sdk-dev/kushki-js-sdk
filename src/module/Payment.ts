@@ -160,7 +160,12 @@ export class Payment implements IPayment {
   public reset(fieldType: FieldTypeEnum): Promise<void> {
     if (Object.values(InputModelEnum).includes(fieldType as InputModelEnum)) {
       this.inputValues[fieldType]?.hostedField?.updateProps({
+        brandIcon: "",
         reset: true
+      });
+
+      this.inputValues[fieldType]?.hostedField?.updateProps({
+        reset: false
       });
 
       return Promise.resolve();
@@ -172,7 +177,11 @@ export class Payment implements IPayment {
   public focus(fieldType: FieldTypeEnum): Promise<void> {
     if (Object.values(InputModelEnum).includes(fieldType as InputModelEnum)) {
       this.inputValues[fieldType]?.hostedField?.updateProps({
-        isActivedFocus: true
+        isFocusActive: true
+      });
+
+      this.inputValues[fieldType]?.hostedField?.updateProps({
+        isFocusActive: false
       });
 
       return Promise.resolve();
@@ -633,7 +642,7 @@ export class Payment implements IPayment {
     this.createCustomEvent(this.listenerFieldFocus, fieldType);
   }
 
-  private handleOnKeyUp(fieldType: string) {
+  private handleOnSubmit(fieldType: string) {
     this.createCustomEvent(this.listenerFieldSubmit, fieldType);
   }
 
@@ -764,7 +773,7 @@ export class Payment implements IPayment {
         return this.handleOnChange(field, value);
       },
       handleOnFocus: (field: string) => this.handleOnFocus(field),
-      handleOnKeyUp: (field: string) => this.handleOnKeyUp(field),
+      handleOnSubmit: (field: string) => this.handleOnSubmit(field),
       handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
         this.handleOnValidity(field, fieldValidity)
     };

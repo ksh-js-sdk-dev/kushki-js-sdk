@@ -8,6 +8,9 @@ export interface ITableDemoField {
 }
 
 export const tableComponentStyles = {
+  head: {
+    height: "30px"
+  },
   table: {
     width: "100%"
   },
@@ -51,30 +54,39 @@ const TableDemoField = ({ fieldType, cardInstance }: ITableDemoField) => {
 
   return (
     <table border="1" style={tableComponentStyles.table}>
-      <tr>
-        <th style={tableComponentStyles.th}>Evento</th>
-        <th style={tableComponentStyles.th}>Campo</th>
-      </tr>
-      <tr>
-        <td style={tableComponentStyles.td}>triggeredBy</td>
-        <td style={tableComponentStyles.td}>cardholderName</td>
-      </tr>
-      <tr>
-        <td style={tableComponentStyles.td}>onFieldValidity</td>
-        <td style={tableComponentStyles.td}>{validityField}</td>
-      </tr>
-      <tr>
-        <td style={tableComponentStyles.td}>onFieldFocus</td>
-        <td style={tableComponentStyles.td}>{focusField}</td>
-      </tr>
-      <tr>
-        <td style={tableComponentStyles.td}>onFieldBlur</td>
-        <td style={tableComponentStyles.td}>{blurField}</td>
-      </tr>
-      <tr>
-        <td style={tableComponentStyles.td}>onFieldSubmit</td>
-        <td style={tableComponentStyles.td}>{submitField}</td>
-      </tr>
+      <thead>
+        <tr>
+          <th colSpan="2" style={tableComponentStyles.head}>
+            {fieldType}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th style={tableComponentStyles.th}>Evento</th>
+          <th style={tableComponentStyles.th}>Valor</th>
+        </tr>
+        <tr>
+          <td style={tableComponentStyles.td}>triggeredBy</td>
+          <td style={tableComponentStyles.td}>{fieldType}</td>
+        </tr>
+        <tr>
+          <td style={tableComponentStyles.td}>onFieldValidity</td>
+          <td style={tableComponentStyles.td}>{validityField}</td>
+        </tr>
+        <tr>
+          <td style={tableComponentStyles.td}>onFieldFocus</td>
+          <td style={tableComponentStyles.td}>{focusField}</td>
+        </tr>
+        <tr>
+          <td style={tableComponentStyles.td}>onFieldBlur</td>
+          <td style={tableComponentStyles.td}>{blurField}</td>
+        </tr>
+        <tr>
+          <td style={tableComponentStyles.td}>onFieldSubmit</td>
+          <td style={tableComponentStyles.td}>{submitField}</td>
+        </tr>
+      </tbody>
     </table>
   );
 };
