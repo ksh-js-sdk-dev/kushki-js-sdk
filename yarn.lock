@@ -971,6 +971,11 @@
     "@krakenjs/post-robot" "^11.0.0"
     "@krakenjs/zalgo-promise" "^2.0.0"
 
+"@kushki/cardinal-sandbox-js@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@kushki/cardinal-sandbox-js/-/cardinal-sandbox-js-1.0.4.tgz#9fa6934419bb6fb969b27f634cd1eef051143d0c"
+  integrity sha512-Mobzd4YiU9+Pvfmg+nP/b2INV+PkFnx1GTZyYzVg5b1A94QVKoaRP+ubd28AYgZSBwHhJ0yrwk5BMIdxjr7eUg==
+
 "@kushki/cli@^1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@kushki/cli/-/cli-1.5.0.tgz#c94980ba689ae6fdb7e5a05e0c33858975696b7f"

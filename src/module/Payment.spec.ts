@@ -7,6 +7,7 @@ import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { FieldTypeEnum } from "types/card_options";
+import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 
 jest.mock("../libs/HostedField.ts", () =>
   jest.fn().mockImplementation(() => ({
@@ -232,7 +233,8 @@ describe("Payment test", () => {
       secureValidation: SecureOtpResponse | Promise<SecureOtpResponse> = {
         code: "3DS000",
         message: "ok"
-      }
+      },
+      isSandboxEnabled: boolean = false
     ) => {
       const mockGateway = {
         requestCreateSubscriptionToken: () => token,
@@ -240,7 +242,8 @@ describe("Payment test", () => {
           jwt: "1234567890"
         }),
         requestMerchantSettings: () => ({
-          active_3dsecure: is3ds
+          active_3dsecure: is3ds,
+          sandboxEnable: isSandboxEnabled
         }),
         requestSecureServiceValidation: () => secureValidation,
         requestToken: () => token
@@ -279,9 +282,22 @@ describe("Payment test", () => {
       window.Cardinal.trigger = jest.fn();
     };
 
+    const mockSandbox = (isError?: boolean) => {
+      jest.spyOn(KushkiCardinalSandbox, "init");
+      jest.spyOn(KushkiCardinalSandbox, "continue");
+      jest
+        .spyOn(KushkiCardinalSandbox, "on")
+        .mockImplementation(
+          (_: string, callback: (isErrorFlow?: boolean) => void) => {
+            callback(isError);
+          }
+        );
+    };
+
     beforeEach(() => {
       mockKushkiGateway();
       mockCardinal();
+      mockSandbox();
     });
 
     const mockInputFields = () => {
@@ -622,6 +638,69 @@ describe("Payment test", () => {
         await cardInstance.requestToken();
       } catch (error: any) {
         expect(error.code).toEqual("E002");
+      }
+    });
+
+    it("it should execute Payment 3ds SANDBOX token with modal validation", async () => {
+      mockKushkiGateway(
+        true,
+        {
+          security: {
+            acsURL: "url",
+            authenticationTransactionId: "1234",
+            authRequired: true,
+            paReq: "req",
+            specificationVersion: "2.0.1"
+          },
+          token: tokenMock
+        },
+        {
+          code: "3DS000",
+          message: "ok"
+        },
+        true
+      );
+
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      mockValidityInputs();
+      mockInputFields();
+
+      const response = await cardInstance.requestToken();
+
+      expect(response.token).toEqual(tokenMock);
+    });
+
+    it("it should execute Payment 3ds SANDBOX token with ERROR on payment validation", async () => {
+      mockSandbox(true);
+      mockKushkiGateway(
+        true,
+        {
+          security: {
+            acsURL: "url.com",
+            authenticationTransactionId: "1234",
+            authRequired: true,
+            paReq: "req",
+            specificationVersion: "2.0.1"
+          },
+          token: tokenMock
+        },
+        {
+          code: "3DS000",
+          message: "ok"
+        },
+        true
+      );
+
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      mockValidityInputs();
+      mockInputFields();
+
+      try {
+        await cardInstance.requestToken();
+      } catch (error: any) {
+        expect(error.code).toEqual("E005");
       }
     });
   });

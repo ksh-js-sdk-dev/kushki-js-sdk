@@ -64,35 +64,18 @@ export const CheckoutContainer = () => {
   const [validFields, setValidFields] = useState<string>("");
   const [triggeredByFields, setTriggeredBy] = useState<string>("");
 
-  const [focusCardHolderName, setFocusCardHolderName] = useState<string>("");
-  const [validityCardHolderName, setValidityCardHolderName] =
-    useState<string>("");
-  const [submitCardHolderName, setSubmitCardHolderName] = useState<string>("");
-  const [blurCardHolderName, setBlurCardHolderName] = useState<string>("");
-
-  const [focusCardNumber, setFocusCardNumber] = useState<string>("");
-  const [validityCardNumber, setValidityCardNumber] = useState<string>("");
-  const [blurCardNumber, setBlurCardNumber] = useState<string>("");
-  const [submitCardNumber, setSubmitCardNumber] = useState<string>("");
-
-  const [focusExpirationDate, setFocusExpirationDate] = useState<string>("");
-  const [validityExpirationDate, setValidityExpirationDate] =
-    useState<string>("");
-  const [submitExpirationDate, setSubmitExpirationDate] = useState<string>("");
-  const [blurExpirationDate, setBlurExpirationDate] = useState<string>("");
-
-  const [focusCvv, setFocusCvv] = useState<string>("");
-  const [validityCvv, setValidityCvv] = useState<string>("");
-  const [submitCvv, setSubmitCvv] = useState<string>("");
-  const [blurCvv, setBlurCvv] = useState<string>("");
-
   const options: CardOptions = {
     amount: {
       iva: 26,
       subtotalIva: 26,
       subtotalIva0: 0
+      // 3ds amount
+      // iva: 0,
+      // subtotalIva: 0,
+      // subtotalIva0: 10000
     },
     currency: "USD",
+    // currency: "COP", // 3ds currency
     fields: {
       cardHolderName: {
         fieldType: "cardholderName",
@@ -466,8 +449,8 @@ export const CheckoutContainer = () => {
     (async () => {
       const kushkiInstance = await Kushki.init({
         inTest: true,
-        // publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
-        publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
+        publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" // 3DS merchant Test
+        // publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
       });
 
       if (kushkiInstance) {
@@ -559,7 +542,7 @@ export const CheckoutContainer = () => {
       <div style={checkoutContainerStyles.contentTitle!}>
         <h1>Kushki Fields JS - DEMO</h1>
       </div>
-
+      <p>Tarjeta 3DS: 4000000000002503</p>
       <div style={checkoutContainerStyles.contentCheckout!}>
         <div id="cardHolderName_id"></div>
         {validError(fieldsValidityDemo, "cardholderName") && (
