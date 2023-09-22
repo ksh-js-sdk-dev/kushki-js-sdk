@@ -12,6 +12,7 @@ import { CONTAINER } from "infrastructure/Container.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import { FieldTypeEnum } from "types/card_options";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
@@ -130,8 +131,8 @@ describe("Payment test", () => {
       "cardholderName",
       "test"
     );
-    KushkiHostedFields.mock.calls[0][0].handleOnFocus("cardholderName", "test");
-    KushkiHostedFields.mock.calls[0][0].handleOnBlur("cardholderName", "test");
+    KushkiHostedFields.mock.calls[0][0].handleOnFocus("cardholderName");
+    KushkiHostedFields.mock.calls[0][0].handleOnBlur("cardholderName");
 
     expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
   });
@@ -1080,6 +1081,18 @@ describe("Payment test", () => {
       expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
     });
 
+    it("when call onFieldFocus, should set successful input value", async () => {
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      mockInputsFields();
+
+      cardInstance.onFieldFocus((e) => {
+        e;
+      });
+
+      expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
+    });
+
     it("when call handleOnChange should call handleOnValidity successful", async () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
@@ -1099,6 +1112,148 @@ describe("Payment test", () => {
       expect(
         typeof KushkiHostedFields.mock.calls[0][0].handleOnValidity
       ).toEqual("function");
+    });
+  });
+
+  describe("onFieldBlur - onFieldSubmit - Test", () => {
+    const fieldType = "cardholderName";
+    let addEventListenerSpy: jest.SpyInstance;
+    let dispatchEventSpy: jest.SpyInstance;
+    const mockFieldEvent = {
+      fields: {
+        cardholderName: {
+          errorType: "empty",
+          isValid: false
+        }
+      },
+      isFormValid: false,
+      triggeredBy: "cardholderName"
+    };
+
+    beforeEach(() => {
+      addEventListenerSpy = jest.spyOn(window, "addEventListener");
+      dispatchEventSpy = jest.spyOn(window, "dispatchEvent");
+    });
+
+    afterEach(() => {
+      addEventListenerSpy.mockRestore();
+      dispatchEventSpy.mockRestore();
+    });
+
+    it("onFieldBlur should add event listener correctly", async () => {
+      const mockEventCallback = jest.fn();
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      cardInstance.onFieldBlur(mockEventCallback, fieldType);
+
+      const customEvent = new CustomEvent("fieldBlurcardholderName", {
+        detail: mockFieldEvent
+      });
+
+      window.dispatchEvent(customEvent);
+
+      expect(addEventListenerSpy).toHaveBeenCalled();
+      expect(window.addEventListener).toHaveBeenCalledWith(
+        "fieldBlurcardholderName",
+        expect.any(Function)
+      );
+    });
+
+    it("onFieldSubmit with fieldType should add event listener correctly", async () => {
+      const mockEventCallback = jest.fn();
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      cardInstance.onFieldSubmit(mockEventCallback, fieldType);
+
+      const customEvent = new CustomEvent("fieldSubmitcardholderName", {
+        detail: mockFieldEvent
+      });
+
+      window.dispatchEvent(customEvent);
+
+      expect(addEventListenerSpy).toHaveBeenCalled();
+      expect(window.addEventListener).toHaveBeenCalledWith(
+        "fieldSubmitcardholderName",
+        expect.any(Function)
+      );
+    });
+
+    it("onFieldSubmit with error fieldType should add event listener correctly", async () => {
+      const mockEventCallback = jest.fn();
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      cardInstance.onFieldSubmit(
+        mockEventCallback,
+        "fieldError" as FieldTypeEnum
+      );
+
+      const customEvent = new CustomEvent("fieldSubmitfieldError", {
+        detail: mockFieldEvent
+      });
+
+      window.dispatchEvent(customEvent);
+
+      expect(window.addEventListener).toHaveBeenCalledWith(
+        "fieldSubmitfieldError",
+        expect.any(Function)
+      );
+    });
+
+    it("should create custom event when called to handleOnSubmit", async () => {
+      await Payment.initCardToken(kushki, options);
+
+      KushkiHostedFields.mock.calls[0][0].handleOnSubmit(
+        InputModelEnum.CARDHOLDER_NAME
+      );
+
+      expect(typeof KushkiHostedFields.mock.calls[0][0].handleOnSubmit).toEqual(
+        "function"
+      );
+      expect(dispatchEventSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("reset", () => {
+    it("resets the hosted field with valid fieldType cardNumber", async () => {
+      const cardInstance = await Payment.initCardToken(kushki, options);
+      const fieldType = InputModelEnum.CARD_NUMBER;
+
+      await cardInstance.reset(fieldType);
+
+      expect(
+        cardInstance["inputValues"].cardNumber!.hostedField!.updateProps
+      ).toBeCalled();
+    });
+
+    it("rejects with ERRORS.E009 for invalid fieldType", async () => {
+      const cardInstance = await Payment.initCardToken(kushki, options);
+      const fieldType = "InvalidFieldType";
+
+      cardInstance
+        .reset(fieldType as FieldTypeEnum)
+        .catch((error) => expect(error.code).toEqual("E009"));
+    });
+  });
+
+  describe("focus", () => {
+    it("focus the hosted field with valid fieldType cardNumber", async () => {
+      const cardInstance = await Payment.initCardToken(kushki, options);
+      const fieldType = InputModelEnum.CARD_NUMBER;
+
+      await cardInstance.focus(fieldType);
+
+      expect(
+        cardInstance["inputValues"].cardNumber!.hostedField!.updateProps
+      ).toBeCalled();
+    });
+
+    it("rejects with ERRORS.E008 for invalid fieldType", async () => {
+      const cardInstance = await Payment.initCardToken(kushki, options);
+      const fieldType = "InvalidFieldType";
+
+      cardInstance
+        .focus(fieldType as FieldTypeEnum)
+        .catch((error) => expect(error.code).toEqual("E008"));
     });
   });
 });
