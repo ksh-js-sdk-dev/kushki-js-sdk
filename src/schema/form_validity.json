@@ -22,6 +22,18 @@
     "isFormValid": {
       "type": "boolean"
     },
+    "triggeredBy": {
+      "title": "FieldTypeEnum",
+      "type": "string",
+      "enum": [
+        "cardNumber",
+        "cardholderName",
+        "cvv",
+        "deferred",
+        "expirationDate",
+        "otp"
+      ]
+    },
     "fields": {
       "title": "Fields",
       "additionalProperties": false,
