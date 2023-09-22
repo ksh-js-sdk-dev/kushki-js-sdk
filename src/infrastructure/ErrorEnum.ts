@@ -11,7 +11,9 @@ export enum ErrorCode {
   E005 = "E005",
   E006 = "E006",
   E007 = "E007",
-  E008 = "E008"
+  E008 = "E008",
+  E009 = "E009",
+  E010 = "E010"
 }
 
 export const ERRORS: KushkiErrors = {
@@ -46,5 +48,13 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E008]: {
     code: ErrorCode.E008,
     message: "Error en la validación de OTP"
+  },
+  [ErrorCode.E009]: {
+    code: ErrorCode.E009,
+    message: "Error al limpiar el campo"
+  },
+  [ErrorCode.E010]: {
+    code: ErrorCode.E010,
+    message: "Error al realizar focus en el campo"
   }
 };

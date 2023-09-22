@@ -1,13 +1,16 @@
 import { Kushki } from "Kushki";
 import {
-  Payment,
   CardOptions,
+  ErrorTypeEnum,
   Fields,
   FormValidity,
+  Payment,
   TokenResponse
 } from "../../../src/module";
 import { useEffect, useState } from "react";
+import { TableDemoField } from "../components/TableDemoField";
 import { ErrorTypeEnum } from "../../../src/infrastructure/ErrorTypeEnum.ts";
+import { TableDemoGeneral } from "../components/TableDemoGeneral";
 
 export const checkoutContainerStyles = {
   button: {
@@ -20,6 +23,20 @@ export const checkoutContainerStyles = {
     marginLeft: "15px",
     overflow: "hidden",
     padding: "0 26px"
+  },
+  buttonError: {
+    backgroundColor: "red",
+    border: "none",
+    borderRadius: "12px",
+    color: "#FFF",
+    height: "36px",
+    margin: "6px 0",
+    marginLeft: "15px",
+    overflow: "hidden",
+    padding: "0 26px"
+  },
+  contentBottoms: {
+    display: "flex"
   },
   contentCheckout: {
     alignItems: "start",
@@ -105,7 +122,6 @@ export const CheckoutContainer = () => {
         }
       },
       cardNumber: {
-        brandIcon: "amex",
         fieldType: "cardNumber",
         inputType: "number",
         label: "Número de tarjeta",
@@ -520,7 +536,6 @@ export const CheckoutContainer = () => {
   useEffect(() => {
     if (cardInstance) {
       cardInstance.onFieldValidity((event: FormValidity) => {
-        console.log("onFieldValidity Checkout Demo", event);
         setFieldsValidityDemo(event.fields);
       });
 
@@ -598,18 +613,122 @@ export const CheckoutContainer = () => {
         <div id="otp_id"></div>
         {errorOTP.length > 0 && <div>Error en OTP {errorOTP}</div>}
 
-        <button
-          style={checkoutContainerStyles.button!}
-          data-testid="tokenRequestBtn"
-          onClick={() => getToken()}
-        >
-          Pagar
-        </button>
+        <div style={checkoutContainerStyles.contentBottoms!}>
+          <button
+            style={checkoutContainerStyles.button!}
+            data-testid="tokenRequestBtn"
+            onClick={() => getToken()}
+          >
+            Pagar
+          </button>
+          <button
+            style={checkoutContainerStyles.buttonError!}
+            onClick={async () => {
+              try {
+                await cardInstance.focus("cardName");
+              } catch (error: any) {
+                alert(error.message);
+              }
+            }}
+          >
+            Error Focus
+          </button>
+          <button
+            style={checkoutContainerStyles.buttonError!}
+            onClick={async () => {
+              try {
+                await cardInstance.reset("cardName");
+              } catch (error: any) {
+                alert(error.message);
+              }
+            }}
+          >
+            Error Reset
+          </button>
+        </div>
+
+        <div style={checkoutContainerStyles.contentBottoms!}>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.focus("cardholderName")}
+          >
+            Focus cardHolderName
+          </button>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.focus("cardNumber")}
+          >
+            Focus cardNumber
+          </button>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.focus("expirationDate")}
+          >
+            Focus expirationDate
+          </button>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.focus("cvv")}
+          >
+            Focus cvv
+          </button>
+        </div>
+
+        <div style={checkoutContainerStyles.contentBottoms!}>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.reset("cardholderName")}
+          >
+            Reset cardHolderName
+          </button>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.reset("cardNumber")}
+          >
+            Reset cardNumber
+          </button>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.reset("expirationDate")}
+          >
+            Reset expirationDate
+          </button>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.reset("cvv")}
+          >
+            Reset cvv
+          </button>
+        </div>
       </div>
 
       <hr />
       <h3 data-testid="token">Token: {token}</h3>
       <hr />
+      {cardInstance && <TableDemoGeneral cardInstance={cardInstance} />}
+
+      <br />
+      {cardInstance && (
+        <TableDemoField
+          fieldType="cardholderName"
+          cardInstance={cardInstance}
+        />
+      )}
+      <br />
+      {cardInstance && (
+        <TableDemoField fieldType="cardNumber" cardInstance={cardInstance} />
+      )}
+      <br />
+      {cardInstance && (
+        <TableDemoField
+          fieldType="expirationDate"
+          cardInstance={cardInstance}
+        />
+      )}
+      <br />
+      {cardInstance && (
+        <TableDemoField fieldType="cvv" cardInstance={cardInstance} />
+      )}
     </>
   );
 };
