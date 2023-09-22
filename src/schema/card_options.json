@@ -8,16 +8,19 @@
       "additionalProperties": false,
       "properties": {
         "input": {
-          "$ref": "#/definitions/cssClass"
+          "$ref": "#/definitions/cssProperties"
         },
         "label": {
-          "$ref": "#/definitions/cssClass"
-        },
-        "inputActive": {
-          "$ref": "#/definitions/cssClass"
+          "$ref": "#/definitions/cssProperties"
         },
         "container": {
-          "$ref": "#/definitions/cssClass"
+          "$ref": "#/definitions/cssProperties"
+        },
+        "select": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "option": {
+          "$ref": "#/definitions/cssProperties"
         }
       },
       "type": "object"
@@ -68,25 +71,10 @@
       "type": "string",
       "enum": ["number", "text", "password"]
     },
-    "fieldType": {
-      "title": "FieldTypeEnum",
-      "type": "string",
-      "enum": [
-        "cardNumber",
-        "cardholderName",
-        "cvv",
-        "deferred",
-        "expirationDate",
-        "otp"
-      ]
-    },
     "selectOptions": {
       "title": "SelectOptions",
       "additionalProperties": false,
       "properties": {
-        "styles": {
-          "$ref": "#/definitions/styles"
-        },
         "placeholder": {
           "type": "string"
         },
@@ -132,38 +120,23 @@
         "maxCardLength": {
           "type": "number"
         },
-        "maxLength": {
-          "type": "number"
-        },
-        "minLength": {
-          "type": "number"
-        },
         "defaultValue": {
           "type": "string"
-        },
-        "styles": {
-          "$ref": "#/definitions/styles"
         },
         "inputType": {
           "$ref": "#/definitions/inputType"
         },
-        "fieldType": {
-          "$ref": "#/definitions/fieldType"
-        },
         "label": {
-          "type": "string"
-        },
-        "brandIcon": {
           "type": "string"
         },
         "deferredInputs": {
           "$ref": "#/definitions/deferredInputs"
         }
       },
-      "required": ["selector", "fieldType"]
+      "required": ["selector"]
     },
-    "cssClass": {
-      "title": "CssClass",
+    "cssProperties": {
+      "title": "CssProperties",
       "oneOf": [
         {
           "additionalProperties": true,
@@ -328,11 +301,14 @@
     "preventAutofill": {
       "type": "boolean"
     },
+    "styles": {
+      "$ref": "#/definitions/styles"
+    },
     "fields": {
       "title": "",
       "additionalProperties": false,
       "properties": {
-        "cardHolderName": {
+        "cardholderName": {
           "$ref": "#/definitions/field"
         },
         "cardNumber": {

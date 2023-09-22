@@ -4,7 +4,7 @@ export { Payment } from "./Payment.ts";
 // Types
 export type {
   Currency,
-  CssClass,
+  CssProperties,
   CardOptions,
   Field,
   Amount

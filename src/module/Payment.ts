@@ -29,13 +29,16 @@ import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { BinInfoResponse } from "types/bin_info_response";
 import { DeferredValues } from "types/card_fields_values";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
-import { FieldValidity, FormValidity } from "types/form_validity";
+import {
+  FieldTypeEnum,
+  FieldValidity,
+  FormValidity
+} from "types/form_validity";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { SiftScienceObject } from "types/sift_science_object";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
-import { FieldTypeEnum } from "types/card_options";
 import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
 import { OTPEnum } from "infrastructure/OTPEnum.ts";
 import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
@@ -829,9 +832,10 @@ export class Payment implements IPayment {
     }
   }
 
-  private buildFieldOptions(field: Field) {
+  private buildFieldOptions(field: Field, fieldType: InputModelEnum) {
     const options: FieldOptions = {
       ...field,
+      fieldType,
       handleOnBlur: (field: string) => this.handleOnBlur(field),
       handleOnChange: (field: string, value: string) => {
         return this.handleOnChange(field, value);
@@ -842,7 +846,7 @@ export class Payment implements IPayment {
         this.handleOnValidity(field, fieldValidity)
     };
 
-    if (field.fieldType === InputModelEnum.DEFERRED) {
+    if (fieldType === InputModelEnum.DEFERRED) {
       options.handleOnChange = (values: DeferredInputValues) =>
         this.onChangeDeferred(values);
       options.handleOnFocus = (values: DeferredInputValues) =>
@@ -851,7 +855,7 @@ export class Payment implements IPayment {
         this.onBlurDeferred(values);
     }
 
-    if (field.fieldType === InputModelEnum.OTP)
+    if (fieldType === InputModelEnum.OTP)
       options.handleOnChange = (field: string, value: string) =>
         this.handleOnChangeOTP(field, value);
 
@@ -861,11 +865,11 @@ export class Payment implements IPayment {
   private initFields(optionsFields: { [k: string]: Field }): Promise<void[]> {
     for (const fieldKey in optionsFields) {
       const field = optionsFields[fieldKey];
-      const options = this.buildFieldOptions(field);
+      const options = this.buildFieldOptions(field, fieldKey as InputModelEnum);
 
       const hostedField = KushkiHostedFields(options);
 
-      this.inputValues[field.fieldType] = {
+      this.inputValues[fieldKey] = {
         hostedField,
         selector: field.selector,
         validity: {

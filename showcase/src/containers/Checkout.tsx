@@ -1,7 +1,6 @@
 import { Kushki } from "Kushki";
 import {
   CardOptions,
-  ErrorTypeEnum,
   Fields,
   FormValidity,
   Payment,
@@ -12,46 +11,8 @@ import { TableDemoField } from "../components/TableDemoField";
 import { ErrorTypeEnum } from "../../../src/infrastructure/ErrorTypeEnum.ts";
 import { TableDemoGeneral } from "../components/TableDemoGeneral";
 import { DeferredValuesResponse } from "../../../types/token_response";
+import { checkoutContainerStyles } from "./Checkout.styles.ts";
 
-export const checkoutContainerStyles = {
-  button: {
-    backgroundColor: "#39a1f4",
-    border: "none",
-    borderRadius: "12px",
-    color: "#FFF",
-    height: "36px",
-    margin: "6px 0",
-    marginLeft: "15px",
-    overflow: "hidden",
-    padding: "0 26px"
-  },
-  buttonError: {
-    backgroundColor: "red",
-    border: "none",
-    borderRadius: "12px",
-    color: "#FFF",
-    height: "36px",
-    margin: "6px 0",
-    marginLeft: "15px",
-    overflow: "hidden",
-    padding: "0 26px"
-  },
-  contentBottoms: {
-    display: "flex"
-  },
-  contentCheckout: {
-    alignItems: "start",
-    display: "flex",
-    flexDirection: "column" as const,
-    padding: "10px"
-  },
-  contentTitle: {
-    display: "flex",
-    justifyContent: "center",
-    marginRight: "250px",
-    width: "100%"
-  }
-};
 
 export const CheckoutContainer = () => {
   const [token, setToken] = useState<string>("");
@@ -81,414 +42,61 @@ export const CheckoutContainer = () => {
     },
     currency: "USD",
     fields: {
-      cardHolderName: {
-        fieldType: "cardholderName",
+      cardholderName: {
         inputType: "text",
         label: "Payment holder name",
         placeholder: "Payment holder name",
         selector: "cardHolderName_id",
-        styles: {
-          container: {
-            position: "relative"
-          },
-          input: {
-            border: "1px solid #ccc",
-            borderRadius: "10px",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "16px",
-            fontWeight: "400",
-            outline: "none",
-            padding: "10px",
-            width: "350px"
-          },
-          inputActive: {
-            border: "1px solid #1E65AE",
-            borderRadius: "10px",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "16px",
-            fontWeight: "400",
-            outline: "none",
-            padding: "10px",
-            width: "350px"
-          },
-          label: {
-            background: "white",
-            color: "#6D7781",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "12px",
-            fontWeight: "400",
-            left: "16px",
-            paddingLeft: "5px",
-            paddingRight: "5px",
-            position: "absolute",
-            top: "-7px"
-          }
-        }
       },
       cardNumber: {
-        fieldType: "cardNumber",
         inputType: "number",
         label: "Número de tarjeta",
         placeholder: "Número de tarjeta",
         selector: "cardNumber_id",
-        styles: {
-          container: {
-            position: "relative"
-          },
-          input: {
-            border: "1px solid #ccc",
-            borderRadius: "10px",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "16px",
-            fontWeight: "400",
-            outline: "none",
-            padding: "10px",
-            width: "350px"
-          },
-          inputActive: {
-            border: "1px solid #1E65AE",
-            borderRadius: "10px",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "16px",
-            fontWeight: "400",
-            outline: "none",
-            padding: "10px",
-            width: "350px"
-          },
-          label: {
-            background: "white",
-            color: "#6D7781",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "12px",
-            fontWeight: "400",
-            left: "16px",
-            paddingLeft: "5px",
-            paddingRight: "5px",
-            position: "absolute",
-            top: "-7px"
-          }
-        }
       },
       cvv: {
-        fieldType: "cvv",
         inputType: "password",
         label: "CVV",
         placeholder: "CVV",
         selector: "cvv_id",
-        styles: {
-          container: {
-            position: "relative"
-          },
-          input: {
-            border: "1px solid #ccc",
-            borderRadius: "10px",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "16px",
-            fontWeight: "400",
-            outline: "none",
-            padding: "10px",
-            width: "350px"
-          },
-          inputActive: {
-            border: "1px solid #1E65AE",
-            borderRadius: "10px",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "16px",
-            fontWeight: "400",
-            outline: "none",
-            padding: "10px",
-            width: "350px"
-          },
-          label: {
-            background: "white",
-            color: "#6D7781",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "12px",
-            fontWeight: "400",
-            left: "16px",
-            paddingLeft: "5px",
-            paddingRight: "5px",
-            position: "absolute",
-            top: "-7px"
-          }
-        }
       },
       deferred: {
         deferredInputs: {
           deferredCheckbox: {
             label: "Quiero pagar en cuotas",
-            styles: {
-              container: {
-                position: "relative",
-                marginBottom: "20px",
-                gridRow: "1",
-                gridColumns: "1"
-              },
-              input: {
-                borderRadius: "10px",
-                padding: "10px",
-                border: "1px solid #ccc",
-                width: "18px",
-                height: "18px"
-              },
-              inputActive: {
-                borderRadius: "10px",
-                padding: "10px",
-                border: "1px solid #ccc",
-                width: "18px",
-                height: "18px"
-              },
-              label: {
-                background: "white",
-                color: "#293036",
-                fontFamily: "IBM Plex sans",
-                fontWeight: "500",
-                paddingLeft: "5px",
-                paddingRight: "5px"
-              }
-            }
           },
           deferredType: {
             label: "Tipos de diferido",
             placeholder: "Tipos de diferido",
             hiddenLabel: "deferred Type",
-            styles: {
-              container: {
-                position: "relative",
-                marginBottom: "20px",
-                gridRow: "2",
-                gridColumns: "1"
-              },
-              input: {
-                fontFamily: "IBM Plex sans-serif",
-                width: "350px",
-                padding: "10px",
-                outline: "none",
-                fontSize: "18px",
-                fontWeight: "400",
-                borderRadius: "10px",
-                border: "1px solid #ccc"
-              },
-              label: {
-                background: "white",
-                color: "#6D7781",
-                fontFamily: "IBM Plex sans-serif",
-                fontSize: "12px",
-                fontWeight: "400",
-                left: "16px",
-                paddingLeft: "5px",
-                paddingRight: "5px",
-                position: "absolute",
-                top: "-7px"
-              }
-            }
           },
           months: {
             label: "Meses",
             placeholder: "Meses",
             hiddenLabel: "Meses",
-            styles: {
-              container: {
-                position: "relative",
-                marginBottom: "20px",
-                width: "175px",
-                gridRow: "3",
-                gridColumns: "1"
-              },
-              input: {
-                fontFamily: "IBM Plex sans-serif",
-                width: "175px",
-                padding: "10px",
-                outline: "none",
-                fontSize: "18px",
-                fontWeight: "400",
-                borderRadius: "10px",
-                border: "1px solid #ccc"
-              },
-              label: {
-                background: "white",
-                color: "#6D7781",
-                fontFamily: "IBM Plex sans-serif",
-                fontSize: "12px",
-                fontWeight: "400",
-                left: "16px",
-                paddingLeft: "5px",
-                paddingRight: "5px",
-                position: "absolute",
-                top: "-7px"
-              }
-            }
           },
           graceMonths: {
             label: "Meses de gracia",
             placeholder: "Meses de gracia",
             hiddenLabel: "Meses de gracia",
-            styles: {
-              container: {
-                position: "relative",
-                marginBottom: "20px",
-                width: "175px",
-                gridRow: "3",
-                gridColumns: "1"
-              },
-              input: {
-                fontFamily: "IBM Plex sans-serif",
-                width: "175px",
-                padding: "10px",
-                outline: "none",
-                fontSize: "18px",
-                fontWeight: "400",
-                borderRadius: "10px",
-                border: "1px solid #ccc"
-              },
-              label: {
-                background: "white",
-                color: "#6D7781",
-                fontFamily: "IBM Plex sans-serif",
-                fontSize: "12px",
-                fontWeight: "400",
-                left: "16px",
-                paddingLeft: "5px",
-                paddingRight: "5px",
-                position: "absolute",
-                top: "-7px"
-              }
-            }
           }
         },
-        fieldType: "deferred",
         inputType: "text",
         label: "Diferido",
         placeholder: "Diferido",
         selector: "deferred_id",
-        styles: {
-          container: {
-            position: "relative",
-            display: "grid",
-            gridTemplateColumns: "50%",
-            gridTemplateRows: "1fr"
-          },
-          input: {
-            border: "1px solid #ccc",
-            borderRadius: "10px",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "16px",
-            fontWeight: "400",
-            outline: "none",
-            padding: "10px",
-            width: "350px"
-          },
-          inputActive: {
-            border: "1px solid #1E65AE",
-            borderRadius: "10px",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "16px",
-            fontWeight: "400",
-            outline: "none",
-            padding: "10px",
-            width: "350px"
-          },
-          label: {
-            background: "white",
-            color: "#6D7781",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "12px",
-            fontWeight: "400",
-            left: "16px",
-            paddingLeft: "5px",
-            paddingRight: "5px",
-            position: "absolute",
-            top: "-7px"
-          }
-        }
       },
       expirationDate: {
-        fieldType: "expirationDate",
         inputType: "text",
         label: "Fecha de vencimiento",
         placeholder: "Fecha de vencimiento",
         selector: "expirationDate_id",
-        styles: {
-          container: {
-            position: "relative"
-          },
-          input: {
-            border: "1px solid #ccc",
-            borderRadius: "10px",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "16px",
-            fontWeight: "400",
-            outline: "none",
-            padding: "10px",
-            width: "350px"
-          },
-          inputActive: {
-            border: "1px solid #1E65AE",
-            borderRadius: "10px",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "16px",
-            fontWeight: "400",
-            outline: "none",
-            padding: "10px",
-            width: "350px"
-          },
-          label: {
-            background: "white",
-            color: "#6D7781",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "12px",
-            fontWeight: "400",
-            left: "16px",
-            paddingLeft: "5px",
-            paddingRight: "5px",
-            position: "absolute",
-            top: "-7px"
-          }
-        }
       },
       otp: {
-        fieldType: "otp",
         inputType: "password",
         label: "OTP",
         placeholder: "OTP",
         selector: "otp_id",
-        styles: {
-          container: {
-            position: "relative"
-          },
-          input: {
-            border: "1px solid #ccc",
-            borderRadius: "10px",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "16px",
-            fontWeight: "400",
-            outline: "none",
-            padding: "10px",
-            width: "350px"
-          },
-          inputActive: {
-            border: "1px solid #1E65AE",
-            borderRadius: "10px",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "16px",
-            fontWeight: "400",
-            outline: "none",
-            padding: "10px",
-            width: "350px"
-          },
-          label: {
-            background: "white",
-            color: "#6D7781",
-            fontFamily: "IBM Plex sans-serif",
-            fontSize: "12px",
-            fontWeight: "400",
-            left: "16px",
-            paddingLeft: "5px",
-            paddingRight: "5px",
-            position: "absolute",
-            top: "-7px"
-          }
-        }
       }
     }
   };
@@ -617,6 +225,9 @@ export const CheckoutContainer = () => {
         <div id="otp_id"></div>
         {errorOTP.length > 0 && <div>Error en OTP {errorOTP}</div>}
 
+        <div id="otp_id"></div>
+        {errorOTP.length > 0 && <div>Error en OTP {errorOTP}</div>}
+
         <div style={checkoutContainerStyles.contentBottoms!}>
           <button
             style={checkoutContainerStyles.button!}
@@ -629,7 +240,7 @@ export const CheckoutContainer = () => {
             style={checkoutContainerStyles.buttonError!}
             onClick={async () => {
               try {
-                await cardInstance.focus("cardName");
+                await cardInstance?.focus("cardName");
               } catch (error: any) {
                 alert(error.message);
               }
@@ -641,7 +252,7 @@ export const CheckoutContainer = () => {
             style={checkoutContainerStyles.buttonError!}
             onClick={async () => {
               try {
-                await cardInstance.reset("cardName");
+                await cardInstance?.reset("cardName");
               } catch (error: any) {
                 alert(error.message);
               }
@@ -654,25 +265,25 @@ export const CheckoutContainer = () => {
         <div style={checkoutContainerStyles.contentBottoms!}>
           <button
             style={checkoutContainerStyles.button!}
-            onClick={async () => await cardInstance.focus("cardholderName")}
+            onClick={async () => await cardInstance?.focus("cardholderName")}
           >
             Focus cardHolderName
           </button>
           <button
             style={checkoutContainerStyles.button!}
-            onClick={async () => await cardInstance.focus("cardNumber")}
+            onClick={async () => await cardInstance?.focus("cardNumber")}
           >
             Focus cardNumber
           </button>
           <button
             style={checkoutContainerStyles.button!}
-            onClick={async () => await cardInstance.focus("expirationDate")}
+            onClick={async () => await cardInstance?.focus("expirationDate")}
           >
             Focus expirationDate
           </button>
           <button
             style={checkoutContainerStyles.button!}
-            onClick={async () => await cardInstance.focus("cvv")}
+            onClick={async () => await cardInstance?.focus("cvv")}
           >
             Focus cvv
           </button>
@@ -681,25 +292,25 @@ export const CheckoutContainer = () => {
         <div style={checkoutContainerStyles.contentBottoms!}>
           <button
             style={checkoutContainerStyles.button!}
-            onClick={async () => await cardInstance.reset("cardholderName")}
+            onClick={async () => await cardInstance?.reset("cardholderName")}
           >
             Reset cardHolderName
           </button>
           <button
             style={checkoutContainerStyles.button!}
-            onClick={async () => await cardInstance.reset("cardNumber")}
+            onClick={async () => await cardInstance?.reset("cardNumber")}
           >
             Reset cardNumber
           </button>
           <button
             style={checkoutContainerStyles.button!}
-            onClick={async () => await cardInstance.reset("expirationDate")}
+            onClick={async () => await cardInstance?.reset("expirationDate")}
           >
             Reset expirationDate
           </button>
           <button
             style={checkoutContainerStyles.button!}
-            onClick={async () => await cardInstance.reset("cvv")}
+            onClick={async () => await cardInstance?.reset("cvv")}
           >
             Reset cvv
           </button>

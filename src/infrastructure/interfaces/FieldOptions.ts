@@ -1,4 +1,4 @@
-import { FieldTypeEnum, InputTypeEnum, Styles } from "types/card_options";
+import {InputTypeEnum, Styles} from "types/card_options";
 import { FieldValidity } from "types/card_fields_values";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { DeferredInputValues } from "types/deferred_input_values";
@@ -9,7 +9,7 @@ export type OnPropsCallback = (
 
 export interface FieldOptions {
   inputType?: InputTypeEnum;
-  fieldType: FieldTypeEnum;
+  fieldType: InputModelEnum;
   onProps?: OnPropsCallback;
   brandIcon?: string;
   placeholder?: string;
@@ -21,7 +21,6 @@ export interface FieldOptions {
   preventAutofill?: boolean;
   label?: string;
   styles?: Styles;
-  globalStyles?: Styles;
   handleOnChange:
     | ((fieldType: string, value: string) => void)
     | ((value: DeferredInputValues) => void);
