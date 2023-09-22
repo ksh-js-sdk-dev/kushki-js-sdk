@@ -27,21 +27,19 @@ jest.mock("Kushki/card", () => {
   };
 });
 
-const mockRequestToken =  jest.fn().mockResolvedValue({
+const mockRequestToken = jest.fn().mockResolvedValue({
   token: "replace by token response"
-})
+});
 
-const mockInitCardToken = jest.fn().mockResolvedValue(
-    {
-      requestToken: mockRequestToken
-    }
-)
+const mockInitCardToken = jest.fn().mockResolvedValue({
+  requestToken: mockRequestToken
+});
 
 describe("Tests on <CheckoutContainer/> component", () => {
   beforeEach(() => {
     cleanup();
     (Kushki.init as jest.Mock).mockResolvedValue({});
-    Card.initCardToken = mockInitCardToken
+    Card.initCardToken = mockInitCardToken;
   });
 
   test("Kushki Fields JS - DEMO", async () => {

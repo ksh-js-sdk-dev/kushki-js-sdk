@@ -4,8 +4,8 @@ import { BinInfoResponse } from "types/bin_info_response";
 import { PathEnum } from "infrastructure/PathEnum.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import axios from "axios";
-import { DeferredByBinResponse, Kushki } from "Kushki";
-import { CardTokenRequest, TokenResponse } from "src/module";
+import { DeferredByBinOptionsResponse, Kushki } from "Kushki";
+import { CardTokenRequest, CardTokenResponse } from "src/module";
 import { IKushkiGateway } from "repository/IKushkiGateway";
 import { injectable } from "inversify";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
@@ -41,7 +41,7 @@ export class KushkiGateway implements IKushkiGateway {
 
   public requestDeferredInfo = async (
     body: BinBody
-  ): Promise<DeferredByBinResponse[]> => {
+  ): Promise<DeferredByBinOptionsResponse[]> => {
     try {
       const url: string = `${this.kushkiInstance.getBaseUrl()}${
         PathEnum.deferred_info
@@ -51,7 +51,8 @@ export class KushkiGateway implements IKushkiGateway {
         headers: this._buildHeader(this.kushkiInstance.getPublicCredentialId())
       });
 
-      const deferredInfoResponse: DeferredByBinResponse[] = response.data;
+      const deferredInfoResponse: DeferredByBinOptionsResponse[] =
+        response.data;
 
       return Promise.resolve(deferredInfoResponse);
     } catch (error) {
@@ -61,13 +62,13 @@ export class KushkiGateway implements IKushkiGateway {
 
   public requestToken = async (
     body: CardTokenRequest
-  ): Promise<TokenResponse> => {
+  ): Promise<CardTokenResponse> => {
     const url: string = `${this.kushkiInstance.getBaseUrl()}${
       PathEnum.card_token
     }`;
 
     try {
-      const { data } = await axios.post<TokenResponse>(url, body, {
+      const { data } = await axios.post<CardTokenResponse>(url, body, {
         headers: this._buildHeader(this.kushkiInstance.getPublicCredentialId())
       });
 
@@ -79,13 +80,13 @@ export class KushkiGateway implements IKushkiGateway {
 
   public requestCreateSubscriptionToken = async (
     body: CardTokenRequest
-  ): Promise<TokenResponse> => {
+  ): Promise<CardTokenResponse> => {
     const url: string = `${this.kushkiInstance.getBaseUrl()}${
       PathEnum.card_subscription_token
     }`;
 
     try {
-      const { data } = await axios.post<TokenResponse>(url, body, {
+      const { data } = await axios.post<CardTokenResponse>(url, body, {
         headers: this._buildHeader(this.kushkiInstance.getPublicCredentialId())
       });
 

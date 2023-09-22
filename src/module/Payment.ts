@@ -5,7 +5,7 @@ import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { FieldOptions } from "infrastructure/interfaces/FieldOptions.ts";
 import {
-  DeferredByBinResponse,
+  DeferredByBinOptionsResponse,
   DeferredInputValues,
   FieldInstance,
   Kushki
@@ -15,6 +15,7 @@ import {
   CardFieldValues,
   CardOptions,
   CardTokenRequest,
+  CardTokenResponse,
   Field,
   Fields,
   TokenResponse
@@ -32,7 +33,11 @@ import { FieldValidity, FormValidity } from "types/form_validity";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { SiftScienceObject } from "types/sift_science_object";
+import { CountryEnum } from "infrastructure/CountryEnum.ts";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
+import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
+import { OTPEnum } from "infrastructure/OTPEnum.ts";
+import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
 
 declare global {
   // tslint:disable-next-line
@@ -47,17 +52,21 @@ export class Payment implements IPayment {
   private readonly kushkiInstance: Kushki;
   private inputValues: CardFieldValues;
   private currentBin: string;
+  private currentBinHasDeferredOptions: boolean;
   private readonly _gateway: IKushkiGateway;
   private readonly _siftScienceService: ISiftScienceService;
   private readonly listenerFieldValidity: string = "fieldValidity";
+  private readonly BIN_LENGTH = 8;
+  private readonly otpValidation: string = "otpValidation";
+  private readonly otpInputOTP: string = "onInputOTP";
   private firstHostedFieldType: string = "";
-
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
     this.options = this.setDefaultValues(options);
     this.kushkiInstance = kushkiInstance;
     this.inputValues = {};
     this.currentBin = "";
     this._gateway = new KushkiGateway(kushkiInstance);
+    this.currentBinHasDeferredOptions = false;
     this._siftScienceService = CONTAINER.get<ISiftScienceService>(
       IDENTIFIERS.SiftScienceService
     );
@@ -76,6 +85,7 @@ export class Payment implements IPayment {
       payment.showContainers();
 
       await payment.hideDeferredOptions();
+      await payment.hideOTPInput();
 
       return payment;
     } catch (error) {
@@ -84,11 +94,6 @@ export class Payment implements IPayment {
   }
 
   public async requestToken(): Promise<TokenResponse> {
-    this.inputValues[this.firstHostedFieldType].hostedField.requestToken(
-      this._gateway,
-      this.options
-    );
-
     try {
       const { isFormValid } = this.getFormValidity();
 
@@ -118,10 +123,33 @@ export class Payment implements IPayment {
       if (jwt) {
         return await this.request3DSToken(
           jwt,
-          merchantSettings.sandboxEnable,
+          merchantSettings,
           siftScienceSession
         );
-      } else return await this.requestTokenGateway(jwt, siftScienceSession);
+      } else {
+        const cardTokenResponse: CardTokenResponse =
+          await this.requestTokenGateway(
+            merchantSettings,
+            jwt,
+            siftScienceSession
+          );
+        const deferredValues: DeferredValues = this.getDeferredValues();
+
+        const inputOTPValidation: TokenResponse | undefined =
+          await this.validInputOTP(
+            cardTokenResponse.token,
+            deferredValues,
+            cardTokenResponse.secureService,
+            cardTokenResponse.secureId
+          );
+
+        if (inputOTPValidation !== undefined) return inputOTPValidation;
+
+        return Promise.resolve({
+          deferred: deferredValues,
+          token: cardTokenResponse.token
+        });
+      }
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
       throw error;
@@ -143,6 +171,31 @@ export class Payment implements IPayment {
     }) as EventListener);
   }
 
+  public onOTPValidation(
+    onRequired: () => void,
+    onError: (error: KushkiErrorAttr) => void,
+    onSuccess: () => void
+  ): void {
+    window.addEventListener(this.otpValidation, ((
+      e: CustomEvent<{ otp: OTPEventEnum }>
+    ) => {
+      const fieldEvent: { otp: OTPEventEnum } = e.detail!;
+
+      const errorOTP = ERRORS.E008;
+
+      const eventActions: Record<
+        OTPEventEnum,
+        (error?: KushkiErrorAttr) => void
+      > = {
+        [OTPEventEnum.SUCCESS]: onSuccess,
+        [OTPEventEnum.ERROR]: () => onError(errorOTP),
+        [OTPEventEnum.REQUIRED]: onRequired
+      };
+
+      eventActions[fieldEvent.otp]();
+    }) as EventListener);
+  }
+
   public getFormValidity(): FormValidity {
     let formValid: boolean = true;
 
@@ -154,6 +207,8 @@ export class Payment implements IPayment {
       if (isInputInValid) formValid = false;
       if (isInputInValid && !isErrorTypeValid)
         validityProps.errorType = ErrorTypeEnum.EMPTY;
+
+      if (inputName === "deferred") formValid = this.validateDeferredValues();
     }
 
     const eventFormValidity: CustomEvent<FormValidity> =
@@ -166,33 +221,53 @@ export class Payment implements IPayment {
 
   private async request3DSToken(
     jwt: string,
-    isSandboxEnabled?: boolean,
+    merchantSettings: MerchantSettingsResponse,
     siftScienceSession?: SiftScienceObject
   ): Promise<TokenResponse> {
-    let token: TokenResponse;
+    let token: CardTokenResponse;
 
-    if (isSandboxEnabled)
-      token = await this.requestTokenGateway(jwt, siftScienceSession);
-    else token = await this.getCardinal3dsToken(jwt, siftScienceSession);
+    if (merchantSettings.sandboxEnable)
+      token = await this.requestTokenGateway(
+        merchantSettings,
+        jwt,
+        siftScienceSession
+      );
+    else
+      token = await this.getCardinal3dsToken(
+        jwt,
+        merchantSettings,
+        siftScienceSession
+      );
 
-    return this.validate3dsToken(token, isSandboxEnabled);
+    return this.validate3dsToken(token, merchantSettings.sandboxEnable);
   }
 
-  private validate3dsToken(
-    token: TokenResponse,
+  private async validate3dsToken(
+    cardTokenResponse: CardTokenResponse,
     isSandboxEnabled?: boolean
   ): Promise<TokenResponse> {
-    if (this.tokenNotNeedsAuth(token)) {
-      return Promise.resolve(token);
+    const deferredValues: DeferredValues = this.getDeferredValues();
+
+    if (this.tokenNotNeedsAuth(cardTokenResponse)) {
+      return Promise.resolve({
+        deferred: deferredValues,
+        token: cardTokenResponse.token
+      });
     }
-    if (this.hasAllSecurityProperties(token, isSandboxEnabled))
-      return this.validate3DS(token, isSandboxEnabled);
+    if (this.hasAllSecurityProperties(cardTokenResponse, isSandboxEnabled)) {
+      await this.validate3DS(cardTokenResponse, isSandboxEnabled);
+
+      return Promise.resolve({
+        deferred: deferredValues,
+        token: cardTokenResponse.token
+      });
+    }
 
     return Promise.reject(ERRORS.E005);
   }
 
   private hasAllSecurityProperties(
-    token: TokenResponse,
+    token: CardTokenResponse,
     isSandboxEnabled?: boolean
   ): boolean {
     const validateVersion = (): boolean =>
@@ -210,16 +285,16 @@ export class Payment implements IPayment {
     );
   }
 
-  private tokenNotNeedsAuth(token: TokenResponse): boolean {
+  private tokenNotNeedsAuth(token: CardTokenResponse): boolean {
     return (
       !!(token.security && !token.security.authRequired) || !token.security
     );
   }
 
   private async validate3DS(
-    token: TokenResponse,
+    token: CardTokenResponse,
     isSandboxEnabled?: boolean
-  ): Promise<TokenResponse> {
+  ): Promise<CardTokenResponse> {
     this.launchPaymentValidation(token, isSandboxEnabled);
 
     if (await this.completePaymentValidation(token.secureId!, isSandboxEnabled))
@@ -243,7 +318,7 @@ export class Payment implements IPayment {
 
           resolve(this.is3dsValid(secureValidation));
         } catch (error) {
-          reject(error);
+          reject(ERRORS.E006);
         }
       };
 
@@ -273,7 +348,7 @@ export class Payment implements IPayment {
   }
 
   private launchPaymentValidation(
-    token: TokenResponse,
+    token: CardTokenResponse,
     isSandboxEnabled?: boolean
   ) {
     const continueEvent: string = "cca";
@@ -299,13 +374,20 @@ export class Payment implements IPayment {
 
   private async getCardinal3dsToken(
     jwt: string,
+    merchantSettings: MerchantSettingsResponse,
     siftScienceSession?: SiftScienceObject
   ): Promise<TokenResponse> {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<TokenResponse>(async (resolve, reject) => {
       const requestToken = async () => {
         try {
-          resolve(await this.requestTokenGateway(jwt, siftScienceSession));
+          resolve(
+            await this.requestTokenGateway(
+              merchantSettings,
+              jwt,
+              siftScienceSession
+            )
+          );
         } catch (error) {
           reject(error);
         }
@@ -378,29 +460,34 @@ export class Payment implements IPayment {
     }
   }
 
-  private requestTokenGateway(
+  private async requestTokenGateway(
+    merchantSettings: MerchantSettingsResponse,
     jwt?: string,
     siftScienceSession?: SiftScienceObject
-  ) {
-    if (this.options.isSubscription)
-      return this._gateway.requestCreateSubscriptionToken(
-        this.buildTokenBody(jwt, siftScienceSession)
-      );
+  ): Promise<CardTokenResponse> {
+    try {
+      const token = await this.inputValues[
+        this.firstHostedFieldType
+      ].hostedField.requestToken(this._gateway, this.options);
 
-    return this._gateway.requestToken(
-      this.buildTokenBody(jwt, siftScienceSession)
-    );
+      console.log(token);
+
+      return Promise.resolve(token);
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
   private buildTokenBody(
+    merchantSettings: MerchantSettingsResponse,
     jwt?: string,
     siftScienceSession?: SiftScienceObject
   ): CardTokenRequest {
     const { cardholderName, cardNumber, expirationDate, cvv } =
       this.inputValues;
     const { currency } = this.options;
-
-    const deferredValues = this.getDeferredValues();
+    const deferredValues =
+      this.buildGetDeferredValuesToRequestToken(merchantSettings);
 
     return {
       ...siftScienceSession,
@@ -412,9 +499,8 @@ export class Payment implements IPayment {
         number: String(cardNumber!.value!).replace(/\s+/g, "")
       },
       currency,
-      isDeferred: deferredValues.isDeferred,
       jwt,
-      months: deferredValues.months,
+      ...deferredValues,
       ...this.buildTotalAmount()
     };
   }
@@ -426,6 +512,52 @@ export class Payment implements IPayment {
     if (typeof this.inputValues.deferred.value !== "object") return {};
 
     return this.inputValues.deferred.value;
+  };
+
+  private buildGetDeferredValuesToRequestToken = (
+    merchantSettings: MerchantSettingsResponse
+  ): DeferredValues => {
+    const deferredValuesToRequestToken: DeferredValues = {};
+    const deferredValues = this.getDeferredValues();
+
+    if (deferredValues.isDeferred)
+      deferredValuesToRequestToken.isDeferred = deferredValues.isDeferred;
+
+    if (
+      merchantSettings.country === CountryEnum.CHL &&
+      deferredValues.isDeferred
+    )
+      deferredValuesToRequestToken.months = deferredValues.months;
+
+    return deferredValuesToRequestToken;
+  };
+  private validateDeferredValues = (): boolean => {
+    let deferredValuesAreValid: boolean = true;
+
+    if (!this.inputValues.deferred || !this.inputValues.deferred.value)
+      return deferredValuesAreValid;
+
+    const deferredValues: DeferredValues = this.getDeferredValues();
+
+    if (!deferredValues.isDeferred) {
+      this.inputValues.deferred.validity.isValid = deferredValuesAreValid;
+
+      return deferredValuesAreValid;
+    }
+
+    const deferredMonthsIsSelected: boolean = deferredValues.months !== 0;
+
+    deferredValuesAreValid =
+      Boolean(deferredValues.isDeferred) && deferredMonthsIsSelected;
+
+    this.inputValues.deferred.validity.isValid = deferredValuesAreValid;
+
+    if (!deferredValuesAreValid) {
+      this.inputValues.deferred.validity.errorType =
+        ErrorTypeEnum.DEFERRED_MONTHS_REQUERED;
+    }
+
+    return deferredValuesAreValid;
   };
 
   private buildTotalAmount() {
@@ -447,7 +579,29 @@ export class Payment implements IPayment {
     };
   }
 
-  private handleOnChange(field: string, value: string) {
+  private async handleOnChangeOTP(field: string, value: string) {
+    this.inputValues = {
+      ...this.inputValues,
+      [field]: { ...this.inputValues[field], value: value }
+    };
+
+    if (
+      this.inputValues.otp?.value !== undefined &&
+      this.inputValues.otp?.value.toString().length === 3
+    ) {
+      const event: CustomEvent<{ otpValue: string }> = new CustomEvent<{
+        otpValue: string;
+      }>(this.otpInputOTP, {
+        detail: {
+          otpValue: this.inputValues.otp.value as string
+        }
+      });
+
+      dispatchEvent(event);
+    }
+  }
+
+  private async handleOnChange(field: string, value: string) {
     /* istanbul ignore next*/
     this.inputValues = {
       ...this.inputValues,
@@ -496,7 +650,7 @@ export class Payment implements IPayment {
 
     if (this.currentBin !== newBin) {
       this.currentBin = newBin;
-
+      this.currentBinHasDeferredOptions = false;
       try {
         const { brand, cardType }: BinInfoResponse =
           await this._gateway.requestBinInfo({
@@ -506,24 +660,40 @@ export class Payment implements IPayment {
         this.inputValues.cardNumber?.hostedField?.updateProps({
           brandIcon: brand
         });
-        /* istanbul ignore next */
-        if (cardType === "credit" && !this.options.isSubscription)
-          this._gateway
-            .requestDeferredInfo({
+
+        if (cardType !== "credit")
+          await this.inputValues.deferred?.hostedField?.hide();
+
+        if (cardType === "credit" && !this.options.isSubscription) {
+          const deferredResponse: DeferredByBinOptionsResponse[] =
+            await this._gateway.requestDeferredInfo({
               bin: newBin
-            })
-            .then(
-              (deferredOptions: DeferredByBinResponse[]) =>
-                this.inputValues.deferred?.hostedField?.updateProps({
-                  deferredOptions
-                })
-            )
-            .then(() => this.inputValues.deferred?.hostedField?.show());
+            });
+
+          await this.inputValues.deferred?.hostedField?.updateProps({
+            deferredOptions: {
+              bin: newBin,
+              options: deferredResponse
+            }
+          });
+
+          this.currentBinHasDeferredOptions =
+            Array.isArray(deferredResponse) && deferredResponse.length > 0;
+          if (this.currentBinHasDeferredOptions)
+            await this.inputValues.deferred?.hostedField?.show();
+          else await this.inputValues.deferred?.hostedField?.hide();
+        }
       } catch (error) {
         this.inputValues.cardNumber?.hostedField?.updateProps({
-          brandIcon: ""
+          brandIcon: "",
+          deferredOptions: {
+            bin: newBin,
+            options: []
+          }
         });
       }
+    } else if (this.currentBinHasDeferredOptions) {
+      await this.inputValues.deferred?.hostedField?.show();
     }
   }
 
@@ -542,7 +712,17 @@ export class Payment implements IPayment {
   private onChangeCardNumber(value: string) {
     const cardNumber: string = value.replace(/ /g, "");
 
-    if (cardNumber.length >= 8) this.handleSetCardNumber(cardNumber);
+    if (cardNumber.length >= this.BIN_LENGTH)
+      this.handleSetCardNumber(cardNumber);
+    else {
+      this.inputValues.deferred?.hostedField?.updateProps({
+        deferredOptions: {
+          bin: cardNumber,
+          options: []
+        }
+      });
+      this.inputValues.deferred?.hostedField?.hide();
+    }
   }
 
   private buildFieldOptions(field: Field) {
@@ -566,6 +746,10 @@ export class Payment implements IPayment {
       options.handleOnBlur = (values: DeferredInputValues) =>
         this.onBlurDeferred(values);
     }
+
+    if (field.fieldType === InputModelEnum.OTP)
+      options.handleOnChange = (field: string, value: string) =>
+        this.handleOnChangeOTP(field, value);
 
     return options;
   }
@@ -599,8 +783,12 @@ export class Payment implements IPayment {
       };
     }
 
-    if (this.inputValues.deferred)
+    if (this.inputValues.deferred) {
       this.inputValues.deferred.validity = { isValid: true };
+    }
+    if (this.inputValues.otp) {
+      this.inputValues.otp.validity = { isValid: true };
+    }
 
     this.hideContainers();
 
@@ -656,7 +844,10 @@ export class Payment implements IPayment {
     };
 
     for (const inputName in inputValues) {
-      if (Object.values(InputModelEnum).includes(inputName as InputModelEnum)) {
+      if (
+        Object.values(InputModelEnum).includes(inputName as InputModelEnum) &&
+        inputName !== InputModelEnum.OTP
+      ) {
         fieldsValidity[inputName as keyof Fields] = {
           errorType: inputValues[inputName].validity.errorType,
           isValid: inputValues[inputName].validity.isValid
@@ -683,24 +874,130 @@ export class Payment implements IPayment {
   }
 
   private hideDeferredOptions = (): Promise<void> => {
-    if (!this.inputValues.deferred) return Promise.resolve();
+    if (!this.inputValues.deferred || !this.inputValues.deferred?.hostedField)
+      return Promise.resolve();
 
     return new Promise<void>((resolve, reject) => {
-      this.resizeField(400, 300, this.inputValues.deferred)
+      this.inputValues.deferred?.hostedField
+        ?.resize({ height: 200, width: 400 })
         .then(() => this.inputValues.deferred?.hostedField?.hide())
         .then(() => resolve())
         .catch((error: any) => reject(error));
     });
   };
 
-  private resizeField = (
-    width: number,
-    height: number,
-    field?: FieldInstance
-  ): Promise<void> => {
-    /* istanbul ignore next*/
-    if (!field) return Promise.resolve();
+  private async getOtpInput(secureId: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      let countTries = 0;
 
-    return field.hostedField?.resize({ height, width });
+      window.addEventListener(this.otpInputOTP, (async (
+        e: CustomEvent<{ otpValue: string }>
+      ): Promise<void> => {
+        countTries += 1;
+
+        if (countTries <= 3) {
+          const otpInputValue: { otpValue: string } = e.detail!;
+
+          const resultValidationOTP = await this.validationOTP(
+            otpInputValue.otpValue,
+            secureId
+          );
+
+          if (resultValidationOTP) resolve(true);
+          /* istanbul ignore next*/
+          if (!resultValidationOTP) {
+            this.dispatchEventOTPValidation(OTPEventEnum.ERROR);
+          }
+          /* istanbul ignore next*/
+          if (!resultValidationOTP && countTries === 3) {
+            reject(ERRORS.E008);
+          }
+        }
+      }) as unknown as EventListener);
+    });
+  }
+
+  private async validInputOTP(
+    token: string,
+    deferredValues: DeferredValues,
+    secureService?: string,
+    secureId?: string
+  ): Promise<TokenResponse | undefined> {
+    const hasOTP: boolean =
+      secureService === OTPEnum.secureService && secureId !== "";
+
+    if (hasOTP) {
+      this.showOtpAndHideInputs();
+      const otpInputSuccess: boolean = await this.getOtpInput(secureId!);
+
+      if (otpInputSuccess) {
+        this.dispatchEventOTPValidation(OTPEventEnum.SUCCESS);
+
+        return Promise.resolve({
+          deferred: deferredValues,
+          token: token
+        });
+      }
+    }
+
+    return undefined;
+  }
+
+  /* istanbul ignore next*/
+  private async validationOTP(
+    otpValue: string,
+    secureId: string
+  ): Promise<boolean> {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        const secureOTPResponse: SecureOtpResponse =
+          await this._gateway.requestSecureServiceValidation({
+            otpValue: otpValue ?? "",
+            secureService: OTPEnum.secureService,
+            secureServiceId: secureId
+          });
+
+        if (
+          "code" in secureOTPResponse &&
+          secureOTPResponse.code === OTPEnum.secureCodeSuccess
+        )
+          resolve(true);
+        else {
+          this.dispatchEventOTPValidation(OTPEventEnum.ERROR);
+          resolve(false);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  private hideOTPInput = (): Promise<void> => {
+    if (!this.inputValues.otp) return Promise.resolve();
+
+    return this.inputValues.otp?.hostedField?.hide();
+  };
+
+  private buildEventOtpValidation = (
+    inputOtp: OTPEventEnum
+  ): CustomEvent<{ otp: OTPEventEnum }> => {
+    return new CustomEvent<{ otp: OTPEventEnum }>(this.otpValidation, {
+      detail: {
+        otp: inputOtp
+      }
+    });
+  };
+
+  private showOtpAndHideInputs = (): void => {
+    this.dispatchEventOTPValidation(OTPEventEnum.REQUIRED);
+    this.inputValues.otp?.hostedField?.show();
+  };
+
+  private dispatchEventOTPValidation = (eventOTP: OTPEventEnum) => {
+    const eventOtpValidity: CustomEvent<{ otp: OTPEventEnum }> =
+      this.buildEventOtpValidation(eventOTP);
+
+    dispatchEvent(eventOtpValidity);
   };
 }

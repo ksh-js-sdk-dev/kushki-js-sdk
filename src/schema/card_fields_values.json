@@ -30,7 +30,7 @@
         },
         "errorType": {
           "type": "string",
-          "enum": ["empty", "invalid"]
+          "enum": ["empty", "invalid", "number of months required"]
         }
       },
       "required": ["isValid"]
@@ -79,7 +79,7 @@
     "deferred": {
       "$ref": "#/definitions/fieldInstance"
     },
-    "creditType": {
+    "expirationDate": {
       "$ref": "#/definitions/fieldInstance"
     }
   },

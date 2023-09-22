@@ -1,7 +1,7 @@
 import { BinInfoResponse } from "types/bin_info_response";
-import { DeferredByBinResponse } from "Kushki";
+import { DeferredByBinOptionsResponse } from "Kushki";
 import { BinBody } from "types/bin_body";
-import { CardTokenRequest, TokenResponse } from "src/module";
+import { CardTokenRequest, CardTokenResponse } from "src/module";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import { SecureOtpRequest } from "types/secure_otp_request";
@@ -18,18 +18,18 @@ export interface IKushkiGateway {
    * @param kushkiInstance
    * @param body
    */
-  requestDeferredInfo(body: BinBody): Promise<DeferredByBinResponse[]>;
+  requestDeferredInfo(body: BinBody): Promise<DeferredByBinOptionsResponse[]>;
   /**
    * Request card Token
    */
-  requestToken(body: CardTokenRequest): Promise<TokenResponse>;
+  requestToken(body: CardTokenRequest): Promise<CardTokenResponse>;
 
   /**
    * Request card Subscription Token
    */
   requestCreateSubscriptionToken(
     body: CardTokenRequest
-  ): Promise<TokenResponse>;
+  ): Promise<CardTokenResponse>;
 
   /**
    * Request card Merchant Settings

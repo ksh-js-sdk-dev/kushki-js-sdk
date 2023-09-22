@@ -2,11 +2,6 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "FormValidity",
   "definitions": {
-    "errorType": {
-      "title": "ErrorTypeEnum",
-      "type": "string",
-      "enum": ["empty", "invalid"]
-    },
     "fieldValidity": {
       "type": "object",
       "title": "FieldValidity",
@@ -16,7 +11,8 @@
           "type": "boolean"
         },
         "errorType": {
-          "$ref": "#/definitions/errorType"
+          "type": "string",
+          "enum": ["empty", "invalid", "number of months required"]
         }
       },
       "required": ["isValid"]
