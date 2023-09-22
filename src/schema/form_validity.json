@@ -30,7 +30,8 @@
         "cardholderName",
         "cvv",
         "deferred",
-        "expirationDate"
+        "expirationDate",
+        "otp"
       ]
     },
     "fields": {

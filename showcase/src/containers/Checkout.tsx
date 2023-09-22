@@ -49,19 +49,6 @@ export const checkoutContainerStyles = {
     justifyContent: "center",
     marginRight: "250px",
     width: "100%"
-  },
-  table: {
-    width: "100%"
-  },
-  td: {
-    padding: "8px",
-    textAlign: "center",
-    width: "50%"
-  },
-  th: {
-    padding: "8px",
-    textAlign: "center",
-    width: "50%"
   }
 };
 
@@ -75,18 +62,20 @@ export const CheckoutContainer = () => {
     deferred: { isValid: true },
     expirationDate: { isValid: true }
   });
-
+  const [showOTP, setShowOTP] = useState<boolean>(false);
+  const [errorOTP, setErrorOTP] = useState<string>("");
   const options: CardOptions = {
     amount: {
       iva: 26,
-      subtotalIva: 260000,
+      // subtotalIva: 260000,
+      subtotalIva: 600, // otp
       subtotalIva0: 0
       // 3ds amount
       // iva: 0,
       // subtotalIva: 0,
       // subtotalIva0: 10000
     },
-    currency: "USD",
+    currency: "COP",
     fields: {
       cardHolderName: {
         fieldType: "cardholderName",
@@ -452,6 +441,50 @@ export const CheckoutContainer = () => {
             top: "-7px"
           }
         }
+      },
+      otp: {
+        fieldType: "otp",
+        inputType: "password",
+        label: "OTP",
+        placeholder: "OTP",
+        selector: "otp_id",
+        styles: {
+          container: {
+            position: "relative"
+          },
+          input: {
+            border: "1px solid #ccc",
+            borderRadius: "10px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          inputActive: {
+            border: "1px solid #1E65AE",
+            borderRadius: "10px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          label: {
+            background: "white",
+            color: "#6D7781",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "12px",
+            fontWeight: "400",
+            left: "16px",
+            paddingLeft: "5px",
+            paddingRight: "5px",
+            position: "absolute",
+            top: "-7px"
+          }
+        }
       }
     }
   };
@@ -460,9 +493,10 @@ export const CheckoutContainer = () => {
     (async () => {
       const kushkiInstance = await Kushki.init({
         inTest: true,
-        // publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
-        // publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
-        publicCredentialId: "289d036418724065bc871ea50a4ee39f" // merchant chile
+        //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
+        //publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
+        // publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
+        publicCredentialId: "7cad8d921dcb463eb92c43c049a849b0" //OTP
       });
 
       if (kushkiInstance) {
@@ -504,6 +538,18 @@ export const CheckoutContainer = () => {
       cardInstance.onFieldValidity((event: FormValidity) => {
         setFieldsValidityDemo(event.fields);
       });
+
+      cardInstance.onOTPValidation(
+        () => {
+          setShowOTP(true);
+        },
+        (error) => {
+          setErrorOTP(error.message);
+        },
+        () => {
+          setErrorOTP("");
+        }
+      );
     }
   }, [cardInstance]);
 
@@ -514,51 +560,58 @@ export const CheckoutContainer = () => {
       </div>
       <p>Tarjeta 3DS: 4000000000002503</p>
       <div style={checkoutContainerStyles.contentCheckout!}>
-        <div id="cardHolderName_id"></div>
-        {validError(fieldsValidityDemo, "cardholderName") && (
-          <div>
-            {customMessageValidity(
-              "cardholderName",
-              fieldsValidityDemo.cardholderName.errorType! as ErrorTypeEnum
+        {!showOTP && (
+          <>
+            <div id="cardHolderName_id"></div>
+            {validError(fieldsValidityDemo, "cardholderName") && (
+              <div>
+                {customMessageValidity(
+                  "cardholderName",
+                  fieldsValidityDemo.cardholderName.errorType! as ErrorTypeEnum
+                )}
+              </div>
             )}
-          </div>
-        )}
-        <div id="cardNumber_id"></div>
-        {validError(fieldsValidityDemo, "cardNumber") && (
-          <div>
-            {customMessageValidity(
-              "cardNumber",
-              fieldsValidityDemo.cardNumber.errorType! as ErrorTypeEnum
+            <div id="cardNumber_id"></div>
+            {validError(fieldsValidityDemo, "cardNumber") && (
+              <div>
+                {customMessageValidity(
+                  "cardNumber",
+                  fieldsValidityDemo.cardNumber.errorType! as ErrorTypeEnum
+                )}
+              </div>
             )}
-          </div>
-        )}
-        <div id="expirationDate_id"></div>
-        {validError(fieldsValidityDemo, "expirationDate") && (
-          <div>
-            {customMessageValidity(
-              "expirationDate",
-              fieldsValidityDemo.expirationDate.errorType! as ErrorTypeEnum
+            <div id="expirationDate_id"></div>
+            {validError(fieldsValidityDemo, "expirationDate") && (
+              <div>
+                {customMessageValidity(
+                  "expirationDate",
+                  fieldsValidityDemo.expirationDate.errorType! as ErrorTypeEnum
+                )}
+              </div>
             )}
-          </div>
-        )}
-        <div id="cvv_id"></div>
-        {validError(fieldsValidityDemo, "cvv") && (
-          <div>
-            {customMessageValidity(
-              "cvv",
-              fieldsValidityDemo.cvv.errorType! as ErrorTypeEnum
+            <div id="cvv_id"></div>
+            {validError(fieldsValidityDemo, "cvv") && (
+              <div>
+                {customMessageValidity(
+                  "cvv",
+                  fieldsValidityDemo.cvv.errorType! as ErrorTypeEnum
+                )}
+              </div>
             )}
-          </div>
-        )}
-        <div id="deferred_id"></div>
-        {validError(fieldsValidityDemo, "deferred") && (
-          <div>
-            {customMessageValidity(
-              "deferred",
-              fieldsValidityDemo.deferred!.errorType! as ErrorTypeEnum
+            <div id="deferred_id"></div>
+            {validError(fieldsValidityDemo, "deferred") && (
+              <div>
+                {customMessageValidity(
+                  "deferred",
+                  fieldsValidityDemo.deferred!.errorType! as ErrorTypeEnum
+                )}
+              </div>
             )}
-          </div>
+          </>
         )}
+
+        <div id="otp_id"></div>
+        {errorOTP.length > 0 && <div>Error en OTP {errorOTP}</div>}
 
         <div style={checkoutContainerStyles.contentBottoms!}>
           <button

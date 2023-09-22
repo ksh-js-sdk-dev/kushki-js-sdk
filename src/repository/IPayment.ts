@@ -1,4 +1,5 @@
 import { FormValidity, TokenResponse } from "src/module";
+import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
 import { FieldTypeEnum } from "types/card_options";
 import { FieldValidity } from "types/card_fields_values";
 
@@ -215,4 +216,23 @@ export interface IPayment {
    * console.log("CVV field is now reset.");
    */
   reset(fieldType: FieldTypeEnum): Promise<void>;
+
+  /**
+   * This event is emitted when enter value in OTP field
+   * @return {void}
+   * @example
+   *  cardInstance.onOTPValidation(
+   *    () => { setShowOTP(true);},
+   *    (error) => { setErrorOTP(error.message);},
+   *    () => { setErrorOTP("");}
+   *  );
+   * @param onRequired
+   * @param onError
+   * @param onSuccess
+   */
+  onOTPValidation(
+    onRequired: () => void,
+    onError: (error: KushkiErrorAttr) => void,
+    onSuccess: () => void
+  ): void;
 }
