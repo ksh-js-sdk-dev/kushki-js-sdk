@@ -50,13 +50,14 @@ export class Payment implements IPayment {
   private readonly _gateway: IKushkiGateway;
   private readonly _siftScienceService: ISiftScienceService;
   private readonly listenerFieldValidity: string = "fieldValidity";
+  private firstHostedFieldType: string = "";
 
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
     this.options = this.setDefaultValues(options);
     this.kushkiInstance = kushkiInstance;
     this.inputValues = {};
     this.currentBin = "";
-    this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
+    this._gateway = new KushkiGateway(kushkiInstance);
     this._siftScienceService = CONTAINER.get<ISiftScienceService>(
       IDENTIFIERS.SiftScienceService
     );
@@ -83,6 +84,11 @@ export class Payment implements IPayment {
   }
 
   public async requestToken(): Promise<TokenResponse> {
+    this.inputValues[this.firstHostedFieldType].hostedField.requestToken(
+      this._gateway,
+      this.options
+    );
+
     try {
       const { isFormValid } = this.getFormValidity();
 
@@ -91,7 +97,7 @@ export class Payment implements IPayment {
       }
 
       const merchantSettings: MerchantSettingsResponse =
-        await this._gateway.requestMerchantSettings(this.kushkiInstance);
+        await this._gateway.requestMerchantSettings();
 
       const cardValue: string = this.inputValues
         .cardNumber!.value!.toString()
@@ -230,13 +236,10 @@ export class Payment implements IPayment {
       const secureValidation = async () => {
         try {
           const secureValidation: SecureOtpResponse =
-            await this._gateway.requestSecureServiceValidation(
-              this.kushkiInstance,
-              {
-                otpValue: "",
-                secureServiceId
-              }
-            );
+            await this._gateway.requestSecureServiceValidation({
+              otpValue: "",
+              secureServiceId
+            });
 
           resolve(this.is3dsValid(secureValidation));
         } catch (error) {
@@ -334,7 +337,7 @@ export class Payment implements IPayment {
   ): Promise<string | undefined> {
     if (merchantSettings.active_3dsecure) {
       const jwtResponse: CybersourceJwtResponse =
-        await this._gateway.requestCybersourceJwt(this.kushkiInstance);
+        await this._gateway.requestCybersourceJwt();
 
       if (merchantSettings.sandboxEnable) KushkiCardinalSandbox.init();
       else await this.initCardinal(jwtResponse.jwt);
@@ -381,12 +384,10 @@ export class Payment implements IPayment {
   ) {
     if (this.options.isSubscription)
       return this._gateway.requestCreateSubscriptionToken(
-        this.kushkiInstance,
         this.buildTokenBody(jwt, siftScienceSession)
       );
 
     return this._gateway.requestToken(
-      this.kushkiInstance,
       this.buildTokenBody(jwt, siftScienceSession)
     );
   }
@@ -498,7 +499,7 @@ export class Payment implements IPayment {
 
       try {
         const { brand, cardType }: BinInfoResponse =
-          await this._gateway.requestBinInfo(this.kushkiInstance, {
+          await this._gateway.requestBinInfo({
             bin: newBin
           });
 
@@ -508,7 +509,7 @@ export class Payment implements IPayment {
         /* istanbul ignore next */
         if (cardType === "credit" && !this.options.isSubscription)
           this._gateway
-            .requestDeferredInfo(this.kushkiInstance, {
+            .requestDeferredInfo({
               bin: newBin
             })
             .then(
@@ -570,11 +571,24 @@ export class Payment implements IPayment {
   }
 
   private initFields(optionsFields: { [k: string]: Field }): Promise<void[]> {
+    let firstHostedField;
+
     for (const fieldKey in optionsFields) {
       const field = optionsFields[fieldKey];
       const options = this.buildFieldOptions(field);
+      let hostedField;
 
-      const hostedField = KushkiHostedFields(options);
+      if (firstHostedField) {
+        hostedField = KushkiHostedFields({
+          ...options,
+          tokenizationInstance: firstHostedField
+        });
+      } else {
+        hostedField = KushkiHostedFields(options);
+
+        firstHostedField = hostedField;
+        this.firstHostedFieldType = field.fieldType;
+      }
 
       this.inputValues[field.fieldType] = {
         hostedField,

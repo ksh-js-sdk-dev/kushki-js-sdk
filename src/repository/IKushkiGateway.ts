@@ -1,5 +1,5 @@
 import { BinInfoResponse } from "types/bin_info_response";
-import { DeferredByBinResponse, Kushki } from "Kushki";
+import { DeferredByBinResponse } from "Kushki";
 import { BinBody } from "types/bin_body";
 import { CardTokenRequest, TokenResponse } from "src/module";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
@@ -11,55 +11,40 @@ export interface IKushkiGateway {
   /**
    * Request bin card information
    */
-  requestBinInfo(
-    kushkiInstance: Kushki,
-    body: BinBody
-  ): Promise<BinInfoResponse>;
+  requestBinInfo(body: BinBody): Promise<BinInfoResponse>;
 
   /**
    * Request deferred card information
    * @param kushkiInstance
    * @param body
    */
-  requestDeferredInfo(
-    kushkiInstance: Kushki,
-    body: BinBody
-  ): Promise<DeferredByBinResponse[]>;
+  requestDeferredInfo(body: BinBody): Promise<DeferredByBinResponse[]>;
   /**
    * Request card Token
    */
-  requestToken(
-    kushkiInstance: Kushki,
-    body: CardTokenRequest
-  ): Promise<TokenResponse>;
+  requestToken(body: CardTokenRequest): Promise<TokenResponse>;
 
   /**
    * Request card Subscription Token
    */
   requestCreateSubscriptionToken(
-    kushkiInstance: Kushki,
     body: CardTokenRequest
   ): Promise<TokenResponse>;
 
   /**
    * Request card Merchant Settings
    */
-  requestMerchantSettings(
-    kushkiInstance: Kushki
-  ): Promise<MerchantSettingsResponse>;
+  requestMerchantSettings(): Promise<MerchantSettingsResponse>;
 
   /**
    * Request Cybersource JWT
    */
-  requestCybersourceJwt(
-    kushkiInstance: Kushki
-  ): Promise<CybersourceJwtResponse>;
+  requestCybersourceJwt(): Promise<CybersourceJwtResponse>;
 
   /**
    * Request Secure validation
    */
   requestSecureServiceValidation(
-    kushkiInstance: Kushki,
     body: SecureOtpRequest
   ): Promise<SecureOtpResponse>;
 }
