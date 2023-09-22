@@ -10,7 +10,8 @@ export enum ErrorCode {
   E004 = "E004",
   E005 = "E005",
   E006 = "E006",
-  E007 = "E007"
+  E007 = "E007",
+  E008 = "E008"
 }
 
 export const ERRORS: KushkiErrors = {
@@ -41,5 +42,9 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E007]: {
     code: ErrorCode.E007,
     message: "Error en la validación del formulario"
+  },
+  [ErrorCode.E008]: {
+    code: ErrorCode.E008,
+    message: "Error en la validación de OTP"
   }
 };

@@ -1,4 +1,5 @@
 import { FormValidity, TokenResponse } from "src/module";
+import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
 
 export interface IPayment {
   /**
@@ -35,4 +36,23 @@ export interface IPayment {
    *  cardInstance.getFormValidity();
    */
   getFormValidity(): FormValidity;
+
+  /**
+   * This event is emitted when enter value in OTP field
+   * @return {void}
+   * @example
+   *  cardInstance.onOTPValidation(
+   *    () => { setShowOTP(true);},
+   *    (error) => { setErrorOTP(error.message);},
+   *    () => { setErrorOTP("");}
+   *  );
+   * @param onRequired
+   * @param onError
+   * @param onSuccess
+   */
+  onOTPValidation(
+    onRequired: () => void,
+    onError: (error: KushkiErrorAttr) => void,
+    onSuccess: () => void
+  ): void;
 }
