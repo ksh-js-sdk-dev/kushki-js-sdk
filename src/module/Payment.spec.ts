@@ -1,5 +1,11 @@
 import { Kushki } from "Kushki";
-import { CardOptions, CardTokenResponse, Field, Payment } from "./index.ts";
+import {
+  CardOptions,
+  CardTokenResponse,
+  Field,
+  Payment,
+  TokenResponse
+} from "./index.ts";
 import KushkiHostedFields from "libs/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { CONTAINER } from "infrastructure/Container.ts";
@@ -11,6 +17,7 @@ import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
 import { DeferredValues } from "types/card_fields_values";
 import { BinInfoResponse } from "types/bin_info_response";
+import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
 
 const mockKushkiHostedFieldsHide = jest.fn().mockResolvedValue({});
 
@@ -932,6 +939,103 @@ describe("Payment test", () => {
         expect(error.code).toEqual("E005");
       }
     });
+
+    it("it should return successful token when OTP value is valid and securevalidationOTP is true", async () => {
+      options.fields.otp = {
+        fieldType: InputModelEnum.OTP,
+        selector: "id_test"
+      };
+
+      mockKushkiGateway(
+        false,
+        {
+          secureId: "555444-1213233-1234243-2324",
+          secureService: "KushkiOTP",
+          token: tokenMock
+        },
+        {
+          code: "OTP000",
+          message: "OTP válido"
+        }
+      );
+
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      KushkiHostedFields.mock.calls[4][0].handleOnChange(
+        InputModelEnum.OTP,
+        "532"
+      );
+      mockValidityInputs();
+      mockInputFields();
+
+      window.addEventListener = jest
+        .fn()
+        .mockImplementationOnce((_, callback) => {
+          callback(
+            new CustomEvent("onInputOTP", { detail: { otpValue: "777" } })
+          );
+        });
+
+      const response: TokenResponse = await cardInstance.requestToken();
+
+      expect(response.token).toEqual(tokenMock);
+    });
+
+    it("when onOTPValidation is initialized and send event successful execute onSuccess function", async () => {
+      const cardInstance = await Payment.initCardToken(kushki, options);
+      let valueSuccess = "";
+
+      mockValidityInputs();
+      mockInputFields();
+
+      window.addEventListener = jest
+        .fn()
+        .mockImplementationOnce((_, callback) => {
+          callback(
+            new CustomEvent("otpValidation", {
+              detail: { otp: OTPEventEnum.SUCCESS }
+            })
+          );
+        });
+
+      cardInstance.onOTPValidation(
+        () => {},
+        () => {},
+        () => {
+          valueSuccess = OTPEventEnum.SUCCESS;
+        }
+      );
+
+      expect(valueSuccess).toEqual(OTPEventEnum.SUCCESS);
+    });
+
+    it("when onOTPValidation is initialized and send event successful execute onSuccess function", async () => {
+      const cardInstance = await Payment.initCardToken(kushki, options);
+      let valueError = "";
+
+      mockValidityInputs();
+      mockInputFields();
+
+      window.addEventListener = jest
+        .fn()
+        .mockImplementationOnce((_, callback) => {
+          callback(
+            new CustomEvent("otpValidation", {
+              detail: { otp: OTPEventEnum.ERROR }
+            })
+          );
+        });
+
+      cardInstance.onOTPValidation(
+        () => {},
+        () => {
+          valueError = OTPEventEnum.ERROR;
+        },
+        () => {}
+      );
+
+      expect(valueError).toEqual(OTPEventEnum.ERROR);
+    });
   });
 
   describe("onFieldValidity - Test", () => {
@@ -958,6 +1062,16 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockInputsFields();
+
+      window.addEventListener = jest
+        .fn()
+        .mockImplementationOnce((_, callback) => {
+          callback(
+            new CustomEvent("fieldValidity", {
+              detail: {}
+            })
+          );
+        });
 
       cardInstance.onFieldValidity((e) => {
         e;
