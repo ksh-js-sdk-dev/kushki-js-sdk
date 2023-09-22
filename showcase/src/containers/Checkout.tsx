@@ -1,13 +1,16 @@
 import { Kushki } from "Kushki";
 import {
-  Payment,
   CardOptions,
+  ErrorTypeEnum,
   Fields,
   FormValidity,
+  Payment,
   TokenResponse
 } from "../../../src/module";
 import { useEffect, useState } from "react";
+import { TableDemoField } from "../components/TableDemoField";
 import { ErrorTypeEnum } from "../../../src/infrastructure/ErrorTypeEnum.ts";
+import { TableDemoGeneral } from "../components/TableDemoGeneral";
 import { DeferredValuesResponse } from "../../../types/token_response";
 
 export const checkoutContainerStyles = {
@@ -21,6 +24,20 @@ export const checkoutContainerStyles = {
     marginLeft: "15px",
     overflow: "hidden",
     padding: "0 26px"
+  },
+  buttonError: {
+    backgroundColor: "red",
+    border: "none",
+    borderRadius: "12px",
+    color: "#FFF",
+    height: "36px",
+    margin: "6px 0",
+    marginLeft: "15px",
+    overflow: "hidden",
+    padding: "0 26px"
+  },
+  contentBottoms: {
+    display: "flex"
   },
   contentCheckout: {
     alignItems: "start",
@@ -49,18 +66,20 @@ export const CheckoutContainer = () => {
     deferred: { isValid: true },
     expirationDate: { isValid: true }
   });
-
+  const [showOTP, setShowOTP] = useState<boolean>(false);
+  const [errorOTP, setErrorOTP] = useState<string>("");
   const options: CardOptions = {
     amount: {
       iva: 26,
-      subtotalIva: 260000,
+      // subtotalIva: 260000,
+      subtotalIva: 600, // otp
       subtotalIva0: 0
       // 3ds amount
       // iva: 0,
       // subtotalIva: 0,
       // subtotalIva0: 10000
     },
-    currency: "CLP",
+    currency: "USD",
     fields: {
       cardHolderName: {
         fieldType: "cardholderName",
@@ -107,7 +126,6 @@ export const CheckoutContainer = () => {
         }
       },
       cardNumber: {
-        brandIcon: "amex",
         fieldType: "cardNumber",
         inputType: "number",
         label: "Número de tarjeta",
@@ -427,6 +445,50 @@ export const CheckoutContainer = () => {
             top: "-7px"
           }
         }
+      },
+      otp: {
+        fieldType: "otp",
+        inputType: "password",
+        label: "OTP",
+        placeholder: "OTP",
+        selector: "otp_id",
+        styles: {
+          container: {
+            position: "relative"
+          },
+          input: {
+            border: "1px solid #ccc",
+            borderRadius: "10px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          inputActive: {
+            border: "1px solid #1E65AE",
+            borderRadius: "10px",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            outline: "none",
+            padding: "10px",
+            width: "350px"
+          },
+          label: {
+            background: "white",
+            color: "#6D7781",
+            fontFamily: "IBM Plex sans-serif",
+            fontSize: "12px",
+            fontWeight: "400",
+            left: "16px",
+            paddingLeft: "5px",
+            paddingRight: "5px",
+            position: "absolute",
+            top: "-7px"
+          }
+        }
       }
     }
   };
@@ -437,7 +499,8 @@ export const CheckoutContainer = () => {
         inTest: true,
         //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
         //publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
-        publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
+        // publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
+        publicCredentialId: "7cad8d921dcb463eb92c43c049a849b0" //OTP
       });
 
       if (kushkiInstance) {
@@ -477,9 +540,20 @@ export const CheckoutContainer = () => {
   useEffect(() => {
     if (cardInstance) {
       cardInstance.onFieldValidity((event: FormValidity) => {
-        console.log("onFieldValidity Checkout Demo", event);
         setFieldsValidityDemo(event.fields);
       });
+
+      cardInstance.onOTPValidation(
+        () => {
+          setShowOTP(true);
+        },
+        (error) => {
+          setErrorOTP(error.message);
+        },
+        () => {
+          setErrorOTP("");
+        }
+      );
     }
   }, [cardInstance]);
 
@@ -490,59 +564,146 @@ export const CheckoutContainer = () => {
       </div>
       <p>Tarjeta 3DS: 4000000000002503</p>
       <div style={checkoutContainerStyles.contentCheckout!}>
-        <div id="cardHolderName_id"></div>
-        {validError(fieldsValidityDemo, "cardholderName") && (
-          <div>
-            {customMessageValidity(
-              "cardholderName",
-              fieldsValidityDemo.cardholderName.errorType! as ErrorTypeEnum
+        {!showOTP && (
+          <>
+            <div id="cardHolderName_id"></div>
+            {validError(fieldsValidityDemo, "cardholderName") && (
+              <div>
+                {customMessageValidity(
+                  "cardholderName",
+                  fieldsValidityDemo.cardholderName.errorType! as ErrorTypeEnum
+                )}
+              </div>
             )}
-          </div>
-        )}
-        <div id="cardNumber_id"></div>
-        {validError(fieldsValidityDemo, "cardNumber") && (
-          <div>
-            {customMessageValidity(
-              "cardNumber",
-              fieldsValidityDemo.cardNumber.errorType! as ErrorTypeEnum
+            <div id="cardNumber_id"></div>
+            {validError(fieldsValidityDemo, "cardNumber") && (
+              <div>
+                {customMessageValidity(
+                  "cardNumber",
+                  fieldsValidityDemo.cardNumber.errorType! as ErrorTypeEnum
+                )}
+              </div>
             )}
-          </div>
-        )}
-        <div id="expirationDate_id"></div>
-        {validError(fieldsValidityDemo, "expirationDate") && (
-          <div>
-            {customMessageValidity(
-              "expirationDate",
-              fieldsValidityDemo.expirationDate.errorType! as ErrorTypeEnum
+            <div id="expirationDate_id"></div>
+            {validError(fieldsValidityDemo, "expirationDate") && (
+              <div>
+                {customMessageValidity(
+                  "expirationDate",
+                  fieldsValidityDemo.expirationDate.errorType! as ErrorTypeEnum
+                )}
+              </div>
             )}
-          </div>
-        )}
-        <div id="cvv_id"></div>
-        {validError(fieldsValidityDemo, "cvv") && (
-          <div>
-            {customMessageValidity(
-              "cvv",
-              fieldsValidityDemo.cvv.errorType! as ErrorTypeEnum
+            <div id="cvv_id"></div>
+            {validError(fieldsValidityDemo, "cvv") && (
+              <div>
+                {customMessageValidity(
+                  "cvv",
+                  fieldsValidityDemo.cvv.errorType! as ErrorTypeEnum
+                )}
+              </div>
             )}
-          </div>
-        )}
-        <div id="deferred_id"></div>
-        {validError(fieldsValidityDemo, "deferred") && (
-          <div>
-            {customMessageValidity(
-              "deferred",
-              fieldsValidityDemo.deferred!.errorType! as ErrorTypeEnum
+            <div id="deferred_id"></div>
+            {validError(fieldsValidityDemo, "deferred") && (
+              <div>
+                {customMessageValidity(
+                  "deferred",
+                  fieldsValidityDemo.deferred!.errorType! as ErrorTypeEnum
+                )}
+              </div>
             )}
-          </div>
+          </>
         )}
 
-        <button
-          style={checkoutContainerStyles.button!}
-          data-testid="tokenRequestBtn"
-          onClick={() => getToken()}
-        >
-          Pagar
-        </button>
+        <div id="otp_id"></div>
+        {errorOTP.length > 0 && <div>Error en OTP {errorOTP}</div>}
+
+        <div style={checkoutContainerStyles.contentBottoms!}>
+          <button
+            style={checkoutContainerStyles.button!}
+            data-testid="tokenRequestBtn"
+            onClick={() => getToken()}
+          >
+            Pagar
+          </button>
+          <button
+            style={checkoutContainerStyles.buttonError!}
+            onClick={async () => {
+              try {
+                await cardInstance.focus("cardName");
+              } catch (error: any) {
+                alert(error.message);
+              }
+            }}
+          >
+            Error Focus
+          </button>
+          <button
+            style={checkoutContainerStyles.buttonError!}
+            onClick={async () => {
+              try {
+                await cardInstance.reset("cardName");
+              } catch (error: any) {
+                alert(error.message);
+              }
+            }}
+          >
+            Error Reset
+          </button>
+        </div>
+
+        <div style={checkoutContainerStyles.contentBottoms!}>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.focus("cardholderName")}
+          >
+            Focus cardHolderName
+          </button>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.focus("cardNumber")}
+          >
+            Focus cardNumber
+          </button>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.focus("expirationDate")}
+          >
+            Focus expirationDate
+          </button>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.focus("cvv")}
+          >
+            Focus cvv
+          </button>
+        </div>
+
+        <div style={checkoutContainerStyles.contentBottoms!}>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.reset("cardholderName")}
+          >
+            Reset cardHolderName
+          </button>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.reset("cardNumber")}
+          >
+            Reset cardNumber
+          </button>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.reset("expirationDate")}
+          >
+            Reset expirationDate
+          </button>
+          <button
+            style={checkoutContainerStyles.button!}
+            onClick={async () => await cardInstance.reset("cvv")}
+          >
+            Reset cvv
+          </button>
+        </div>
       </div>
 
       <hr />
@@ -566,6 +727,30 @@ export const CheckoutContainer = () => {
         </ul>
       </section>
       <hr />
+      {cardInstance && <TableDemoGeneral cardInstance={cardInstance} />}
+
+      <br />
+      {cardInstance && (
+        <TableDemoField
+          fieldType="cardholderName"
+          cardInstance={cardInstance}
+        />
+      )}
+      <br />
+      {cardInstance && (
+        <TableDemoField fieldType="cardNumber" cardInstance={cardInstance} />
+      )}
+      <br />
+      {cardInstance && (
+        <TableDemoField
+          fieldType="expirationDate"
+          cardInstance={cardInstance}
+        />
+      )}
+      <br />
+      {cardInstance && (
+        <TableDemoField fieldType="cvv" cardInstance={cardInstance} />
+      )}
     </>
   );
 };

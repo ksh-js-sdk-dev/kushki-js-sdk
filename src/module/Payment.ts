@@ -35,6 +35,10 @@ import { SecureOtpResponse } from "types/secure_otp_response";
 import { SiftScienceObject } from "types/sift_science_object";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
+import { FieldTypeEnum } from "types/card_options";
+import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
+import { OTPEnum } from "infrastructure/OTPEnum.ts";
+import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
 
 declare global {
   // tslint:disable-next-line
@@ -54,6 +58,11 @@ export class Payment implements IPayment {
   private readonly _siftScienceService: ISiftScienceService;
   private readonly listenerFieldValidity: string = "fieldValidity";
   private readonly BIN_LENGTH = 8;
+  private readonly listenerFieldFocus: string = "fieldFocus";
+  private readonly listenerFieldBlur: string = "fieldBlur";
+  private readonly listenerFieldSubmit: string = "fieldSubmit";
+  private readonly otpValidation: string = "otpValidation";
+  private readonly otpInputOTP: string = "onInputOTP";
 
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
     this.options = this.setDefaultValues(options);
@@ -80,6 +89,7 @@ export class Payment implements IPayment {
       payment.showContainers();
 
       await payment.hideDeferredOptions();
+      await payment.hideOTPInput();
 
       return payment;
     } catch (error) {
@@ -127,8 +137,17 @@ export class Payment implements IPayment {
             jwt,
             siftScienceSession
           );
-
         const deferredValues: DeferredValues = this.getDeferredValues();
+
+        const inputOTPValidation: TokenResponse | undefined =
+          await this.validInputOTP(
+            cardTokenResponse.token,
+            deferredValues,
+            cardTokenResponse.secureService,
+            cardTokenResponse.secureId
+          );
+
+        if (inputOTPValidation !== undefined) return inputOTPValidation;
 
         return Promise.resolve({
           deferred: deferredValues,
@@ -146,13 +165,89 @@ export class Payment implements IPayment {
     }
   }
 
-  public onFieldValidity(event: (fieldEvent: FormValidity) => void): void {
-    window.addEventListener(this.listenerFieldValidity, ((
-      e: CustomEvent<FormValidity>
-    ) => {
-      const fieldEvent: FormValidity = e.detail!;
+  public onFieldValidity(
+    event: (fieldEvent: FormValidity | FieldValidity) => void,
+    fieldType?: FieldTypeEnum
+  ): void {
+    this.addEventListener(this.listenerFieldValidity, event, fieldType);
+  }
 
-      event(fieldEvent);
+  public reset(fieldType: FieldTypeEnum): Promise<void> {
+    if (Object.values(InputModelEnum).includes(fieldType as InputModelEnum)) {
+      this.inputValues[fieldType]?.hostedField?.updateProps({
+        brandIcon: "",
+        reset: true
+      });
+
+      this.inputValues[fieldType]?.hostedField?.updateProps({
+        reset: false
+      });
+
+      return Promise.resolve();
+    } else {
+      return Promise.reject(ERRORS.E009);
+    }
+  }
+
+  public focus(fieldType: FieldTypeEnum): Promise<void> {
+    if (Object.values(InputModelEnum).includes(fieldType as InputModelEnum)) {
+      this.inputValues[fieldType]?.hostedField?.updateProps({
+        isFocusActive: true
+      });
+
+      this.inputValues[fieldType]?.hostedField?.updateProps({
+        isFocusActive: false
+      });
+
+      return Promise.resolve();
+    } else {
+      return Promise.reject(ERRORS.E008);
+    }
+  }
+
+  public onFieldFocus(
+    event: (fieldEvent: FormValidity | FieldValidity) => void,
+    fieldType?: FieldTypeEnum
+  ): void {
+    this.addEventListener(this.listenerFieldFocus, event, fieldType);
+  }
+
+  public onFieldBlur(
+    event: (fieldEvent: FormValidity | FieldValidity) => void,
+    fieldType?: FieldTypeEnum
+  ): void {
+    this.addEventListener(this.listenerFieldBlur, event, fieldType);
+  }
+
+  public onFieldSubmit(
+    event: (fieldEvent: FormValidity | FieldValidity) => void,
+    fieldType?: FieldTypeEnum
+  ): void {
+    this.addEventListener(this.listenerFieldSubmit, event, fieldType);
+  }
+
+  public onOTPValidation(
+    onRequired: () => void,
+    onError: (error: KushkiErrorAttr) => void,
+    onSuccess: () => void
+  ): void {
+    window.addEventListener(this.otpValidation, ((
+      e: CustomEvent<{ otp: OTPEventEnum }>
+    ) => {
+      const fieldEvent: { otp: OTPEventEnum } = e.detail!;
+
+      const errorOTP = ERRORS.E008;
+
+      const eventActions: Record<
+        OTPEventEnum,
+        (error?: KushkiErrorAttr) => void
+      > = {
+        [OTPEventEnum.SUCCESS]: onSuccess,
+        [OTPEventEnum.ERROR]: () => onError(errorOTP),
+        [OTPEventEnum.REQUIRED]: onRequired
+      };
+
+      eventActions[fieldEvent.otp]();
     }) as EventListener);
   }
 
@@ -173,11 +268,11 @@ export class Payment implements IPayment {
     }
 
     const eventFormValidity: CustomEvent<FormValidity> =
-      this.buildEventFormValidity(this.inputValues);
+      this.buildEventFormValidity(this.inputValues, undefined);
 
     dispatchEvent(eventFormValidity);
 
-    return this.buildFieldsValidity(this.inputValues, formValid);
+    return this.buildFieldsValidity(this.inputValues, undefined, formValid);
   }
 
   private async request3DSToken(
@@ -547,7 +642,29 @@ export class Payment implements IPayment {
     };
   }
 
-  private handleOnChange(field: string, value: string) {
+  private async handleOnChangeOTP(field: string, value: string) {
+    this.inputValues = {
+      ...this.inputValues,
+      [field]: { ...this.inputValues[field], value: value }
+    };
+
+    if (
+      this.inputValues.otp?.value !== undefined &&
+      this.inputValues.otp?.value.toString().length === 3
+    ) {
+      const event: CustomEvent<{ otpValue: string }> = new CustomEvent<{
+        otpValue: string;
+      }>(this.otpInputOTP, {
+        detail: {
+          otpValue: this.inputValues.otp.value as string
+        }
+      });
+
+      dispatchEvent(event);
+    }
+  }
+
+  private async handleOnChange(field: string, value: string) {
     /* istanbul ignore next*/
     this.inputValues = {
       ...this.inputValues,
@@ -559,14 +676,42 @@ export class Payment implements IPayment {
     }
   }
 
-  private handleOnFocus(field: string, value: string) {
-    field;
-    value;
+  private createCustomEvent(listener: string, fieldType: string) {
+    const event: CustomEvent<FormValidity> = new CustomEvent<FormValidity>(
+      listener,
+      {
+        detail: this.buildFieldsValidity(
+          this.inputValues,
+          fieldType as FieldTypeEnum
+        )
+      }
+    );
+
+    dispatchEvent(event);
+
+    const eventField: CustomEvent<FormValidity> = new CustomEvent<FormValidity>(
+      `${listener}${fieldType}`,
+      {
+        detail: this.buildFieldsValidity(
+          this.inputValues,
+          fieldType as FieldTypeEnum
+        )
+      }
+    );
+
+    dispatchEvent(eventField);
   }
 
-  private handleOnBlur(field: string, value: string) {
-    field;
-    value;
+  private handleOnFocus(fieldType: string) {
+    this.createCustomEvent(this.listenerFieldFocus, fieldType);
+  }
+
+  private handleOnSubmit(fieldType: string) {
+    this.createCustomEvent(this.listenerFieldSubmit, fieldType);
+  }
+
+  private handleOnBlur(fieldType: string) {
+    this.createCustomEvent(this.listenerFieldBlur, fieldType);
   }
 
   private handleOnValidity(
@@ -585,10 +730,23 @@ export class Payment implements IPayment {
     };
 
     const event: CustomEvent<FormValidity> = this.buildEventFormValidity(
-      this.inputValues
+      this.inputValues,
+      field
     );
 
     dispatchEvent(event);
+
+    const eventField: CustomEvent<FormValidity> = new CustomEvent<FormValidity>(
+      `${this.listenerFieldValidity}${field}`,
+      {
+        detail: this.buildFieldsValidity(
+          this.inputValues,
+          field as FieldTypeEnum
+        )
+      }
+    );
+
+    dispatchEvent(eventField);
   }
 
   private async handleSetCardNumber(cardNumber: string) {
@@ -674,12 +832,12 @@ export class Payment implements IPayment {
   private buildFieldOptions(field: Field) {
     const options: FieldOptions = {
       ...field,
-      handleOnBlur: (field: string, value: string) =>
-        this.handleOnBlur(field, value),
+      handleOnBlur: (field: string) => this.handleOnBlur(field),
       handleOnChange: (field: string, value: string) => {
         return this.handleOnChange(field, value);
       },
-      handleOnFocus: (field, value: string) => this.handleOnFocus(field, value),
+      handleOnFocus: (field: string) => this.handleOnFocus(field),
+      handleOnSubmit: (field: string) => this.handleOnSubmit(field),
       handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
         this.handleOnValidity(field, fieldValidity)
     };
@@ -692,6 +850,10 @@ export class Payment implements IPayment {
       options.handleOnBlur = (values: DeferredInputValues) =>
         this.onBlurDeferred(values);
     }
+
+    if (field.fieldType === InputModelEnum.OTP)
+      options.handleOnChange = (field: string, value: string) =>
+        this.handleOnChangeOTP(field, value);
 
     return options;
   }
@@ -712,8 +874,12 @@ export class Payment implements IPayment {
       };
     }
 
-    if (this.inputValues.deferred)
+    if (this.inputValues.deferred) {
       this.inputValues.deferred.validity = { isValid: true };
+    }
+    if (this.inputValues.otp) {
+      this.inputValues.otp.validity = { isValid: true };
+    }
 
     this.hideContainers();
 
@@ -754,6 +920,7 @@ export class Payment implements IPayment {
 
   private buildFieldsValidity = (
     inputValues: CardFieldValues,
+    field?: FieldTypeEnum,
     isFormValid?: boolean
   ): FormValidity => {
     const defaultValidity: FieldValidity = {
@@ -769,7 +936,11 @@ export class Payment implements IPayment {
     };
 
     for (const inputName in inputValues) {
-      if (Object.values(InputModelEnum).includes(inputName as InputModelEnum)) {
+      if (
+        Object.values(InputModelEnum).includes(inputName as InputModelEnum) &&
+        inputName !== InputModelEnum.OTP &&
+        inputValues[inputName].validity
+      ) {
         fieldsValidity[inputName as keyof Fields] = {
           errorType: inputValues[inputName].validity.errorType,
           isValid: inputValues[inputName].validity.isValid
@@ -777,14 +948,19 @@ export class Payment implements IPayment {
       }
     }
 
-    return { fields: fieldsValidity, isFormValid: isFormValid ?? false };
+    return {
+      fields: fieldsValidity,
+      isFormValid: isFormValid ?? false,
+      triggeredBy: field
+    };
   };
 
   private buildEventFormValidity = (
-    inputValues: CardFieldValues
+    inputValues: CardFieldValues,
+    field?: FieldTypeEnum
   ): CustomEvent<FormValidity> => {
     return new CustomEvent<FormValidity>(this.listenerFieldValidity, {
-      detail: this.buildFieldsValidity(inputValues)
+      detail: this.buildFieldsValidity(inputValues, field)
     });
   };
 
@@ -807,4 +983,141 @@ export class Payment implements IPayment {
         .catch((error: any) => reject(error));
     });
   };
+
+  private async getOtpInput(secureId: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      let countTries = 0;
+
+      window.addEventListener(this.otpInputOTP, (async (
+        e: CustomEvent<{ otpValue: string }>
+      ): Promise<void> => {
+        countTries += 1;
+
+        if (countTries <= 3) {
+          const otpInputValue: { otpValue: string } = e.detail!;
+
+          const resultValidationOTP = await this.validationOTP(
+            otpInputValue.otpValue,
+            secureId
+          );
+
+          if (resultValidationOTP) resolve(true);
+          /* istanbul ignore next*/
+          if (!resultValidationOTP) {
+            this.dispatchEventOTPValidation(OTPEventEnum.ERROR);
+          }
+          /* istanbul ignore next*/
+          if (!resultValidationOTP && countTries === 3) {
+            reject(ERRORS.E008);
+          }
+        }
+      }) as unknown as EventListener);
+    });
+  }
+
+  private async validInputOTP(
+    token: string,
+    deferredValues: DeferredValues,
+    secureService?: string,
+    secureId?: string
+  ): Promise<TokenResponse | undefined> {
+    const hasOTP: boolean =
+      secureService === OTPEnum.secureService && secureId !== "";
+
+    if (hasOTP) {
+      this.showOtpAndHideInputs();
+      const otpInputSuccess: boolean = await this.getOtpInput(secureId!);
+
+      if (otpInputSuccess) {
+        this.dispatchEventOTPValidation(OTPEventEnum.SUCCESS);
+
+        return Promise.resolve({
+          deferred: deferredValues,
+          token: token
+        });
+      }
+    }
+
+    return undefined;
+  }
+
+  /* istanbul ignore next*/
+  private async validationOTP(
+    otpValue: string,
+    secureId: string
+  ): Promise<boolean> {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        const secureOTPResponse: SecureOtpResponse =
+          await this._gateway.requestSecureServiceValidation(
+            this.kushkiInstance,
+            {
+              otpValue: otpValue ?? "",
+              secureService: OTPEnum.secureService,
+              secureServiceId: secureId
+            }
+          );
+
+        if (
+          "code" in secureOTPResponse &&
+          secureOTPResponse.code === OTPEnum.secureCodeSuccess
+        )
+          resolve(true);
+        else {
+          this.dispatchEventOTPValidation(OTPEventEnum.ERROR);
+          resolve(false);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  private hideOTPInput = (): Promise<void> => {
+    if (!this.inputValues.otp) return Promise.resolve();
+
+    return this.inputValues.otp?.hostedField?.hide();
+  };
+
+  private buildEventOtpValidation = (
+    inputOtp: OTPEventEnum
+  ): CustomEvent<{ otp: OTPEventEnum }> => {
+    return new CustomEvent<{ otp: OTPEventEnum }>(this.otpValidation, {
+      detail: {
+        otp: inputOtp
+      }
+    });
+  };
+
+  private showOtpAndHideInputs = (): void => {
+    this.dispatchEventOTPValidation(OTPEventEnum.REQUIRED);
+    this.inputValues.otp?.hostedField?.show();
+  };
+
+  private dispatchEventOTPValidation = (eventOTP: OTPEventEnum) => {
+    const eventOtpValidity: CustomEvent<{ otp: OTPEventEnum }> =
+      this.buildEventOtpValidation(eventOTP);
+
+    dispatchEvent(eventOtpValidity);
+  };
+
+  /* istanbul ignore next*/
+  private addEventListener(
+    listener: string,
+    event: (fieldEvent: FormValidity | FieldValidity) => void,
+    fieldType?: FieldTypeEnum
+  ): void {
+    if (fieldType) {
+      window.addEventListener(`${listener}${fieldType}`, ((
+        e: CustomEvent<FormValidity>
+      ) => {
+        event(e.detail!.fields![fieldType as keyof Fields] || e.detail!);
+      }) as EventListener);
+    } else {
+      window.addEventListener(listener, ((e: CustomEvent<FormValidity>) => {
+        event(e.detail!);
+      }) as EventListener);
+    }
+  }
 }
