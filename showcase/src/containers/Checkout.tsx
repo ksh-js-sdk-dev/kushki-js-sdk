@@ -486,17 +486,18 @@ export const CheckoutContainer = () => {
           }
         }
       }
-    }
+    },
+    isSubscription: false
   };
 
   useEffect(() => {
     (async () => {
       const kushkiInstance = await Kushki.init({
         inTest: true,
-        //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
-        //publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
+        // publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
+        // publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
         // publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
-        publicCredentialId: "7cad8d921dcb463eb92c43c049a849b0" //OTP
+        publicCredentialId: "7cad8d921dcb463eb92c43c049a849b0" // OTP
       });
 
       if (kushkiInstance) {
