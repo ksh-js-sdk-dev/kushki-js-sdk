@@ -36,9 +36,10 @@ import { SiftScienceObject } from "types/sift_science_object";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 import { FieldTypeEnum } from "types/card_options";
-import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
+import { KushkiError, KushkiErrorAttr } from "infrastructure/KushkiError.ts";
 import { OTPEnum } from "infrastructure/OTPEnum.ts";
 import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
+import { UtilsService } from "service/UtilService.ts";
 
 declare global {
   // tslint:disable-next-line
@@ -82,6 +83,8 @@ export class Payment implements IPayment {
   ): Promise<Payment> {
     // eslint-disable-next-line no-useless-catch
     try {
+      this.validParamsInitCardToken(kushkiInstance, options);
+
       const payment: Payment = new Payment(kushkiInstance, options);
 
       await payment.initFields(options.fields);
@@ -93,7 +96,7 @@ export class Payment implements IPayment {
 
       return payment;
     } catch (error) {
-      throw error;
+      return await UtilsService.validErrors(error, ERRORS.E012);
     }
   }
 
@@ -102,7 +105,7 @@ export class Payment implements IPayment {
       const { isFormValid } = this.getFormValidity();
 
       if (!isFormValid) {
-        return Promise.reject(ERRORS.E007);
+        throw new KushkiError(ERRORS.E007);
       }
 
       const merchantSettings: MerchantSettingsResponse =
@@ -156,7 +159,7 @@ export class Payment implements IPayment {
       }
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
-      throw error;
+      return await UtilsService.validErrors(error, ERRORS.E002);
     } finally {
       if (window.Cardinal) {
         window.Cardinal.off("payments.setupComplete");
@@ -185,7 +188,7 @@ export class Payment implements IPayment {
 
       return Promise.resolve();
     } else {
-      return Promise.reject(ERRORS.E009);
+      return Promise.reject(new KushkiError(ERRORS.E009));
     }
   }
 
@@ -201,7 +204,7 @@ export class Payment implements IPayment {
 
       return Promise.resolve();
     } else {
-      return Promise.reject(ERRORS.E008);
+      return Promise.reject(new KushkiError(ERRORS.E008));
     }
   }
 
@@ -318,7 +321,7 @@ export class Payment implements IPayment {
       });
     }
 
-    return Promise.reject(ERRORS.E005);
+    return Promise.reject(new KushkiError(ERRORS.E005));
   }
 
   private hasAllSecurityProperties(
@@ -354,7 +357,7 @@ export class Payment implements IPayment {
 
     if (await this.completePaymentValidation(token.secureId!, isSandboxEnabled))
       return Promise.resolve(token);
-    else return Promise.reject(ERRORS.E006);
+    else return Promise.reject(new KushkiError(ERRORS.E006));
   }
 
   private async completePaymentValidation(
@@ -376,7 +379,7 @@ export class Payment implements IPayment {
 
           resolve(this.is3dsValid(secureValidation));
         } catch (error) {
-          reject(ERRORS.E006);
+          reject(new KushkiError(ERRORS.E006));
         }
       };
 
@@ -384,7 +387,7 @@ export class Payment implements IPayment {
         KushkiCardinalSandbox.on(
           onPaymentEvent,
           async (isErrorFlow?: boolean) => {
-            if (isErrorFlow) reject(ERRORS.E005);
+            if (isErrorFlow) reject(new KushkiError(ERRORS.E005));
             else await secureValidation();
           }
         );
@@ -1006,7 +1009,7 @@ export class Payment implements IPayment {
           }
           /* istanbul ignore next*/
           if (!resultValidationOTP && countTries === 3) {
-            reject(ERRORS.E008);
+            reject(new KushkiError(ERRORS.E008));
           }
         }
       }) as unknown as EventListener);
@@ -1116,6 +1119,15 @@ export class Payment implements IPayment {
       window.addEventListener(listener, ((e: CustomEvent<FormValidity>) => {
         event(e.detail!);
       }) as EventListener);
+    }
+  }
+
+  private static validParamsInitCardToken(
+    kushkiInstance: Kushki,
+    options: CardOptions
+  ): void {
+    if (!options || !kushkiInstance) {
+      throw new KushkiError(ERRORS.E012);
     }
   }
 }

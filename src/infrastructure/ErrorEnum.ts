@@ -13,7 +13,9 @@ export enum ErrorCode {
   E007 = "E007",
   E008 = "E008",
   E009 = "E009",
-  E010 = "E010"
+  E010 = "E010",
+  E011 = "E011",
+  E012 = "E012"
 }
 
 export const ERRORS: KushkiErrors = {
@@ -56,5 +58,13 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E010]: {
     code: ErrorCode.E010,
     message: "Error al realizar focus en el campo"
+  },
+  [ErrorCode.E011]: {
+    code: ErrorCode.E011,
+    message: "Error inicializacion de la libreria"
+  },
+  [ErrorCode.E012]: {
+    code: ErrorCode.E012,
+    message: "Error inicialización de campos"
   }
 };

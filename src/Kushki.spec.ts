@@ -41,4 +41,14 @@ describe("Kushki - test", () => {
     );
     expect(kushkiInstance.getEnvironmentSift()).toEqual(SiftScienceEnum.prod);
   });
+
+  it("when pass options with incorrect body, should return error controlled", async () => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      await Kushki.init({});
+    } catch (error: any) {
+      expect(error.code).toEqual("E011");
+    }
+  });
 });

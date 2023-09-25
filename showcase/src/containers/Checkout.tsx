@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { TableDemoField } from "../components/TableDemoField";
 import { ErrorTypeEnum } from "../../../src/infrastructure/ErrorTypeEnum.ts";
 import { TableDemoGeneral } from "../components/TableDemoGeneral";
+import { KushkiError } from "../../../src/infrastructure/KushkiError.ts";
 
 export const checkoutContainerStyles = {
   button: {
@@ -68,12 +69,12 @@ export const CheckoutContainer = () => {
     amount: {
       iva: 26,
       // subtotalIva: 260000,
-      subtotalIva: 600, // otp
-      subtotalIva0: 0
+      // subtotalIva: 600, // otp
+      // subtotalIva0: 0
       // 3ds amount
-      // iva: 0,
-      // subtotalIva: 0,
-      // subtotalIva0: 10000
+      iva: 0,
+      subtotalIva: 0,
+      subtotalIva0: 10000
     },
     currency: "COP",
     fields: {
@@ -491,16 +492,20 @@ export const CheckoutContainer = () => {
 
   useEffect(() => {
     (async () => {
-      const kushkiInstance = await Kushki.init({
-        inTest: true,
-        //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
-        //publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
-        // publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
-        publicCredentialId: "7cad8d921dcb463eb92c43c049a849b0" //OTP
-      });
+      try {
+        const kushkiInstance = await Kushki.init({
+          inTest: true,
+          publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
+          //publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
+          // publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
+          // publicCredentialId: "7cad8d921dcb463eb92c43c049a849b0" //OTP
+        });
 
-      if (kushkiInstance) {
-        setCardinstance(await Payment.initCardToken(kushkiInstance, options));
+        if (kushkiInstance) {
+          setCardinstance(await Payment.initCardToken(kushkiInstance, options));
+        }
+      } catch (e: any) {
+        console.log(e.message);
       }
     })();
   }, []);
@@ -611,7 +616,7 @@ export const CheckoutContainer = () => {
         )}
 
         <div id="otp_id"></div>
-        {errorOTP.length > 0 && <div>Error en OTP {errorOTP}</div>}
+        {errorOTP.length > 0 && <div>El código OTP es incorrecto</div>}
 
         <div style={checkoutContainerStyles.contentBottoms!}>
           <button
