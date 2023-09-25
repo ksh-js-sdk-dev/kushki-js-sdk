@@ -42,6 +42,7 @@ import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
 import { OTPEnum } from "infrastructure/OTPEnum.ts";
 import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
+import { Styles } from "types/card_options";
 
 declare global {
   // tslint:disable-next-line
@@ -87,7 +88,7 @@ export class Payment implements IPayment {
     try {
       const payment: Payment = new Payment(kushkiInstance, options);
 
-      await payment.initFields(options.fields);
+      await payment.initFields(options.fields, options.styles);
 
       payment.showContainers();
 
@@ -570,13 +571,14 @@ export class Payment implements IPayment {
     };
   }
 
-  private getDeferredValues = (): DeferredValues => {
-    if (!this.inputValues.deferred || !this.inputValues.deferred.value)
-      return {};
+  private getDeferredValues = (
+    deferredInstance = this.inputValues.deferred
+  ): DeferredValues => {
+    if (!deferredInstance || !deferredInstance.value) return {};
 
-    if (typeof this.inputValues.deferred.value !== "object") return {};
+    if (typeof deferredInstance.value !== "object") return {};
 
-    return this.inputValues.deferred.value;
+    return deferredInstance.value;
   };
 
   private buildGetDeferredValuesToRequestToken = (
@@ -600,7 +602,11 @@ export class Payment implements IPayment {
   private validateDeferredValues = (): boolean => {
     let deferredValuesAreValid: boolean = true;
 
-    if (!this.inputValues.deferred || !this.inputValues.deferred.value)
+    if (
+      !this.inputValues.deferred ||
+      !this.inputValues.deferred.value ||
+      Object.keys(this.inputValues.deferred.value).length === 0
+    )
       return deferredValuesAreValid;
 
     const deferredValues: DeferredValues = this.getDeferredValues();
@@ -805,7 +811,27 @@ export class Payment implements IPayment {
   }
 
   private onChangeDeferred(values: DeferredInputValues) {
-    this.inputValues.deferred!.value = values;
+    const deferredValues = this.getDeferredValues({
+      selector: "",
+      validity: { isValid: true },
+      value: values
+    });
+
+    this.inputValues.deferred!.value = deferredValues;
+
+    if (deferredValues.isDeferred) {
+      this.inputValues.deferred?.hostedField?.resize({
+        height: 140,
+        width: 400
+      });
+    }
+
+    if (deferredValues.isDeferred && deferredValues.creditType !== "") {
+      this.inputValues.deferred?.hostedField?.resize({
+        height: 200,
+        width: 400
+      });
+    }
   }
 
   private onFocusDeferred(values: DeferredInputValues) {
@@ -832,7 +858,11 @@ export class Payment implements IPayment {
     }
   }
 
-  private buildFieldOptions(field: Field, fieldType: InputModelEnum) {
+  private buildFieldOptions(
+    field: Field,
+    fieldType: InputModelEnum,
+    styles?: Styles
+  ) {
     const options: FieldOptions = {
       ...field,
       fieldType,
@@ -843,7 +873,8 @@ export class Payment implements IPayment {
       handleOnFocus: (field: string) => this.handleOnFocus(field),
       handleOnSubmit: (field: string) => this.handleOnSubmit(field),
       handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
-        this.handleOnValidity(field, fieldValidity)
+        this.handleOnValidity(field, fieldValidity),
+      styles: styles
     };
 
     if (fieldType === InputModelEnum.DEFERRED) {
@@ -862,10 +893,17 @@ export class Payment implements IPayment {
     return options;
   }
 
-  private initFields(optionsFields: { [k: string]: Field }): Promise<void[]> {
+  private initFields(
+    optionsFields: { [k: string]: Field },
+    styles?: Styles
+  ): Promise<void[]> {
     for (const fieldKey in optionsFields) {
       const field = optionsFields[fieldKey];
-      const options = this.buildFieldOptions(field, fieldKey as InputModelEnum);
+      const options = this.buildFieldOptions(
+        field,
+        fieldKey as InputModelEnum,
+        styles
+      );
 
       const hostedField = KushkiHostedFields(options);
 
@@ -981,7 +1019,7 @@ export class Payment implements IPayment {
 
     return new Promise<void>((resolve, reject) => {
       this.inputValues.deferred?.hostedField
-        ?.resize({ height: 200, width: 400 })
+        ?.resize({ height: 75, width: 400 })
         .then(() => this.inputValues.deferred?.hostedField?.hide())
         .then(() => resolve())
         .catch((error: any) => reject(error));

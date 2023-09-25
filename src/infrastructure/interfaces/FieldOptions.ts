@@ -1,4 +1,4 @@
-import {InputTypeEnum, Styles} from "types/card_options";
+import { InputTypeEnum, Styles } from "types/card_options";
 import { FieldValidity } from "types/card_fields_values";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { DeferredInputValues } from "types/deferred_input_values";

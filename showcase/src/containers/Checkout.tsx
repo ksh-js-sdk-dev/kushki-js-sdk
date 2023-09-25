@@ -2,6 +2,7 @@ import { Kushki } from "Kushki";
 import {
   CardOptions,
   Fields,
+  FieldValidity,
   FormValidity,
   Payment,
   TokenResponse
@@ -11,8 +12,11 @@ import { TableDemoField } from "../components/TableDemoField";
 import { ErrorTypeEnum } from "../../../src/infrastructure/ErrorTypeEnum.ts";
 import { TableDemoGeneral } from "../components/TableDemoGeneral";
 import { DeferredValuesResponse } from "../../../types/token_response";
-import { checkoutContainerStyles } from "./Checkout.styles.ts";
-
+import {
+  checkoutContainerStyles,
+  hostedFieldsStyles
+} from "./Checkout.styles.ts";
+import { FieldTypeEnum } from "../../../types/form_validity";
 
 export const CheckoutContainer = () => {
   const [token, setToken] = useState<string>("");
@@ -46,59 +50,57 @@ export const CheckoutContainer = () => {
         inputType: "text",
         label: "Payment holder name",
         placeholder: "Payment holder name",
-        selector: "cardHolderName_id",
+        selector: "cardHolderName_id"
       },
       cardNumber: {
         inputType: "number",
         label: "Número de tarjeta",
         placeholder: "Número de tarjeta",
-        selector: "cardNumber_id",
+        selector: "cardNumber_id"
       },
       cvv: {
         inputType: "password",
         label: "CVV",
         placeholder: "CVV",
-        selector: "cvv_id",
+        selector: "cvv_id"
       },
       deferred: {
         deferredInputs: {
           deferredCheckbox: {
-            label: "Quiero pagar en cuotas",
+            label: "Quiero pagar en cuotas"
           },
           deferredType: {
             label: "Tipos de diferido",
             placeholder: "Tipos de diferido",
-            hiddenLabel: "deferred Type",
+            hiddenLabel: "deferred Type"
           },
           months: {
             label: "Meses",
             placeholder: "Meses",
-            hiddenLabel: "Meses",
+            hiddenLabel: "Meses"
           },
           graceMonths: {
             label: "Meses de gracia",
             placeholder: "Meses de gracia",
-            hiddenLabel: "Meses de gracia",
+            hiddenLabel: "Meses de gracia"
           }
         },
-        inputType: "text",
-        label: "Diferido",
-        placeholder: "Diferido",
-        selector: "deferred_id",
+        selector: "deferred_id"
       },
       expirationDate: {
         inputType: "text",
         label: "Fecha de vencimiento",
         placeholder: "Fecha de vencimiento",
-        selector: "expirationDate_id",
+        selector: "expirationDate_id"
       },
       otp: {
         inputType: "password",
         label: "OTP",
         placeholder: "OTP",
-        selector: "otp_id",
+        selector: "otp_id"
       }
-    }
+    },
+    styles: hostedFieldsStyles
   };
 
   useEffect(() => {
@@ -106,9 +108,9 @@ export const CheckoutContainer = () => {
       const kushkiInstance = await Kushki.init({
         inTest: true,
         //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
-        //publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
+        publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
         // publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
-        publicCredentialId: "7cad8d921dcb463eb92c43c049a849b0" //OTP
+        // publicCredentialId: "7cad8d921dcb463eb92c43c049a849b0" //OTP
       });
 
       if (kushkiInstance) {
@@ -147,8 +149,8 @@ export const CheckoutContainer = () => {
 
   useEffect(() => {
     if (cardInstance) {
-      cardInstance.onFieldValidity((event: FormValidity) => {
-        setFieldsValidityDemo(event.fields);
+      cardInstance.onFieldValidity((event: FormValidity | FieldValidity) => {
+        if ("fields" in event) setFieldsValidityDemo(event.fields);
       });
 
       cardInstance.onOTPValidation(
@@ -240,7 +242,7 @@ export const CheckoutContainer = () => {
             style={checkoutContainerStyles.buttonError!}
             onClick={async () => {
               try {
-                await cardInstance?.focus("cardName");
+                await cardInstance?.focus("cardName" as FieldTypeEnum);
               } catch (error: any) {
                 alert(error.message);
               }
@@ -252,7 +254,7 @@ export const CheckoutContainer = () => {
             style={checkoutContainerStyles.buttonError!}
             onClick={async () => {
               try {
-                await cardInstance?.reset("cardName");
+                await cardInstance?.reset("cardName" as FieldTypeEnum);
               } catch (error: any) {
                 alert(error.message);
               }
