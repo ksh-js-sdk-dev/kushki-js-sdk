@@ -41,67 +41,65 @@ export const checkoutContainerStyles = {
 };
 
 export const hostedFieldsStyles: Styles = {
-  general: {
-    container: {
-      position: "relative",
-      "&:focus-within": {
-        "& label": {
-          background: "white",
-          color: "#6D7781",
-          fontFamily: "IBM Plex sans-serif",
-          fontSize: "12px",
-          fontWeight: "400",
-          left: "16px",
-          paddingLeft: "5px",
-          paddingRight: "5px",
-          position: "absolute",
-          top: "-7px"
-        }
+  container: {
+    position: "relative",
+    "&:focus-within": {
+      "& label": {
+        background: "white",
+        color: "#6D7781",
+        fontFamily: "IBM Plex sans-serif",
+        fontSize: "12px",
+        fontWeight: "400",
+        left: "16px",
+        paddingLeft: "5px",
+        paddingRight: "5px",
+        position: "absolute",
+        top: "-7px"
       }
-    },
-    input: {
-      border: "1px solid #1E65AE",
+    }
+  },
+  input: {
+    border: "1px solid #1E65AE",
+    borderRadius: "10px",
+    fontFamily: "IBM Plex sans-serif",
+    fontSize: "16px",
+    fontWeight: "400",
+    outline: "none",
+    padding: "10px",
+    width: "350px",
+    "&:focus": {
+      border: "1px solid #ccc",
       borderRadius: "10px",
       fontFamily: "IBM Plex sans-serif",
       fontSize: "16px",
       fontWeight: "400",
       outline: "none",
       padding: "10px",
-      width: "350px",
-      "&:focus": {
-        border: "1px solid #ccc",
-        borderRadius: "10px",
-        fontFamily: "IBM Plex sans-serif",
-        fontSize: "16px",
-        fontWeight: "400",
-        outline: "none",
-        padding: "10px",
-        width: "350px"
-      },
-      "&:invalid": {
-        border: "1px solid #B60000",
-        borderRadius: "10px",
-        fontFamily: "IBM Plex sans-serif",
-        fontSize: "16px",
-        fontWeight: "400",
-        outline: "none",
-        padding: "10px",
-        width: "350px"
-      }
+      width: "350px"
     },
-    label: {
-      color: "transparent"
-    },
-    select: {
-      fontFamily: "IBM Plex sans-serif",
-      width: "375px",
-      padding: "10px",
-      outline: "none",
-      fontSize: "18px",
-      fontWeight: "400",
+    "&:invalid": {
+      border: "1px solid #B60000",
       borderRadius: "10px",
-      border: "1px solid #ccc"
+      fontFamily: "IBM Plex sans-serif",
+      fontSize: "16px",
+      fontWeight: "400",
+      outline: "none",
+      padding: "10px",
+      width: "350px"
     }
+  },
+  label: {
+    color: "transparent"
+  },
+  select: {
+    fontFamily: "IBM Plex sans-serif",
+    width: "375px",
+    padding: "10px",
+    outline: "none",
+    fontSize: "18px",
+    fontWeight: "400",
+    borderRadius: "10px",
+    border: "1px solid #ccc"
   },
   deferred: {
     container: {

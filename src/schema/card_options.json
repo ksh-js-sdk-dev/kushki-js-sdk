@@ -7,20 +7,35 @@
       "title": "Styles",
       "additionalProperties": false,
       "properties": {
-        "general": {
-          "$ref": "#/definitions/cssHostedField"
+        "input": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "label": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "container": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "checkbox": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "select": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "option": {
+          "$ref": "#/definitions/cssProperties"
         },
         "cardholderName": {
-          "$ref": "#/definitions/cssHostedField"
+          "$ref": "#/definitions/cssProperties"
         },
         "cardNumber": {
-          "$ref": "#/definitions/cssHostedField"
+          "$ref": "#/definitions/cssProperties"
         },
         "expirationDate": {
-          "$ref": "#/definitions/cssHostedField"
+          "$ref": "#/definitions/cssProperties"
         },
         "cvv": {
-          "$ref": "#/definitions/cssHostedField"
+          "$ref": "#/definitions/cssProperties"
         },
         "deferred": {
           "type": "object",
@@ -43,7 +58,7 @@
           }
         },
         "otp": {
-          "$ref": "#/definitions/cssHostedField"
+          "$ref": "#/definitions/cssProperties"
         }
       },
       "type": "object"
