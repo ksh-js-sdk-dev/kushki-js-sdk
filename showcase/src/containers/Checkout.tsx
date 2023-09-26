@@ -12,12 +12,50 @@ import { TableDemoField } from "../components/TableDemoField";
 import { ErrorTypeEnum } from "../../../src/infrastructure/ErrorTypeEnum.ts";
 import { TableDemoGeneral } from "../components/TableDemoGeneral";
 import { DeferredValuesResponse } from "../../../types/token_response";
-import {
-  checkoutContainerStyles,
-  hostedFieldsStyles
-} from "./Checkout.styles.ts";
+import { hostedFieldsStyles } from "./Checkout.styles.ts";
 import { FieldTypeEnum } from "../../../types/form_validity";
 import "../../assets/css/checkout.css";
+import { KushkiError } from "../../../src/infrastructure/KushkiError.ts";
+
+export const checkoutContainerStyles = {
+  button: {
+    backgroundColor: "#39a1f4",
+    border: "none",
+    borderRadius: "12px",
+    color: "#FFF",
+    height: "36px",
+    margin: "6px 0",
+    marginLeft: "15px",
+    overflow: "hidden",
+    padding: "0 26px"
+  },
+  buttonError: {
+    backgroundColor: "red",
+    border: "none",
+    borderRadius: "12px",
+    color: "#FFF",
+    height: "36px",
+    margin: "6px 0",
+    marginLeft: "15px",
+    overflow: "hidden",
+    padding: "0 26px"
+  },
+  contentBottoms: {
+    display: "flex"
+  },
+  contentCheckout: {
+    alignItems: "start",
+    display: "flex",
+    flexDirection: "column" as const,
+    padding: "10px"
+  },
+  contentTitle: {
+    display: "flex",
+    justifyContent: "center",
+    marginRight: "250px",
+    width: "100%"
+  }
+};
 
 export const CheckoutContainer = () => {
   const [token, setToken] = useState<string>("");
@@ -106,16 +144,23 @@ export const CheckoutContainer = () => {
 
   useEffect(() => {
     (async () => {
-      const kushkiInstance = await Kushki.init({
-        inTest: true,
-        //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
-        publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
-        // publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
-        // publicCredentialId: "7cad8d921dcb463eb92c43c049a849b0" //OTP
-      });
+      try {
+        const kushkiInstance = await Kushki.init({
+          inTest: true,
+          //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
+          publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
+          // publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
+          // publicCredentialId: "7cad8d921dcb463eb92c43c049a849b0" //OTP
+        });
 
-      if (kushkiInstance) {
-        setCardinstance(await Payment.initCardToken(kushkiInstance, options));
+        if (kushkiInstance) {
+          setCardinstance(await Payment.initCardToken(kushkiInstance, options));
+        }
+        // TODO validate remove ts lint warnings
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+      } catch (e: KushkiError) {
+        console.log(e.message);
       }
     })();
   }, []);
@@ -229,7 +274,7 @@ export const CheckoutContainer = () => {
         {errorOTP.length > 0 && <div>Error en OTP {errorOTP}</div>}
 
         <div id="otp_id"></div>
-        {errorOTP.length > 0 && <div>Error en OTP {errorOTP}</div>}
+        {errorOTP.length > 0 && <div>El código OTP es incorrecto</div>}
 
         <div style={checkoutContainerStyles.contentBottoms!}>
           <button

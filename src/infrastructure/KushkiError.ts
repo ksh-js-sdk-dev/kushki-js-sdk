@@ -17,24 +17,15 @@ export type KushkiErrors<T extends string = ErrorCode> = {
  */
 export class KushkiError extends Error {
   public readonly code: string;
-  private readonly _customMessage: string | null;
-  private readonly _error: KushkiErrorAttr;
+  public readonly message: string;
+  public readonly detail: string | null;
 
-  constructor(error: KushkiErrorAttr, message: string | null = null) {
-    const prefix: string = "K";
-    const code: string = `${prefix}${error.code.replace("E", "")}`;
+  constructor(error: KushkiErrorAttr, detail: string | null = null) {
+    /* istanbul ignore next: TODO: reporter is failing */ super(error.code);
 
-    /* istanbul ignore next: TODO: reporter is failing */ super(code);
-
-    this.code = code;
-    this._customMessage = message;
-    this._error = error;
+    this.code = error.code;
+    this.message = error.message;
+    this.detail = detail;
     Object.setPrototypeOf(this, KushkiError.prototype);
-  }
-
-  public getMessage(): string | null {
-    if (this._customMessage !== null) return this._customMessage;
-
-    return this._error.message;
   }
 }
