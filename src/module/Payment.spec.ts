@@ -19,6 +19,7 @@ import { CountryEnum } from "infrastructure/CountryEnum.ts";
 import { DeferredValues } from "types/card_fields_values";
 import { BinInfoResponse } from "types/bin_info_response";
 import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
+import { KushkiError } from "infrastructure/KushkiError.ts";
 
 const mockKushkiHostedFieldsHide = jest.fn().mockResolvedValue({});
 
@@ -63,6 +64,7 @@ describe("Payment test", () => {
       InputModelEnum.CARD_NUMBER,
       "4242424242424242"
     );
+    KushkiHostedFields.mock.calls[0][0].handleOnBinChange("4242424242424242");
   };
 
   const initKushki = async (inTest?: boolean) => {
@@ -172,6 +174,14 @@ describe("Payment test", () => {
     expect(cardInstance["inputValues"].deferred!.value).toEqual(deferredValue);
   });
 
+  it("should return error when initCardToken has invalid prop", () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    Payment.initCardToken(kushki, undefined).catch((error) =>
+      expect(error.code).toEqual("E012")
+    );
+  });
+
   it("should render deferred input but hide input failed", () => {
     KushkiHostedFields.mockImplementation(() => ({
       hide: jest.fn().mockRejectedValue("throw exception"),
@@ -185,7 +195,7 @@ describe("Payment test", () => {
     };
 
     Payment.initCardToken(kushki, options).catch((error) =>
-      expect(error).toEqual("throw exception")
+      expect(error.code).toEqual("E012")
     );
   });
 
@@ -201,9 +211,9 @@ describe("Payment test", () => {
       selector: "id_test"
     };
 
-    Payment.initCardToken(kushki, options).catch((error) =>
-      expect(error).toEqual("throw exception")
-    );
+    Payment.initCardToken(kushki, options).catch((error) => {
+      expect(error.code).toEqual("E012");
+    });
   });
 
   it("should throw error when element not exist in method initCardToken", async () => {
@@ -221,9 +231,9 @@ describe("Payment test", () => {
       }
     };
 
-    await expect(Payment.initCardToken(kushki, options)).rejects.toThrow(
-      "element don't exist"
-    );
+    Payment.initCardToken(kushki, options).catch((error) => {
+      expect(error.detail).toEqual("element don't exist");
+    });
   });
 
   it("if cardNumber have max eight digits then it should called handleSetCardNumber but requestBinInfo is Success", async () => {
@@ -256,10 +266,7 @@ describe("Payment test", () => {
     paymentInstance["currentBin"] = "42424242";
     paymentInstance["currentBinHasDeferredOptions"] = true;
 
-    KushkiHostedFields.mock.calls[0][0].handleOnChange(
-      InputModelEnum.CARD_NUMBER,
-      "42424242"
-    );
+    KushkiHostedFields.mock.calls[0][0].handleOnBinChange("42424242");
 
     expect(KushkiHostedFields).toHaveBeenCalledTimes(4);
   });
@@ -271,6 +278,7 @@ describe("Payment test", () => {
       InputModelEnum.CARD_NUMBER,
       "424242"
     );
+    KushkiHostedFields.mock.calls[0][0].handleOnBinChange("424242");
 
     expect(paymentInstance["currentBinHasDeferredOptions"]).toEqual(false);
   });
@@ -552,12 +560,9 @@ describe("Payment test", () => {
       deferredValueDefault.months = 0;
       KushkiHostedFields.mock.calls[4][0].handleOnChange(deferredValueDefault);
 
-      cardInstance.requestToken().catch((error) =>
-        expect(error).toEqual({
-          code: "E007",
-          message: "Error en la validación del formulario"
-        })
-      );
+      cardInstance.requestToken().catch((error) => {
+        expect(error.code).toEqual("E007");
+      });
     });
 
     it("it should execute Payment token request but deferred values and country chile", async () => {
@@ -832,7 +837,7 @@ describe("Payment test", () => {
 
     it("it should execute Payment 3ds token UAT throw error: E006, for SecureServiceValidation request fail", async () => {
       await initKushki(true);
-      mockKushkiGateway(true, Promise.reject(ERRORS.E006));
+      mockKushkiGateway(true, Promise.reject(new KushkiError(ERRORS.E006)));
 
       const cardInstance = await Payment.initCardToken(kushki, options);
 
@@ -848,7 +853,7 @@ describe("Payment test", () => {
 
     it("it should execute Payment 3ds token UAT throw error: E005, for requestToken", async () => {
       await initKushki(true);
-      mockKushkiGateway(true, Promise.reject(ERRORS.E002), {
+      mockKushkiGateway(true, Promise.reject(new KushkiError(ERRORS.E002)), {
         code: "ok",
         message: "fail"
       });

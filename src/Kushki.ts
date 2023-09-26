@@ -1,6 +1,9 @@
 import { KushkiOptions } from "Kushki";
 import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
 import { SiftScienceEnum } from "infrastructure/SiftScienceEnum";
+import { KushkiError } from "infrastructure/KushkiError.ts";
+import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import { UtilsService } from "service/UtilService.ts";
 
 export class Kushki {
   private readonly baseUrl: EnvironmentEnum;
@@ -14,12 +17,16 @@ export class Kushki {
     this.environmentSift = this.initEnvironmentSift(options.inTest);
   }
 
-  public static init(options: KushkiOptions): Promise<Kushki> {
-    const kushki: Kushki = new Kushki(options);
+  public static async init(options: KushkiOptions): Promise<Kushki> {
+    try {
+      const kushki: Kushki = new Kushki(options);
 
-    return new Promise<Kushki>((resolve) => {
-      resolve(kushki);
-    });
+      this.validParamsKushkiOptions(options);
+
+      return Promise.resolve(kushki);
+    } catch (e) {
+      return UtilsService.validErrors(e, ERRORS.E011);
+    }
   }
 
   public getBaseUrl(): EnvironmentEnum {
@@ -44,5 +51,14 @@ export class Kushki {
 
   private initEnvironmentSift(inTest?: boolean): SiftScienceEnum {
     return inTest ? SiftScienceEnum.uat : SiftScienceEnum.prod;
+  }
+
+  private static validParamsKushkiOptions(options: KushkiOptions): void {
+    const isUndefinedPublicCredential: boolean =
+      typeof options.publicCredentialId === "undefined";
+
+    if (isUndefinedPublicCredential) {
+      throw new KushkiError(ERRORS.E011);
+    }
   }
 }
