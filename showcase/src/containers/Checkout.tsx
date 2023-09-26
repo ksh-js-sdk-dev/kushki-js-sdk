@@ -15,6 +15,7 @@ import { DeferredValuesResponse } from "../../../types/token_response";
 import { hostedFieldsStyles } from "./Checkout.styles.ts";
 import { FieldTypeEnum } from "../../../types/form_validity";
 import "../../assets/css/checkout.css";
+import { KushkiError } from "../../../src/infrastructure/KushkiError.ts";
 
 export const checkoutContainerStyles = {
   button: {
@@ -155,7 +156,10 @@ export const CheckoutContainer = () => {
         if (kushkiInstance) {
           setCardinstance(await Payment.initCardToken(kushkiInstance, options));
         }
-      } catch (e: any) {
+        // TODO validate remove ts lint warnings
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+      } catch (e: KushkiError) {
         console.log(e.message);
       }
     })();

@@ -17,15 +17,13 @@ export class Kushki {
     this.environmentSift = this.initEnvironmentSift(options.inTest);
   }
 
-  public static init(options: KushkiOptions): Promise<Kushki> {
+  public static async init(options: KushkiOptions): Promise<Kushki> {
     try {
       const kushki: Kushki = new Kushki(options);
 
       this.validParamsKushkiOptions(options);
 
-      return new Promise<Kushki>((resolve) => {
-        resolve(kushki);
-      });
+      return Promise.resolve(kushki);
     } catch (e) {
       return UtilsService.validErrors(e, ERRORS.E011);
     }

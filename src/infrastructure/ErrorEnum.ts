@@ -61,10 +61,10 @@ export const ERRORS: KushkiErrors = {
   },
   [ErrorCode.E011]: {
     code: ErrorCode.E011,
-    message: "Error inicializacion de la libreria"
+    message: "Error en inicializacion de la libreria"
   },
   [ErrorCode.E012]: {
     code: ErrorCode.E012,
-    message: "Error inicialización de campos"
+    message: "Error en inicialización de campos"
   }
 };
