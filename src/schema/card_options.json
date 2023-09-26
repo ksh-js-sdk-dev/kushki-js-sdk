@@ -8,16 +8,58 @@
       "additionalProperties": false,
       "properties": {
         "input": {
-          "$ref": "#/definitions/cssClass"
+          "$ref": "#/definitions/cssProperties"
         },
         "label": {
-          "$ref": "#/definitions/cssClass"
-        },
-        "inputActive": {
-          "$ref": "#/definitions/cssClass"
+          "$ref": "#/definitions/cssProperties"
         },
         "container": {
-          "$ref": "#/definitions/cssClass"
+          "$ref": "#/definitions/cssProperties"
+        },
+        "checkbox": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "select": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "option": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "cardholderName": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "cardNumber": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "expirationDate": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "cvv": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "deferred": {
+          "type": "object",
+          "title": "DeferredStyles",
+          "properties": {
+            "container": {
+              "$ref": "#/definitions/cssProperties"
+            },
+            "checkbox": {
+              "$ref": "#/definitions/cssHostedField"
+            },
+            "creditType": {
+              "$ref": "#/definitions/cssHostedField"
+            },
+            "months": {
+              "$ref": "#/definitions/cssHostedField"
+            },
+            "graceMonths": {
+              "$ref": "#/definitions/cssHostedField"
+            }
+          }
+        },
+        "otp": {
+          "$ref": "#/definitions/cssProperties"
         }
       },
       "type": "object"
@@ -84,9 +126,6 @@
       "title": "SelectOptions",
       "additionalProperties": false,
       "properties": {
-        "styles": {
-          "$ref": "#/definitions/styles"
-        },
         "placeholder": {
           "type": "string"
         },
@@ -132,38 +171,47 @@
         "maxCardLength": {
           "type": "number"
         },
-        "maxLength": {
-          "type": "number"
-        },
-        "minLength": {
-          "type": "number"
-        },
         "defaultValue": {
           "type": "string"
-        },
-        "styles": {
-          "$ref": "#/definitions/styles"
         },
         "inputType": {
           "$ref": "#/definitions/inputType"
         },
-        "fieldType": {
-          "$ref": "#/definitions/fieldType"
-        },
         "label": {
-          "type": "string"
-        },
-        "brandIcon": {
           "type": "string"
         },
         "deferredInputs": {
           "$ref": "#/definitions/deferredInputs"
         }
       },
-      "required": ["selector", "fieldType"]
+      "required": ["selector"]
     },
-    "cssClass": {
-      "title": "CssClass",
+    "cssHostedField": {
+      "type": "object",
+      "title": "CssHostedField",
+      "properties": {
+        "input": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "label": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "container": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "checkbox": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "select": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "option": {
+          "$ref": "#/definitions/cssProperties"
+        }
+      }
+    },
+    "cssProperties": {
+      "title": "CssProperties",
       "oneOf": [
         {
           "additionalProperties": true,
@@ -328,11 +376,14 @@
     "preventAutofill": {
       "type": "boolean"
     },
+    "styles": {
+      "$ref": "#/definitions/styles"
+    },
     "fields": {
       "title": "",
       "additionalProperties": false,
       "properties": {
-        "cardHolderName": {
+        "cardholderName": {
           "$ref": "#/definitions/field"
         },
         "cardNumber": {
