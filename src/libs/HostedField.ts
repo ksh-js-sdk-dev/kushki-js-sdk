@@ -17,6 +17,7 @@ const KushkiHostedFields = zoid.create({
       requestPaymentToken: (
         kushkiInstance: Kushki,
         options: CardOptions,
+        requestPath: string,
         jwt?: string,
         siftScienceSession?: SiftScienceObject,
         deferredValues?: DeferredValues
@@ -25,6 +26,7 @@ const KushkiHostedFields = zoid.create({
           exports.requestPaymentToken(
             kushkiInstance,
             options,
+            requestPath,
             jwt,
             siftScienceSession,
             deferredValues

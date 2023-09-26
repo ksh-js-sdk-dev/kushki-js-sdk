@@ -11,6 +11,7 @@ import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import { SecureOtpRequest } from "types/secure_otp_request";
 import { SecureOtpResponse } from "types/secure_otp_response";
+import { KushkiError } from "infrastructure/KushkiError.ts";
 
 @injectable()
 export class KushkiGateway implements IKushkiGateway {
@@ -54,8 +55,8 @@ export class KushkiGateway implements IKushkiGateway {
         response.data;
 
       return Promise.resolve(deferredInfoResponse);
-    } catch (error) {
-      return Promise.reject(ERRORS.E001);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E001, error.message));
     }
   };
 
@@ -72,8 +73,8 @@ export class KushkiGateway implements IKushkiGateway {
       });
 
       return Promise.resolve(data);
-    } catch (error) {
-      return Promise.reject(ERRORS.E003);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E003, error.message));
     }
   };
 
@@ -90,8 +91,8 @@ export class KushkiGateway implements IKushkiGateway {
       });
 
       return Promise.resolve(data);
-    } catch (error) {
-      return Promise.reject(ERRORS.E004);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E004, error.message));
     }
   };
 
@@ -109,8 +110,8 @@ export class KushkiGateway implements IKushkiGateway {
       });
 
       return Promise.resolve(data);
-    } catch (error) {
-      return Promise.reject(ERRORS.E006);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E006, error.message));
     }
   };
 
