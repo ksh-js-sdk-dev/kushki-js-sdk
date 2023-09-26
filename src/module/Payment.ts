@@ -43,6 +43,7 @@ import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
 import { OTPEnum } from "infrastructure/OTPEnum.ts";
 import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
 import { Styles } from "types/card_options";
+import { buildCssStyle } from "utils/buildCssStyle.ts";
 
 declare global {
   // tslint:disable-next-line
@@ -874,7 +875,7 @@ export class Payment implements IPayment {
       handleOnSubmit: (field: string) => this.handleOnSubmit(field),
       handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
         this.handleOnValidity(field, fieldValidity),
-      styles: styles
+      styles: buildCssStyle(styles || {})
     };
 
     if (fieldType === InputModelEnum.DEFERRED) {

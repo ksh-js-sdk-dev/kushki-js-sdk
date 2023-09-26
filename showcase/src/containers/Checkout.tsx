@@ -17,6 +17,7 @@ import {
   hostedFieldsStyles
 } from "./Checkout.styles.ts";
 import { FieldTypeEnum } from "../../../types/form_validity";
+import "../../assets/css/checkout.css";
 
 export const CheckoutContainer = () => {
   const [token, setToken] = useState<string>("");

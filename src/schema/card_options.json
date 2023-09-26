@@ -39,6 +39,7 @@
         },
         "deferred": {
           "type": "object",
+          "title": "DeferredStyles",
           "properties": {
             "container": {
               "$ref": "#/definitions/cssProperties"

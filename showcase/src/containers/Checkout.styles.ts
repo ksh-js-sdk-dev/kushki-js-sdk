@@ -88,19 +88,8 @@ export const hostedFieldsStyles: Styles = {
       width: "350px"
     }
   },
-  label: {
-    color: "transparent"
-  },
-  select: {
-    fontFamily: "IBM Plex sans-serif",
-    width: "375px",
-    padding: "10px",
-    outline: "none",
-    fontSize: "18px",
-    fontWeight: "400",
-    borderRadius: "10px",
-    border: "1px solid #ccc"
-  },
+  label: ".kushki-hosted-field-label",
+  select: ".kushki-hosted-field-select",
   deferred: {
     container: {
       position: "relative",
