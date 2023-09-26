@@ -28,16 +28,21 @@ import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { BinInfoResponse } from "types/bin_info_response";
 import { DeferredValues } from "types/card_fields_values";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
-import { FieldValidity, FormValidity } from "types/form_validity";
+import {
+  FieldTypeEnum,
+  FieldValidity,
+  FormValidity
+} from "types/form_validity";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { SiftScienceObject } from "types/sift_science_object";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
-import { FieldTypeEnum } from "types/card_options";
 import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
 import { OTPEnum } from "infrastructure/OTPEnum.ts";
 import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
+import { Styles } from "types/card_options";
+import { buildCssStyle } from "utils/BuildCssStyle.ts";
 
 declare global {
   // tslint:disable-next-line
@@ -84,7 +89,7 @@ export class Payment implements IPayment {
     try {
       const payment: Payment = new Payment(kushkiInstance, options);
 
-      await payment.initFields(options.fields);
+      await payment.initFields(options.fields, options.styles);
 
       payment.showContainers();
 
@@ -263,7 +268,8 @@ export class Payment implements IPayment {
       if (isInputInValid && !isErrorTypeValid)
         validityProps.errorType = ErrorTypeEnum.EMPTY;
 
-      if (inputName === "deferred") formValid = this.validateDeferredValues();
+      if (inputName === InputModelEnum.DEFERRED)
+        formValid = this.validateDeferredValues();
     }
 
     const eventFormValidity: CustomEvent<FormValidity> =
@@ -543,13 +549,14 @@ export class Payment implements IPayment {
     }
   }
 
-  private getDeferredValues = (): DeferredValues => {
-    if (!this.inputValues.deferred || !this.inputValues.deferred.value)
-      return {};
+  private getDeferredValues = (
+    deferredInstance = this.inputValues.deferred
+  ): DeferredValues => {
+    if (!deferredInstance || !deferredInstance.value) return {};
 
-    if (typeof this.inputValues.deferred.value !== "object") return {};
+    if (typeof deferredInstance.value !== "object") return {};
 
-    return this.inputValues.deferred.value;
+    return deferredInstance.value;
   };
 
   private buildGetDeferredValuesToRequestToken = (
@@ -569,10 +576,15 @@ export class Payment implements IPayment {
 
     return deferredValuesToRequestToken;
   };
+
   private validateDeferredValues = (): boolean => {
     let deferredValuesAreValid: boolean = true;
 
-    if (!this.inputValues.deferred || !this.inputValues.deferred.value)
+    if (
+      !this.inputValues.deferred ||
+      !this.inputValues.deferred.value ||
+      Object.keys(this.inputValues.deferred.value).length === 0
+    )
       return deferredValuesAreValid;
 
     const deferredValues: DeferredValues = this.getDeferredValues();
@@ -765,7 +777,27 @@ export class Payment implements IPayment {
   }
 
   private onChangeDeferred(values: DeferredInputValues) {
-    this.inputValues.deferred!.value = values;
+    const deferredValues = this.getDeferredValues({
+      selector: "",
+      validity: { isValid: true },
+      value: values
+    });
+
+    this.inputValues.deferred!.value = deferredValues;
+
+    if (deferredValues.isDeferred) {
+      this.inputValues.deferred?.hostedField?.resize({
+        height: 140,
+        width: 400
+      });
+    }
+
+    if (deferredValues.isDeferred && deferredValues.creditType !== "") {
+      this.inputValues.deferred?.hostedField?.resize({
+        height: 200,
+        width: 400
+      });
+    }
   }
 
   private onFocusDeferred(values: DeferredInputValues) {
@@ -792,9 +824,14 @@ export class Payment implements IPayment {
     }
   }
 
-  private buildFieldOptions(field: Field) {
+  private buildFieldOptions(
+    field: Field,
+    fieldType: InputModelEnum,
+    styles?: Styles
+  ) {
     const options: FieldOptions = {
       ...field,
+      fieldType,
       handleOnBlur: (field: string) => this.handleOnBlur(field),
       handleOnChange: (field: string, value: string) => {
         return this.handleOnChange(field, value);
@@ -802,10 +839,11 @@ export class Payment implements IPayment {
       handleOnFocus: (field: string) => this.handleOnFocus(field),
       handleOnSubmit: (field: string) => this.handleOnSubmit(field),
       handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
-        this.handleOnValidity(field, fieldValidity)
+        this.handleOnValidity(field, fieldValidity),
+      styles: buildCssStyle(styles || {})
     };
 
-    if (field.fieldType === InputModelEnum.DEFERRED) {
+    if (fieldType === InputModelEnum.DEFERRED) {
       options.handleOnChange = (values: DeferredInputValues) =>
         this.onChangeDeferred(values);
       options.handleOnFocus = (values: DeferredInputValues) =>
@@ -814,19 +852,26 @@ export class Payment implements IPayment {
         this.onBlurDeferred(values);
     }
 
-    if (field.fieldType === InputModelEnum.OTP)
+    if (fieldType === InputModelEnum.OTP)
       options.handleOnChange = (field: string, value: string) =>
         this.handleOnChangeOTP(field, value);
 
     return options;
   }
 
-  private initFields(optionsFields: { [k: string]: Field }): Promise<void[]> {
+  private initFields(
+    optionsFields: { [k: string]: Field },
+    styles?: Styles
+  ): Promise<void[]> {
     let firstHostedField;
 
     for (const fieldKey in optionsFields) {
       const field = optionsFields[fieldKey];
-      const options = this.buildFieldOptions(field);
+      const options = this.buildFieldOptions(
+        field,
+        fieldKey as InputModelEnum,
+        styles
+      );
       let hostedField;
 
       if (firstHostedField) {
@@ -836,12 +881,11 @@ export class Payment implements IPayment {
         });
       } else {
         hostedField = KushkiHostedFields(options);
-
         firstHostedField = hostedField;
-        this.firstHostedFieldType = field.fieldType;
+        this.firstHostedFieldType = fieldKey;
       }
 
-      this.inputValues[field.fieldType] = {
+      this.inputValues[fieldKey] = {
         hostedField,
         selector: field.selector,
         validity: {
@@ -953,7 +997,7 @@ export class Payment implements IPayment {
 
     return new Promise<void>((resolve, reject) => {
       this.inputValues.deferred?.hostedField
-        ?.resize({ height: 200, width: 400 })
+        ?.resize({ height: 75, width: 400 })
         .then(() => this.inputValues.deferred?.hostedField?.hide())
         .then(() => resolve())
         .catch((error: any) => reject(error));
