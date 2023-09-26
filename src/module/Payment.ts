@@ -759,16 +759,14 @@ export class Payment implements IPayment {
     dispatchEvent(eventField);
   }
 
-  private async handleSetCardNumber(cardNumber: string) {
-    const newBin: string = cardNumber.substring(0, 8);
-
-    if (this.currentBin !== newBin) {
-      this.currentBin = newBin;
+  private async handleOnBinChange(bin: string) {
+    if (this.currentBin !== bin) {
+      this.currentBin = bin;
       this.currentBinHasDeferredOptions = false;
       try {
         const { brand, cardType }: BinInfoResponse =
           await this._gateway.requestBinInfo(this.kushkiInstance, {
-            bin: newBin
+            bin
           });
 
         this.inputValues.cardNumber?.hostedField?.updateProps({
@@ -781,12 +779,12 @@ export class Payment implements IPayment {
         if (cardType === "credit" && !this.options.isSubscription) {
           const deferredResponse: DeferredByBinOptionsResponse[] =
             await this._gateway.requestDeferredInfo(this.kushkiInstance, {
-              bin: newBin
+              bin
             });
 
           await this.inputValues.deferred?.hostedField?.updateProps({
             deferredOptions: {
-              bin: newBin,
+              bin,
               options: deferredResponse
             }
           });
@@ -801,7 +799,7 @@ export class Payment implements IPayment {
         this.inputValues.cardNumber?.hostedField?.updateProps({
           brandIcon: "",
           deferredOptions: {
-            bin: newBin,
+            bin,
             options: []
           }
         });
@@ -846,9 +844,7 @@ export class Payment implements IPayment {
   private onChangeCardNumber(value: string) {
     const cardNumber: string = value.replace(/ /g, "");
 
-    if (cardNumber.length >= this.BIN_LENGTH)
-      this.handleSetCardNumber(cardNumber);
-    else {
+    if (cardNumber.length < this.BIN_LENGTH) {
       this.inputValues.deferred?.hostedField?.updateProps({
         deferredOptions: {
           bin: cardNumber,
@@ -867,6 +863,7 @@ export class Payment implements IPayment {
     const options: FieldOptions = {
       ...field,
       fieldType,
+      handleOnBinChange: (bin: string) => this.handleOnBinChange(bin),
       handleOnBlur: (field: string) => this.handleOnBlur(field),
       handleOnChange: (field: string, value: string) => {
         return this.handleOnChange(field, value);

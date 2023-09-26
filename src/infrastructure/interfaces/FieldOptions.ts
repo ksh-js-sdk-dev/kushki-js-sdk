@@ -37,4 +37,5 @@ export interface FieldOptions {
     fieldType: InputModelEnum,
     fieldValidity: FieldValidity
   ) => void;
+  handleOnBinChange?: (bin: string) => void;
 }
