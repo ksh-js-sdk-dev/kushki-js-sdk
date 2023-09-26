@@ -56,6 +56,18 @@ export const hostedFieldsStyles: Styles = {
         position: "absolute",
         top: "-7px"
       }
+    },
+    "& input:not(:placeholder-shown) + label" : {
+      background: "white",
+      color: "#6D7781",
+      fontFamily: "IBM Plex sans-serif",
+      fontSize: "12px",
+      fontWeight: "400",
+      left: "16px",
+      paddingLeft: "5px",
+      paddingRight: "5px",
+      position: "absolute",
+      top: "-7px"
     }
   },
   input: {
@@ -79,6 +91,16 @@ export const hostedFieldsStyles: Styles = {
     },
     "&:invalid": {
       border: "1px solid #B60000",
+      borderRadius: "10px",
+      fontFamily: "IBM Plex sans-serif",
+      fontSize: "16px",
+      fontWeight: "400",
+      outline: "none",
+      padding: "10px",
+      width: "350px"
+    },
+    "&:not(:invalid)": {
+      border: "1px solid #1E65AE",
       borderRadius: "10px",
       fontFamily: "IBM Plex sans-serif",
       fontSize: "16px",

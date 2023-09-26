@@ -58,6 +58,7 @@ describe("Payment test", () => {
       InputModelEnum.CARD_NUMBER,
       "4242424242424242"
     );
+    KushkiHostedFields.mock.calls[0][0].handleOnBinChange("4242424242424242");
   };
 
   const initKushki = async (inTest?: boolean) => {
@@ -251,10 +252,7 @@ describe("Payment test", () => {
     paymentInstance["currentBin"] = "42424242";
     paymentInstance["currentBinHasDeferredOptions"] = true;
 
-    KushkiHostedFields.mock.calls[0][0].handleOnChange(
-      InputModelEnum.CARD_NUMBER,
-      "42424242"
-    );
+    KushkiHostedFields.mock.calls[0][0].handleOnBinChange("42424242");
 
     expect(KushkiHostedFields).toHaveBeenCalledTimes(4);
   });
@@ -266,6 +264,7 @@ describe("Payment test", () => {
       InputModelEnum.CARD_NUMBER,
       "424242"
     );
+    KushkiHostedFields.mock.calls[0][0].handleOnBinChange("424242");
 
     expect(paymentInstance["currentBinHasDeferredOptions"]).toEqual(false);
   });
