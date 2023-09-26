@@ -3,7 +3,7 @@ import {
   buildCssStyleDeclaration,
   buildCssStyleFromCssHostedField,
   getStyleOfDeferred
-} from "utils/buildCssStyle.ts";
+} from "utils/BuildCssStyle.ts";
 import { CssHostedField, DeferredStyles, Styles } from "types/card_options";
 
 describe("Test CSS Utils", function () {

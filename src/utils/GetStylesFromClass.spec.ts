@@ -1,4 +1,4 @@
-import { getStylesFromClass } from "utils/getStylesFromClass.ts";
+import { getStylesFromClass } from "utils/GetStylesFromClass.ts";
 
 describe("Test getStylesFromClass", function () {
   beforeEach(() => {

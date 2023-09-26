@@ -43,7 +43,7 @@ import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
 import { OTPEnum } from "infrastructure/OTPEnum.ts";
 import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
 import { Styles } from "types/card_options";
-import { buildCssStyle } from "utils/buildCssStyle.ts";
+import { buildCssStyle } from "utils/BuildCssStyle.ts";
 
 declare global {
   // tslint:disable-next-line

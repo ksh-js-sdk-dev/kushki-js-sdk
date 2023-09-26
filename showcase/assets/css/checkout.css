@@ -2,6 +2,11 @@
     color: transparent;
     padding: 0;
     border-color: transparent;
+    border-width: 0;
+}
+
+.kushki-hosted-field-label:hover {
+    color: #008800;
 }
 
 .kushki-hosted-field-select {

@@ -5,7 +5,7 @@ import {
   Styles
 } from "types/card_options";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import { getStylesFromClass } from "utils/getStylesFromClass.ts";
+import { getStylesFromClass } from "utils/GetStylesFromClass.ts";
 
 export const buildCssStyleDeclaration = (
   cssProperties: CssProperties

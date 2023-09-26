@@ -1,5 +1,5 @@
+import { allowedStyles } from "infrastructure/AllowedStylesEnum.ts";
 import { CssProperties } from "types/card_options";
-import { allowedStyles } from "infrastructure/allowedStylesEnum.ts";
 
 export const getStylesFromClass = (cssClass: string) => {
   const element: HTMLInputElement = document.createElement("input");
