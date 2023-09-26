@@ -270,8 +270,6 @@ export const CheckoutContainer = () => {
           </>
         )}
 
-        <div id="otp_id"></div>
-        {errorOTP.length > 0 && <div>Error en OTP {errorOTP}</div>}
 
         <div id="otp_id"></div>
         {errorOTP.length > 0 && <div>El código OTP es incorrecto</div>}
