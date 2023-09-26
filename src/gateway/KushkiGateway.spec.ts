@@ -1,6 +1,5 @@
 import { KushkiGateway } from "./KushkiGateway";
 import axios, { AxiosError } from "axios";
-import { CardTokenRequest, CardTokenResponse } from "src/module";
 import { CONTAINER } from "infrastructure/Container";
 import { IDENTIFIERS } from "src/constant/Identifiers";
 import { Mock } from "ts-mockery";
@@ -91,93 +90,6 @@ describe("KushkiGateway - Test", () => {
     } catch (error: any) {
       expect(error.code).toEqual("E001");
     }
-  });
-
-  describe("requestToken - Test", () => {
-    const mockToken: CardTokenResponse = { token: "123456789" };
-    const requestTokenBody: CardTokenRequest = {
-      card: {
-        cvv: "123",
-        expiryMonth: "12",
-        expiryYear: "34",
-        name: "Test",
-        number: "4242424242424242"
-      },
-      currency: "USD",
-      totalAmount: 10
-    };
-
-    it("when called requestToken return data on success", async () => {
-      const axiosPostSpy = jest.fn(() => {
-        return Promise.resolve({
-          data: mockToken
-        });
-      });
-
-      jest.spyOn(axios, "post").mockImplementation(axiosPostSpy);
-
-      const tokenResponse: CardTokenResponse = await kushkiGateway.requestToken(
-        mockKushki,
-        requestTokenBody
-      );
-
-      expect(tokenResponse).toEqual(mockToken);
-    });
-
-    it("When requestToken throws an AxiosError", async () => {
-      jest.spyOn(axios, "post").mockRejectedValue(new AxiosError(""));
-
-      try {
-        await kushkiGateway.requestToken(mockKushki, requestTokenBody);
-      } catch (error: any) {
-        expect(error.code).toEqual("E002");
-      }
-    });
-  });
-
-  describe("requestCreateSubscriptionToken - Test", () => {
-    const mockToken: CardTokenResponse = { token: "123456789" };
-    const requestSubscriptionTokenBody: CardTokenRequest = {
-      card: {
-        cvv: "123",
-        expiryMonth: "12",
-        expiryYear: "34",
-        name: "Test",
-        number: "4242424242424242"
-      },
-      currency: "USD"
-    };
-
-    it("when called requestCreateSubscriptionToken return data on success", async () => {
-      const axiosPostSpy = jest.fn(() => {
-        return Promise.resolve({
-          data: mockToken
-        });
-      });
-
-      jest.spyOn(axios, "post").mockImplementation(axiosPostSpy);
-
-      const tokenResponse: CardTokenResponse =
-        await kushkiGateway.requestCreateSubscriptionToken(
-          mockKushki,
-          requestSubscriptionTokenBody
-        );
-
-      expect(tokenResponse).toEqual(mockToken);
-    });
-
-    it("When requestCreateSubscriptionToken throws an AxiosError", async () => {
-      jest.spyOn(axios, "post").mockRejectedValue(new AxiosError(""));
-
-      try {
-        await kushkiGateway.requestCreateSubscriptionToken(
-          mockKushki,
-          requestSubscriptionTokenBody
-        );
-      } catch (error: any) {
-        expect(error.code).toEqual("E002");
-      }
-    });
   });
 
   describe("requestMerchantSettings - Test", () => {

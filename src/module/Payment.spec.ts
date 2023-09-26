@@ -1,11 +1,5 @@
 import { Kushki } from "Kushki";
-import {
-  CardOptions,
-  CardTokenResponse,
-  Field,
-  Payment,
-  TokenResponse
-} from "./index.ts";
+import { CardOptions, Field, Payment, TokenResponse } from "./index.ts";
 import KushkiHostedFields from "libs/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { CONTAINER } from "infrastructure/Container.ts";
@@ -27,6 +21,7 @@ jest.mock("../libs/HostedField.ts", () =>
   jest.fn().mockImplementation(() => ({
     hide: mockKushkiHostedFieldsHide,
     render: jest.fn(),
+    requestPaymentToken: jest.fn(),
     resize: jest.fn().mockResolvedValue({}),
     show: jest.fn().mockResolvedValue({}),
     updateProps: jest.fn()
@@ -326,9 +321,6 @@ describe("Payment test", () => {
 
     const mockKushkiGateway = (
       is3ds?: boolean,
-      token: CardTokenResponse | Promise<CardTokenResponse> = {
-        token: tokenMock
-      },
       secureValidation: SecureOtpResponse | Promise<SecureOtpResponse> = {
         code: "3DS000",
         message: "ok"
@@ -337,7 +329,6 @@ describe("Payment test", () => {
       isSandboxEnabled: boolean = false
     ) => {
       const mockGateway = {
-        requestCreateSubscriptionToken: () => token,
         requestCybersourceJwt: () => ({
           jwt: "1234567890"
         }),
@@ -346,8 +337,7 @@ describe("Payment test", () => {
           active_3dsecure: is3ds,
           sandboxEnable: isSandboxEnabled
         }),
-        requestSecureServiceValidation: () => secureValidation,
-        requestToken: () => token
+        requestSecureServiceValidation: () => secureValidation
       };
 
       const mockSiftService = {
@@ -395,6 +385,17 @@ describe("Payment test", () => {
         );
     };
 
+    const mockRequestPaymentToken = (mock: jest.Mock) => {
+      KushkiHostedFields.mockImplementation(() => ({
+        hide: jest.fn().mockResolvedValue({}),
+        render: jest.fn(),
+        requestPaymentToken: mock,
+        resize: jest.fn().mockResolvedValue({}),
+        show: jest.fn().mockResolvedValue({}),
+        updateProps: jest.fn()
+      }));
+    };
+
     beforeEach(() => {
       deferredValueDefault = {
         creditType: "all",
@@ -405,6 +406,9 @@ describe("Payment test", () => {
       mockKushkiGateway();
       mockCardinal();
       mockSandbox();
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({ token: tokenMock })
+      );
     });
 
     const mockInputFields = () => {
@@ -569,10 +573,8 @@ describe("Payment test", () => {
       options.fields.deferred = {
         selector: "id_test"
       };
-
-      mockKushkiGateway(
-        true,
-        {
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({
           security: {
             acsURL: "url",
             authenticationTransactionId: "1234",
@@ -581,7 +583,11 @@ describe("Payment test", () => {
             specificationVersion: "2.0.1"
           },
           token: tokenMock
-        },
+        })
+      );
+
+      mockKushkiGateway(
+        true,
         {
           code: "ok",
           message: "3DS000"
@@ -632,16 +638,19 @@ describe("Payment test", () => {
     });
 
     it("it should execute Payment 3ds token PROD with modal validation", async () => {
-      mockKushkiGateway(true, {
-        security: {
-          acsURL: "url",
-          authenticationTransactionId: "1234",
-          authRequired: true,
-          paReq: "req",
-          specificationVersion: "2.0.1"
-        },
-        token: tokenMock
-      });
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({
+          security: {
+            acsURL: "url",
+            authenticationTransactionId: "1234",
+            authRequired: true,
+            paReq: "req",
+            specificationVersion: "2.0.1"
+          },
+          token: tokenMock
+        })
+      );
+      mockKushkiGateway(true);
 
       const cardInstance = await Payment.initCardToken(kushki, options);
 
@@ -656,9 +665,8 @@ describe("Payment test", () => {
     it("it should execute Payment Subscription 3ds token PROD with modal validation", async () => {
       options.isSubscription = true;
 
-      mockKushkiGateway(
-        true,
-        {
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({
           security: {
             acsURL: "url",
             authenticationTransactionId: "1234",
@@ -667,12 +675,13 @@ describe("Payment test", () => {
             specificationVersion: "2.0.1"
           },
           token: tokenMock
-        },
-        {
-          code: "ok",
-          message: "3DS000"
-        }
+        })
       );
+
+      mockKushkiGateway(true, {
+        code: "ok",
+        message: "3DS000"
+      });
 
       const cardInstance = await Payment.initCardToken(kushki, options);
 
@@ -686,16 +695,20 @@ describe("Payment test", () => {
 
     it("it should execute Payment 3ds token UAT without modal validation", async () => {
       await initKushki(true);
+
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({
+          security: {
+            acsURL: "url",
+            authenticationTransactionId: "1234",
+            authRequired: false,
+            paReq: "req"
+          },
+          token: tokenMock
+        })
+      );
       mockCardinal(jest.fn());
-      mockKushkiGateway(true, {
-        security: {
-          acsURL: "url",
-          authenticationTransactionId: "1234",
-          authRequired: false,
-          paReq: "req"
-        },
-        token: tokenMock
-      });
+      mockKushkiGateway(true);
 
       const cardInstance = await Payment.initCardToken(kushki, options);
 
@@ -708,17 +721,20 @@ describe("Payment test", () => {
     });
 
     it("it should execute Payment 3ds token PROD for retry", async () => {
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({
+          security: {
+            acsURL: "url",
+            authenticationTransactionId: "1234",
+            authRequired: true,
+            paReq: "req",
+            specificationVersion: "2.0.1"
+          },
+          token: tokenMock
+        })
+      );
       mockCardinal(jest.fn().mockReturnValue({}));
-      mockKushkiGateway(true, {
-        security: {
-          acsURL: "url",
-          authenticationTransactionId: "1234",
-          authRequired: true,
-          paReq: "req",
-          specificationVersion: "2.0.1"
-        },
-        token: tokenMock
-      });
+      mockKushkiGateway(true);
 
       const cardInstance = await Payment.initCardToken(kushki, options);
 
@@ -732,14 +748,17 @@ describe("Payment test", () => {
 
     it("it should execute Payment 3ds token UAT throw error: E005, for token incomplete", async () => {
       await initKushki(true);
-      mockKushkiGateway(true, {
-        security: {
-          authenticationTransactionId: "1234",
-          authRequired: true,
-          paReq: "req"
-        },
-        token: tokenMock
-      });
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({
+          security: {
+            authenticationTransactionId: "1234",
+            authRequired: true,
+            paReq: "req"
+          },
+          token: tokenMock
+        })
+      );
+      mockKushkiGateway(true);
 
       const cardInstance = await Payment.initCardToken(kushki, options);
 
@@ -774,9 +793,8 @@ describe("Payment test", () => {
 
     it("it should execute Payment 3ds token UAT throw error: E006, for SecureServiceValidation", async () => {
       await initKushki(true);
-      mockKushkiGateway(
-        true,
-        {
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({
           security: {
             acsURL: "url",
             authenticationTransactionId: "1234",
@@ -785,12 +803,12 @@ describe("Payment test", () => {
             specificationVersion: "2.0.1"
           },
           token: tokenMock
-        },
-        {
-          code: "ok",
-          message: "fail"
-        }
+        })
       );
+      mockKushkiGateway(true, {
+        code: "ok",
+        message: "fail"
+      });
 
       const cardInstance = await Payment.initCardToken(kushki, options);
 
@@ -806,9 +824,8 @@ describe("Payment test", () => {
 
     it("it should execute Payment 3ds token UAT throw error: E006, for request SecureServiceValidation failed", async () => {
       await initKushki(true);
-      mockKushkiGateway(
-        true,
-        {
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({
           security: {
             acsURL: "url",
             authenticationTransactionId: "1234",
@@ -817,7 +834,10 @@ describe("Payment test", () => {
             specificationVersion: "2.0.1"
           },
           token: tokenMock
-        },
+        })
+      );
+      mockKushkiGateway(
+        true,
         Promise.reject(
           "unexpected error when was called API to request SecureServiceValidation"
         )
@@ -837,6 +857,18 @@ describe("Payment test", () => {
 
     it("it should execute Payment 3ds token UAT throw error: E006, for SecureServiceValidation request fail", async () => {
       await initKushki(true);
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({
+          security: {
+            acsURL: "url",
+            authenticationTransactionId: "1234",
+            authRequired: true,
+            paReq: "req",
+            specificationVersion: "2.0.1"
+          },
+          token: tokenMock
+        })
+      );
       mockKushkiGateway(true, Promise.reject(new KushkiError(ERRORS.E006)));
 
       const cardInstance = await Payment.initCardToken(kushki, options);
@@ -851,9 +883,12 @@ describe("Payment test", () => {
       }
     });
 
-    it("it should execute Payment 3ds token UAT throw error: E005, for requestToken", async () => {
+    it("it should execute Payment 3ds token UAT throw error: E004, for requestToken", async () => {
       await initKushki(true);
-      mockKushkiGateway(true, Promise.reject(new KushkiError(ERRORS.E002)), {
+      mockRequestPaymentToken(
+        jest.fn().mockRejectedValue(new KushkiError(ERRORS.E002))
+      );
+      mockKushkiGateway(true, {
         code: "ok",
         message: "fail"
       });
@@ -871,9 +906,8 @@ describe("Payment test", () => {
     });
 
     it("it should execute Payment 3ds SANDBOX token with modal validation", async () => {
-      mockKushkiGateway(
-        true,
-        {
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({
           security: {
             acsURL: "url",
             authenticationTransactionId: "1234",
@@ -882,7 +916,10 @@ describe("Payment test", () => {
             specificationVersion: "2.0.1"
           },
           token: tokenMock
-        },
+        })
+      );
+      mockKushkiGateway(
+        true,
         {
           code: "3DS000",
           message: "ok"
@@ -902,10 +939,8 @@ describe("Payment test", () => {
     });
 
     it("it should execute Payment 3ds SANDBOX token with ERROR on payment validation", async () => {
-      mockSandbox(true);
-      mockKushkiGateway(
-        true,
-        {
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({
           security: {
             acsURL: "url.com",
             authenticationTransactionId: "1234",
@@ -914,7 +949,11 @@ describe("Payment test", () => {
             specificationVersion: "2.0.1"
           },
           token: tokenMock
-        },
+        })
+      );
+      mockSandbox(true);
+      mockKushkiGateway(
+        true,
         {
           code: "3DS000",
           message: "ok"
@@ -940,18 +979,17 @@ describe("Payment test", () => {
         selector: "id_test"
       };
 
-      mockKushkiGateway(
-        false,
-        {
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({
           secureId: "555444-1213233-1234243-2324",
           secureService: "KushkiOTP",
           token: tokenMock
-        },
-        {
-          code: "OTP000",
-          message: "OTP válido"
-        }
+        })
       );
+      mockKushkiGateway(false, {
+        code: "OTP000",
+        message: "OTP válido"
+      });
 
       const cardInstance = await Payment.initCardToken(kushki, options);
 

@@ -5,7 +5,6 @@ import { PathEnum } from "infrastructure/PathEnum.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import axios from "axios";
 import { DeferredByBinOptionsResponse, Kushki } from "Kushki";
-import { CardTokenRequest, CardTokenResponse } from "src/module";
 import { IKushkiGateway } from "repository/IKushkiGateway";
 import { injectable } from "inversify";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
@@ -13,7 +12,6 @@ import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import { SecureOtpRequest } from "types/secure_otp_request";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { KushkiError } from "infrastructure/KushkiError.ts";
-import { UtilsService } from "service/UtilService.ts";
 
 @injectable()
 export class KushkiGateway implements IKushkiGateway {
@@ -59,42 +57,6 @@ export class KushkiGateway implements IKushkiGateway {
       return Promise.resolve(deferredInfoResponse);
     } catch (error: any) {
       return Promise.reject(new KushkiError(ERRORS.E001, error.message));
-    }
-  };
-
-  public requestToken = async (
-    kushkiInstance: Kushki,
-    body: CardTokenRequest
-  ): Promise<CardTokenResponse> => {
-    const url: string = `${kushkiInstance.getBaseUrl()}${PathEnum.card_token}`;
-
-    try {
-      const { data } = await axios.post<CardTokenResponse>(url, body, {
-        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
-      });
-
-      return Promise.resolve(data);
-    } catch (error: any) {
-      return Promise.reject(new KushkiError(ERRORS.E002, error.message));
-    }
-  };
-
-  public requestCreateSubscriptionToken = async (
-    kushkiInstance: Kushki,
-    body: CardTokenRequest
-  ): Promise<CardTokenResponse> => {
-    const url: string = `${kushkiInstance.getBaseUrl()}${
-      PathEnum.card_subscription_token
-    }`;
-
-    try {
-      const { data } = await axios.post<CardTokenResponse>(url, body, {
-        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
-      });
-
-      return Promise.resolve(data);
-    } catch (error) {
-      return UtilsService.validErrors(error, ERRORS.E002);
     }
   };
 

@@ -14,7 +14,6 @@ import KushkiHostedFields from "libs/HostedField.ts";
 import {
   CardFieldValues,
   CardOptions,
-  CardTokenRequest,
   CardTokenResponse,
   Field,
   Fields,
@@ -45,6 +44,7 @@ import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
 import { Styles } from "types/card_options";
 import { buildCssStyle } from "utils/BuildCssStyle.ts";
 import { UtilsService } from "service/UtilService.ts";
+import { PathEnum } from "infrastructure/PathEnum.ts";
 
 declare global {
   // tslint:disable-next-line
@@ -69,6 +69,7 @@ export class Payment implements IPayment {
   private readonly listenerFieldSubmit: string = "fieldSubmit";
   private readonly otpValidation: string = "otpValidation";
   private readonly otpInputOTP: string = "onInputOTP";
+  private firstHostedFieldType: string = "";
 
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
     this.options = this.setDefaultValues(options);
@@ -533,46 +534,27 @@ export class Payment implements IPayment {
     siftScienceSession?: SiftScienceObject
   ): Promise<CardTokenResponse> {
     try {
-      if (this.options.isSubscription)
-        return await this._gateway.requestCreateSubscriptionToken(
-          this.kushkiInstance,
-          this.buildTokenBody(merchantSettings, jwt, siftScienceSession)
-        );
+      const deferredValues: DeferredValues =
+        this.buildGetDeferredValuesToRequestToken(merchantSettings);
+      const requestPath: string = this.options.isSubscription
+        ? PathEnum.card_subscription_token
+        : PathEnum.card_token;
 
-      return await this._gateway.requestToken(
+      const token = await this.inputValues[
+        this.firstHostedFieldType
+      ].hostedField.requestPaymentToken(
         this.kushkiInstance,
-        this.buildTokenBody(merchantSettings, jwt, siftScienceSession)
+        this.options,
+        requestPath,
+        jwt,
+        siftScienceSession,
+        deferredValues
       );
+
+      return Promise.resolve(token);
     } catch (error) {
       return Promise.reject(error);
     }
-  }
-
-  private buildTokenBody(
-    merchantSettings: MerchantSettingsResponse,
-    jwt?: string,
-    siftScienceSession?: SiftScienceObject
-  ): CardTokenRequest {
-    const { cardholderName, cardNumber, expirationDate, cvv } =
-      this.inputValues;
-    const { currency } = this.options;
-    const deferredValues =
-      this.buildGetDeferredValuesToRequestToken(merchantSettings);
-
-    return {
-      ...siftScienceSession,
-      card: {
-        cvv: String(cvv!.value!),
-        expiryMonth: String(expirationDate!.value!).split("/")[0]!,
-        expiryYear: String(expirationDate!.value!).split("/")[1]!,
-        name: String(cardholderName!.value!),
-        number: String(cardNumber!.value!).replace(/\s+/g, "")
-      },
-      currency,
-      jwt,
-      ...deferredValues,
-      ...this.buildTotalAmount()
-    };
   }
 
   private getDeferredValues = (
@@ -635,18 +617,6 @@ export class Payment implements IPayment {
 
     return deferredValuesAreValid;
   };
-
-  private buildTotalAmount() {
-    const { amount } = this.options;
-
-    if (this.options.isSubscription && !amount) return {};
-
-    return (
-      amount && {
-        totalAmount: amount.iva + amount.subtotalIva + amount.subtotalIva0
-      }
-    );
-  }
 
   private setDefaultValues(options: CardOptions): CardOptions {
     return {
@@ -898,6 +868,8 @@ export class Payment implements IPayment {
     optionsFields: { [k: string]: Field },
     styles?: Styles
   ): Promise<void[]> {
+    let firstHostedField;
+
     for (const fieldKey in optionsFields) {
       const field = optionsFields[fieldKey];
       const options = this.buildFieldOptions(
@@ -905,8 +877,18 @@ export class Payment implements IPayment {
         fieldKey as InputModelEnum,
         styles
       );
+      let hostedField;
 
-      const hostedField = KushkiHostedFields(options);
+      if (firstHostedField) {
+        hostedField = KushkiHostedFields({
+          ...options,
+          tokenizationInstance: firstHostedField
+        });
+      } else {
+        hostedField = KushkiHostedFields(options);
+        firstHostedField = hostedField;
+        this.firstHostedFieldType = fieldKey;
+      }
 
       this.inputValues[fieldKey] = {
         hostedField,
