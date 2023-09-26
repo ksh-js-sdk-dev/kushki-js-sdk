@@ -977,6 +977,7 @@ export class Payment implements IPayment {
       deferred: defaultValidity,
       expirationDate: defaultValidity
     };
+    let formValid: boolean = true;
 
     for (const inputName in inputValues) {
       if (
@@ -989,11 +990,15 @@ export class Payment implements IPayment {
           isValid: inputValues[inputName].validity.isValid
         };
       }
+      const validityProps: FieldValidity = this.inputValues[inputName].validity;
+      const isInputInValid: boolean = !validityProps.isValid;
+
+      if (isInputInValid) formValid = false;
     }
 
     return {
       fields: fieldsValidity,
-      isFormValid: isFormValid ?? false,
+      isFormValid: isFormValid ?? formValid,
       triggeredBy: field
     };
   };
