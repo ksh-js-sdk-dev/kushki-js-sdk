@@ -54,7 +54,8 @@ export const hostedFieldsStyles: Styles = {
         paddingLeft: "5px",
         paddingRight: "5px",
         position: "absolute",
-        top: "-7px"
+        top: "-7px",
+        width: "auto"
       }
     },
     "& input:not(:placeholder-shown) + label" : {
@@ -67,7 +68,8 @@ export const hostedFieldsStyles: Styles = {
       paddingLeft: "5px",
       paddingRight: "5px",
       position: "absolute",
-      top: "-7px"
+      top: "-7px",
+      width: "auto"
     }
   },
   input: {
@@ -99,16 +101,6 @@ export const hostedFieldsStyles: Styles = {
       padding: "10px",
       width: "350px"
     },
-    "&:not(:invalid)": {
-      border: "1px solid #1E65AE",
-      borderRadius: "10px",
-      fontFamily: "IBM Plex sans-serif",
-      fontSize: "16px",
-      fontWeight: "400",
-      outline: "none",
-      padding: "10px",
-      width: "350px"
-    }
   },
   label: ".kushki-hosted-field-label",
   select: ".kushki-hosted-field-select",
