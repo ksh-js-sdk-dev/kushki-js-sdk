@@ -12,7 +12,7 @@ import { CONTAINER } from "infrastructure/Container.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
-import { FieldTypeEnum } from "types/card_options";
+import { FieldTypeEnum } from "types/form_validity";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
@@ -102,7 +102,6 @@ describe("Payment test", () => {
     initMocksGateway();
 
     field = {
-      fieldType: InputModelEnum.CARD_NUMBER,
       selector: "id_test"
     };
 
@@ -114,7 +113,7 @@ describe("Payment test", () => {
       },
       currency: "USD",
       fields: {
-        cardHolderName: field,
+        cardholderName: field,
         cardNumber: field,
         cvv: field,
         expirationDate: field
@@ -155,7 +154,6 @@ describe("Payment test", () => {
 
   it("should render deferred input", async () => {
     options.fields.deferred = {
-      fieldType: InputModelEnum.DEFERRED,
       selector: "id_test"
     };
 
@@ -184,7 +182,6 @@ describe("Payment test", () => {
     }));
 
     options.fields.deferred = {
-      fieldType: InputModelEnum.DEFERRED,
       selector: "id_test"
     };
 
@@ -202,7 +199,6 @@ describe("Payment test", () => {
     }));
 
     options.fields.deferred = {
-      fieldType: InputModelEnum.DEFERRED,
       selector: "id_test"
     };
 
@@ -213,14 +209,13 @@ describe("Payment test", () => {
 
   it("should throw error when element not exist in method initCardToken", async () => {
     field = {
-      fieldType: "cardNumber",
       selector: "id_test_not_created"
     };
 
     options = {
       currency: "USD",
       fields: {
-        cardHolderName: field,
+        cardholderName: field,
         cardNumber: field,
         cvv: field,
         expirationDate: field
@@ -239,7 +234,7 @@ describe("Payment test", () => {
 
     if (KushkiHostedFields.mock.lastCall) {
       expect(KushkiHostedFields.mock.lastCall[0].fieldType).toEqual(
-        InputModelEnum.CARD_NUMBER
+        InputModelEnum.EXPIRATION_DATE
       );
     }
   });
@@ -459,7 +454,6 @@ describe("Payment test", () => {
 
     it("it should execute Payment token request but deferred values is undefined", async () => {
       options.fields.deferred = {
-        fieldType: InputModelEnum.DEFERRED,
         selector: "id_test"
       };
 
@@ -480,7 +474,6 @@ describe("Payment test", () => {
 
     it("it should execute Payment token request but deferred values are incorrect", async () => {
       options.fields.deferred = {
-        fieldType: InputModelEnum.DEFERRED,
         selector: "id_test"
       };
 
@@ -503,7 +496,6 @@ describe("Payment test", () => {
 
     it("it should execute Payment token request but isDeferred is false", async () => {
       options.fields.deferred = {
-        fieldType: InputModelEnum.DEFERRED,
         selector: "id_test"
       };
 
@@ -524,7 +516,6 @@ describe("Payment test", () => {
 
     it("it should execute Payment token request but deferred values are correct", async () => {
       options.fields.deferred = {
-        fieldType: InputModelEnum.DEFERRED,
         selector: "id_test"
       };
 
@@ -548,7 +539,6 @@ describe("Payment test", () => {
 
     it("it shouldn't execute Payment token request but deferred values are required", async () => {
       options.fields.deferred = {
-        fieldType: InputModelEnum.DEFERRED,
         selector: "id_test"
       };
 
@@ -571,7 +561,6 @@ describe("Payment test", () => {
 
     it("it should execute Payment token request but deferred values and country chile", async () => {
       options.fields.deferred = {
-        fieldType: InputModelEnum.DEFERRED,
         selector: "id_test"
       };
 
@@ -942,7 +931,6 @@ describe("Payment test", () => {
 
     it("it should return successful token when OTP value is valid and securevalidationOTP is true", async () => {
       options.fields.otp = {
-        fieldType: InputModelEnum.OTP,
         selector: "id_test"
       };
 
