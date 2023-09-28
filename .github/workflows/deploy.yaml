@@ -1,0 +1,97 @@
+
+name: Deployment
+
+on:
+  push:
+    branches: [ "feature/COS-2335" ]
+  pull_request:
+    branches: [ "feature/14195" ]
+
+  workflow_dispatch:
+
+env:
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+
+      - name: Get current version
+        run: |
+          GET_VERSION=$(node -p -e "require('./package.json').version")
+          echo "GET_VERSION=${GET_VERSION}" >> $GITHUB_ENV
+
+      - name: Extract branch number
+        id: extract-number-branch
+        run: |
+          IFS='/' read -ra BRANCH_PARTS <<< "${GITHUB_REF}"
+          BRANCH_NUMBER="${BRANCH_PARTS[3]}"
+          echo "BRANCH_NUMBER=$BRANCH_NUMBER" >> $GITHUB_ENV
+
+      - name: Determine Version Format
+        id: determine-version-format
+        run: |
+          CURRENT_VERSION=$GET_VERSION
+          if [[ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            IS_NEW_FORMAT=false
+          else
+            IS_NEW_FORMAT=true
+          fi
+          echo "IS_NEW_FORMAT=${IS_NEW_FORMAT}" >> $GITHUB_ENV
+
+      - name: Set Version
+        id: set-version
+        run: |
+          CURRENT_VERSION=$GET_VERSION
+          if [[ $IS_NEW_FORMAT == "true" ]]; then
+            IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+            IFS='-' read -ra VERSION_PARTS_1 <<< "${VERSION_PARTS[2]}"
+
+            # ELIMINAR BRANCH
+            CURRENT_BRANCH_NUMBER="${VERSION_PARTS_1[1]}-${VERSION_PARTS_1[2]}"
+
+            if [[ $CURRENT_BRANCH_NUMBER == $BRANCH_NUMBER ]]; then
+              CURRENT_NUMBER="${VERSION_PARTS_1[3]}"
+              NEW_NUMBER=$((CURRENT_NUMBER + 1))
+              NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS_1[0]}-${BRANCH_NUMBER}-${NEW_NUMBER}"
+            else
+              NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS_1[0]}-${BRANCH_NUMBER}-1"
+            fi
+            echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          
+          else
+            IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+            MAJOR_VERSION="${VERSION_PARTS[0]}"
+            MINOR_VERSION="${VERSION_PARTS[1]}"
+            PATCH_VERSION="${VERSION_PARTS[2]}" 
+            NEW_VERSION_MINOR=$((MINOR_VERSION + 1))
+            BRANCH_NUMBER=$BRANCH_NUMBER
+            NEW_VERSION="${MAJOR_VERSION}.{$NEW_VERSION_MINOR}.${PATCH_VERSION}-${BRANCH_NUMBER}-1"
+            echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          fi
+
+      - name: console log
+        run: |
+          echo "GET_VERSION is $GET_VERSION"          
+          echo "BRANCH_NUMBER is $BRANCH_NUMBER"
+          echo "NEW_VERSION is $NEW_VERSION"          
+          echo "IS_NEW_FORMAT is $IS_NEW_FORMAT"
+
+      - run: printf "\n//registry.npmjs.org/:_authToken=\"${NPM_TOKEN}\"" >> .npmrc
+      - name: Install dependencies
+        id: install
+        run: yarn install
+
+      - name: Publish to npm
+        env:
+          NPM_PUB_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=\${NPM_PUB_TOKEN}" > ~/.npmrc
+          npm publish --access restricted --tag alpha --unsafe-perm
