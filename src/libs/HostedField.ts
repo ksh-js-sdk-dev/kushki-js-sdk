@@ -6,6 +6,7 @@ import { CardTokenResponse } from "types/card_token_response";
 import { SiftScienceObject } from "types/sift_science_object";
 import { DeferredValues } from "types/card_fields_values";
 import { Kushki } from "Kushki";
+import { KUSHKI_HOSTED_FIELD_EVENT } from "src/constant/GlobalEventName.ts";
 
 const KushkiHostedFields = zoid.create({
   dimensions: {
@@ -34,7 +35,7 @@ const KushkiHostedFields = zoid.create({
         )
     };
   },
-  tag: "kushki-hosted-fields",
+  tag: KUSHKI_HOSTED_FIELD_EVENT,
   url: "http://localhost:5173"
 });
 
