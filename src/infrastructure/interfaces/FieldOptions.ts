@@ -21,21 +21,14 @@ export interface FieldOptions {
   preventAutofill?: boolean;
   label?: string;
   styles?: Styles;
-  handleOnChange:
-    | ((fieldType: string, value: string) => void)
-    | ((value: DeferredInputValues) => void);
-  handleOnBlur?:
-    | ((fieldType: string, value: string) => void)
-    | ((value: DeferredInputValues) => void);
-  handleOnFocus?:
-    | ((fieldType: string, value: string) => void)
-    | ((value: DeferredInputValues) => void);
-  handleOnSubmit?:
-    | ((fieldType: string, value: string) => void)
-    | ((value: DeferredInputValues) => void);
+  handleOnBlur?: (fieldType: string) => void;
+  handleOnFocus?: (fieldType: string) => void;
+  handleOnSubmit?: (fieldType: string) => void;
   handleOnValidity?: (
     fieldType: InputModelEnum,
     fieldValidity: FieldValidity
   ) => void;
   handleOnBinChange?: (bin: string) => void;
+  handleOnOtpChange?: (code: string) => void;
+  handleOnDeferredChange?: (value: DeferredInputValues) => void;
 }

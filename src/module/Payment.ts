@@ -63,7 +63,6 @@ export class Payment implements IPayment {
   private readonly _gateway: IKushkiGateway;
   private readonly _siftScienceService: ISiftScienceService;
   private readonly listenerFieldValidity: string = "fieldValidity";
-  private readonly BIN_LENGTH = 8;
   private readonly listenerFieldFocus: string = "fieldFocus";
   private readonly listenerFieldBlur: string = "fieldBlur";
   private readonly listenerFieldSubmit: string = "fieldSubmit";
@@ -117,14 +116,10 @@ export class Payment implements IPayment {
       const merchantSettings: MerchantSettingsResponse =
         await this._gateway.requestMerchantSettings(this.kushkiInstance);
 
-      const cardValue: string = this.inputValues
-        .cardNumber!.value!.toString()
-        .replace(/\s+/g, "");
-
       const siftScienceSession: SiftScienceObject =
         this._siftScienceService.createSiftScienceSession(
-          this.getBinFromCreditCardNumberSift(cardValue),
-          cardValue.slice(-4),
+          this.getBinFromCreditCardNumberSift(this.currentBin),
+          this.currentBin.slice(-4),
           this.kushkiInstance,
           merchantSettings
         );
@@ -507,12 +502,8 @@ export class Payment implements IPayment {
   }
 
   private async setupCardinal(jwt: string) {
-    const accountNumber = this.inputValues[InputModelEnum.CARD_NUMBER]
-      ?.value!.toString()
-      .replace(/\s+/g, "");
-
     if (await this.isCardinalInitialized()) {
-      window.Cardinal.trigger("accountNumber.update", accountNumber);
+      window.Cardinal.trigger("accountNumber.update", this.currentBin);
       window.Cardinal.trigger("jwt.update", jwt);
     } else {
       window.Cardinal.setup("init", {
@@ -520,7 +511,7 @@ export class Payment implements IPayment {
         order: {
           Consumer: {
             Account: {
-              AccountNumber: accountNumber
+              AccountNumber: this.currentBin
             }
           }
         }
@@ -625,10 +616,13 @@ export class Payment implements IPayment {
     };
   }
 
-  private async handleOnChangeOTP(field: string, value: string) {
+  private async handleOnChangeOTP(value: string) {
     this.inputValues = {
       ...this.inputValues,
-      [field]: { ...this.inputValues[field], value: value }
+      [InputModelEnum.OTP]: {
+        ...this.inputValues[InputModelEnum.OTP],
+        value: value
+      }
     };
 
     if (
@@ -644,18 +638,6 @@ export class Payment implements IPayment {
       });
 
       dispatchEvent(event);
-    }
-  }
-
-  private async handleOnChange(field: string, value: string) {
-    /* istanbul ignore next*/
-    this.inputValues = {
-      ...this.inputValues,
-      [field]: { ...this.inputValues[field], value: value }
-    };
-
-    if (field === InputModelEnum.CARD_NUMBER) {
-      this.onChangeCardNumber(value);
     }
   }
 
@@ -733,6 +715,17 @@ export class Payment implements IPayment {
   }
 
   private async handleOnBinChange(bin: string) {
+    if (!bin) {
+      this.inputValues.deferred?.hostedField?.updateProps({
+        deferredOptions: {
+          bin: "",
+          options: []
+        }
+      });
+      this.inputValues.deferred?.hostedField?.hide();
+
+      return;
+    }
     if (this.currentBin !== bin) {
       this.currentBin = bin;
       this.currentBinHasDeferredOptions = false;
@@ -806,28 +799,6 @@ export class Payment implements IPayment {
     }
   }
 
-  private onFocusDeferred(values: DeferredInputValues) {
-    values;
-  }
-
-  private onBlurDeferred(values: DeferredInputValues) {
-    values;
-  }
-
-  private onChangeCardNumber(value: string) {
-    const cardNumber: string = value.replace(/ /g, "");
-
-    if (cardNumber.length < this.BIN_LENGTH) {
-      this.inputValues.deferred?.hostedField?.updateProps({
-        deferredOptions: {
-          bin: cardNumber,
-          options: []
-        }
-      });
-      this.inputValues.deferred?.hostedField?.hide();
-    }
-  }
-
   private buildFieldOptions(
     field: Field,
     fieldType: InputModelEnum,
@@ -838,10 +809,8 @@ export class Payment implements IPayment {
       fieldType,
       handleOnBinChange: (bin: string) => this.handleOnBinChange(bin),
       handleOnBlur: (field: string) => this.handleOnBlur(field),
-      handleOnChange: (field: string, value: string) => {
-        return this.handleOnChange(field, value);
-      },
       handleOnFocus: (field: string) => this.handleOnFocus(field),
+      handleOnOtpChange: (code: string) => this.handleOnChangeOTP(code),
       handleOnSubmit: (field: string) => this.handleOnSubmit(field),
       handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
         this.handleOnValidity(field, fieldValidity),
@@ -849,17 +818,9 @@ export class Payment implements IPayment {
     };
 
     if (fieldType === InputModelEnum.DEFERRED) {
-      options.handleOnChange = (values: DeferredInputValues) =>
+      options.handleOnDeferredChange = (values: DeferredInputValues) =>
         this.onChangeDeferred(values);
-      options.handleOnFocus = (values: DeferredInputValues) =>
-        this.onFocusDeferred(values);
-      options.handleOnBlur = (values: DeferredInputValues) =>
-        this.onBlurDeferred(values);
     }
-
-    if (fieldType === InputModelEnum.OTP)
-      options.handleOnChange = (field: string, value: string) =>
-        this.handleOnChangeOTP(field, value);
 
     return options;
   }
@@ -868,8 +829,6 @@ export class Payment implements IPayment {
     optionsFields: { [k: string]: Field },
     styles?: Styles
   ): Promise<void[]> {
-    let firstHostedField;
-
     for (const fieldKey in optionsFields) {
       const field = optionsFields[fieldKey];
       const options = this.buildFieldOptions(
@@ -879,14 +838,10 @@ export class Payment implements IPayment {
       );
       let hostedField;
 
-      if (firstHostedField) {
-        hostedField = KushkiHostedFields({
-          ...options,
-          tokenizationInstance: firstHostedField
-        });
-      } else {
+      if (this.firstHostedFieldType) {
         hostedField = KushkiHostedFields(options);
-        firstHostedField = hostedField;
+      } else {
+        hostedField = KushkiHostedFields({ ...options, isFirst: true });
         this.firstHostedFieldType = fieldKey;
       }
 
