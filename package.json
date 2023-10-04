@@ -1,6 +1,5 @@
 {
   "name": "kushki-js-sdk",
-  "private": true,
   "version": "0.0.1",
   "scripts": {
     "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
