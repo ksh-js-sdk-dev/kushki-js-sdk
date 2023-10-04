@@ -57,6 +57,7 @@ jobs:
         id: extract-number-branch
         run: |
           BRANCH=${{ github.base_ref }}
+          echo "BRANCH ${BRANCH}"
           IFS='/' read -ra BRANCH_PARTS <<< "$BRANCH"
           echo "BRANCH_SOURCE=${BRANCH_PARTS[0]}" >> $GITHUB_ENV
           echo "BRANCH_NUMBER=${BRANCH_PARTS[1]}" >> $GITHUB_ENV
