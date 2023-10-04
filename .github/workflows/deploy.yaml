@@ -26,20 +26,9 @@ jobs:
       - name: Extract branch number
         id: extract-number-branch
         run: |
-          IFS='/' read -ra BRANCH_PARTS <<< "${GITHUB_REF}"
-          BRANCH_NUMBER="${BRANCH_PARTS[3]}"
-          echo "GITHUB_REF: ${GITHUB_REF}"
-          
-          SOURCE_BRANCH_FROM=${{ github.base_ref }}
-          echo "SOURCE_BRANCH_FROM: $SOURCE_BRANCH_FROM"
-          
-          TARGET_BRANCH=${{ github.head_ref }}
-          echo "TARGET_BRANCH: $TARGET_BRANCH"
-
-          # Get the source branch from the push
-          BRANCH_SOURCE=$(echo $GITHUB_REF | cut -d/ -f3)
-          echo "BRANCH_SOURCE=$BRANCH_SOURCE" >> $GITHUB_ENV
-          echo "BRANCH_NUMBER=$BRANCH_NUMBER" >> $GITHUB_ENV
+          IFS='/' read -ra BRANCH_PARTS <<< "${github.base_ref}"
+          echo "BRANCH_SOURCE=${BRANCH_PARTS[0]}" >> $GITHUB_ENV
+          echo "BRANCH_NUMBER=${BRANCH_PARTS[1]}" >> $GITHUB_ENV
 
       - name: Determine Version Format
         run: |
