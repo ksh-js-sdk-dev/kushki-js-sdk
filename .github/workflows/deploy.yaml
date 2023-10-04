@@ -28,6 +28,7 @@ jobs:
         run: |
           IFS='/' read -ra BRANCH_PARTS <<< "${GITHUB_REF}"
           BRANCH_NUMBER="${BRANCH_PARTS[3]}"
+          echo "GITHUB_REF: ${GITHUB_REF}"
           
           SOURCE_BRANCH_FROM=${{ github.base_ref }}
           echo "SOURCE_BRANCH_FROM: $SOURCE_BRANCH_FROM"
