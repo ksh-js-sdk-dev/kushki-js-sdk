@@ -59,6 +59,7 @@ jobs:
         run: |
           BRANCH=${{ github.base_ref }}
           echo "BRANCH ${BRANCH}"
+          echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
           IFS='/' read -ra BRANCH_PARTS <<< "$BRANCH"
           echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
           echo "BRANCH_SOURCE=${BRANCH_PARTS[0]}" >> $GITHUB_ENV
