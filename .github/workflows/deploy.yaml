@@ -79,7 +79,7 @@ jobs:
           if [[ $IS_NEW_FORMAT == "true" ]]; then
           
             IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
-  
+
             if [ "$BRANCH_SOURCE" == "feature" ]; then
               IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[2]}"
               GET_BRANCH_NUMBER="${VERSION_PARTS[1]}-${VERSION_PARTS_SECOND[0]}"
@@ -90,10 +90,10 @@ jobs:
               IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[1]}"
               GET_BRANCH_NUMBER="${VERSION_PARTS_SECOND[0]}"
             fi
-  
+          
             echo "GET_BRANCH_NUMBER is $GET_BRANCH_NUMBER"
             echo "VERSION_PARTS_SECOND is $VERSION_PARTS_SECOND"
-  
+
             if [[ $GET_BRANCH_NUMBER == $BRANCH_NUMBER ]]; then
               CURRENT_NUMBER="${VERSION_PARTS_SECOND[1]}"
               NEW_NUMBER=$((CURRENT_NUMBER + 1))
@@ -108,7 +108,7 @@ jobs:
               NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}.1"
             fi
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-  
+
           else
             IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
             MAJOR_VERSION="${VERSION_PARTS[0]}"
@@ -127,7 +127,7 @@ jobs:
           echo "BRANCH_NUMBER is $BRANCH_NUMBER"
           echo "NEW_VERSION is $NEW_VERSION"          
           echo "IS_NEW_FORMAT is $IS_NEW_FORMAT"
-  
+
       - name: Config Git
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
