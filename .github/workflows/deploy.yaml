@@ -32,6 +32,9 @@ jobs:
           
           SOURCE_BRANCH_FROM=${{ github.base_ref }}
           echo "SOURCE_BRANCH_FROM: $SOURCE_BRANCH_FROM"
+          
+          TARGET_BRANCH=${{ github.head_ref }}
+          echo "TARGET_BRANCH: $TARGET_BRANCH"
 
           # Get the source branch from the push
           BRANCH_SOURCE=$(echo $GITHUB_REF | cut -d/ -f3)
