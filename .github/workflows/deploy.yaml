@@ -28,6 +28,7 @@ jobs:
 
       - name: Generate schemas
         run: yarn run tsc:interface
+        run: npm list
 
       - name: Test code
         id: run-tests
@@ -153,6 +154,10 @@ jobs:
           echo "NEW_VERSION is $NEW_VERSION"
           npm version "$NEW_VERSION"
 
+      - name: Push new version to GitHub
+        run: |
+          git push --follow-tags origin HEAD:"$BRANCH"
+
   build:
     needs: build-version
     runs-on: ubuntu-latest
@@ -160,23 +165,20 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
 
-      - name: Cache Yarn dependencies
-        uses: actions/cache@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          path: |
-            ~/.cache/yarn
-            node_modules
-            types
-          key: types-${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            types
-            node-modules-
-            ${{ runner.os }}-
+          node-version: 18.x
 
-      - name: Get Version
-        run: |
-          GET_VERSION=$(node -p -e "require('./package.json').version")
-          echo "GET_VERSION is ${GET_VERSION}"
+      - name: Pull new version to GitHub
+        run: git pull
+
+      - name: Install dependencies
+        id: install
+        run: yarn install
+
+      - name: Generate schemas
+        run: yarn run tsc:interface
 
       - name: Build library
         run: yarn run build
@@ -199,21 +201,6 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
-
-      - name: Cache Yarn dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/yarn
-            node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Get Version
-        run: |
-          GET_VERSION=$(node -p -e "require('./package.json').version")
-          echo "GET_VERSION is ${GET_VERSION}"
 
       - name: Get build artifacts
         uses: actions/download-artifact@v3
