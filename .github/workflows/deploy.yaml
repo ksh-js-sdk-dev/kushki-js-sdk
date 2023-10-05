@@ -28,6 +28,9 @@ jobs:
 
       - name: Generate schemas
         run: yarn run tsc:interface
+
+      - name: List the state of node modules
+        continue-on-error: true
         run: npm list
 
       - name: Test code
