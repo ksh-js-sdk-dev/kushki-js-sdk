@@ -55,10 +55,6 @@ describe("Payment test", () => {
   };
 
   const mockInputFieldCardNumber = () => {
-    KushkiHostedFields.mock.calls[0][0].handleOnChange(
-      InputModelEnum.CARD_NUMBER,
-      "4242424242424242"
-    );
     KushkiHostedFields.mock.calls[0][0].handleOnBinChange("4242424242424242");
   };
 
@@ -121,16 +117,17 @@ describe("Payment test", () => {
   });
 
   it("it should return base URL of uat when Payment has property inTest equal to true", async () => {
-    const cardInstance = await Payment.initCardToken(kushki, options);
+    await Payment.initCardToken(kushki, options);
 
-    KushkiHostedFields.mock.calls[0][0].handleOnChange(
-      "cardholderName",
-      "test"
-    );
     KushkiHostedFields.mock.calls[0][0].handleOnFocus("cardholderName");
     KushkiHostedFields.mock.calls[0][0].handleOnBlur("cardholderName");
 
-    expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
+    expect(typeof KushkiHostedFields.mock.calls[0][0].handleOnFocus).toEqual(
+      "function"
+    );
+    expect(typeof KushkiHostedFields.mock.calls[0][0].handleOnBlur).toEqual(
+      "function"
+    );
   });
 
   it("should set handleOnChange as callback in KushkiHostedFields", async () => {
@@ -140,9 +137,7 @@ describe("Payment test", () => {
     expect(KushkiHostedFields.mock.calls[0][0].selector).toEqual(
       field.selector
     );
-    expect(typeof KushkiHostedFields.mock.calls[0][0].handleOnChange).toEqual(
-      "function"
-    );
+
     expect(typeof KushkiHostedFields.mock.calls[0][0].handleOnFocus).toEqual(
       "function"
     );
@@ -162,7 +157,7 @@ describe("Payment test", () => {
       months: 0
     };
 
-    KushkiHostedFields.mock.calls[4][0].handleOnChange(deferredValue);
+    KushkiHostedFields.mock.calls[4][0].handleOnDeferredChange(deferredValue);
     KushkiHostedFields.mock.calls[4][0].handleOnBlur(deferredValue);
     KushkiHostedFields.mock.calls[4][0].handleOnFocus(deferredValue);
 
@@ -269,11 +264,15 @@ describe("Payment test", () => {
   it("shouldn't call API bin info and deferred options", async function () {
     const paymentInstance = await Payment.initCardToken(kushki, options);
 
-    KushkiHostedFields.mock.calls[0][0].handleOnChange(
-      InputModelEnum.CARD_NUMBER,
-      "424242"
-    );
     KushkiHostedFields.mock.calls[0][0].handleOnBinChange("424242");
+
+    expect(paymentInstance["currentBinHasDeferredOptions"]).toEqual(false);
+  });
+
+  it("shouldn't call API bin info when bin is empty", async function () {
+    const paymentInstance = await Payment.initCardToken(kushki, options);
+
+    KushkiHostedFields.mock.calls[0][0].handleOnBinChange("");
 
     expect(paymentInstance["currentBinHasDeferredOptions"]).toEqual(false);
   });
@@ -411,25 +410,6 @@ describe("Payment test", () => {
       );
     });
 
-    const mockInputFields = () => {
-      KushkiHostedFields.mock.calls[0][0].handleOnChange(
-        InputModelEnum.CARDHOLDER_NAME,
-        "test"
-      );
-      KushkiHostedFields.mock.calls[0][0].handleOnChange(
-        InputModelEnum.CARD_NUMBER,
-        "4242 4242 4242 4242"
-      );
-      KushkiHostedFields.mock.calls[0][0].handleOnChange(
-        InputModelEnum.EXPIRATION_DATE,
-        "12/34"
-      );
-      KushkiHostedFields.mock.calls[0][0].handleOnChange(
-        InputModelEnum.CVV,
-        "123"
-      );
-    };
-
     const mockValidityInputs = () => {
       KushkiHostedFields.mock.calls[0][0].handleOnValidity(
         InputModelEnum.CARDHOLDER_NAME,
@@ -458,7 +438,6 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       const response = await cardInstance.requestToken();
 
@@ -473,9 +452,8 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
-      KushkiHostedFields.mock.calls[4][0].handleOnChange(undefined);
+      KushkiHostedFields.mock.calls[4][0].handleOnDeferredChange(undefined);
 
       const response = await cardInstance.requestToken();
 
@@ -493,9 +471,8 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
-      KushkiHostedFields.mock.calls[4][0].handleOnChange(
+      KushkiHostedFields.mock.calls[4][0].handleOnDeferredChange(
         "incorrect type of value"
       );
 
@@ -515,9 +492,10 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
-      KushkiHostedFields.mock.calls[4][0].handleOnChange({ isDeferred: false });
+      KushkiHostedFields.mock.calls[4][0].handleOnDeferredChange({
+        isDeferred: false
+      });
 
       const response = await cardInstance.requestToken();
 
@@ -535,9 +513,10 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
-      KushkiHostedFields.mock.calls[4][0].handleOnChange(deferredValueDefault);
+      KushkiHostedFields.mock.calls[4][0].handleOnDeferredChange(
+        deferredValueDefault
+      );
 
       const response = await cardInstance.requestToken();
 
@@ -558,11 +537,12 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       deferredValueDefault.isDeferred = true;
       deferredValueDefault.months = 0;
-      KushkiHostedFields.mock.calls[4][0].handleOnChange(deferredValueDefault);
+      KushkiHostedFields.mock.calls[4][0].handleOnDeferredChange(
+        deferredValueDefault
+      );
 
       cardInstance.requestToken().catch((error) => {
         expect(error.code).toEqual("E007");
@@ -608,9 +588,8 @@ describe("Payment test", () => {
       };
 
       mockValidityInputs();
-      mockInputFields();
 
-      KushkiHostedFields.mock.calls[4][0].handleOnChange(deferredValue);
+      KushkiHostedFields.mock.calls[4][0].handleOnDeferredChange(deferredValue);
 
       const response = await cardInstance.requestToken();
 
@@ -630,7 +609,6 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       const response = await cardInstance.requestToken();
 
@@ -655,7 +633,6 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       const response = await cardInstance.requestToken();
 
@@ -686,7 +663,6 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       const response = await cardInstance.requestToken();
 
@@ -713,7 +689,6 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       const response = await cardInstance.requestToken();
 
@@ -739,7 +714,6 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       const response = await cardInstance.requestToken();
 
@@ -763,7 +737,6 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       try {
         await cardInstance.requestToken();
@@ -782,7 +755,6 @@ describe("Payment test", () => {
           isValid: false
         }
       );
-      mockInputFields();
 
       try {
         await cardInstance.requestToken();
@@ -813,7 +785,6 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       try {
         await cardInstance.requestToken();
@@ -846,7 +817,6 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       try {
         await cardInstance.requestToken();
@@ -874,7 +844,6 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       try {
         await cardInstance.requestToken();
@@ -896,7 +865,6 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       try {
         await cardInstance.requestToken();
@@ -931,7 +899,6 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       const response = await cardInstance.requestToken();
 
@@ -965,7 +932,6 @@ describe("Payment test", () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
       mockValidityInputs();
-      mockInputFields();
 
       try {
         await cardInstance.requestToken();
@@ -993,12 +959,8 @@ describe("Payment test", () => {
 
       const cardInstance = await Payment.initCardToken(kushki, options);
 
-      KushkiHostedFields.mock.calls[4][0].handleOnChange(
-        InputModelEnum.OTP,
-        "532"
-      );
+      KushkiHostedFields.mock.calls[4][0].handleOnOtpChange("532");
       mockValidityInputs();
-      mockInputFields();
 
       window.addEventListener = jest
         .fn()
@@ -1018,7 +980,6 @@ describe("Payment test", () => {
       let valueSuccess = "";
 
       mockValidityInputs();
-      mockInputFields();
 
       window.addEventListener = jest
         .fn()
@@ -1046,7 +1007,6 @@ describe("Payment test", () => {
       let valueError = "";
 
       mockValidityInputs();
-      mockInputFields();
 
       window.addEventListener = jest
         .fn()
@@ -1071,29 +1031,8 @@ describe("Payment test", () => {
   });
 
   describe("onFieldValidity - Test", () => {
-    const mockInputsFields = (): void => {
-      KushkiHostedFields.mock.calls[0][0].handleOnChange(
-        InputModelEnum.CARDHOLDER_NAME,
-        "test"
-      );
-      KushkiHostedFields.mock.calls[0][0].handleOnChange(
-        InputModelEnum.CARD_NUMBER,
-        "4242 4242 4242 4242"
-      );
-      KushkiHostedFields.mock.calls[0][0].handleOnChange(
-        InputModelEnum.EXPIRATION_DATE,
-        "12/34"
-      );
-      KushkiHostedFields.mock.calls[0][0].handleOnChange(
-        InputModelEnum.CVV,
-        "123"
-      );
-    };
-
     it("when call onFieldValidity, should set successful input value", async () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
-
-      mockInputsFields();
 
       window.addEventListener = jest
         .fn()
@@ -1109,36 +1048,32 @@ describe("Payment test", () => {
         e;
       });
 
-      expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
+      expect(
+        cardInstance["inputValues"].cardholderName!.validity.isValid
+      ).toEqual(false);
     });
 
     it("when call onFieldFocus, should set successful input value", async () => {
       const cardInstance = await Payment.initCardToken(kushki, options);
 
-      mockInputsFields();
-
       cardInstance.onFieldFocus((e) => {
         e;
       });
 
-      expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
+      expect(
+        cardInstance["inputValues"].cardholderName!.validity.isValid
+      ).toEqual(false);
     });
 
     it("when call handleOnChange should call handleOnValidity successful", async () => {
-      const cardInstance = await Payment.initCardToken(kushki, options);
+      await Payment.initCardToken(kushki, options);
 
-      KushkiHostedFields.mock.calls[0][0].handleOnChange(
-        "cardholderName",
-        "test"
-      );
       KushkiHostedFields.mock.calls[0][0].handleOnValidity(
         InputModelEnum.CARDHOLDER_NAME,
         {
           isValid: false
         }
       );
-
-      expect(cardInstance["inputValues"].cardholderName!.value).toEqual("test");
 
       expect(
         typeof KushkiHostedFields.mock.calls[0][0].handleOnValidity
