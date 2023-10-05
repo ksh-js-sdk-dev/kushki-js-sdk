@@ -173,6 +173,7 @@ jobs:
         with:
           name: dist-files
           path: dist
+        run: ls -al dist
 
       - name: Publish to npm
         env:
