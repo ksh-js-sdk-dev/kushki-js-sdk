@@ -3,12 +3,11 @@
   "title": "SiftScienceObject",
   "properties": {
     "userId": {
-      "type": ["string", "null"]
+      "type": ["string"]
     },
     "sessionId": {
-      "type": ["string", "null"]
+      "type": ["string"]
     }
   },
-  "required": ["userId", "sessionId"],
   "type": "object"
 }

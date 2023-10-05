@@ -27,8 +27,8 @@ export class SiftScienceService implements ISiftScienceService {
       this._validateMerchantSettings(siftEnvironment, merchantSettingsResponse)
     )
       return {
-        sessionId: null,
-        userId: null
+        sessionId: undefined,
+        userId: undefined
       };
 
     const userIdNew: string =
