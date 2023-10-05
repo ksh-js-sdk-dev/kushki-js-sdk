@@ -17,11 +17,11 @@
     "test": "npm run test:unit && npm run test:coverage",
     "validate": "npm run lint && npm run test",
     "cp:package": "cp ./package.json dist",
-    "publish:alpha": "npm publish --tag alpha",
+    "publish:alpha": "npm publish ./dist --tag alpha",
     "publish:latest": "npm publish"
   },
   "files": [
-    "dist/**"
+    "dist"
   ],
   "exports": {
     ".": {

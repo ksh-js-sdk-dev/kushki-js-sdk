@@ -179,7 +179,10 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Get build artifacts
+      - name: Generate schemas
+        run: yarn run tsc:interface
+
+      - name: Get dist artifacts
         uses: actions/download-artifact@v3
         with:
           name: dist-files
@@ -190,4 +193,4 @@ jobs:
           NPM_PUB_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
         run: |
           printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
-          yarn run publish:alpha
+          npm publish ./dist --tag alpha
