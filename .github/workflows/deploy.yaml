@@ -166,9 +166,12 @@ jobs:
           path: |
             ~/.cache/yarn
             node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+            types
+          key: types-${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            types
+            node-modules-
+            ${{ runner.os }}-
 
       - name: Get Version
         run: |
