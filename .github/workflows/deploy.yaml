@@ -168,20 +168,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Get code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18.x
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Generate schemas
-        run: yarn run tsc:interface
-
       - name: Get dist artifacts
         uses: actions/download-artifact@v3
         with:
@@ -193,4 +179,4 @@ jobs:
           NPM_PUB_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
         run: |
           printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
-          npm publish ./dist --tag alpha
+          npm run publish:alpha

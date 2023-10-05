@@ -11,18 +11,16 @@
     "preview": "vite preview --c vite.config-npm.ts",
     "lint:fix": "eslint --fix src/**/*.ts",
     "format": "prettier --write src/**/*.ts --config ./.prettierrc",
+    "prepare": "echo husky install",
     "tsc:interface": "cd json2ts/bin && node kushki json2ts ",
     "test:unit": "jest",
     "test:coverage": "jest --coverage",
     "test": "npm run test:unit && npm run test:coverage",
     "validate": "npm run lint && npm run test",
     "cp:package": "cp ./package.json dist",
-    "publish:alpha": "npm publish ./dist --tag alpha",
-    "publish:latest": "npm publish"
+    "publish:alpha": "cd ./dist && npm publish --tag alpha",
+    "publish:latest": "cd ./dist && npm publish"
   },
-  "files": [
-    "dist"
-  ],
   "exports": {
     ".": {
       "import": "./Kushki.js"
