@@ -167,7 +167,10 @@ jobs:
         run: |
           NEW_VERSION="${{ needs.build-version.outputs.NEW_VERSION }}"
           echo "NEW_VERSION is $NEW_VERSION"
+          echo "TYPE_FORMAT_VERSION is $TYPE_FORMAT_VERSION"
           npm version "$NEW_VERSION"
+        env:
+          TYPE_FORMAT_VERSION: ${{ env.TYPE_FORMAT_VERSION }}
 
       - name: Get Version
         run: |
