@@ -29,6 +29,10 @@ jobs:
       - name: Generate schemas
         run: yarn run tsc:interface
 
+      - name: List the state of node modules
+        continue-on-error: true
+        run: npm list
+
       - name: Test code
         id: run-tests
         run: yarn run validate
@@ -120,6 +124,7 @@ jobs:
               NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}.1"
             fi
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+            echo "handle=$NEW_VERSION" >> "$GITHUB_OUTPUT"
           
           else
             IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
@@ -129,6 +134,7 @@ jobs:
             BRANCH_NUMBER=$BRANCH_NUMBER
             NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+            echo "handle=$NEW_VERSION" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Log GITHUB_ENV
@@ -140,7 +146,20 @@ jobs:
           echo "NEW_VERSION is $NEW_VERSION"          
           echo "IS_NEW_FORMAT is $IS_NEW_FORMAT"
           echo "TYPE_FORMAT_VERSION is $TYPE_FORMAT_VERSION"
-  
+
+      - name: Config Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Set new version in package.json
+        run: |
+          echo "NEW_VERSION is $NEW_VERSION"
+          npm version "$NEW_VERSION"
+
+      - name: Push new version to GitHub
+        run: |
+          git push --follow-tags origin HEAD:"$BRANCH"
 
   build:
     needs: build-version
@@ -149,41 +168,35 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
 
-      - name: Cache Yarn dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/yarn
-            node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
 
-      - name: Set new version in package.json
-        run: |
-          echo "NEW_VERSION is $NEW_VERSION"
-          npm version "$NEW_VERSION"
-        env:
-          NEW_VERSION: ${{ env.NEW_VERSION }}
+      - name: Pull new version to GitHub
+        run: git pull
 
-      - name: Get Version
-        run: |
-          GET_VERSION=$(node -p -e "require('./package.json').version")
-          echo "GET_VERSION is ${GET_VERSION}"
+      - name: Install dependencies
+        id: install
+        run: yarn install
+
+      - name: Generate schemas
+        run: yarn run tsc:interface
 
       - name: Build library
         run: yarn run build
 
-      - name: Upload artifacts
+      - name: Upload artifacts lib
         uses: actions/upload-artifact@v3
         with:
           name: lib-files
           path: lib
+
+      - name: Upload artifacts dist
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files
+          path: dist
 
   deploy-npm:
     needs: build
@@ -192,20 +205,16 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
 
-      - name: Cache Yarn dependencies
-        uses: actions/cache@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          path: |
-            ~/.cache/yarn
-            node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          node-version: 18.x
 
-      - name: Get Version
-        run: |
-          GET_VERSION=$(node -p -e "require('./package.json').version")
-          echo "GET_VERSION is ${GET_VERSION}"
+      - name: Get build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
+          path: ./dist
 
       - name: Publish to npm
         env:
@@ -213,5 +222,5 @@ jobs:
         run: |
           echo "BRANCH $BRANCH"
           printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
-          npm publish --tag alpha --unsafe-perm
+          npm publish ./dist --tag alpha --unsafe-perm
 
