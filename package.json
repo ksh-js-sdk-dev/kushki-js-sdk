@@ -1,6 +1,6 @@
 {
   "name": "@kushki/js-sdk",
-  "version": "0.1.1-COS-2336.6",
+  "version": "0.1.1-COS-2336.7",
   "scripts": {
     "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
     "dev": "cd ./showcase && vite --c vite.config.ts",
@@ -17,11 +17,11 @@
     "test": "npm run test:unit && npm run test:coverage",
     "validate": "npm run lint && npm run test",
     "cp:package": "cp ./package.json dist",
-    "publish:alpha": "npm publish --tag alpha",
+    "publish:alpha": "npm publish ./dist --tag alpha",
     "publish:latest": "npm publish"
   },
   "files": [
-    "dist/**"
+    "dist"
   ],
   "exports": {
     ".": {
