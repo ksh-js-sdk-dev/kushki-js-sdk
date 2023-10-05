@@ -172,14 +172,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist-files
-          path: ./dist
+          path: ./
 
       - name: ls
-        run: ls -al dist
+        run: ls -al ./
 
       - name: Publish to npm
         env:
           NPM_PUB_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
         run: |
           printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
-          npm publish dist --tag alpha
+          npm publish --tag alpha
