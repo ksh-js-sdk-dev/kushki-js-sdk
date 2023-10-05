@@ -1,12 +1,24 @@
-import { Kushki } from "Kushki";
-import {
-  CardOptions,
-  Fields,
-  FieldValidity,
-  FormValidity,
-  Payment,
-  TokenResponse
-} from "../../../src/module";
+// import { Kushki } from "Kushki";
+// import { Kushki } from "@kushki/js-sdk";
+
+// import {
+//   CardOptions,
+//   Fields,
+//   FieldValidity,
+//   FormValidity,
+//   Payment,
+//   TokenResponse
+// } from "../../../src/module";
+
+// import {
+//   CardOptions,
+//   Fields,
+//   FieldValidity,
+//   FormValidity,
+//   Payment,
+//   TokenResponse
+// } from "@kushki/js-sdk/Payment";
+
 import { useEffect, useState } from "react";
 import { TableDemoField } from "../components/TableDemoField";
 import { ErrorTypeEnum } from "../../../src/infrastructure/ErrorTypeEnum.ts";
