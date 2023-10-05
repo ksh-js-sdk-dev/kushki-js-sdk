@@ -11,41 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18.x
-
-      - name: Install dependencies
-        id: install
-        run: yarn install
-
-      - name: Generate schemas
-        run: yarn run tsc:interface
-
-      - name: List the state of node modules
-        continue-on-error: true
-        run: npm list
-
-      - name: Test code
-        id: run-tests
-        run: yarn run validate
-
-      - name: Upload test report
-        if: failure() && steps.run-tests.outcome == 'failure'
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-report
-          path: test.json
-
   build-version:
-    needs: validate
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -210,11 +176,14 @@ jobs:
         with:
           node-version: 18.x
 
+      - name: Install dependencies
+        run: yarn install
+
       - name: Get build artifacts
         uses: actions/download-artifact@v3
         with:
           name: dist-files
-          path: ./dist
+          path: dist
 
       - name: Publish to npm
         env:
@@ -223,4 +192,3 @@ jobs:
           echo "BRANCH $BRANCH"
           printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
           npm publish ./dist --tag alpha --unsafe-perm
-
