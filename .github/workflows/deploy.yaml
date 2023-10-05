@@ -172,7 +172,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist-files
-          path: dist
+          path: ./dist
+
+      - name: ls
         run: ls -al dist
 
       - name: Publish to npm
