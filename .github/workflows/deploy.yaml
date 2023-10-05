@@ -190,5 +190,6 @@ jobs:
           NPM_PUB_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
         run: |
           echo "BRANCH $BRANCH"
+          npm install -g husky 
           printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
-          npm publish ./dist --tag alpha --unsafe-perm
+          yarn run publish:alpha
