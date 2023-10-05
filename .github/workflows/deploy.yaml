@@ -182,4 +182,4 @@ jobs:
           NPM_PUB_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
         run: |
           printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
-          npm run publish:alpha
+          npm publish dist --tag alpha
