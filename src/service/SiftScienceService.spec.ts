@@ -89,7 +89,7 @@ describe("SiftScience Gateway - ", () => {
       merchantSettings
     );
 
-    expect(data).toHaveProperty("userId", null);
-    expect(data).toHaveProperty("sessionId", null);
+    expect(data).toHaveProperty("userId", undefined);
+    expect(data).toHaveProperty("sessionId", undefined);
   });
 });
