@@ -175,7 +175,7 @@ jobs:
           path: ./
 
       - name: ls
-        run: ls -al dist
+        run: ls -al ./
 
       - name: Publish to npm
         env:
