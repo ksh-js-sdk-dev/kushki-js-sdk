@@ -168,11 +168,13 @@ jobs:
         run: |
           echo "NEW_VERSION is $NEW_VERSION"
           npm version "$NEW_VERSION"
+        env:
+          NEW_VERSION: ${{ env.NEW_VERSION }}
 
-      - name: Get current version
+      - name: Get Version
         run: |
           GET_VERSION=$(node -p -e "require('./package.json').version")
-          echo "GET_VERSION=${GET_VERSION}" >> $GITHUB_ENV
+          echo "GET_VERSION is ${GET_VERSION}"
 
       - name: Build library
         run: yarn run build
@@ -203,17 +205,7 @@ jobs:
       - name: Get Version
         run: |
           GET_VERSION=$(node -p -e "require('./package.json').version")
-          echo "GET_VERSION=${GET_VERSION}" >> $GITHUB_ENV
-
-      - name: Log GITHUB_ENV
-        run: |
-          echo "GET_VERSION is $GET_VERSION"          
-          echo "BRANCH is $BRANCH"
-          echo "BRANCH_SOURCE is $BRANCH_SOURCE"
-          echo "BRANCH_NUMBER is $BRANCH_NUMBER"
-          echo "NEW_VERSION is $NEW_VERSION"          
-          echo "IS_NEW_FORMAT is $IS_NEW_FORMAT"
-          echo "TYPE_FORMAT_VERSION is $TYPE_FORMAT_VERSION"
+          echo "GET_VERSION is ${GET_VERSION}"
 
       - name: Publish to npm
         env:
