@@ -120,7 +120,6 @@ jobs:
               NEW_VERSION_MINOR=$((MINOR_VERSION + 1))
               BRANCH_NUMBER=$BRANCH_NUMBER
               NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
-              NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}.1"
             fi
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
             echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"          
@@ -167,7 +166,7 @@ jobs:
 
       - name: Set new version in package.json
         run: |
-          $NEW_VERSION=${{ needs.build-version.outputs.new-version }}
+          NEW_VERSION=${{ needs.build-version.outputs.new-version }}
           echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
           echo "NEW_VERSION is $NEW_VERSION"
           npm version "$NEW_VERSION"
