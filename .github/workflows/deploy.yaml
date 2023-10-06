@@ -113,7 +113,7 @@ jobs:
           echo "IS_NEW_FORMAT is $IS_NEW_FORMAT"
           echo "TYPE_FORMAT_VERSION is $TYPE_FORMAT_VERSION"
 
-     - name: Config Git
+      - name: Config Git
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
