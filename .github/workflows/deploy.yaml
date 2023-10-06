@@ -167,19 +167,17 @@ jobs:
   deploy-npm:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
-      - name: Get dist artifacts
-        uses: actions/download-artifact@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          name: dist-files
-          path: ./
+          audience: sts.amazonaws.com
+          role-to-assume: arn:aws:iam::732306726995:role/GitHubActionsCloudFrontFull
+          aws-region: us-east-1
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
 
-      - name: ls
-        run: ls -al ./
-
-      - name: Publish to npm
-        env:
-          NPM_PUB_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
-        run: |
-          printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
-          npm publish --tag alpha
+      - name: Invalidate CloudFront Cache
+        run: aws cloudfront create-invalidation --distribution-id E3MTSN9SMDYQ23 --paths "/*"
