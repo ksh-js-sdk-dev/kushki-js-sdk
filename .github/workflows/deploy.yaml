@@ -131,9 +131,9 @@ jobs:
       contents: read
     steps:
       - name: Get current version
-          run: |
-            GET_VERSION=$(node -p -e "require('./package.json').version")
-            echo "GET_VERSION is ${GET_VERSION}"
+        run: |
+          GET_VERSION=$(node -p -e "require('./package.json').version")
+          echo "GET_VERSION is ${GET_VERSION}"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -143,7 +143,5 @@ jobs:
           aws-region: us-east-1
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
 
-      - name: Invalidate CloudFront Cache
-        run: aws cloudfront create-invalidation --distribution-id E3MTSN9SMDYQ23 --paths "/*"
       - name: Invalidate CloudFront Cache
         run: aws cloudfront create-invalidation --distribution-id E3MTSN9SMDYQ23 --paths "/*"
