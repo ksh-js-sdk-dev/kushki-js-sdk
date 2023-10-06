@@ -133,7 +133,11 @@ jobs:
       - name: Get current version
         run: |
           GET_VERSION=$(node -p -e "require('./package.json').version")
-          echo "GET_VERSION is ${GET_VERSION}"
+          ls -al ./
+          echo "GET_VERSION=${GET_VERSION}" >> $GITHUB_ENV
+          echo "GET_VERSION is $GET_VERSION"
+          export LIBRARY_VERSION=$(cat package.json | grep version)
+          echo "LIBRARY_VERSION is ${LIBRARY_VERSION}"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
