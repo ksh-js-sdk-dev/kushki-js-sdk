@@ -129,11 +129,12 @@ export class Payment implements IPayment {
       );
 
       if (jwt) {
-        return await this.request3DSToken(
+        const tokenResponseGenerated : TokenResponse = await this.request3DSToken(
           jwt,
           merchantSettings,
           siftScienceSession
         );
+        return this.buildTokenResponse(tokenResponseGenerated);
       } else {
         const cardTokenResponse: CardTokenResponse =
           await this.requestTokenGateway(
@@ -151,12 +152,14 @@ export class Payment implements IPayment {
             cardTokenResponse.secureId
           );
 
-        if (inputOTPValidation !== undefined) return inputOTPValidation;
+        if (inputOTPValidation !== undefined) return this.buildTokenResponse(inputOTPValidation);
 
-        return Promise.resolve({
+        const tokenResponse : TokenResponse = this.buildTokenResponse({
           deferred: deferredValues,
           token: cardTokenResponse.token
         });
+
+        return Promise.resolve(tokenResponse);
       }
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
@@ -277,6 +280,30 @@ export class Payment implements IPayment {
     dispatchEvent(eventFormValidity);
 
     return this.buildFieldsValidity(this.inputValues, undefined, formValid);
+  }
+
+  private buildTokenResponse = (tokenResponseRaw : TokenResponse) : TokenResponse => {
+    const tokenResponseCreated : TokenResponse = { token: tokenResponseRaw.token};
+
+    if(!tokenResponseRaw.deferred)
+      return tokenResponseCreated;
+
+    if(tokenResponseRaw.deferred.creditType === "")
+      return tokenResponseCreated;
+
+    if(tokenResponseRaw.deferred.creditType === "all"){
+      tokenResponseCreated.deferred = {
+        months: tokenResponseRaw.deferred.months
+      }
+    }else {
+      tokenResponseCreated.deferred = {
+        graceMonths: tokenResponseRaw.deferred.graceMonths,
+        months: tokenResponseRaw.deferred.months,
+        creditType: tokenResponseRaw.deferred.creditType
+      }
+    }
+
+    return tokenResponseCreated;
   }
 
   private async request3DSToken(
@@ -594,6 +621,24 @@ export class Payment implements IPayment {
       return deferredValuesAreValid;
     }
 
+    const deferredTypeIsSelected: boolean = deferredValues.creditType !== "";
+
+    deferredValuesAreValid =
+        Boolean(deferredValues.isDeferred) && deferredTypeIsSelected;
+
+    this.inputValues.deferred.validity.isValid = deferredValuesAreValid;
+
+    if (!deferredValuesAreValid) {
+      this.inputValues.deferred.validity.errorType =
+          ErrorTypeEnum.DEFERRED_TYPE_REQUERED;
+      this.inputValues.deferred?.hostedField?.updateProps({
+        deferredOptions: {
+          isValid: false
+        }
+      });
+      return deferredValuesAreValid;
+    }
+
     const deferredMonthsIsSelected: boolean = deferredValues.months !== 0;
 
     deferredValuesAreValid =
@@ -604,6 +649,11 @@ export class Payment implements IPayment {
     if (!deferredValuesAreValid) {
       this.inputValues.deferred.validity.errorType =
         ErrorTypeEnum.DEFERRED_MONTHS_REQUERED;
+      this.inputValues.deferred?.hostedField?.updateProps({
+        deferredOptions: {
+          isValid: false
+        }
+      });
     }
 
     return deferredValuesAreValid;
@@ -781,7 +831,6 @@ export class Payment implements IPayment {
       validity: { isValid: true },
       value: values
     });
-
     this.inputValues.deferred!.value = deferredValues;
 
     if (deferredValues.isDeferred) {
@@ -853,7 +902,6 @@ export class Payment implements IPayment {
         }
       };
     }
-
     if (this.inputValues.deferred) {
       this.inputValues.deferred.validity = { isValid: true };
     }

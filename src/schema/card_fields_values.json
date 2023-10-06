@@ -30,7 +30,7 @@
         },
         "errorType": {
           "type": "string",
-          "enum": ["empty", "invalid", "number of months required"]
+          "enum": ["empty", "invalid", "number of months required", "credit type required"]
         }
       },
       "required": ["isValid"]

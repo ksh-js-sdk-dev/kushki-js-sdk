@@ -1,5 +1,10 @@
 import { Kushki } from "Kushki";
-import { CardOptions, Field, Payment, TokenResponse } from "./index.ts";
+import {
+  CardOptions,
+  Field,
+  Payment,
+  TokenResponse
+} from "./index.ts";
 import KushkiHostedFields from "libs/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { CONTAINER } from "infrastructure/Container.ts";

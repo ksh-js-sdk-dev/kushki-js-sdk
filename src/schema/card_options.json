@@ -16,15 +16,6 @@
         "container": {
           "$ref": "#/definitions/cssProperties"
         },
-        "checkbox": {
-          "$ref": "#/definitions/cssProperties"
-        },
-        "select": {
-          "$ref": "#/definitions/cssProperties"
-        },
-        "option": {
-          "$ref": "#/definitions/cssProperties"
-        },
         "cardholderName": {
           "$ref": "#/definitions/cssProperties"
         },
@@ -38,25 +29,7 @@
           "$ref": "#/definitions/cssProperties"
         },
         "deferred": {
-          "type": "object",
-          "title": "DeferredStyles",
-          "properties": {
-            "container": {
-              "$ref": "#/definitions/cssProperties"
-            },
-            "checkbox": {
-              "$ref": "#/definitions/cssHostedField"
-            },
-            "creditType": {
-              "$ref": "#/definitions/cssHostedField"
-            },
-            "months": {
-              "$ref": "#/definitions/cssHostedField"
-            },
-            "graceMonths": {
-              "$ref": "#/definitions/cssHostedField"
-            }
-          }
+          "$ref": "#/definitions/cssProperties"
         },
         "otp": {
           "$ref": "#/definitions/cssProperties"
@@ -185,30 +158,6 @@
         }
       },
       "required": ["selector"]
-    },
-    "cssHostedField": {
-      "type": "object",
-      "title": "CssHostedField",
-      "properties": {
-        "input": {
-          "$ref": "#/definitions/cssProperties"
-        },
-        "label": {
-          "$ref": "#/definitions/cssProperties"
-        },
-        "container": {
-          "$ref": "#/definitions/cssProperties"
-        },
-        "checkbox": {
-          "$ref": "#/definitions/cssProperties"
-        },
-        "select": {
-          "$ref": "#/definitions/cssProperties"
-        },
-        "option": {
-          "$ref": "#/definitions/cssProperties"
-        }
-      }
     },
     "cssProperties": {
       "title": "CssProperties",
