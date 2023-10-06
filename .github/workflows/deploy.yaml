@@ -242,7 +242,7 @@ jobs:
 
       - name: upload file AWS S3
         run: |
-          $NEW_VERSION=${{ needs.build.outputs.new-version }}
+          NEW_VERSION=${{ needs.build.outputs.new-version }}
           echo "NEW_VERSION is $NEW_VERSION"
           aws s3 sync ./lib s3://js-sdk-build-gha-demo/"$NEW_VERSION"
 
