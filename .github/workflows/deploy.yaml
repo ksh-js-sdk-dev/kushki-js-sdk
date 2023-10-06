@@ -15,6 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      handle: ${{ steps.version.outputs.handle }}
+      new-version: ${{ steps.version.outputs.NEW_VERSION }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -59,6 +62,7 @@ jobs:
           echo "IS_NEW_FORMAT=${IS_NEW_FORMAT}" >> $GITHUB_ENV
 
       - name: Set Version
+        id: version
         run: |
           CURRENT_VERSION=$GET_VERSION
           if [[ $IS_NEW_FORMAT == "true" ]]; then
@@ -91,7 +95,6 @@ jobs:
             fi
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
             echo "handle=$NEW_VERSION" >> "$GITHUB_OUTPUT"
-            echo "::set-output name=new_version::$NEW_VERSION"
           
           else
             IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
@@ -102,7 +105,6 @@ jobs:
             NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
             echo "handle=$NEW_VERSION" >> "$GITHUB_OUTPUT"
-            echo "::set-output name=new_version::$NEW_VERSION"
           fi
 
       - name: Log GITHUB_ENV
@@ -142,16 +144,6 @@ jobs:
           ls -al ./
           GET_VERSION=$(node -p -e "require('./package.json').version")
           echo "GET_VERSION is ${GET_VERSION}"
-          echo "new version ${{ needs.build-version.outputs.new_version }}"
+          echo "NEW_VERSION is $NEW_VERSION"
+          echo "new version ${{ needs.build-version.outputs.new-version }}"
           echo "handle ${{ needs.build-version.outputs.handle }}"      
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          audience: sts.amazonaws.com
-          role-to-assume: arn:aws:iam::732306726995:role/GitHubActionsCloudFrontFull
-          aws-region: us-east-1
-          role-session-name: GitHub_to_AWS_via_FederatedOIDC
-
-      - name: Invalidate CloudFront Cache
-        run: aws cloudfront create-invalidation --distribution-id E3MTSN9SMDYQ23 --paths "/*"
