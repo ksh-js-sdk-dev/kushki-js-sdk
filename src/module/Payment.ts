@@ -68,6 +68,7 @@ export class Payment implements IPayment {
   private readonly listenerFieldSubmit: string = "fieldSubmit";
   private readonly otpValidation: string = "otpValidation";
   private readonly otpInputOTP: string = "onInputOTP";
+  private readonly deferredDefaultWidth: number = 300;
   private firstHostedFieldType: string = "";
 
   private constructor(kushkiInstance: Kushki, options: CardOptions) {
@@ -298,7 +299,11 @@ export class Payment implements IPayment {
     };
 
     /* istanbul ignore next */
-    if (!tokenResponseRaw.deferred) return tokenResponseCreated;
+    if (
+      !tokenResponseRaw.deferred ||
+      tokenResponseRaw.deferred.creditType === ""
+    )
+      return tokenResponseCreated;
 
     if (tokenResponseRaw.deferred.creditType === "all") {
       tokenResponseCreated.deferred = {
@@ -847,14 +852,14 @@ export class Payment implements IPayment {
     if (deferredValues.isDeferred) {
       this.inputValues.deferred?.hostedField?.resize({
         height: 125,
-        width: 250
+        width: this.deferredDefaultWidth
       });
     }
 
     if (deferredValues.isDeferred && deferredValues.creditType !== "") {
       this.inputValues.deferred?.hostedField?.resize({
         height: 160,
-        width: 250
+        width: this.deferredDefaultWidth
       });
     }
   }
@@ -1021,7 +1026,7 @@ export class Payment implements IPayment {
 
     return new Promise<void>((resolve, reject) => {
       this.inputValues.deferred?.hostedField
-        ?.resize({ height: 75, width: 250 })
+        ?.resize({ height: 75, width: this.deferredDefaultWidth })
         .then(() => this.inputValues.deferred?.hostedField?.hide())
         .then(() => resolve())
         .catch((error: any) => reject(error));

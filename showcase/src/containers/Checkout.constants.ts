@@ -85,19 +85,20 @@ export const hostedFieldsStyles: Styles = {
   },
   label: ".kushki-hosted-field-label",
   deferred: {
-    fontSize: "12px",
+    fontSize: "14px",
     "&#ksh-deferred-checkbox>label": {
       width: "max-content",
-      fontSize: "15px"
+      fontFamily: "Arial,Verdana,Tahoma",
+      fontSize: "14px",
     },
     "&#ksh-deferred-creditType":{
-      width: "240px"
+      width: "290px"
     },
     "&#ksh-deferred-months":{
-      width: "110px"
+      width: "140px"
     },
     "&#ksh-deferred-graceMonths":{
-      width: "125px"
+      width: "140px"
     },
   }
 };
