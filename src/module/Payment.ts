@@ -129,10 +129,9 @@ export class Payment implements IPayment {
       );
 
       if (jwt) {
-        const tokenResponseGenerated: TokenResponse =
-          await this.request3DSToken(jwt, merchantSettings, siftScienceSession);
-
-        return this.buildTokenResponse(tokenResponseGenerated);
+        return this.buildTokenResponse(
+          await this.request3DSToken(jwt, merchantSettings, siftScienceSession)
+        );
       } else {
         const cardTokenResponse: CardTokenResponse =
           await this.requestTokenGateway(
@@ -153,12 +152,10 @@ export class Payment implements IPayment {
         if (inputOTPValidation !== undefined)
           return this.buildTokenResponse(inputOTPValidation);
 
-        const tokenResponse: TokenResponse = this.buildTokenResponse({
+        return Promise.resolve(this.buildTokenResponse({
           deferred: deferredValues,
           token: cardTokenResponse.token
-        });
-
-        return Promise.resolve(tokenResponse);
+        }));
       }
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
