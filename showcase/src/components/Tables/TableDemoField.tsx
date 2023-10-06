@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Payment } from "../../../src/module";
-import { Fields } from "../../../types/form_validity";
+import { useState } from "react";
+import { Payment } from "../../../../src/module";
+import { Fields } from "../../../../types/form_validity";
 
 export interface ITableDemoField {
   fieldType: string;
