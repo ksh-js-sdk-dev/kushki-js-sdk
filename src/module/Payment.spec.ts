@@ -1,10 +1,5 @@
 import { Kushki } from "Kushki";
-import {
-  CardOptions,
-  Field,
-  Payment,
-  TokenResponse
-} from "./index.ts";
+import { CardOptions, Field, Payment, TokenResponse } from "./index.ts";
 import KushkiHostedFields from "libs/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { CONTAINER } from "infrastructure/Container.ts";
@@ -507,6 +502,43 @@ describe("Payment test", () => {
       expect(KushkiHostedFields.mock.calls[4][0].fieldType).toEqual(
         InputModelEnum.DEFERRED
       );
+      expect(response.token).toEqual(tokenMock);
+    });
+
+    it("it should execute Payment token request but credit type is empty", async () => {
+      options.fields.deferred = {
+        selector: "id_test"
+      };
+
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      mockValidityInputs();
+
+      KushkiHostedFields.mock.calls[4][0].handleOnDeferredChange({
+        creditType: "",
+        isDeferred: true
+      });
+
+      try {
+        await cardInstance.requestToken();
+      } catch (error: any) {
+        expect(error.message).toEqual("Error en la validación del formulario");
+      }
+    });
+
+    it("it should execute Payment token request but deferred is undefined", async () => {
+      options.fields.deferred = {
+        selector: "id_test"
+      };
+
+      const cardInstance = await Payment.initCardToken(kushki, options);
+
+      mockValidityInputs();
+
+      KushkiHostedFields.mock.calls[4][0].handleOnDeferredChange(undefined);
+
+      const response = await cardInstance.requestToken();
+
       expect(response.token).toEqual(tokenMock);
     });
 

@@ -1,6 +1,6 @@
 import {
   buildCssStyle,
-  buildCssStyleDeclaration,
+  buildCssStyleDeclaration
 } from "utils/BuildCssStyle.ts";
 import { Styles } from "types/card_options";
 
@@ -39,9 +39,7 @@ describe("Test CSS Utils", function () {
   describe("Test method buildCssStyle", function () {
     test("should build object styles", () => {
       const styles: Styles = {
-        deferred: {
-          container: ".test"
-        },
+        deferred: ".test",
         input: ".test"
       };
 
@@ -52,7 +50,7 @@ describe("Test CSS Utils", function () {
       expect(stylesCreated.input!.color).toEqual("red");
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      expect(stylesCreated.deferred?.container!.color).toEqual("red");
+      expect(stylesCreated.deferred?.color).toEqual("red");
     });
   });
 });

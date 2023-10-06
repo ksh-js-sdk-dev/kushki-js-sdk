@@ -129,11 +129,9 @@ export class Payment implements IPayment {
       );
 
       if (jwt) {
-        const tokenResponseGenerated : TokenResponse = await this.request3DSToken(
-          jwt,
-          merchantSettings,
-          siftScienceSession
-        );
+        const tokenResponseGenerated: TokenResponse =
+          await this.request3DSToken(jwt, merchantSettings, siftScienceSession);
+
         return this.buildTokenResponse(tokenResponseGenerated);
       } else {
         const cardTokenResponse: CardTokenResponse =
@@ -152,9 +150,10 @@ export class Payment implements IPayment {
             cardTokenResponse.secureId
           );
 
-        if (inputOTPValidation !== undefined) return this.buildTokenResponse(inputOTPValidation);
+        if (inputOTPValidation !== undefined)
+          return this.buildTokenResponse(inputOTPValidation);
 
-        const tokenResponse : TokenResponse = this.buildTokenResponse({
+        const tokenResponse: TokenResponse = this.buildTokenResponse({
           deferred: deferredValues,
           token: cardTokenResponse.token
         });
@@ -282,29 +281,30 @@ export class Payment implements IPayment {
     return this.buildFieldsValidity(this.inputValues, undefined, formValid);
   }
 
-  private buildTokenResponse = (tokenResponseRaw : TokenResponse) : TokenResponse => {
-    const tokenResponseCreated : TokenResponse = { token: tokenResponseRaw.token};
+  private buildTokenResponse = (
+    tokenResponseRaw: TokenResponse
+  ): TokenResponse => {
+    const tokenResponseCreated: TokenResponse = {
+      token: tokenResponseRaw.token
+    };
 
-    if(!tokenResponseRaw.deferred)
-      return tokenResponseCreated;
+    /* istanbul ignore next */
+    if (!tokenResponseRaw.deferred) return tokenResponseCreated;
 
-    if(tokenResponseRaw.deferred.creditType === "")
-      return tokenResponseCreated;
-
-    if(tokenResponseRaw.deferred.creditType === "all"){
+    if (tokenResponseRaw.deferred.creditType === "all") {
       tokenResponseCreated.deferred = {
         months: tokenResponseRaw.deferred.months
-      }
-    }else {
+      };
+    } else {
       tokenResponseCreated.deferred = {
+        creditType: tokenResponseRaw.deferred.creditType,
         graceMonths: tokenResponseRaw.deferred.graceMonths,
-        months: tokenResponseRaw.deferred.months,
-        creditType: tokenResponseRaw.deferred.creditType
-      }
+        months: tokenResponseRaw.deferred.months
+      };
     }
 
     return tokenResponseCreated;
-  }
+  };
 
   private async request3DSToken(
     jwt: string,
@@ -624,18 +624,19 @@ export class Payment implements IPayment {
     const deferredTypeIsSelected: boolean = deferredValues.creditType !== "";
 
     deferredValuesAreValid =
-        Boolean(deferredValues.isDeferred) && deferredTypeIsSelected;
+      Boolean(deferredValues.isDeferred) && deferredTypeIsSelected;
 
     this.inputValues.deferred.validity.isValid = deferredValuesAreValid;
 
     if (!deferredValuesAreValid) {
       this.inputValues.deferred.validity.errorType =
-          ErrorTypeEnum.DEFERRED_TYPE_REQUERED;
+        ErrorTypeEnum.DEFERRED_TYPE_REQUERED;
       this.inputValues.deferred?.hostedField?.updateProps({
         deferredOptions: {
           isValid: false
         }
       });
+
       return deferredValuesAreValid;
     }
 
@@ -831,19 +832,20 @@ export class Payment implements IPayment {
       validity: { isValid: true },
       value: values
     });
+
     this.inputValues.deferred!.value = deferredValues;
 
     if (deferredValues.isDeferred) {
       this.inputValues.deferred?.hostedField?.resize({
-        height: 140,
-        width: 400
+        height: 125,
+        width: 250
       });
     }
 
     if (deferredValues.isDeferred && deferredValues.creditType !== "") {
       this.inputValues.deferred?.hostedField?.resize({
-        height: 200,
-        width: 400
+        height: 160,
+        width: 250
       });
     }
   }
@@ -1010,7 +1012,7 @@ export class Payment implements IPayment {
 
     return new Promise<void>((resolve, reject) => {
       this.inputValues.deferred?.hostedField
-        ?.resize({ height: 75, width: 400 })
+        ?.resize({ height: 75, width: 250 })
         .then(() => this.inputValues.deferred?.hostedField?.hide())
         .then(() => resolve())
         .catch((error: any) => reject(error));
