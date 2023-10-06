@@ -511,7 +511,44 @@ describe("Card test", () => {
       expect(response.token).toEqual(tokenMock);
     });
 
-    it("it should execute Card token request but deferred values are correct", async () => {
+    it("it should execute Payment token request but credit type is empty", async () => {
+      options.fields.deferred = {
+        selector: "id_test"
+      };
+
+      const cardInstance = await initCardToken(kushki, options);
+
+      mockValidityInputs();
+
+      KushkiHostedFields.mock.calls[4][0].handleOnDeferredChange({
+        creditType: "",
+        isDeferred: true
+      });
+
+      try {
+        await cardInstance.requestToken();
+      } catch (error: any) {
+        expect(error.message).toEqual("Error en la validación del formulario");
+      }
+    });
+
+    it("it should execute Payment token request but deferred is undefined", async () => {
+      options.fields.deferred = {
+        selector: "id_test"
+      };
+
+      const cardInstance = await initCardToken(kushki, options);
+
+      mockValidityInputs();
+
+      KushkiHostedFields.mock.calls[4][0].handleOnDeferredChange(undefined);
+
+      const response = await cardInstance.requestToken();
+
+      expect(response.token).toEqual(tokenMock);
+    });
+
+    it("it should execute Payment token request but deferred values are correct", async () => {
       options.fields.deferred = {
         selector: "id_test"
       };

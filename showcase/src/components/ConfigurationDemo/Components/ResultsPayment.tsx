@@ -12,7 +12,6 @@ const ResultsPayment = ({
   getToken,
   deferredValues,
   token,
-  errorHostedFields,
   disablePaymentButton
 }: IResultsPaymentProps) => {
   const hasToken: boolean = token !== "";
@@ -26,7 +25,7 @@ const ResultsPayment = ({
           className={"mui-btn mui-btn--primary mui-btn--small button-border"}
           data-testid="tokenRequestBtn"
           onClick={() => getToken()}
-          disabled={errorHostedFields || disablePaymentButton}
+          disabled={disablePaymentButton}
         >
           Pagar
         </button>

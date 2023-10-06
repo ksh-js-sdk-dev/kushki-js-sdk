@@ -84,85 +84,21 @@ export const hostedFieldsStyles: Styles = {
     }
   },
   label: ".kushki-hosted-field-label",
-  select: ".kushki-hosted-field-select",
   deferred: {
-    container: {
-      position: "relative",
-      display: "grid",
-      gridTemplateColumns: "50%",
-      gridTemplateRows: "1fr"
+    fontSize: "12px",
+    "&#ksh-deferred-checkbox>label": {
+      width: "max-content",
+      fontSize: "15px"
     },
-    checkbox: {
-      container: {
-        position: "relative",
-        marginBottom: "20px",
-        gridRow: "1",
-        gridColumns: "1"
-      },
-      input: {
-        borderRadius: "10px",
-        padding: "10px",
-        border: "1px solid #ccc",
-        width: "18px",
-        height: "18px"
-      },
-      label: {
-        background: "white",
-        fontFamily: "Arial,Verdana,Tahoma",
-        fontWeight: "500",
-        paddingLeft: "5px",
-        paddingRight: "5px"
-      }
+    "&#ksh-deferred-creditType":{
+      width: "240px"
     },
-    creditType: {
-      container: {
-        border: "none",
-        position: "relative",
-        marginBottom: "10px",
-        gridRow: "2",
-        gridColumns: "1"
-      }
+    "&#ksh-deferred-months":{
+      width: "110px"
     },
-    months: {
-      container: {
-        border: "none",
-        position: "relative",
-        width: "175px",
-        gridRow: "3",
-        gridColumns: "1"
-      },
-      select: {
-        fontFamily: "IBM Plex sans-serif",
-        width: "175px",
-        padding: "10px",
-        outline: "none",
-        fontSize: "18px",
-        fontWeight: "400",
-        border: "none",
-        borderBottom: "1px solid #ccc",
-        "&:focus": {
-          borderBottom: "2px solid #2196F3"
-        }
-      }
+    "&#ksh-deferred-graceMonths":{
+      width: "125px"
     },
-    graceMonths: {
-      container: {
-        position: "relative",
-        width: "175px",
-        gridRow: "3",
-        gridColumns: "1"
-      },
-      select: {
-        fontFamily: "IBM Plex sans-serif",
-        width: "175px",
-        padding: "10px",
-        outline: "none",
-        fontSize: "18px",
-        fontWeight: "400",
-        borderRadius: "10px",
-        border: "1px solid #ccc"
-      }
-    }
   }
 };
 
