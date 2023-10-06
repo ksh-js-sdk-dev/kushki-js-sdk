@@ -1,3 +1,5 @@
+export * from "./index.ts";
+
 import { KushkiGateway } from "gateway/KushkiGateway.ts";
 import { CONTAINER } from "infrastructure/Container.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";

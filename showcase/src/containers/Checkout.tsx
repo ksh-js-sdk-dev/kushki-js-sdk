@@ -1,5 +1,5 @@
 // import { Kushki } from "Kushki";
-// import { Kushki } from "@kushki/js-sdk";
+import { Kushki } from "@kushki/js-sdk";
 
 // import {
 //   CardOptions,
@@ -10,14 +10,14 @@
 //   TokenResponse
 // } from "../../../src/module";
 
-// import {
-//   CardOptions,
-//   Fields,
-//   FieldValidity,
-//   FormValidity,
-//   Payment,
-//   TokenResponse
-// } from "@kushki/js-sdk/Payment";
+import {
+  CardOptions,
+  Fields,
+  FieldValidity,
+  FormValidity,
+  Payment,
+  TokenResponse
+} from "@kushki/js-sdk/Payment";
 
 import { useEffect, useState } from "react";
 import { TableDemoField } from "../components/TableDemoField";
@@ -281,7 +281,6 @@ export const CheckoutContainer = () => {
             )}
           </>
         )}
-
 
         <div id="otp_id"></div>
         {errorOTP.length > 0 && <div>El código OTP es incorrecto</div>}

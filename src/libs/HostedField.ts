@@ -36,7 +36,8 @@ const KushkiHostedFields = zoid.create({
     };
   },
   tag: KUSHKI_HOSTED_FIELD_EVENT,
-  url: "http://localhost:5173"
+  // url: "http://localhost:5173"
+  url: "https://qa-spa-js-inputs.kushkipagos.blue"
 });
 
 export default KushkiHostedFields;

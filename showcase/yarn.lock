@@ -1670,10 +1670,8 @@
   resolved "https://registry.yarnpkg.com/@kushki/cardinal-sandbox-js/-/cardinal-sandbox-js-1.0.4.tgz#9fa6934419bb6fb969b27f634cd1eef051143d0c"
   integrity sha512-Mobzd4YiU9+Pvfmg+nP/b2INV+PkFnx1GTZyYzVg5b1A94QVKoaRP+ubd28AYgZSBwHhJ0yrwk5BMIdxjr7eUg==
 
-"@kushki/js-sdk@0.1.1-14195.1":
-  version "0.1.1-14195.1"
-  resolved "https://registry.yarnpkg.com/@kushki/js-sdk/-/js-sdk-0.1.1-14195.1.tgz#32a40215ee033d4b8657b1580a7c861c8960d70f"
-  integrity sha512-0fZuwB9Vqmil6p0WnEa3OLfZw15eTDgZdfYl1pYUDboWG6rBSDsWROPnln9y0c4gug/ek/zT/DCCPehuZlnS4Q==
+"@kushki/js-sdk@../dist":
+  version "0.1.0-test.3"
   dependencies:
     "@krakenjs/zoid" "^10.3.1"
     "@kushki/cardinal-sandbox-js" "^1.0.4"

@@ -25,7 +25,7 @@ export default defineConfig({
         entryFileNames: (chunkInfo: PreRenderedChunk) => {
           if (chunkInfo.name === "Kushki") return "[name].js";
 
-          return "module/[name]/[name].js";
+          return "module/[name].js";
         }
       }
     }

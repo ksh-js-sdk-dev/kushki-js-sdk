@@ -1,3 +1,5 @@
+export * from "./index.ts";
+
 import { KushkiOptions } from "Kushki";
 import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
 import { SiftScienceEnum } from "infrastructure/SiftScienceEnum";
