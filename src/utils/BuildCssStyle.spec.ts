@@ -1,10 +1,8 @@
 import {
   buildCssStyle,
-  buildCssStyleDeclaration,
-  buildCssStyleFromCssHostedField,
-  getStyleOfDeferred
+  buildCssStyleDeclaration
 } from "utils/BuildCssStyle.ts";
-import { CssHostedField, DeferredStyles, Styles } from "types/card_options";
+import { Styles } from "types/card_options";
 
 describe("Test CSS Utils", function () {
   beforeEach(() => {
@@ -38,58 +36,10 @@ describe("Test CSS Utils", function () {
     });
   });
 
-  describe("Test method buildCssStyleFromCssHostedField", function () {
-    test("should build styles from object", () => {
-      const cssHostedField: CssHostedField = {
-        input: ".test",
-        label: {
-          color: "red"
-        }
-      };
-
-      const style = buildCssStyleFromCssHostedField(cssHostedField);
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      expect(style.input!.color).toEqual("red");
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      expect(style.label!.color).toEqual("red");
-    });
-  });
-
-  describe("Test method getStyleOfDeferred", function () {
-    test("should return a empty object when deferred styles is undefined", () => {
-      const styles = getStyleOfDeferred(undefined);
-
-      expect(styles).toEqual({});
-    });
-
-    test("should build object of styles from deferred styles object", () => {
-      const deferredStyles: DeferredStyles = {
-        container: ".test",
-        creditType: {
-          input: ".test"
-        }
-      };
-
-      const styles = getStyleOfDeferred(deferredStyles);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-
-      expect(styles.container!.color).toEqual("red");
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      expect(styles.creditType!.input!.color).toEqual("red");
-    });
-  });
-
   describe("Test method buildCssStyle", function () {
     test("should build object styles", () => {
       const styles: Styles = {
-        deferred: {
-          container: ".test"
-        },
+        deferred: ".test",
         input: ".test"
       };
 
@@ -100,7 +50,7 @@ describe("Test CSS Utils", function () {
       expect(stylesCreated.input!.color).toEqual("red");
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      expect(stylesCreated.deferred?.container!.color).toEqual("red");
+      expect(stylesCreated.deferred?.color).toEqual("red");
     });
   });
 });

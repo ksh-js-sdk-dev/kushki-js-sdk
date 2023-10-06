@@ -88,7 +88,7 @@ const HostedFields = ({
           )}
           <div id="deferred_id"></div>
           {validError(fieldsValidityDemo, "deferred") && (
-            <div>
+            <div className={"label-hostedFieldError"}>
               {customMessageValidity(
                 "deferred",
                 fieldsValidityDemo.deferred!.errorType! as ErrorTypeEnum

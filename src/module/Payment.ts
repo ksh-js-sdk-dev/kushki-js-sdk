@@ -129,10 +129,8 @@ export class Payment implements IPayment {
       );
 
       if (jwt) {
-        return await this.request3DSToken(
-          jwt,
-          merchantSettings,
-          siftScienceSession
+        return this.buildTokenResponse(
+          await this.request3DSToken(jwt, merchantSettings, siftScienceSession)
         );
       } else {
         const cardTokenResponse: CardTokenResponse =
@@ -151,12 +149,13 @@ export class Payment implements IPayment {
             cardTokenResponse.secureId
           );
 
-        if (inputOTPValidation !== undefined) return inputOTPValidation;
+        if (inputOTPValidation !== undefined)
+          return this.buildTokenResponse(inputOTPValidation);
 
-        return Promise.resolve({
+        return Promise.resolve(this.buildTokenResponse({
           deferred: deferredValues,
           token: cardTokenResponse.token
-        });
+        }));
       }
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
@@ -278,6 +277,31 @@ export class Payment implements IPayment {
 
     return this.buildFieldsValidity(this.inputValues, undefined, formValid);
   }
+
+  private buildTokenResponse = (
+    tokenResponseRaw: TokenResponse
+  ): TokenResponse => {
+    const tokenResponseCreated: TokenResponse = {
+      token: tokenResponseRaw.token
+    };
+
+    /* istanbul ignore next */
+    if (!tokenResponseRaw.deferred) return tokenResponseCreated;
+
+    if (tokenResponseRaw.deferred.creditType === "all") {
+      tokenResponseCreated.deferred = {
+        months: tokenResponseRaw.deferred.months
+      };
+    } else {
+      tokenResponseCreated.deferred = {
+        creditType: tokenResponseRaw.deferred.creditType,
+        graceMonths: tokenResponseRaw.deferred.graceMonths,
+        months: tokenResponseRaw.deferred.months
+      };
+    }
+
+    return tokenResponseCreated;
+  };
 
   private async request3DSToken(
     jwt: string,
@@ -594,6 +618,25 @@ export class Payment implements IPayment {
       return deferredValuesAreValid;
     }
 
+    const deferredTypeIsSelected: boolean = deferredValues.creditType !== "";
+
+    deferredValuesAreValid =
+      Boolean(deferredValues.isDeferred) && deferredTypeIsSelected;
+
+    this.inputValues.deferred.validity.isValid = deferredValuesAreValid;
+
+    if (!deferredValuesAreValid) {
+      this.inputValues.deferred.validity.errorType =
+        ErrorTypeEnum.DEFERRED_TYPE_REQUERED;
+      this.inputValues.deferred?.hostedField?.updateProps({
+        deferredOptions: {
+          isValid: false
+        }
+      });
+
+      return deferredValuesAreValid;
+    }
+
     const deferredMonthsIsSelected: boolean = deferredValues.months !== 0;
 
     deferredValuesAreValid =
@@ -604,6 +647,11 @@ export class Payment implements IPayment {
     if (!deferredValuesAreValid) {
       this.inputValues.deferred.validity.errorType =
         ErrorTypeEnum.DEFERRED_MONTHS_REQUERED;
+      this.inputValues.deferred?.hostedField?.updateProps({
+        deferredOptions: {
+          isValid: false
+        }
+      });
     }
 
     return deferredValuesAreValid;
@@ -786,15 +834,15 @@ export class Payment implements IPayment {
 
     if (deferredValues.isDeferred) {
       this.inputValues.deferred?.hostedField?.resize({
-        height: 140,
-        width: 400
+        height: 125,
+        width: 250
       });
     }
 
     if (deferredValues.isDeferred && deferredValues.creditType !== "") {
       this.inputValues.deferred?.hostedField?.resize({
-        height: 200,
-        width: 400
+        height: 160,
+        width: 250
       });
     }
   }
@@ -853,7 +901,6 @@ export class Payment implements IPayment {
         }
       };
     }
-
     if (this.inputValues.deferred) {
       this.inputValues.deferred.validity = { isValid: true };
     }
@@ -962,7 +1009,7 @@ export class Payment implements IPayment {
 
     return new Promise<void>((resolve, reject) => {
       this.inputValues.deferred?.hostedField
-        ?.resize({ height: 75, width: 400 })
+        ?.resize({ height: 75, width: 250 })
         .then(() => this.inputValues.deferred?.hostedField?.hide())
         .then(() => resolve())
         .catch((error: any) => reject(error));
