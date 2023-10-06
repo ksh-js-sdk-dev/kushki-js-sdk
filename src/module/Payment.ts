@@ -152,10 +152,12 @@ export class Payment implements IPayment {
         if (inputOTPValidation !== undefined)
           return this.buildTokenResponse(inputOTPValidation);
 
-        return Promise.resolve(this.buildTokenResponse({
-          deferred: deferredValues,
-          token: cardTokenResponse.token
-        }));
+        return Promise.resolve(
+          this.buildTokenResponse({
+            deferred: deferredValues,
+            token: cardTokenResponse.token
+          })
+        );
       }
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
@@ -245,8 +247,18 @@ export class Payment implements IPayment {
         OTPEventEnum,
         (error?: KushkiErrorAttr) => void
       > = {
-        [OTPEventEnum.SUCCESS]: onSuccess,
-        [OTPEventEnum.ERROR]: () => onError(errorOTP),
+        [OTPEventEnum.SUCCESS]: () => {
+          onSuccess();
+          this.inputValues.otp?.hostedField?.updateProps({
+            otpValidationError: false
+          });
+        },
+        [OTPEventEnum.ERROR]: () => {
+          this.inputValues.otp?.hostedField?.updateProps({
+            otpValidationError: true
+          });
+          onError(errorOTP);
+        },
         [OTPEventEnum.REQUIRED]: onRequired
       };
 

@@ -74,7 +74,7 @@ const ConfigurationDemo = ({
       [OptionDefaultData.TRX_DECLINED]: () => {
         setInputsAndOptionsHostedField(
           "40f9e34568fa40e39e15c5dddb607075",
-          "CLP",
+          "USD",
           600
         );
       }

@@ -45,28 +45,28 @@ export const hostedFieldsStyles: Styles = {
     border: "1px solid rgba(203, 213, 224, 1)",
     borderRadius: "10px",
     fontFamily: "Arial,Verdana,Tahoma",
-    fontSize: "12px",
+    fontSize: "14px",
     fontWeight: "400",
     outline: "none",
     paddingLeft: "8px",
     boxSizing: "border-box",
-    width: "250px",
-    height: "30px",
+    width: "300px",
+    height: "40px",
     "&::placeholder": {
       fontFamily: "Arial,Verdana,Tahoma",
-      fontSize: "12px",
+      fontSize: "14px",
       color: "rgba(0,0,0,.26)"
     },
     "&:focus": {
       border: "1px solid #0077ff",
       borderRadius: "10px",
       fontFamily: "Arial,Verdana,Tahoma",
-      fontSize: "12px",
+      fontSize: "14px",
       fontWeight: "400",
       outline: "none",
       paddingLeft: "8px",
-      width: "250px",
-      height: "30px"
+      width: "300px",
+      height: "40px"
     },
     "&:focus::placeholder": {
       color: "transparent"
@@ -75,12 +75,12 @@ export const hostedFieldsStyles: Styles = {
       border: "1px solid #B60000",
       borderRadius: "10px",
       fontFamily: "Arial,Verdana,Tahoma",
-      fontSize: "10px",
+      fontSize: "14px",
       fontWeight: "400",
       outline: "none",
-      paddingLeft: "4px",
-      height: "30px",
-      width: "250px"
+      paddingLeft: "8px",
+      height: "40px",
+      width: "300px"
     }
   },
   label: ".kushki-hosted-field-label",
