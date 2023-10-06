@@ -45,6 +45,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      new-version: ${{ steps.version.outputs.new-version }}
+      branch: ${{ steps.version.outputs.branch }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -60,13 +63,13 @@ jobs:
           BRANCH=${{ github.base_ref }}
           IFS='/' read -ra BRANCH_PARTS <<< "$BRANCH"
           echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
           echo "BRANCH_SOURCE=${BRANCH_PARTS[0]}" >> $GITHUB_ENV
           echo "BRANCH_NUMBER=${BRANCH_PARTS[1]}" >> $GITHUB_ENV
 
       - name: Validate version format
         run: |
           CURRENT_VERSION=$GET_VERSION
-          TYPE_FORMAT_VERSION="error"
           if [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]; then
             TYPE_FORMAT_VERSION="latest"
           elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+-[0-9]+\.[0-9]+$ ]; then
@@ -89,6 +92,7 @@ jobs:
           echo "IS_NEW_FORMAT=${IS_NEW_FORMAT}" >> $GITHUB_ENV
 
       - name: Set Version
+        id: version
         run: |
           CURRENT_VERSION=$GET_VERSION
           if [[ $IS_NEW_FORMAT == "true" ]]; then
@@ -117,19 +121,19 @@ jobs:
               NEW_VERSION_MINOR=$((MINOR_VERSION + 1))
               BRANCH_NUMBER=$BRANCH_NUMBER
               NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
-              NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}.1"
             fi
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-  
+            echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"          
+          
           else
             IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
             MAJOR_VERSION="${VERSION_PARTS[0]}"
             MINOR_VERSION="${VERSION_PARTS[1]}"
-            PATCH_VERSION="${VERSION_PARTS[2]}" 
             NEW_VERSION_MINOR=$((MINOR_VERSION + 1))
             BRANCH_NUMBER=$BRANCH_NUMBER
-            NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.${PATCH_VERSION}-${BRANCH_NUMBER}.1"
+            NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+            echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Log GITHUB_ENV
@@ -141,23 +145,12 @@ jobs:
           echo "IS_NEW_FORMAT is $IS_NEW_FORMAT"
           echo "TYPE_FORMAT_VERSION is $TYPE_FORMAT_VERSION"
   
-      - name: Config Git
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-
-      - name: Set new version in package.json
-        run: |
-          echo "NEW_VERSION is $NEW_VERSION"
-          npm version "$NEW_VERSION"
-
-      - name: Push new version to GitHub
-        run: |
-          git push --follow-tags origin HEAD:"$BRANCH"
 
   build:
     needs: build-version
     runs-on: ubuntu-latest
+    outputs:
+      new-version: ${{ steps.version.outputs.new-version }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -167,8 +160,17 @@ jobs:
         with:
           node-version: 18.x
 
-      - name: Pull new version to GitHub
-        run: git pull
+      - name: Config Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Set new version in package.json
+        run: |
+          NEW_VERSION=${{ needs.build-version.outputs.new-version }}
+          echo "NEW_VERSION is $NEW_VERSION"
+          echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          npm version "$NEW_VERSION"
 
       - name: Install dependencies
         run: yarn install
@@ -185,38 +187,36 @@ jobs:
           name: lib-files
           path: lib
 
+      - name: Upload artifacts dist
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files
+          path: dist
+
+      - name: Push new version to GitHub
+        run: |
+          BRANCH=${{ needs.build-version.outputs.branch }}
+          git push --follow-tags origin HEAD:"$BRANCH"
+
   deploy-npm:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Get code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Get dist artifacts
+        uses: actions/download-artifact@v3
         with:
-          node-version: 18.x
-
-      - name: Pull new version to GitHub
-        run: git pull
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Generate schemas
-        run: yarn run tsc:interface
+          name: dist-files
+          path: ./
 
       - name: Publish to npm
         env:
           NPM_PUB_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
         run: |
-          echo "BRANCH $BRANCH"
-          echo "BRANCH ${BRANCH}"
           printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
-          npm publish --tag alpha --unsafe-perm
+          npm publish --tag alpha
 
   deploy-cdn:
-    needs: deploy-npm
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -225,13 +225,13 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
 
-      - name: Get build artifacts
+      - name: Get lib artifacts
         uses: actions/download-artifact@v3
         with:
           name: lib-files
           path: ./lib
 
-      - name: Configure AWS Credentials
+      - name: Configure AWS Credentials S3
         uses: aws-actions/configure-aws-credentials@v4
         with:
           audience: sts.amazonaws.com
@@ -240,4 +240,18 @@ jobs:
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
 
       - name: upload file AWS S3
-        run: aws s3 sync ./lib s3://js-sdk-build-gha-demo/
+        run: |
+          $NEW_VERSION=${{ needs.build.outputs.new-version }}
+          echo "NEW_VERSION is $NEW_VERSION"
+          aws s3 sync ./lib s3://js-sdk-build-gha-demo/"$NEW_VERSION"
+
+      - name: Configure AWS Credentials CloudFront
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          audience: sts.amazonaws.com
+          role-to-assume: arn:aws:iam::732306726995:role/GitHubActionsCloudFrontFull
+          aws-region: us-east-1
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+
+      - name: Invalidate CloudFront Cache
+        run: aws cloudfront create-invalidation --distribution-id E3MTSN9SMDYQ23 --paths "/*"
