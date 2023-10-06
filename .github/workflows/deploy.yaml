@@ -43,8 +43,6 @@ jobs:
   build-version:
     needs: validate
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     outputs:
       new-version: ${{ steps.version.outputs.new-version }}
       branch: ${{ steps.extract-number-branch.outputs.branch }}
@@ -149,6 +147,8 @@ jobs:
   build:
     needs: build-version
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       new-version: ${{ steps.version.outputs.new-version }}
     steps:
