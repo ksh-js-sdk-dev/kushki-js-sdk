@@ -91,6 +91,7 @@ jobs:
             fi
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
             echo "handle=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+            echo "::set-output name=new_version::$NEW_VERSION"
           
           else
             IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
@@ -101,6 +102,7 @@ jobs:
             NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
             echo "handle=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+            echo "::set-output name=new_version::$NEW_VERSION"
           fi
 
       - name: Log GITHUB_ENV
@@ -139,8 +141,9 @@ jobs:
           echo "LIBRARY_VERSION is ${LIBRARY_VERSION}"
           ls -al ./
           GET_VERSION=$(node -p -e "require('./package.json').version")
-          echo "GET_VERSION=${GET_VERSION}" >> $GITHUB_ENV
-          echo "GET_VERSION is $GET_VERSION"
+          echo "GET_VERSION is ${GET_VERSION}"
+          echo "new version ${{ needs.build-version.outputs.new_version }}"
+          echo "handle ${{ needs.build-version.outputs.handle }}"      
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
