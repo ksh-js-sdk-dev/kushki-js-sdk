@@ -15,13 +15,15 @@ const CardNumberHelper = ({
     <>
       {displayHostedFields && (
         <div className={"cardNumberHelp"}>
-          <div className="mui--text-caption">Dato de prueba</div>
-          <div className="mui--text-caption imgCopy">
+          <div className="mui--text-caption cardNumberHelp-text">
+            Dato de prueba
+          </div>
+          <div className="mui--text-caption cardNumberHelp-text">
             {cardNumberHelper}
             <img
               src={CopyIcon}
               alt=""
-              style={{ cursor: "pointer" }}
+              className={"imgCopy"}
               onClick={() => clipboard(cardNumberHelper)}
             />
           </div>

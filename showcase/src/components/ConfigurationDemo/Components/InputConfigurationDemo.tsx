@@ -32,7 +32,7 @@ const InputConfigurationDemo = ({
             (inputProps: any) => (
               <input
                 {...inputProps}
-                className={"inputExample"}
+                className={"input-configuration"}
                 type="text"
                 disabled={disableInputPrev}
                 value={valueInput}
@@ -40,7 +40,7 @@ const InputConfigurationDemo = ({
             )
           }
         </InputMask>
-        <label className={"labelInputExample"}>{label}</label>
+        <label className={"label-input-configuration"}>{label}</label>
       </div>
     </>
   );

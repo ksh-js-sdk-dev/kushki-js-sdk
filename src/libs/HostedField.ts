@@ -11,7 +11,7 @@ import { KUSHKI_HOSTED_FIELD_EVENT } from "src/constant/GlobalEventName.ts";
 const KushkiHostedFields = zoid.create({
   dimensions: {
     height: "55px",
-    width: "250px"
+    width: "300px"
   },
   exports: ({ getExports }: any) => {
     return {
