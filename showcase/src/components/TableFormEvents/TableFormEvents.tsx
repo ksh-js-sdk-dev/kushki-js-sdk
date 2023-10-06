@@ -1,9 +1,9 @@
 import { FieldTypeEnum } from "../../../../types/form_validity";
 import { TableDemoGeneral } from "../Tables/TableDemoGeneral.tsx";
 import { TableDemoField } from "../Tables/TableDemoField.tsx";
-import { Payment } from "../../../../src/module";
+import { Card } from "../../../../src/module/Payments.index.ts";
 export interface ITableFormEventsProps {
-  cardInstance?: Payment;
+  cardInstance?: Card;
 }
 
 const TableFormEvents = ({ cardInstance }: ITableFormEventsProps) => {

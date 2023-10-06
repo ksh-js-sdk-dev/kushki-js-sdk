@@ -4,24 +4,22 @@ import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { FieldOptions } from "infrastructure/interfaces/FieldOptions.ts";
-import {
-  DeferredByBinOptionsResponse,
-  DeferredInputValues,
-  FieldInstance,
-  Kushki
-} from "Kushki";
+import { IKushki } from "Kushki";
 import KushkiHostedFields from "libs/HostedField.ts";
 import {
   CardFieldValues,
   CardOptions,
   CardTokenResponse,
+  DeferredByBinOptionsResponse,
+  DeferredInputValues,
   Field,
+  FieldInstance,
   Fields,
   TokenResponse
-} from "module/index.ts";
+} from "module/Payments.index.ts";
 import "reflect-metadata";
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
-import { IPayment } from "repository/IPayment.ts";
+import { IPayments } from "repository/IPayments.ts";
 import { ISiftScienceService } from "repository/ISiftScienceService.ts";
 import { CREDIT_CARD_ESPECIFICATIONS } from "src/constant/CreditCardEspecifications.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
@@ -54,9 +52,9 @@ declare global {
   }
 }
 
-export class Payment implements IPayment {
+export class Card implements IPayments {
   private readonly options: CardOptions;
-  private readonly kushkiInstance: Kushki;
+  private readonly kushkiInstance: IKushki;
   private inputValues: CardFieldValues;
   private currentBin: string;
   private currentBinHasDeferredOptions: boolean;
@@ -70,7 +68,7 @@ export class Payment implements IPayment {
   private readonly otpInputOTP: string = "onInputOTP";
   private firstHostedFieldType: string = "";
 
-  private constructor(kushkiInstance: Kushki, options: CardOptions) {
+  private constructor(kushkiInstance: IKushki, options: CardOptions) {
     this.options = this.setDefaultValues(options);
     this.kushkiInstance = kushkiInstance;
     this.inputValues = {};
@@ -83,14 +81,14 @@ export class Payment implements IPayment {
   }
 
   public static async initCardToken(
-    kushkiInstance: Kushki,
+    kushkiInstance: IKushki,
     options: CardOptions
-  ): Promise<Payment> {
+  ): Promise<Card> {
     // eslint-disable-next-line no-useless-catch
     try {
       this.validParamsInitCardToken(kushkiInstance, options);
 
-      const payment: Payment = new Payment(kushkiInstance, options);
+      const payment: Card = new Card(kushkiInstance, options);
 
       await payment.initFields(options.fields, options.styles);
 
@@ -1107,7 +1105,7 @@ export class Payment implements IPayment {
   }
 
   private static validParamsInitCardToken(
-    kushkiInstance: Kushki,
+    kushkiInstance: IKushki,
     options: CardOptions
   ): void {
     if (!options || !kushkiInstance) {

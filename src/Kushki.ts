@@ -4,24 +4,26 @@ import { SiftScienceEnum } from "infrastructure/SiftScienceEnum";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { UtilsService } from "service/UtilService.ts";
+import {IKushki} from "repository/IKushki.ts";
 
-export class Kushki {
+export class Kushki implements IKushki {
   private readonly baseUrl: EnvironmentEnum;
   private readonly publicCredentialId: string;
-  private readonly inTest: boolean | undefined;
+  private readonly inTest: boolean;
   private readonly environmentSift: string;
+
   constructor(options: KushkiOptions) {
     this.publicCredentialId = options.publicCredentialId;
-    this.baseUrl = this.initBaseUrl(options.inTest);
-    this.inTest = options.inTest;
-    this.environmentSift = this.initEnvironmentSift(options.inTest);
+    this.baseUrl = this._initBaseUrl(options.inTest);
+    this.inTest = !!options.inTest;
+    this.environmentSift = this._initEnvironmentSift(options.inTest);
   }
 
   public static async init(options: KushkiOptions): Promise<Kushki> {
     try {
       const kushki: Kushki = new Kushki(options);
 
-      this.validParamsKushkiOptions(options);
+      this._validParamsKushkiOptions(options);
 
       return Promise.resolve(kushki);
     } catch (e) {
@@ -41,19 +43,19 @@ export class Kushki {
     return this.environmentSift;
   }
 
-  public isInTest(): boolean | undefined {
+  public isInTest(): boolean {
     return this.inTest;
   }
 
-  private initBaseUrl(inTest?: boolean): EnvironmentEnum {
+  private _initBaseUrl(inTest?: boolean): EnvironmentEnum {
     return inTest ? EnvironmentEnum.uat : EnvironmentEnum.prod;
   }
 
-  private initEnvironmentSift(inTest?: boolean): SiftScienceEnum {
+  private _initEnvironmentSift(inTest?: boolean): SiftScienceEnum {
     return inTest ? SiftScienceEnum.uat : SiftScienceEnum.prod;
   }
 
-  private static validParamsKushkiOptions(options: KushkiOptions): void {
+  private static _validParamsKushkiOptions(options: KushkiOptions): void {
     const isUndefinedPublicCredential: boolean =
       typeof options.publicCredentialId === "undefined";
 

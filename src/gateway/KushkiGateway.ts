@@ -4,7 +4,8 @@ import { BinInfoResponse } from "types/bin_info_response";
 import { PathEnum } from "infrastructure/PathEnum.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import axios from "axios";
-import { DeferredByBinOptionsResponse, Kushki } from "Kushki";
+import { IKushki } from "Kushki";
+import { DeferredByBinOptionsResponse } from "Kushki/payments";
 import { IKushkiGateway } from "repository/IKushkiGateway";
 import { injectable } from "inversify";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
@@ -18,7 +19,7 @@ export class KushkiGateway implements IKushkiGateway {
   private readonly _publicHeader: string = "Public-Merchant-Id";
 
   public requestBinInfo = async (
-    kushkiInstance: Kushki,
+    kushkiInstance: IKushki,
     body: BinBody
   ): Promise<BinInfoResponse> => {
     try {
@@ -39,7 +40,7 @@ export class KushkiGateway implements IKushkiGateway {
   };
 
   public requestDeferredInfo = async (
-    kushkiInstance: Kushki,
+    kushkiInstance: IKushki,
     body: BinBody
   ): Promise<DeferredByBinOptionsResponse[]> => {
     try {
@@ -61,7 +62,7 @@ export class KushkiGateway implements IKushkiGateway {
   };
 
   public requestMerchantSettings = async (
-    kushkiInstance: Kushki
+    kushkiInstance: IKushki
   ): Promise<MerchantSettingsResponse> => {
     const url: string = `${kushkiInstance.getBaseUrl()}${
       PathEnum.merchant_settings
@@ -79,7 +80,7 @@ export class KushkiGateway implements IKushkiGateway {
   };
 
   public requestCybersourceJwt = async (
-    kushkiInstance: Kushki
+    kushkiInstance: IKushki
   ): Promise<CybersourceJwtResponse> => {
     const url: string = `${kushkiInstance.getBaseUrl()}${
       PathEnum.cybersource_jwt
@@ -97,7 +98,7 @@ export class KushkiGateway implements IKushkiGateway {
   };
 
   public requestSecureServiceValidation = async (
-    kushkiInstance: Kushki,
+    kushkiInstance: IKushki,
     body: SecureOtpRequest
   ): Promise<SecureOtpResponse> => {
     const url: string = `${kushkiInstance.getBaseUrl()}${

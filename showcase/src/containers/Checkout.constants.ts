@@ -1,4 +1,4 @@
-import { CardOptions } from "../../../src/module";
+import { CardOptions } from "../../../src/module/Payments.index.ts";
 import { Styles } from "../../../types/card_options";
 
 export const hostedFieldsStyles: Styles = {
@@ -177,8 +177,8 @@ export const optionsDefault: CardOptions = {
   fields: {
     cardholderName: {
       inputType: "text",
-      label: "Payment holder name",
-      placeholder: "Payment holder name",
+      label: "Card holder name",
+      placeholder: "Card holder name",
       selector: "cardHolderName_id"
     },
     cardNumber: {

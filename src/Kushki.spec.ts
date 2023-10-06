@@ -1,5 +1,5 @@
 import { EnvironmentEnum } from "./infrastructure/EnvironmentEnum.ts";
-import { Kushki, KushkiOptions } from "./index.ts";
+import { IKushki, init, KushkiOptions } from "./index.ts";
 import { SiftScienceEnum } from "infrastructure/SiftScienceEnum";
 
 describe("Kushki - test", () => {
@@ -18,7 +18,7 @@ describe("Kushki - test", () => {
       publicCredentialId: "1234"
     };
 
-    const kushkiInstance = await Kushki.init(options);
+    const kushkiInstance: IKushki = await init(options);
 
     expect(kushkiInstance.getBaseUrl()).toEqual(EnvironmentEnum.uat);
     expect(kushkiInstance.getPublicCredentialId()).toEqual(
@@ -33,7 +33,7 @@ describe("Kushki - test", () => {
       publicCredentialId: "1234"
     };
 
-    const kushkiInstance = await Kushki.init(options);
+    const kushkiInstance: IKushki = await init(options);
 
     expect(kushkiInstance.getBaseUrl()).toEqual(EnvironmentEnum.prod);
     expect(kushkiInstance.getPublicCredentialId()).toEqual(
@@ -44,9 +44,8 @@ describe("Kushki - test", () => {
 
   it("when pass options with incorrect body, should return error controlled", async () => {
     try {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      await Kushki.init({});
+      await init({});
     } catch (error: any) {
       expect(error.code).toEqual("E011");
     }

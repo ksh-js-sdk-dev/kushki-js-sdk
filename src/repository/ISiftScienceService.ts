@@ -1,7 +1,7 @@
 /**
  * Interface Sift Science Service file.
  */
-import { Kushki } from "Kushki";
+import { IKushki } from "Kushki";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { SiftScienceObject } from "types/sift_science_object";
 
@@ -12,7 +12,7 @@ export interface ISiftScienceService {
   createSiftScienceSession(
     processor: string,
     clientIdentification: string,
-    kushkiInstance: Kushki,
+    kushkiInstance: IKushki,
     merchantSettingsResponse: MerchantSettingsResponse,
     userId?: string
   ): SiftScienceObject;
