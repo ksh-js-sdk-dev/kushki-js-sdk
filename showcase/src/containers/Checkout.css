@@ -1,0 +1,191 @@
+/* styles.css */
+
+.boxPrincipal {
+  box-sizing: border-box;
+}
+
+.button-contained {
+  background-color: rgba(68, 152, 238, 1);
+  color: white;
+  border: 1px solid rgba(68, 152, 238, 1);
+  border-radius: 8px;
+  text-transform: none;
+  font-size: 10px;
+}
+
+.button-outlined {
+  background-color: white;
+  color: rgba(68, 152, 238, 1);
+  border: 1px solid rgba(68, 152, 238, 1);
+  border-radius: 8px;
+  text-transform: none;
+  font-size: 10px;
+}
+
+.button-border {
+  border: 1px solid rgba(68, 152, 238, 1);
+  border-radius: 8px;
+  width: 250px;
+  height: 30px;
+  text-transform: none;
+}
+
+.inputExample {
+  border: 1px solid rgba(203, 213, 224, 1) !important;
+  border-radius: 10px !important;
+  height: 30px !important;
+  width: 250px !important;
+  font-size: 12px !important;
+  font-family: Arial, Verdana, Tahoma !important;
+  padding-left: 8px !important;
+}
+
+.inputExample:focus {
+  border: 1px solid #0077ff !important;
+  border-radius: 10px;
+  outline: none !important;
+  height: 30px !important;
+  margin: 0px !important;
+  font-size: 12px !important;
+  font-family: Arial, Verdana, Tahoma !important;
+}
+
+.labelInputExample {
+  margin-top: -1px !important;
+  padding-left: 8px !important;
+  font-family: Arial, Verdana, Tahoma;
+  font-size: 12px !important;
+  align-items: center;
+}
+
+.inputCheck {
+  margin-top: 2px !important;
+}
+
+.divContainer {
+  width: 250px;
+  margin: 10px 0px 0px 0px !important;
+  font-family: Arial, Verdana, Tahoma;
+  color: rgba(109, 119, 129, 1) !important;
+  font-size: 12px !important;
+}
+
+.divContainerSelect {
+  padding: 0px !important;
+  margin-bottom: 5px !important;
+}
+
+.label-hostedFieldError {
+  color: #b60000;
+  font-size: 10px;
+  margin-top: -10px;
+  font-weight: 400;
+  text-align: left;
+  width: 250px;
+  font-family: Arial, Verdana, Tahoma;
+}
+
+.cardNumberHelp {
+  width: 250px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.imgCopy {
+  display: flex;
+  align-items: center;
+}
+
+.selectExample {
+  color: rgba(109, 119, 129, 1) !important;
+  padding: 0px 15px 0px 10px !important;
+  padding-right: 20px !important;
+  font-size: 10px !important;
+  height: 30px !important;
+}
+
+.expiration-date-custom {
+  display: flex;
+  width: 250px;
+  justify-content: flex-start;
+}
+
+.titleDemo {
+  color: rgba(2, 51, 101, 1);
+  font-size: 23px;
+}
+
+.mui-text-custom {
+  font-weight: 400;
+  font-family: Arial, Verdana, Tahoma !important;
+  color: rgba(109, 119, 129, 1) !important;
+  text-align: center;
+}
+.mui-text-result {
+  width: 250px;
+  font-weight: 400;
+  font-family: Arial, Verdana, Tahoma;
+  color: rgba(109, 119, 129, 1) !important;
+  text-align: left;
+}
+
+.box-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.box-input-prev {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.box-hosted-fields {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.mui-textfield {
+  margin: 0px !important;
+}
+
+.content-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.button-error {
+  background-color: red;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  height: 36px;
+  margin: 6px 0;
+  margin-left: 15px;
+  overflow: hidden;
+  padding: 0 26px;
+}
+
+.table-buttons {
+  background-color: #39a1f4;
+  border: none;
+  border-radius: 12px;
+  color: #FFF;
+  height: 36px;
+  margin: 6px 0;
+  margin-left: 15px;
+  overflow: hidden;
+  padding: 0 26px;
+}
+
+.content-title {
+  display: flex;
+  justify-content: center;
+  margin-right: 250px;
+  width: 100%;
+}
