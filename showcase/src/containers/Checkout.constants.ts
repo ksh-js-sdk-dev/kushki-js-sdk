@@ -6,40 +6,7 @@ export const hostedFieldsStyles: Styles = {
     position: "relative",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    "&:focus-within": {
-      // TODO defined remove
-      //   "& label": {
-      //     background: "white",
-      //     color: "#6D7781",
-      //     // color: "blue",
-      //     // fontFamily: "IBM Plex sans-serif",
-      //     fontFamily: "Arial,Verdana,Tahoma",
-      //     fontSize: "10px",
-      //     fontWeight: "400",
-      //     left: "6px",
-      //     paddingLeft: "5px",
-      //     paddingRight: "5px",
-      //     position: "absolute",
-      //     top: "-3px",
-      //     width: "auto",
-      //     // transform: "translateY(-7px)",
-      //     // transition: "all 0.2s ease-in"
-      //   }
-    },
-    "& input:not(:placeholder-shown) + label": {
-      background: "white",
-      color: "#6D7781",
-      fontFamily: "Arial,Verdana,Tahoma",
-      fontSize: "8px",
-      fontWeight: "400",
-      left: "16px",
-      paddingLeft: "5px",
-      paddingRight: "5px",
-      position: "absolute",
-      top: "-3px",
-      width: "auto"
-    }
+    alignItems: "center"
   },
   input: {
     border: "1px solid rgba(203, 213, 224, 1)",
@@ -68,6 +35,23 @@ export const hostedFieldsStyles: Styles = {
       width: "300px",
       height: "40px"
     },
+    "& + label": {
+      color: "transparent",
+      fontFamily: "Arial,Verdana,Tahoma",
+      fontSize: "12px",
+      fontWeight: "400",
+      left: "16px",
+      paddingLeft: "5px",
+      paddingRight: "5px",
+      position: "absolute",
+      top: "-3px",
+      width: "auto"
+    },
+    "&:focus + label": {
+      background: "white",
+      color: "#6D7781",
+      fontSize: "12px"
+    },
     "&:focus::placeholder": {
       color: "transparent"
     },
@@ -81,6 +65,24 @@ export const hostedFieldsStyles: Styles = {
       paddingLeft: "8px",
       height: "40px",
       width: "300px"
+    },
+    "&:invalid::placeholder": {
+      color: "transparent"
+    },
+    "&:invalid + label": {
+      background: "white",
+      color: "#B60000",
+      fontSize: "12px"
+    },
+    "&:not(:placeholder-shown):invalid + label": {
+      background: "white",
+      color: "#B60000",
+      fontSize: "12px"
+    },
+    "&:not(:placeholder-shown) + label": {
+      background: "white",
+      color: "#6D7781",
+      fontSize: "12px"
     }
   },
   label: ".kushki-hosted-field-label",

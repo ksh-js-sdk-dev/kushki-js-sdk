@@ -12,7 +12,8 @@ const ResultsPayment = ({
   getToken,
   deferredValues,
   token,
-  disablePaymentButton
+  disablePaymentButton,
+  errorHostedFields
 }: IResultsPaymentProps) => {
   const hasToken: boolean = token !== "";
   const hasDeferredValues =
@@ -27,7 +28,7 @@ const ResultsPayment = ({
           }
           data-testid="tokenRequestBtn"
           onClick={() => getToken()}
-          disabled={disablePaymentButton}
+          disabled={errorHostedFields || disablePaymentButton}
         >
           Pagar
         </button>
