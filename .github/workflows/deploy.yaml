@@ -48,10 +48,12 @@ jobs:
           echo "source_branch=${BRANCH_PARTS[0]}" >> $GITHUB_OUTPUT
           echo "NUMBER_BRANCH=${BRANCH_PARTS[1]}" >> $GITHUB_ENV
           echo "BRANCH_NUMBER is $BRANCH_NUMBER"
+          echo "BRANCH_PARTS_1 is ${BRANCH_PARTS[1]}"
 
       - name: Set Version Release
         if: ${{ steps.extract-number-branch.outputs.source_branch == 'release' }}
         run: |
+          echo "TYPE_FORMAT_VERSION is $TYPE_FORMAT_VERSION"
           if [[ $TYPE_FORMAT_VERSION == "release" ]]; then
             IFS='-' read -ra VERSION_PARTS <<< "$GET_VERSION"
             IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[1]}"
