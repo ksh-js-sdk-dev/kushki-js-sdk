@@ -80,7 +80,7 @@ jobs:
         if: ${{ steps.extract-from-number-branch.outputs.from_branch == 'hotfix' }}
         run: |
           CURRENT_VERSION=$GET_VERSION
-          if [[ CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-tik-[0-9]+\-patch.[0-9]+$ ]]; then
+          if [[ CURRENT_VERSION =~ ^\d+\.\d+\.\d+-tik-\d+-patch\.\d+$ ]]; then
             IFS='-' read -ra BRANCH_NUMBER_PARTS <<< "$NUMBER_BRANCH"
             IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
             IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[3]}"
