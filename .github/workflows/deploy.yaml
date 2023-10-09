@@ -85,10 +85,10 @@ jobs:
             IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
             IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[3]}"
             GET_BRANCH_NUMBER="${VERSION_PARTS[2]}"
-            echo "PART BRANCH is $BRANCH_NUMBER_PARTS[1]"
+            echo "PART BRANCH is ${BRANCH_NUMBER_PARTS[1]}"
             echo "GET BRANCH is $GET_BRANCH_NUMBER"
           
-            if [[ $GET_BRANCH_NUMBER == $BRANCH_NUMBER_PARTS[1] ]]; then
+            if [[ $GET_BRANCH_NUMBER == ${BRANCH_NUMBER_PARTS[1]} ]]; then
               CURRENT_NUMBER="${VERSION_PARTS_SECOND[1]}"
               NEW_NUMBER=$((CURRENT_NUMBER + 1))
               NEW_VERSION="${VERSION_PARTS[0]}-${VERSION_PARTS[1]}-${VERSION_PARTS[2]}-tik-${VERSION_PARTS_SECOND[0]}-patch.${NEW_NUMBER}"
