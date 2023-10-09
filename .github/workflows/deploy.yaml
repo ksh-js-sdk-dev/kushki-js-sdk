@@ -11,37 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18.x
-
-      - name: Install dependencies
-        id: install
-        run: yarn install
-
-      - name: Generate schemas
-        run: yarn run tsc:interface
-
-      - name: Test code
-        id: run-tests
-        run: yarn run validate
-
-      - name: Upload test report
-        if: failure() && steps.run-tests.outcome == 'failure'
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-report
-          path: test.json
-
   build-version:
-    needs: validate
     runs-on: ubuntu-latest
     outputs:
       new-version: ${{ steps.version.outputs.new-version }}
@@ -63,6 +33,7 @@ jobs:
           IFS='/' read -ra BRANCH_PARTS <<< "$BRANCH"
           echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
           echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "source=${BRANCH_PARTS[0]}" >> "$GITHUB_OUTPUT"
           echo "BRANCH_SOURCE=${BRANCH_PARTS[0]}" >> $GITHUB_ENV
           echo "BRANCH_NUMBER=${BRANCH_PARTS[1]}" >> $GITHUB_ENV
 
@@ -83,7 +54,7 @@ jobs:
           echo "format-version=${TYPE_FORMAT_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Set Version Release
-        if: ${{ steps.extract-number-branch.outputs.branch == 'release' }}
+        if: ${{ steps.extract-number-branch.outputs.source == 'release' }}
         run: |
           if [[ $TYPE_FORMAT_VERSION == "release" ]]; then
             IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
