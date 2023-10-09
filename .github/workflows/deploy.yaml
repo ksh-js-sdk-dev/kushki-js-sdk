@@ -46,6 +46,7 @@ jobs:
     outputs:
       new-version: ${{ steps.version.outputs.new-version }}
       branch: ${{ steps.extract-number-branch.outputs.branch }}
+      format-version: ${{ steps.extract-format-version.outputs.format-version }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -66,48 +67,29 @@ jobs:
           echo "BRANCH_NUMBER=${BRANCH_PARTS[1]}" >> $GITHUB_ENV
 
       - name: Validate version format
+        id: extract-format-version
         run: |
           CURRENT_VERSION=$GET_VERSION
           if [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]; then
             TYPE_FORMAT_VERSION="latest"
           elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+\.[0-9]+$ ]; then
             TYPE_FORMAT_VERSION="release"
-          elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+-tik-[0-9]+-patch\.[0-9]+$ ]; then
+          elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-tik-[0-9]+-patch\.[0-9]+$ ]; then
             TYPE_FORMAT_VERSION="hotfix"
-          elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+-[0-9]+-alpha\.[0-9]+$ ]; then
+          elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+-alpha\.[0-9]+$ ]; then
             TYPE_FORMAT_VERSION="develop"
           fi
           echo "TYPE_FORMAT_VERSION=${TYPE_FORMAT_VERSION}" >> $GITHUB_ENV
-
-      - name: Determine Version Format
-        run: |
-          CURRENT_VERSION=$GET_VERSION
-          if [[ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            IS_NEW_FORMAT=false
-          else
-            IS_NEW_FORMAT=true
-          fi
-          echo "IS_NEW_FORMAT=${IS_NEW_FORMAT}" >> $GITHUB_ENV
+          echo "format-version=${TYPE_FORMAT_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Set Version
-        id: version
+        if: steps.extract-number-branch.outputs.branch == 'release'
         run: |
-          CURRENT_VERSION=$GET_VERSION
-          if [[ $IS_NEW_FORMAT == "true" ]]; then
-          
+          if [[ $TYPE_FORMAT_VERSION == "release" ]]; then
             IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
-  
-            if [ "$BRANCH_SOURCE" == "feature" ]; then
-              IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[2]}"
-              GET_BRANCH_NUMBER="${VERSION_PARTS[1]}-${VERSION_PARTS_SECOND[0]}"
-            elif [ "$BRANCH_SOURCE" == "hotfix" ]; then
-              IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[2]}"
-              GET_BRANCH_NUMBER="${VERSION_PARTS[1]}-${VERSION_PARTS_SECOND[0]}"
-            elif [ "$BRANCH_SOURCE" == "release" ]; then
-              IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[1]}"
-              GET_BRANCH_NUMBER="${VERSION_PARTS_SECOND[0]}"
-            fi
-  
+            IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[1]}"
+            GET_BRANCH_NUMBER="${VERSION_PARTS_SECOND[0]}"
+          
             if [[ $GET_BRANCH_NUMBER == $BRANCH_NUMBER ]]; then
               CURRENT_NUMBER="${VERSION_PARTS_SECOND[1]}"
               NEW_NUMBER=$((CURRENT_NUMBER + 1))
@@ -121,8 +103,7 @@ jobs:
               NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
             fi
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-            echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"          
-          
+            echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
           else
             IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
             MAJOR_VERSION="${VERSION_PARTS[0]}"
@@ -133,6 +114,7 @@ jobs:
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
             echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
           fi
+        shell: bash
 
       - name: Log GITHUB_ENV
         run: |
@@ -142,7 +124,6 @@ jobs:
           echo "NEW_VERSION is $NEW_VERSION"          
           echo "IS_NEW_FORMAT is $IS_NEW_FORMAT"
           echo "TYPE_FORMAT_VERSION is $TYPE_FORMAT_VERSION"
-  
 
   build:
     needs: build-version
