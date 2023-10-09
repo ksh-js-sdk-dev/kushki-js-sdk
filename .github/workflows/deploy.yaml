@@ -66,6 +66,39 @@ jobs:
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           fi
 
+
+      - name: Set Version hotfix
+        if: ${{ steps.extract-number-branch.outputs.source_branch == 'hotfix' }}
+        run: |
+          CURRENT_VERSION=$GET_VERSION
+          if [[ CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+-alpha\.[0-9]+$ ]]; then
+            IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+            IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[1]}"
+            GET_BRANCH_NUMBER="${VERSION_PARTS_SECOND[0]}"
+          
+            if [[ $GET_BRANCH_NUMBER == $BRANCH_NUMBER ]]; then
+              CURRENT_NUMBER="${VERSION_PARTS_SECOND[1]}"
+              NEW_NUMBER=$((CURRENT_NUMBER + 1))
+              NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}.${NEW_NUMBER}"
+            else
+              IFS='.' read -ra VERSION_PARTS_FIRST <<< "${VERSION_PARTS[0]}"
+              MAJOR_VERSION="${VERSION_PARTS_FIRST[0]}"
+              MINOR_VERSION="${VERSION_PARTS_FIRST[1]}"
+              NEW_VERSION_MINOR=$((MINOR_VERSION + 1))
+              BRANCH_NUMBER=$BRANCH_NUMBER
+              NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
+            fi
+            echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          else
+            IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+            MAJOR_VERSION="${VERSION_PARTS[0]}"
+            MINOR_VERSION="${VERSION_PARTS[1]}"
+            NEW_VERSION_MINOR=$((MINOR_VERSION + 1))
+            BRANCH_NUMBER=$BRANCH_NUMBER
+            NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
+            echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          fi
+
       - name: output Version
         id: version
         run: |
