@@ -30,9 +30,9 @@ jobs:
         run: |
           BRANCH=${{ github.base_ref }}
           IFS='/' read -ra BRANCH_PARTS <<< "$BRANCH"
-          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
-          echo "source_branch=${BRANCH_PARTS[0]}" >> "$GITHUB_OUTPUT"
-          echo "NUMBER_BRANCH=${BRANCH_PARTS[1]}" >> "$GITHUB_ENV"
+          echo "branch=${BRANCH}" >> $GITHUB_OUTPUT
+          echo "source_branch=${BRANCH_PARTS[0]}" >> $GITHUB_OUTPUT
+          echo "BRANCH_NUMBER=${BRANCH_PARTS[1]}" >> $GITHUB_ENV
 
       - name: Set Version Release
         if: ${{ steps.extract-number-branch.outputs.source_branch == 'release' }}
@@ -69,7 +69,7 @@ jobs:
       - name: output Version
         id: version
         run: |
-          echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          echo "new-version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Log GITHUB_ENV
         run: |
