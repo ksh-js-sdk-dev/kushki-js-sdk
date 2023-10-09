@@ -28,6 +28,7 @@ jobs:
       - name: Validate version format
         id: extract-format-version
         run: |
+          echo "GET_VERSION is $GET_VERSION"
           if [ $GET_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]; then
             TYPE_FORMAT_VERSION="latest"
           elif [ $GET_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+\.[0-9]+$ ]; then
@@ -38,6 +39,7 @@ jobs:
             TYPE_FORMAT_VERSION="develop"
           fi
           echo "TYPE_FORMAT_VERSION=${TYPE_FORMAT_VERSION}" >> $GITHUB_ENV
+          echo "TYPE_FORMAT_VERSION is $TYPE_FORMAT_VERSION"
 
       - name: Extract branch number
         id: extract-number-branch
@@ -80,7 +82,6 @@ jobs:
             NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           fi
-
 
       - name: output Version
         id: version
