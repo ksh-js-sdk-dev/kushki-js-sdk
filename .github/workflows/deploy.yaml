@@ -47,8 +47,7 @@ jobs:
           echo "branch=${BRANCH}" >> $GITHUB_OUTPUT
           echo "source_branch=${BRANCH_PARTS[0]}" >> $GITHUB_OUTPUT
           echo "NUMBER_BRANCH=${BRANCH_PARTS[1]}" >> $GITHUB_ENV
-          echo "BRANCH_NUMBER is $BRANCH_NUMBER"
-          echo "BRANCH_PARTS_1 is ${BRANCH_PARTS[1]}"
+          echo "BRANCH_NUMBER is ${BRANCH_NUMBER}"
 
       - name: Set Version Release
         if: ${{ steps.extract-number-branch.outputs.source_branch == 'release' }}
