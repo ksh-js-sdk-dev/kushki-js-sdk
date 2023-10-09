@@ -85,7 +85,7 @@ jobs:
             IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
             IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[3]}"
             GET_BRANCH_NUMBER="${VERSION_PARTS[2]}"
-            echo "LOG BRANCH is $NUMBER_BRANCH $GET_BRANCH_NUMBER $BRANCH_NUMBER_PARTS[1]
+            echo "LOG BRANCH is $NUMBER_BRANCH $GET_BRANCH_NUMBER $BRANCH_NUMBER_PARTS[1]"
           
             if [[ $GET_BRANCH_NUMBER == $BRANCH_NUMBER_PARTS[1] ]]; then
               CURRENT_NUMBER="${VERSION_PARTS_SECOND[1]}"
