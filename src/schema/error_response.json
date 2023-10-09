@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ErrorResponse",
+  "additionalProperties": false,
+  "type": "object",
+  "required": ["code", "message", "error"],
+  "properties": {
+    "code": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "error": {
+      "type": "string"
+    }
+  }
+}

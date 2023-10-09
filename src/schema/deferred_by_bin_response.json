@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://ksh/BinInfoResponse",
+  "title": "DeferredByBinResponse",
+  "additionalProperties": false,
+  "definitions": {
+    "options": {
+      "title": "DeferredByBinOptionsResponse",
+      "type": "object",
+      "properties": {
+        "months": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "monthsOfGrace": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "bin": {
+      "type": "string"
+    },
+    "options": {
+      "$ref": "#/definitions/options"
+    }
+  }
+}

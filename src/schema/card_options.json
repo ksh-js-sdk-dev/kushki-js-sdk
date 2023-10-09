@@ -1,0 +1,359 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "CardOptions",
+  "additionalProperties": false,
+  "definitions": {
+    "styles": {
+      "title": "Styles",
+      "additionalProperties": false,
+      "properties": {
+        "input": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "label": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "container": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "cardholderName": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "cardNumber": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "expirationDate": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "cvv": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "deferred": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "otp": {
+          "$ref": "#/definitions/cssProperties"
+        }
+      },
+      "type": "object"
+    },
+    "currency": {
+      "title": "Currency",
+      "type": "string",
+      "enum": [
+        "USD",
+        "COP",
+        "CLP",
+        "UF",
+        "PEN",
+        "MXN",
+        "CRC",
+        "GTQ",
+        "HNL",
+        "NIO",
+        "BRL"
+      ]
+    },
+    "amount": {
+      "title": "Amount",
+      "additionalProperties": false,
+      "properties": {
+        "subtotalIva": {
+          "type": "number",
+          "minimum": 0
+        },
+        "subtotalIva0": {
+          "type": "number",
+          "minimum": 0
+        },
+        "iva": {
+          "type": "number",
+          "minimum": 0
+        },
+        "ice": {
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": ["subtotalIva", "subtotalIva0", "iva"],
+      "type": "object"
+    },
+    "inputType": {
+      "title": "InputTypeEnum",
+      "type": "string",
+      "enum": ["number", "text", "password"]
+    },
+    "fieldType": {
+      "title": "FieldTypeEnum",
+      "type": "string",
+      "enum": [
+        "cardNumber",
+        "cardholderName",
+        "cvv",
+        "deferred",
+        "expirationDate",
+        "otp"
+      ]
+    },
+    "selectOptions": {
+      "title": "SelectOptions",
+      "additionalProperties": false,
+      "properties": {
+        "placeholder": {
+          "type": "string"
+        },
+        "hiddenLabel": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      }
+    },
+    "deferredInputs": {
+      "title": "DeferredInputs",
+      "additionalProperties": false,
+      "properties": {
+        "deferredCheckbox": {
+          "$ref": "#/definitions/selectOptions"
+        },
+        "deferredType": {
+          "$ref": "#/definitions/selectOptions"
+        },
+        "months": {
+          "$ref": "#/definitions/selectOptions"
+        },
+        "graceMonths": {
+          "$ref": "#/definitions/selectOptions"
+        }
+      }
+    },
+    "field": {
+      "title": "Field",
+      "additionalProperties": false,
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "hiddenLabel": {
+          "type": "string"
+        },
+        "maxCardLength": {
+          "type": "number"
+        },
+        "defaultValue": {
+          "type": "string"
+        },
+        "inputType": {
+          "$ref": "#/definitions/inputType"
+        },
+        "label": {
+          "type": "string"
+        },
+        "deferredInputs": {
+          "$ref": "#/definitions/deferredInputs"
+        }
+      },
+      "required": ["selector"]
+    },
+    "cssProperties": {
+      "title": "CssProperties",
+      "oneOf": [
+        {
+          "additionalProperties": true,
+          "type": "object",
+          "properties": {
+            "-moz-appearance": {
+              "type": "string"
+            },
+            "-moz-box-shadow": {
+              "type": "string"
+            },
+            "-moz-osx-font-smoothing": {
+              "type": "string"
+            },
+            "-moz-tap-highlight-color": {
+              "type": "string"
+            },
+            "-moz-transition": {
+              "type": "string"
+            },
+            "-webkit-appearance": {
+              "type": "string"
+            },
+            "-webkit-box-shadow": {
+              "type": "string"
+            },
+            "-webkit-font-smoothing": {
+              "type": "string"
+            },
+            "-webkit-tap-highlight-color": {
+              "type": "string"
+            },
+            "-webkit-transition": {
+              "type": "string"
+            },
+            "appearance": {
+              "type": "string"
+            },
+            "background": {
+              "type": "string"
+            },
+            "border": {
+              "type": "string"
+            },
+            "box-shadow": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            },
+            "direction": {
+              "type": "string"
+            },
+            "font": {
+              "type": "string"
+            },
+            "font-family": {
+              "type": "string"
+            },
+            "font-size": {
+              "type": "string"
+            },
+            "font-size-adjust": {
+              "type": "string"
+            },
+            "font-stretch": {
+              "type": "string"
+            },
+            "font-style": {
+              "type": "string"
+            },
+            "font-variant": {
+              "type": "string"
+            },
+            "font-variant-alternates": {
+              "type": "string"
+            },
+            "font-variant-caps": {
+              "type": "string"
+            },
+            "font-variant-east-asian": {
+              "type": "string"
+            },
+            "font-variant-ligatures": {
+              "type": "string"
+            },
+            "font-variant-numeric": {
+              "type": "string"
+            },
+            "font-weight": {
+              "type": "string"
+            },
+            "letter-spacing": {
+              "type": "string"
+            },
+            "line-height": {
+              "type": "string"
+            },
+            "margin": {
+              "type": "string"
+            },
+            "margin-top": {
+              "type": "string"
+            },
+            "margin-right": {
+              "type": "string"
+            },
+            "margin-bottom": {
+              "type": "string"
+            },
+            "margin-left": {
+              "type": "string"
+            },
+            "opacity": {
+              "type": "string"
+            },
+            "outline": {
+              "type": "string"
+            },
+            "padding": {
+              "type": "string"
+            },
+            "padding-top": {
+              "type": "string"
+            },
+            "padding-right": {
+              "type": "string"
+            },
+            "padding-bottom": {
+              "type": "string"
+            },
+            "padding-left": {
+              "type": "string"
+            },
+            "text-align": {
+              "type": "string"
+            },
+            "text-shadow": {
+              "type": "string"
+            },
+            "transition": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "properties": {
+    "amount": {
+      "$ref": "#/definitions/amount"
+    },
+    "currency": {
+      "$ref": "#/definitions/currency"
+    },
+    "isSubscription": {
+      "type": "boolean"
+    },
+    "preventAutofill": {
+      "type": "boolean"
+    },
+    "styles": {
+      "$ref": "#/definitions/styles"
+    },
+    "fields": {
+      "title": "",
+      "additionalProperties": false,
+      "properties": {
+        "cardholderName": {
+          "$ref": "#/definitions/field"
+        },
+        "cardNumber": {
+          "$ref": "#/definitions/field"
+        },
+        "expirationDate": {
+          "$ref": "#/definitions/field"
+        },
+        "cvv": {
+          "$ref": "#/definitions/field"
+        },
+        "deferred": {
+          "$ref": "#/definitions/field"
+        },
+        "otp": {
+          "$ref": "#/definitions/field"
+        }
+      },
+      "required": ["cardHolderName", "cardNumber", "expirationDate", "cvv"]
+    }
+  },
+  "required": ["publicCredentialId", "currency", "fields"],
+  "type": "object"
+}

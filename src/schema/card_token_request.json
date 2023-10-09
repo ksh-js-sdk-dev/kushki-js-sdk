@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "CardTokenRequest",
+  "id": "CardTokenRequest",
+  "properties": {
+    "card": {
+      "properties": {
+        "cvv": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9]{3,4}$"
+        },
+        "expiryMonth": {
+          "type": "string",
+          "pattern": "^(1[0-2]|0[1-9]|[1-9])$"
+        },
+        "expiryYear": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "string",
+          "pattern": "^[0-9]{14,19}$"
+        }
+      },
+      "required": ["expiryYear", "name", "expiryMonth", "number"],
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "currency": {
+      "type": "string",
+      "enum": [
+        "USD",
+        "COP",
+        "CLP",
+        "UF",
+        "PEN",
+        "MXN",
+        "CRC",
+        "GTQ",
+        "HNL",
+        "NIO",
+        "BRL"
+      ]
+    },
+    "isDeferred": {
+      "type": "boolean"
+    },
+    "totalAmount": {
+      "type": "number",
+      "minimum": 0
+    },
+    "months": {
+      "type": "number"
+    },
+    "jwt": {
+      "type": "string"
+    }
+  },
+  "required": ["currency", "card"],
+  "type": "object"
+}

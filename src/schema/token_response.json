@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TokenResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "token": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9]{32}$"
+    },
+    "deferred": {
+      "type": "object",
+      "title": "DeferredValuesResponse",
+      "properties": {
+        "graceMonths": {
+          "type": "number"
+        },
+        "creditType": {
+          "type": "string"
+        },
+        "months": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "required": ["token"]
+}
