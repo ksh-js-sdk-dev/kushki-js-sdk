@@ -82,8 +82,8 @@ jobs:
           echo "TYPE_FORMAT_VERSION=${TYPE_FORMAT_VERSION}" >> $GITHUB_ENV
           echo "format-version=${TYPE_FORMAT_VERSION}" >> $GITHUB_OUTPUT
 
-      - name: Set Version
-        if: steps.extract-number-branch.outputs.branch == 'release'
+      - name: Set Version Release
+        if: ${{ steps.extract-number-branch.outputs.branch == 'release' }}
         run: |
           if [[ $TYPE_FORMAT_VERSION == "release" ]]; then
             IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
@@ -124,43 +124,3 @@ jobs:
           echo "NEW_VERSION is $NEW_VERSION"          
           echo "IS_NEW_FORMAT is $IS_NEW_FORMAT"
           echo "TYPE_FORMAT_VERSION is $TYPE_FORMAT_VERSION"
-
-  build:
-    needs: build-version
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    outputs:
-      new-version: ${{ steps.version.outputs.new-version }}
-    steps:
-      - name: Get code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18.x
-
-      - name: Config Git
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-
-      - name: Set new version in package.json
-        id: version
-        run: |
-          NEW_VERSION=${{ needs.build-version.outputs.new-version }}
-          BRANCH=${{ needs.build-version.outputs.branch }}
-          echo "NEW_VERSION is $NEW_VERSION"
-          echo "BRANCH is $BRANCH"
-          echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
-          npm version "$NEW_VERSION"
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Generate schemas
-        run: yarn run tsc:interface
-
-      - name: Build library
-        run: yarn run build
