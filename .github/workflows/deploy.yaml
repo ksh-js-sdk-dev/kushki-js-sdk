@@ -16,7 +16,6 @@ jobs:
     outputs:
       new-version: ${{ steps.version.outputs.new-version }}
       branch: ${{ steps.extract-number-branch.outputs.branch }}
-      format-version: ${{ steps.extract-format-version.outputs.format-version }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -26,38 +25,34 @@ jobs:
           GET_VERSION=$(node -p -e "require('./package.json').version")
           echo "GET_VERSION=${GET_VERSION}" >> $GITHUB_ENV
 
+      - name: Validate version format
+        id: extract-format-version
+        run: |
+          if [ $GET_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]; then
+            TYPE_FORMAT_VERSION="latest"
+          elif [ $GET_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+\.[0-9]+$ ]; then
+            TYPE_FORMAT_VERSION="release"
+          elif [ $GET_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-tik-[0-9]+-patch\.[0-9]+$ ]; then
+            TYPE_FORMAT_VERSION="hotfix"
+          elif [ $GET_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+-alpha\.[0-9]+$ ]; then
+            TYPE_FORMAT_VERSION="develop"
+          fi
+          echo "TYPE_FORMAT_VERSION=${TYPE_FORMAT_VERSION}" >> $GITHUB_ENV
+
       - name: Extract branch number
         id: extract-number-branch
         run: |
           BRANCH=${{ github.base_ref }}
           IFS='/' read -ra BRANCH_PARTS <<< "$BRANCH"
-          echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
-          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
-          echo "source=${BRANCH_PARTS[0]}" >> "$GITHUB_OUTPUT"
-          echo "BRANCH_SOURCE=${BRANCH_PARTS[0]}" >> $GITHUB_ENV
-          echo "BRANCH_NUMBER=${BRANCH_PARTS[1]}" >> $GITHUB_ENV
-
-      - name: Validate version format
-        id: extract-format-version
-        run: |
-          CURRENT_VERSION=$GET_VERSION
-          if [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]; then
-            TYPE_FORMAT_VERSION="latest"
-          elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+\.[0-9]+$ ]; then
-            TYPE_FORMAT_VERSION="release"
-          elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-tik-[0-9]+-patch\.[0-9]+$ ]; then
-            TYPE_FORMAT_VERSION="hotfix"
-          elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+-alpha\.[0-9]+$ ]; then
-            TYPE_FORMAT_VERSION="develop"
-          fi
-          echo "TYPE_FORMAT_VERSION=${TYPE_FORMAT_VERSION}" >> $GITHUB_ENV
-          echo "format-version=${TYPE_FORMAT_VERSION}" >> $GITHUB_OUTPUT
+          echo "branch=${BRANCH}" >> $GITHUB_OUTPUT
+          echo "source_branch=${BRANCH_PARTS[0]}" >> $GITHUB_OUTPUT
+          echo "NUMBER_BRANCH=${BRANCH_PARTS[1]}" >> $GITHUB_ENV
 
       - name: Set Version Release
-        if: ${{ steps.extract-number-branch.outputs.source == 'release' }}
+        if: ${{ steps.extract-number-branch.outputs.source_branch == 'release' }}
         run: |
           if [[ $TYPE_FORMAT_VERSION == "release" ]]; then
-            IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+            IFS='-' read -ra VERSION_PARTS <<< "$GET_VERSION"
             IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[1]}"
             GET_BRANCH_NUMBER="${VERSION_PARTS_SECOND[0]}"
           
@@ -73,7 +68,6 @@ jobs:
               BRANCH_NUMBER=$BRANCH_NUMBER
               NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
             fi
-            echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
             echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
           else
             IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
@@ -82,16 +76,14 @@ jobs:
             NEW_VERSION_MINOR=$((MINOR_VERSION + 1))
             BRANCH_NUMBER=$BRANCH_NUMBER
             NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
-            echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
             echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
           fi
-        shell: bash
 
       - name: Log GITHUB_ENV
         run: |
           echo "GET_VERSION is $GET_VERSION"          
-          echo "BRANCH_SOURCE is $BRANCH_SOURCE"
+          echo "source_branch is ${{ steps.extract-number-branch.outputs.source_branch }}"
+          echo "branch is ${{ steps.extract-number-branch.outputs.branch }}"
           echo "BRANCH_NUMBER is $BRANCH_NUMBER"
-          echo "NEW_VERSION is $NEW_VERSION"          
-          echo "IS_NEW_FORMAT is $IS_NEW_FORMAT"
+          echo "new-version is ${{ steps.extract-number-branch.outputs.new-version }}"          
           echo "TYPE_FORMAT_VERSION is $TYPE_FORMAT_VERSION"
