@@ -100,6 +100,7 @@ jobs:
               NEW_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${NEW_VERSION_PATCH}-tik-${VERSION_PARTS_SECOND[0]}-patch.1"
             fi
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          
           else
             IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
             IFS='-' read -ra BRANCH_NUMBER_PARTS <<< "$NUMBER_BRANCH"
