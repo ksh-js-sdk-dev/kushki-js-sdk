@@ -5,9 +5,8 @@ on:
   pull_request:
     branches:
       - "release/*"
-      - "feature/*"
-      - "hotfix/*"
-      - "developer"
+      - "develop"
+      - "master"
     types: [closed]
 
   workflow_dispatch:
