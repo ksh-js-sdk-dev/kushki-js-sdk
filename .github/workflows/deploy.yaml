@@ -47,6 +47,7 @@ jobs:
           echo "branch=${BRANCH}" >> $GITHUB_OUTPUT
           echo "source_branch=${BRANCH_PARTS[0]}" >> $GITHUB_OUTPUT
           echo "NUMBER_BRANCH=${BRANCH_PARTS[1]}" >> $GITHUB_ENV
+          echo "BRANCH_NUMBER is $BRANCH_NUMBER"
 
       - name: Set Version Release
         if: ${{ steps.extract-number-branch.outputs.source_branch == 'release' }}
@@ -68,7 +69,7 @@ jobs:
               BRANCH_NUMBER=$BRANCH_NUMBER
               NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
             fi
-            echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+            echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           else
             IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
             MAJOR_VERSION="${VERSION_PARTS[0]}"
@@ -76,8 +77,14 @@ jobs:
             NEW_VERSION_MINOR=$((MINOR_VERSION + 1))
             BRANCH_NUMBER=$BRANCH_NUMBER
             NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
-            echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+            echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           fi
+
+
+      - name: output Version
+        id: version
+        run: |
+          echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Log GITHUB_ENV
         run: |
@@ -85,5 +92,5 @@ jobs:
           echo "source_branch is ${{ steps.extract-number-branch.outputs.source_branch }}"
           echo "branch is ${{ steps.extract-number-branch.outputs.branch }}"
           echo "BRANCH_NUMBER is $BRANCH_NUMBER"
-          echo "new-version is ${{ steps.extract-number-branch.outputs.new-version }}"          
+          echo "new-version is ${{ steps.version.outputs.new-version }}"          
           echo "TYPE_FORMAT_VERSION is $TYPE_FORMAT_VERSION"
