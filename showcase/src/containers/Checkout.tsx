@@ -92,7 +92,6 @@ export const CheckoutContainer = () => {
         setDeferredValues(token.deferred);
       } catch (error: any) {
         setToken(error.message);
-      } finally {
         setDisablePaymentButton(false);
       }
     }

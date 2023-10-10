@@ -3,6 +3,7 @@ import CardNumberHelper from "../CardNumberHelper/CardNumberHelper.tsx";
 import { Fields } from "../../../../types/form_validity";
 import { IDefaultInformation } from "../ConfigurationDemo/ConfigurationDemo.interface.ts";
 import { useEffect, useState } from "react";
+import { InputModelEnum } from "../../../../src/infrastructure/InputModel.enum.ts";
 
 export interface IHostedFieldsProps {
   showOTP: boolean;
@@ -21,9 +22,36 @@ const HostedFields = ({
 }: IHostedFieldsProps) => {
   const [cardHelper, setCardHelper] = useState<string>("4195614311940576");
   const customMessageValidity = (field: string, errorType: ErrorTypeEnum) => {
-    if (errorType === "empty") return `The field ${field} is required`;
+    const fieldsErrorEmpty: Record<string, string> = {
+      [InputModelEnum.CARDHOLDER_NAME]:
+        "Nombre del tarjeta habiente es requerido",
+      [InputModelEnum.CARD_NUMBER]: "Número de tarjeta es un campo requerido",
+      [InputModelEnum.EXPIRATION_DATE]: "Fecha de vencimiento es requerido",
+      [InputModelEnum.CVV]: "El campo CVV es requerido"
+    };
 
-    return `Error-${field} is ${errorType}`;
+    const fieldsErrorInvalid: Record<string, string> = {
+      [InputModelEnum.CARDHOLDER_NAME]:
+        "Nombre del tarjeta habiente es inválido",
+      [InputModelEnum.CARD_NUMBER]:
+        "Verifique los dígitos ingresados en su tarjeta",
+      [InputModelEnum.EXPIRATION_DATE]: "El formato es incorrecto",
+      [InputModelEnum.CVV]: "El código es incorrecto"
+    };
+
+    if (errorType === "empty") {
+      return fieldsErrorEmpty[field] || `El campo ${field} es requerido`;
+    }
+
+    if(field !== InputModelEnum.DEFERRED)
+      return fieldsErrorInvalid[field] || `${field} is ${errorType}`;
+
+
+    if(errorType === ErrorTypeEnum.DEFERRED_TYPE_REQUERED)
+      return 'El tipo de diferido es requerido';
+
+    if(errorType === ErrorTypeEnum.DEFERRED_MONTHS_REQUERED)
+      return 'La cantidad de meses son requeridos';
   };
 
   const validError = (
@@ -40,10 +68,16 @@ const HostedFields = ({
     if (buttonActive.threeDomainSecure) setCardHelper("4000000000002503");
     if (buttonActive.otp) setCardHelper("4195612455557800");
     if (buttonActive.approved) setCardHelper("4195612455557800");
+    if (buttonActive.declined) setCardHelper("4574441215190335");
   }, [buttonActive]);
 
   return (
     <div className={"box-hosted-fields"}>
+      {displayHostedFields && (
+        <div className="mui--text-body2 mui-text-custom">
+          Completar el formulario
+        </div>
+      )}
       {!showOTP && (
         <>
           <div id="cardHolderName_id"></div>
@@ -98,7 +132,9 @@ const HostedFields = ({
         </>
       )}
       <div id="otp_id"></div>
-      {errorOTP.length > 0 && <div>El código OTP es incorrecto</div>}
+      <div className={"label-hostedFieldError"}>
+        {errorOTP.length > 0 && <div>El código OTP es incorrecto</div>}
+      </div>
     </div>
   );
 };
