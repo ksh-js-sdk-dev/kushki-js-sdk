@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "CardTokenResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "token": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9]{32}$"
+    },
+    "secureService": {
+      "type": "string"
+    },
+    "secureId": {
+      "type": "string"
+    },
+    "settlement": {
+      "type": "number"
+    },
+    "security": {
+      "type": "object",
+      "properties": {
+        "authRequired": {
+          "type": "boolean"
+        },
+        "acsURL": {
+          "type": "string"
+        },
+        "authenticationTransactionId": {
+          "type": "string"
+        },
+        "paReq": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": ["token"]
+}
