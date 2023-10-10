@@ -114,6 +114,8 @@ jobs:
   deploy-npm:
     needs: build
     runs-on: ubuntu-latest
+    outputs:
+      new-version: ${{ steps.version.outputs.new-version }}
     steps:
       - name: Get dist artifacts
         uses: actions/download-artifact@v3
@@ -128,8 +130,15 @@ jobs:
           printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
           npm publish --tag alpha
 
+      - name: Set new version in package.json
+        id: version
+        run: |
+          NEW_VERSION=${{ needs.build.outputs.new-version }}
+          echo "NEW_VERSION is $NEW_VERSION"
+          echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+
   deploy-cdn:
-    needs: build
+    needs: deploy-npm
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -154,7 +163,7 @@ jobs:
 
       - name: upload file AWS S3
         run: |
-          NEW_VERSION=${{ needs.build.outputs.new-version }}
+          NEW_VERSION=${{ needs.deploy-npm.outputs.new-version }}
           echo "NEW_VERSION is $NEW_VERSION"
           aws s3 sync ./lib s3://js-sdk-build-gha-demo/"$NEW_VERSION"
 
