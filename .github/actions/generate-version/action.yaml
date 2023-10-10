@@ -5,7 +5,7 @@ outputs:
   branch:
     value: ${{ steps.extract-number-branch.outputs.branch }}
 runs:
-  runs-on: ubuntu-latest
+  using: 'composite'
   steps:
     - name: Get current version
       run: |
