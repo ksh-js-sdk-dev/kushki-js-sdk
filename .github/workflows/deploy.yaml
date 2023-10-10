@@ -129,7 +129,7 @@ jobs:
           npm publish --tag alpha
 
   deploy-cdn:
-    needs: build
+    needs: deploy-npm
     runs-on: ubuntu-latest
     permissions:
       id-token: write
