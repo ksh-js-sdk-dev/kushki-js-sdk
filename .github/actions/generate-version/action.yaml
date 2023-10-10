@@ -123,6 +123,7 @@ runs:
       run: |
         echo "GET_VERSION is $GET_VERSION"          
         echo "source_branch is ${{ steps.extract-number-branch.outputs.source_branch }}"
+        echo "from_branch is ${{ steps.extract-from-number-branch.outputs.from_branch }}"
         echo "branch is ${{ steps.extract-number-branch.outputs.branch }}"
         echo "BRANCH_NUMBER is $BRANCH_NUMBER"
         echo "NUMBER_BRANCH is $NUMBER_BRANCH"
