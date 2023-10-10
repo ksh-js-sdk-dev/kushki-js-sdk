@@ -1,10 +1,9 @@
 name: 'Generate version'
 outputs:
-  new-version:
-    value: ${{ steps.version.outputs.new-version }}
-  branch:
-    value: ${{ steps.extract-number-branch.outputs.branch }}
+  new-version: ${{ steps.version.outputs.new-version }}
+  branch: ${{ steps.extract-number-branch.outputs.branch }}
 runs:
+  using: 'shell'
   steps:
     - name: Get current version
       run: |
