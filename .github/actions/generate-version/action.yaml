@@ -130,7 +130,7 @@ runs:
       shell: bash
 
     - name: Set Version Master
-      if: ${{ steps.extract-from-number-branch.outputs.source_branch == 'master' }}
+      if: ${{ steps.extract-number-branch.outputs.source_branch == 'master' }}
       run: |
         CURRENT_VERSION=$GET_VERSION
         IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
