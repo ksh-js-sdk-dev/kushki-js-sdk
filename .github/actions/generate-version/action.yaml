@@ -154,16 +154,20 @@ runs:
            NEW_NUMBER=$((CURRENT_NUMBER + 1))
            NEW_VERSION="${VERSION_PARTS[0]}-${VERSION_PARTS[1]}-alpha.${NEW_NUMBER}"
          else
-           IFS='.' read -ra VERSION_PARTS_FIRST <<< "${VERSION_PARTS[0]}"
            BRANCH_NUMBER=$NUMBER_BRANCH
            NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}-alpha.1"
          fi
          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
+        elif [[ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+\.[0-9]+$ ]]; then
+          IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+          IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[1]}"
+          NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}-alpha.${VERSION_PARTS_SECOND[0]}"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          
         else 
          BRANCH_NUMBER=$NUMBER_BRANCH
          IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
-        
          NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}-alpha.1"
          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
         fi
