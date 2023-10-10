@@ -1,7 +1,9 @@
 name: 'Generate version'
 outputs:
-  new-version: ${{ steps.version.outputs.new-version }}
-  branch: ${{ steps.extract-number-branch.outputs.branch }}
+  new-version:
+    value: ${{ steps.version.outputs.new-version }}
+  branch:
+    value: ${{ steps.extract-number-branch.outputs.branch }}
 runs:
   steps:
     - name: Get current version
@@ -109,3 +111,12 @@ runs:
       id: version
       run: |
         echo "new-version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+    - name: Log GITHUB_ENV
+      run: |
+        echo "GET_VERSION is $GET_VERSION"          
+        echo "source_branch is ${{ steps.extract-number-branch.outputs.source_branch }}"
+        echo "branch is ${{ steps.extract-number-branch.outputs.branch }}"
+        echo "BRANCH_NUMBER is $BRANCH_NUMBER"
+        echo "NUMBER_BRANCH is $NUMBER_BRANCH"
+        echo "new-version is ${{ steps.version.outputs.new-version }}"
