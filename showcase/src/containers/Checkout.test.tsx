@@ -1,9 +1,9 @@
 import {
+  act,
   cleanup,
   fireEvent,
   render,
   screen,
-  act,
   waitFor
 } from "@testing-library/react";
 import { Kushki, TokenResponse } from "kushki-js-sdk";
@@ -65,6 +65,7 @@ describe("Tests on <CheckoutContainer/> component", () => {
     });
 
     const label = await waitFor(() => screen.getByTestId("token"));
+
     expect(label).toBeDefined();
     expect(mockRequestToken).toHaveBeenCalled();
   });

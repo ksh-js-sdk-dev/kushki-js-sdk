@@ -3,38 +3,29 @@ import { Styles } from "../../../types/card_options";
 
 export const hostedFieldsStyles: Styles = {
   container: {
-    position: "relative",
+    alignItems: "center",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    position: "relative"
+  },
+  deferred: {
+    "&#ksh-deferred-checkbox>label": {
+      fontFamily: "Arial,Verdana,Tahoma",
+      fontSize: "14px",
+      width: "max-content"
+    },
+    "&#ksh-deferred-creditType": {
+      width: "290px"
+    },
+    "&#ksh-deferred-graceMonths": {
+      width: "140px"
+    },
+    "&#ksh-deferred-months": {
+      width: "140px"
+    },
+    fontSize: "14px"
   },
   input: {
-    border: "1px solid rgba(203, 213, 224, 1)",
-    borderRadius: "10px",
-    fontFamily: "Arial,Verdana,Tahoma",
-    fontSize: "14px",
-    fontWeight: "400",
-    outline: "none",
-    paddingLeft: "8px",
-    boxSizing: "border-box",
-    width: "300px",
-    height: "40px",
-    "&::placeholder": {
-      fontFamily: "Arial,Verdana,Tahoma",
-      fontSize: "14px",
-      color: "rgba(0,0,0,.26)"
-    },
-    "&:focus": {
-      border: "1px solid #0077ff",
-      borderRadius: "10px",
-      fontFamily: "Arial,Verdana,Tahoma",
-      fontSize: "14px",
-      fontWeight: "400",
-      outline: "none",
-      paddingLeft: "8px",
-      width: "300px",
-      height: "40px"
-    },
     "& + label": {
       color: "transparent",
       fontFamily: "Arial,Verdana,Tahoma",
@@ -46,6 +37,22 @@ export const hostedFieldsStyles: Styles = {
       position: "absolute",
       top: "-3px",
       width: "auto"
+    },
+    "&::placeholder": {
+      color: "rgba(0,0,0,.26)",
+      fontFamily: "Arial,Verdana,Tahoma",
+      fontSize: "14px"
+    },
+    "&:focus": {
+      border: "1px solid #0077ff",
+      borderRadius: "10px",
+      fontFamily: "Arial,Verdana,Tahoma",
+      fontSize: "14px",
+      fontWeight: "400",
+      height: "40px",
+      outline: "none",
+      paddingLeft: "8px",
+      width: "300px"
     },
     "&:focus + label": {
       background: "white",
@@ -61,17 +68,22 @@ export const hostedFieldsStyles: Styles = {
       fontFamily: "Arial,Verdana,Tahoma",
       fontSize: "14px",
       fontWeight: "400",
+      height: "40px",
       outline: "none",
       paddingLeft: "8px",
-      height: "40px",
       width: "300px"
-    },
-    "&:invalid::placeholder": {
-      color: "transparent"
     },
     "&:invalid + label": {
       background: "white",
       color: "#B60000",
+      fontSize: "12px"
+    },
+    "&:invalid::placeholder": {
+      color: "transparent"
+    },
+    "&:not(:placeholder-shown) + label": {
+      background: "white",
+      color: "#6D7781",
       fontSize: "12px"
     },
     "&:not(:placeholder-shown):invalid + label": {
@@ -79,30 +91,18 @@ export const hostedFieldsStyles: Styles = {
       color: "#B60000",
       fontSize: "12px"
     },
-    "&:not(:placeholder-shown) + label": {
-      background: "white",
-      color: "#6D7781",
-      fontSize: "12px"
-    }
-  },
-  label: ".kushki-hosted-field-label",
-  deferred: {
+    border: "1px solid rgba(203, 213, 224, 1)",
+    borderRadius: "10px",
+    boxSizing: "border-box",
+    fontFamily: "Arial,Verdana,Tahoma",
     fontSize: "14px",
-    "&#ksh-deferred-checkbox>label": {
-      width: "max-content",
-      fontFamily: "Arial,Verdana,Tahoma",
-      fontSize: "14px",
-    },
-    "&#ksh-deferred-creditType":{
-      width: "290px"
-    },
-    "&#ksh-deferred-months":{
-      width: "140px"
-    },
-    "&#ksh-deferred-graceMonths":{
-      width: "140px"
-    },
-  }
+    fontWeight: "400",
+    height: "40px",
+    outline: "none",
+    paddingLeft: "8px",
+    width: "300px"
+  },
+  label: ".kushki-hosted-field-label"
 };
 
 export const optionsDefault: CardOptions = {
@@ -111,13 +111,12 @@ export const optionsDefault: CardOptions = {
     subtotalIva: 0,
     subtotalIva0: 0
   },
-  isSubscription: false,
   currency: "USD",
   fields: {
     cardholderName: {
       inputType: "text",
-      label: "Payment holder name",
-      placeholder: "Payment holder name",
+      label: "Nombre del tarjeta habiente",
+      placeholder: "Nombre del tarjeta habiente",
       selector: "cardHolderName_id"
     },
     cardNumber: {
@@ -138,19 +137,19 @@ export const optionsDefault: CardOptions = {
           label: "Quiero pagar en cuotas"
         },
         deferredType: {
+          hiddenLabel: "deferred Type",
           label: "Tipos de diferido",
-          placeholder: "Tipos de diferido",
-          hiddenLabel: "deferred Type"
-        },
-        months: {
-          label: "Meses",
-          placeholder: "Meses",
-          hiddenLabel: "Meses"
+          placeholder: "Tipos de diferido"
         },
         graceMonths: {
+          hiddenLabel: "Meses de gracia",
           label: "Meses de gracia",
-          placeholder: "Meses de gracia",
-          hiddenLabel: "Meses de gracia"
+          placeholder: "Meses de gracia"
+        },
+        months: {
+          hiddenLabel: "Meses",
+          label: "Meses",
+          placeholder: "Meses"
         }
       },
       selector: "deferred_id"
@@ -168,5 +167,6 @@ export const optionsDefault: CardOptions = {
       selector: "otp_id"
     }
   },
+  isSubscription: false,
   styles: hostedFieldsStyles
 };
