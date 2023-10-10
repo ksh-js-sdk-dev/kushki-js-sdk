@@ -1,0 +1,206 @@
+/* styles.css */
+
+.boxPrincipal {
+  box-sizing: border-box;
+}
+
+.button-contained {
+  background-color: rgba(68, 152, 238, 1);
+  color: white;
+  border: 1px solid rgba(68, 152, 238, 1);
+  border-radius: 8px;
+  text-transform: none;
+  font-size: 14px;
+}
+
+.button-outlined {
+  background-color: white;
+  color: rgba(68, 152, 238, 1);
+  border: 1px solid rgba(68, 152, 238, 1);
+  border-radius: 8px;
+  text-transform: none;
+  font-size: 14px;
+}
+
+.button-border {
+  border: 1px solid rgba(68, 152, 238, 1);
+  border-radius: 8px;
+  width: 300px;
+  height: 40px;
+  text-transform: none;
+}
+
+.button-pay {
+  margin-top: 20px
+}
+
+.input-configuration {
+  border: 1px solid rgba(203, 213, 224, 1) !important;
+  border-radius: 10px !important;
+  height: 40px !important;
+  width: 300px !important;
+  font-size: 14px !important;
+  font-family: Arial, Verdana, Tahoma !important;
+  padding-left: 8px !important;
+}
+
+.input-configuration:focus {
+  border: 1px solid #0077ff !important;
+  border-radius: 10px;
+  outline: none !important;
+  height: 40px !important;
+  margin: 0px !important;
+  font-size: 14px !important;
+  font-family: Arial, Verdana, Tahoma !important;
+}
+
+.label-input-configuration {
+  padding-left: 8px !important;
+  display: flex;
+  font-family: Arial, Verdana, Tahoma;
+  font-size: 14px !important;
+  align-items: center;
+}
+
+.inputCheck {
+  margin-top: 2px !important;
+}
+
+.divContainer {
+  width: 300px;
+  margin: 10px 0px 0px 0px !important;
+  font-family: Arial, Verdana, Tahoma;
+  color: rgba(109, 119, 129, 1) !important;
+  font-size: 14px !important;
+}
+
+.divContainerSelect {
+  padding: 0px !important;
+  margin-bottom: 5px !important;
+}
+
+.label-hostedFieldError {
+  color: #b60000;
+  font-size: 14px;
+  margin-top: -10px;
+  font-weight: 400;
+  text-align: left;
+  width: 300px;
+  font-family: Arial, Verdana, Tahoma;
+}
+
+.cardNumberHelp {
+  width: 300px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardNumberHelp-text {
+  font-size: 10px !important;
+  color: rgba(109, 119, 129, 0.8) !important;
+  display: flex;
+  align-items: center;
+}
+
+.imgCopy {
+  cursor: pointer;
+  padding-left: 4px;
+  width: 12px;
+  height: 12px;
+}
+
+.selectExample {
+  color: rgba(109, 119, 129, 1) !important;
+  padding: 0px 15px 0px 10px !important;
+  padding-right: 20px !important;
+  font-size: 14px !important;
+  height: 40px !important;
+  margin: 4px 0px !important;
+}
+
+.expiration-date-custom {
+  display: flex;
+  width: 300px;
+  justify-content: flex-start;
+}
+
+.titleDemo {
+  color: rgba(2, 51, 101, 1);
+  font-size: 23px;
+}
+
+.mui-text-custom {
+  font-weight: 400;
+  font-family: Arial, Verdana, Tahoma !important;
+  color: rgba(109, 119, 129, 1) !important;
+  text-align: center;
+}
+.mui-text-result {
+  width: 300px;
+  font-weight: 400;
+  font-family: Arial, Verdana, Tahoma;
+  color: rgba(109, 119, 129, 1) !important;
+  text-align: left;
+}
+
+.box-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.box-input-prev {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.box-hosted-fields {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.mui-textfield {
+  margin: 0px !important;
+}
+
+.content-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.button-error {
+  background-color: red;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  height: 36px;
+  margin: 6px 0;
+  margin-left: 15px;
+  overflow: hidden;
+  padding: 0 26px;
+}
+
+.table-buttons {
+  background-color: #39a1f4;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  height: 36px;
+  margin: 6px 0;
+  margin-left: 15px;
+  overflow: hidden;
+  padding: 0 26px;
+}
+
+.content-title {
+  display: flex;
+  justify-content: center;
+  margin-right: 300px;
+  width: 100%;
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Kushki  Options",
+  "additionalProperties": false,
+  "properties": {
+    "publicCredentialId": {
+      "type": "string"
+    },
+    "inTest": {
+      "type": "boolean"
+    }
+  },
+  "required": ["publicCredentialId"],
+  "type": "object"
+}

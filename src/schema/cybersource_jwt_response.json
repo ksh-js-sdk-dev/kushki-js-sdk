@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://ksh/CybersourceJwtResponse",
+  "title": "CybersourceJwtResponse",
+  "additionalProperties": false,
+  "type": "object",
+  "required": ["jwt"],
+  "properties": {
+    "jwt": {
+      "type": "string"
+    },
+    "identifier": {
+      "type": "string"
+    }
+  }
+}
