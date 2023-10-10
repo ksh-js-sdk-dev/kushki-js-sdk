@@ -18,6 +18,7 @@ import ResultsPayment from "../components/ConfigurationDemo/Components/ResultsPa
 import HostedFields from "../components/HostedFields/HostedFields.tsx";
 import { IDefaultInformation } from "../components/ConfigurationDemo/ConfigurationDemo.interface.ts";
 import { optionsDefault } from "./Checkout.constants.ts";
+import { InputModelEnum } from "../../../src/infrastructure/InputModel.enum.ts";
 
 export const CheckoutContainer = () => {
   const [token, setToken] = useState<string>("");
@@ -60,8 +61,8 @@ export const CheckoutContainer = () => {
       ...optionsDefault.amount!,
       subtotalIva0: amountOptions
     },
-    isSubscription: isSubscriptionOption,
-    currency: currencyOptions!
+    currency: currencyOptions!,
+    isSubscription: isSubscriptionOption
   };
 
   const initKushkiInstance = async (): Promise<void> => {
@@ -87,6 +88,7 @@ export const CheckoutContainer = () => {
       try {
         setDisablePaymentButton(true);
         const token: TokenResponse = await cardInstance.requestToken();
+
         setToken(token.token);
         setDeferredValues(token.deferred);
       } catch (error: any) {
@@ -118,12 +120,15 @@ export const CheckoutContainer = () => {
   }, [cardInstance]);
 
   useEffect(() => {
-    const errorForm: boolean = Object.keys(fieldsValidityDemo).some(
-      (fieldName) => !fieldsValidityDemo[fieldName as keyof Fields]?.isValid
-    );
+    const errorForm: boolean = Object.keys(fieldsValidityDemo)
+      .filter((fieldName) => fieldName !== InputModelEnum.DEFERRED)
+      .some(
+        (fieldName) => !fieldsValidityDemo[fieldName as keyof Fields]?.isValid
+      );
 
     if (errorForm) {
       setErrorHostedFields(true);
+
       return;
     }
 
@@ -161,7 +166,7 @@ export const CheckoutContainer = () => {
             token={token}
             getToken={getToken}
           />
-          {/*<TableFormEvents cardInstance={cardInstance} />*/}
+          {/* <TableFormEvents cardInstance={cardInstance} />*/}
         </>
       )}
     </>

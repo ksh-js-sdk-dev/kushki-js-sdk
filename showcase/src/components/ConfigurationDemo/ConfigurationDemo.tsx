@@ -44,11 +44,6 @@ const ConfigurationDemo = ({
   };
 
   const buildDefaultInformation = (option: OptionDefaultData) => {
-    //TODO remove pending
-    //publicCredentialId: "d6b3e17702e64d85b812c089e24a1ca1" //3DS merchant Test
-    //       publicCredentialId: "40f9e34568fa40e39e15c5dddb607075" // Sift merchant Test
-    //       // publicCredentialId: "289d036418724065bc871ea50a4ee39f" //merchant chile
-    //       // publicCredentialId: "7cad8d921dcb463eb92c43c049a849b0" //OTP
     const optionDefaultData: { [k: string]: () => void } = {
       [OptionDefaultData.OTP]: () => {
         setInputsAndOptionsHostedField(
@@ -79,15 +74,16 @@ const ConfigurationDemo = ({
         );
       }
     };
+
     optionDefaultData[option]();
   };
   const setDefaultOptions = (option: keyof IDefaultInformation) => {
     setButtonActive((prevState) => ({
       approved: false,
       declined: false,
+      [option]: !prevState[option],
       otp: false,
-      threeDomainSecure: false,
-      [option]: !prevState[option]
+      threeDomainSecure: false
     }));
 
     buildDefaultInformation(option as OptionDefaultData);
@@ -115,7 +111,6 @@ const ConfigurationDemo = ({
       inputCurrency?.length != 0 &&
       inputAmount.length != 0
     ) {
-      //TODO temp
       setPublicMerchantIdDemo(inputMerchantId);
       setAmountOptions(Number(inputAmount));
       setCurrencyOptions(inputCurrency as Currency);
