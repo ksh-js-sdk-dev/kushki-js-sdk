@@ -11,6 +11,7 @@ runs:
       run: |
         GET_VERSION=$(node -p -e "require('./package.json').version")
         echo "GET_VERSION=${GET_VERSION}" >> $GITHUB_ENV
+      shell: bash
 
     - name: Extract branch number
       id: extract-number-branch
@@ -20,6 +21,7 @@ runs:
         echo "branch=${BRANCH}" >> $GITHUB_OUTPUT
         echo "source_branch=${BRANCH_PARTS[0]}" >> $GITHUB_OUTPUT
         echo "BRANCH_NUMBER=${BRANCH_PARTS[1]}" >> $GITHUB_ENV
+      shell: bash
 
     - name: Extract from branch number
       id: extract-from-number-branch
@@ -28,6 +30,7 @@ runs:
         IFS='/' read -ra FROM_BRANCH_PARTS <<< "$FROM_BRANCH"
         echo "from_branch=${FROM_BRANCH_PARTS[0]}" >> $GITHUB_OUTPUT
         echo "NUMBER_BRANCH=${FROM_BRANCH_PARTS[1]}" >> $GITHUB_ENV
+      shell: bash
 
     - name: Set Version Release
       if: ${{ steps.extract-number-branch.outputs.source_branch == 'release' }}
@@ -60,7 +63,7 @@ runs:
           NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
         fi
-
+      shell: bash
 
     - name: Set Version hotfix
       if: ${{ steps.extract-from-number-branch.outputs.from_branch == 'hotfix' }}
@@ -100,6 +103,7 @@ runs:
           NEW_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${NEW_VERSION_PATCH}-tik-${BRANCH_NUMBER_PARTS[1]}-patch.1"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
         fi
+      shell: bash
 
     - name: Set Version Develop
       if: ${{ steps.extract-from-number-branch.outputs.from_branch == 'develop' }}
@@ -107,11 +111,13 @@ runs:
         CURRENT_VERSION=$GET_VERSION
         IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
         echo "NEW_VERSION=${VERSION_PARTS[0]}" >> $GITHUB_ENV
+      shell: bash
 
     - name: output Version
       id: version
       run: |
         echo "new-version=$NEW_VERSION" >> $GITHUB_OUTPUT
+      shell: bash
 
     - name: Log GITHUB_ENV
       run: |
@@ -121,3 +127,4 @@ runs:
         echo "BRANCH_NUMBER is $BRANCH_NUMBER"
         echo "NUMBER_BRANCH is $NUMBER_BRANCH"
         echo "new-version is ${{ steps.version.outputs.new-version }}"
+      shell: bash
