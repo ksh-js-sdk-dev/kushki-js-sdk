@@ -9,16 +9,20 @@
       "pattern": "^[a-zA-Z0-9]{32}$"
     },
     "deferred": {
+      "description": "@public",
       "type": "object",
       "title": "DeferredValuesResponse",
       "properties": {
         "graceMonths": {
+          "description": "@typeParam  number - from 0 to more",
           "type": "number"
         },
         "creditType": {
+          "description": "@typeParam  string - code of credit type.",
           "type": "string"
         },
         "months": {
+          "description": "@typeParam  number - from 0 to more",
           "type": "number"
         }
       }

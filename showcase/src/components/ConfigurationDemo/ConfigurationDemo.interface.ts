@@ -27,5 +27,5 @@ export interface IButtonsDefaultInfoProps {
   option: OptionDefaultData;
   label: string;
   setDefaultOptions: (option: keyof IDefaultInformation) => void;
-  disableButtons: boolean
+  disableButtons: boolean;
 }
