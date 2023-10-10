@@ -6,6 +6,8 @@ on:
     branches:
       - "release/*"
       - "feature/*"
+      - "master"
+      - "develop"
     types: [closed]
 
   workflow_dispatch:
@@ -41,7 +43,7 @@ jobs:
           path: test.json
 
   build-version:
-    needs: build-version
+    needs: validate
     runs-on: ubuntu-latest
     outputs:
       new-version: ${{ steps.generate-version.outputs.new-version }}
@@ -53,10 +55,9 @@ jobs:
       - name: Generate new version
         id: generate-version
         uses: ./.github/actions/generate-version
-  
 
   build:
-    needs: validate
+    needs: build-version
     runs-on: ubuntu-lat4est
     permissions:
       contents: write
