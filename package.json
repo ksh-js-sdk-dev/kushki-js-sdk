@@ -3,8 +3,9 @@
   "version": "0.1.1-14195.11",
   "scripts": {
     "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
-    "dev": "npm run docs && cd ./showcase && vite --c vite.config.ts",
+    "dev": "cd ./showcase && vite --c vite.config.ts",
     "docs": "typedoc --tsconfig ./tsconfig.json",
+    "docs:dev": "typedoc --watch --tsconfig ./tsconfig.json",
     "build:npm": "tsc && vite build --c vite.config-npm.ts && yarn cp:package",
     "build:cdn": "npx webpack --config webpack-cdn.config.js",
     "build": "npm run validate && npm run build:npm && npm run build:cdn && npm run docs",
@@ -43,6 +44,8 @@
     "inversify": "^6.0.1",
     "reflect-metadata": "^0.1.13",
     "typedoc": "^0.25.2",
+    "typedoc-github-wiki-theme": "^1.1.0",
+    "typedoc-plugin-markdown": "^3.16.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

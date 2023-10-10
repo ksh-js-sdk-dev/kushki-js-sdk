@@ -49,9 +49,10 @@ describe("Cardinal3DSProvider - Test", () => {
 
   const initProvider = (inTest?: boolean) => {
     const kushkiInstanceMock: IKushki = new Kushki({
-      publicCredentialId: "1234456789",
-      inTest
+      inTest,
+      publicCredentialId: "1234456789"
     });
+
     cardinalProvider = new Cardinal3DSProvider(kushkiInstanceMock);
   };
 
@@ -88,6 +89,7 @@ describe("Cardinal3DSProvider - Test", () => {
 
     it("should call complete for callback on retry ", async () => {
       const completeMock = jest.fn().mockReturnValue({});
+
       mockCardinal(completeMock);
 
       await cardinalProvider.getCardinal3dsToken(() => {
@@ -98,14 +100,14 @@ describe("Cardinal3DSProvider - Test", () => {
 
   describe("validateCardinal3dsToken - method", () => {
     const tokenMock = {
-      token: "123456",
       security: {
-        authRequired: true,
         acsURL: ".com",
-        paReq: "456",
         authenticationTransactionId: "678",
+        authRequired: true,
+        paReq: "456",
         specificationVersion: "2.0.0"
-      }
+      },
+      token: "123456"
     };
 
     it("should return token with all security props validated", async () => {
@@ -130,10 +132,10 @@ describe("Cardinal3DSProvider - Test", () => {
       try {
         await cardinalProvider.validateCardinal3dsToken(
           {
-            token: "1234",
             security: {
               authRequired: true
-            }
+            },
+            token: "1234"
           },
           {}
         );
