@@ -134,7 +134,8 @@ runs:
       run: |
         CURRENT_VERSION=$GET_VERSION
         IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
-        echo "NEW_VERSION=${VERSION_PARTS[0]}-alpha" >> $GITHUB_ENV
+        NEW_VERSION="${VERSION_PARTS[0]}-alpha"
+        echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
       shell: bash
 
     - name: Set Version Release -> Develop
