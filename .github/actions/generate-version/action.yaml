@@ -173,38 +173,6 @@ runs:
         fi
       shell: bash
 
-    - name: Set Version Release -> Develop
-      if: ${{ steps.extract-from-number-branch.outputs.source_branch == 'release' }}
-      run: |
-        CURRENT_VERSION=$GET_VERSION
-        if [[ $CURRENT_VERSION =~  ^[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+-alpha\.[0-9]+$ ]]; then
-         IFS='-' read -ra BRANCH_NUMBER_PARTS <<< "$NUMBER_BRANCH"
-         IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
-         IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[2]}"
-         GET_BRANCH_NUMBER="${VERSION_PARTS[1]}"
-         echo "PART BRANCH is ${BRANCH_NUMBER_PARTS[1]}"
-         echo "GET BRANCH is $GET_BRANCH_NUMBER"
-        
-         if [[ $GET_BRANCH_NUMBER == ${BRANCH_NUMBER_PARTS[1]} ]]; then
-           CURRENT_NUMBER="${VERSION_PARTS_SECOND[1]}"
-           NEW_NUMBER=$((CURRENT_NUMBER + 1))
-           NEW_VERSION="${VERSION_PARTS[0]}-${VERSION_PARTS[1]}-alpha.${NEW_NUMBER}"
-         else
-           IFS='.' read -ra VERSION_PARTS_FIRST <<< "${VERSION_PARTS[0]}"
-           BRANCH_NUMBER=$NUMBER_BRANCH
-           NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}-alpha.1"
-         fi
-         echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-
-        else 
-         BRANCH_NUMBER=$NUMBER_BRANCH
-         IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
-        
-         NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}-alpha.1"
-         echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-        fi
-      shell: bash
-
     - name: output Version
       id: version
       run: |
