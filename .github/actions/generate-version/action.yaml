@@ -139,7 +139,7 @@ runs:
         
          NEW_VERSION="${VERSION_PARTS[0]}-alpha.${VERSION_PARTS_SECOND[1]}"
         
-        elfi [[ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+-tik-[0-9]+-patch\.[0-9]+$ ]]; then
+        elif [[ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+-tik-[0-9]+-patch\.[0-9]+$ ]]; then
           IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
           IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[3]}"
         
