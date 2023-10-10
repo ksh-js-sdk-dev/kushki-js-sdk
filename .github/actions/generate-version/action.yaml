@@ -4,6 +4,7 @@ outputs:
     value: ${{ steps.version.outputs.new-version }}
   branch:
     value: ${{ steps.extract-number-branch.outputs.branch }}
+description: 'Generate version'
 runs:
   using: 'composite'
   steps:
@@ -72,6 +73,8 @@ runs:
           NEW_VERSION_MINOR=$((MINOR_VERSION + 1))
           BRANCH_NUMBER=$BRANCH_NUMBER
           NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
         fi
       shell: bash
 
@@ -116,13 +119,13 @@ runs:
         else 
           IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
           IFS='.' read -ra VERSION_PARTS_FIRST <<< "${VERSION_PARTS[0]}"
+          IFS='-' read -ra BRANCH_NUMBER_PARTS <<< "$NUMBER_BRANCH"
           MAJOR_VERSION="${VERSION_PARTS_FIRST[0]}"
           MINOR_VERSION="${VERSION_PARTS_FIRST[1]}"
           PATCH_VERSION="${VERSION_PARTS_FIRST[2]}"
           NEW_VERSION_PATCH=$((PATCH_VERSION + 1))
-          BRANCH_NUMBER=$NUMBER_BRANCH
           NEW_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${NEW_VERSION_PATCH}-tik-${BRANCH_NUMBER_PARTS[1]}-patch.1"
-        
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
         fi
       shell: bash
 
