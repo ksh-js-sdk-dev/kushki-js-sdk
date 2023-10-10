@@ -65,7 +65,7 @@ runs:
           BRANCH_NUMBER=$BRANCH_NUMBER
           NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
         
-        elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ];
+        elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]; then
           IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
           MAJOR_VERSION="${VERSION_PARTS[0]}"
           MINOR_VERSION="${VERSION_PARTS[1]}"
