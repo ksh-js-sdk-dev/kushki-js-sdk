@@ -58,7 +58,7 @@ jobs:
 
   build:
     needs: build-version
-    runs-on: ubuntu-lat4est
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     outputs:
