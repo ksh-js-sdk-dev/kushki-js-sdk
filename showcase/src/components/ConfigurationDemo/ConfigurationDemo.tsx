@@ -79,7 +79,10 @@ const ConfigurationDemo = ({
   };
   const setDefaultOptions = (option: keyof IDefaultInformation) => {
     setButtonActive((prevState) => ({
-      ...prevState,
+      approved: false,
+      declined: false,
+      otp: false,
+      threeDomainSecure: false,
       [option]: !prevState[option]
     }));
 
