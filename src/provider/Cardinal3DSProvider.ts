@@ -14,6 +14,12 @@ import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { CONTAINER } from "infrastructure/Container.ts";
 import { KushkiGateway } from "gateway/KushkiGateway.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
+import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
+import { injectable } from "inversify";
+import {
+  CardinalValidationCodeEnum,
+  ICardinalValidation
+} from "infrastructure/CardinalValidationEnum.ts";
 
 declare global {
   // tslint:disable-next-line
@@ -22,32 +28,36 @@ declare global {
     Cardinal: any;
   }
 }
-export class Cardinal3DSProvider {
-  private readonly _kushkiInstance: IKushki;
+
+@injectable()
+export class Cardinal3DSProvider implements ICardinal3DSProvider {
   private readonly _gateway: IKushkiGateway;
-  constructor(kushkiInstance: IKushki) {
-    this._kushkiInstance = kushkiInstance;
+  constructor() {
     this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
   }
 
-  public async initCardinal(jwt: string, cardBin: string) {
-    if (this._kushkiInstance.isInTest())
-      await import("libs/cardinal/staging.ts");
+  public async initCardinal(
+    kushkiInstance: IKushki,
+    jwt: string,
+    cardBin: string
+  ) {
+    if (kushkiInstance.isInTest()) await import("libs/cardinal/staging.ts");
     else await import("libs/cardinal/prod.ts");
 
     await this._setupCardinal(jwt, cardBin);
   }
 
-  public async getCardinal3dsToken(callback: () => void): Promise<void> {
+  public async onSetUpComplete(callback: () => void): Promise<void> {
     if (await this._isCardinalInitialized()) {
       callback();
     } else
-      window.Cardinal.on("payments.setupComplete", async () => {
+      window.Cardinal.on("payments.setupComplete", () => {
         callback();
       });
   }
 
   public async validateCardinal3dsToken(
+    kushkiInstance: IKushki,
     cardTokenResponse: CardTokenResponse,
     deferredValues: DeferredValues
   ): Promise<TokenResponse> {
@@ -58,7 +68,10 @@ export class Cardinal3DSProvider {
       });
     }
     if (tokenHasAllSecurityProperties(cardTokenResponse, false)) {
-      await this._launch3DSCardinalValidation(cardTokenResponse);
+      await this._launch3DSCardinalValidation(
+        kushkiInstance,
+        cardTokenResponse
+      );
 
       return Promise.resolve({
         deferred: deferredValues,
@@ -70,35 +83,48 @@ export class Cardinal3DSProvider {
   }
 
   private async _launch3DSCardinalValidation(
+    kushkiInstance: IKushki,
     token: CardTokenResponse
   ): Promise<CardTokenResponse> {
     this._launchCardinalModal(token);
 
-    if (await this._onCardinalPaymentValidation(token.secureId!))
+    if (
+      await this._onCardinalPaymentValidation(kushkiInstance, token.secureId!)
+    )
       return Promise.resolve(token);
     else return Promise.reject(new KushkiError(ERRORS.E006));
   }
 
   private async _onCardinalPaymentValidation(
+    kushkiInstance: IKushki,
     secureServiceId: string
   ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      window.Cardinal.on("payments.validated", async () => {
-        try {
-          const secureValidation: SecureOtpResponse =
-            await this._gateway.requestSecureServiceValidation(
-              this._kushkiInstance,
-              {
-                otpValue: "",
-                secureServiceId
-              }
-            );
+      window.Cardinal.on(
+        "payments.validated",
+        async (data: ICardinalValidation) => {
+          if (data.ActionCode !== CardinalValidationCodeEnum.SUCCESS)
+            reject(new KushkiError(ERRORS.E005));
 
-          resolve(is3dsValid(secureValidation));
-        } catch (error) {
-          reject(new KushkiError(ERRORS.E006));
+          try {
+            const secureValidation: SecureOtpResponse =
+              await this._gateway.requestSecureServiceValidation(
+                kushkiInstance,
+                {
+                  otpValue: "",
+                  secureServiceId
+                }
+              );
+
+            resolve(is3dsValid(secureValidation));
+          } catch (error) {
+            reject(new KushkiError(ERRORS.E006));
+          } finally {
+            window.Cardinal.off("payments.setupComplete");
+            window.Cardinal.off("payments.validated");
+          }
         }
-      });
+      );
     });
   }
 

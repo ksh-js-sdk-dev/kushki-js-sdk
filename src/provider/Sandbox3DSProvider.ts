@@ -15,20 +15,22 @@ import { CONTAINER } from "infrastructure/Container.ts";
 import { KushkiGateway } from "gateway/KushkiGateway.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
+import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
+import { injectable } from "inversify";
 
-export class Sandbox3DSProvider {
-  private readonly _kushkiInstance: IKushki;
+@injectable()
+export class Sandbox3DSProvider implements ISandbox3DSProvider {
   private readonly _gateway: IKushkiGateway;
-  constructor(kushkiInstance: IKushki) {
-    this._kushkiInstance = kushkiInstance;
+  constructor() {
     this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
   }
 
-  public async initSandbox() {
+  public initSandbox() {
     KushkiCardinalSandbox.init();
   }
 
   public async validateSandbox3dsToken(
+    kushkiInstance: IKushki,
     cardTokenResponse: CardTokenResponse,
     deferredValues: DeferredValues
   ): Promise<TokenResponse> {
@@ -39,7 +41,7 @@ export class Sandbox3DSProvider {
       });
     }
     if (tokenHasAllSecurityProperties(cardTokenResponse, true)) {
-      await this._launch3DSSandboxValidation(cardTokenResponse);
+      await this._launch3DSSandboxValidation(kushkiInstance, cardTokenResponse);
 
       return Promise.resolve({
         deferred: deferredValues,
@@ -51,16 +53,18 @@ export class Sandbox3DSProvider {
   }
 
   private async _launch3DSSandboxValidation(
+    kushkiInstance: IKushki,
     token: CardTokenResponse
   ): Promise<CardTokenResponse> {
     this._launchSandboxModal(token);
 
-    if (await this._onSandboxPaymentValidation(token.secureId!))
+    if (await this._onSandboxPaymentValidation(kushkiInstance, token.secureId!))
       return Promise.resolve(token);
     else return Promise.reject(new KushkiError(ERRORS.E006));
   }
 
   private async _onSandboxPaymentValidation(
+    kushkiInstance: IKushki,
     secureServiceId: string
   ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
@@ -72,7 +76,7 @@ export class Sandbox3DSProvider {
           try {
             const secureValidation: SecureOtpResponse =
               await this._gateway.requestSecureServiceValidation(
-                this._kushkiInstance,
+                kushkiInstance,
                 {
                   otpValue: "",
                   secureServiceId

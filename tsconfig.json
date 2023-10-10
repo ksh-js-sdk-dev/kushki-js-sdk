@@ -38,7 +38,7 @@
   "references": [{ "path": "./tsconfig.node.json" }],
   "typedocOptions": {
     "lightHighlightTheme": "light-plus",
-    "entryPoints": ["src/repository/IPayment.ts", "types/token_response.d.ts"],
+    "entryPoints": ["src/repository/ICard.ts", "types/token_response.d.ts"],
     "out": "docs"
   }
 }

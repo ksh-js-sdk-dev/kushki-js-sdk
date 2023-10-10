@@ -10,6 +10,7 @@ import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 
 describe("Sandbox3DSProvider - Test", () => {
   let sandboxProvider: Sandbox3DSProvider;
+  let kushkiInstanceMock: IKushki;
   let initSpy: jest.SpyInstance;
 
   const mockSandbox = (isError?: boolean) => {
@@ -39,12 +40,12 @@ describe("Sandbox3DSProvider - Test", () => {
   };
 
   const initProvider = (inTest?: boolean) => {
-    const kushkiInstanceMock: IKushki = new Kushki({
+    kushkiInstanceMock = new Kushki({
       inTest,
       publicCredentialId: "1234456789"
     });
 
-    sandboxProvider = new Sandbox3DSProvider(kushkiInstanceMock);
+    sandboxProvider = new Sandbox3DSProvider();
   };
 
   beforeEach(() => {
@@ -76,6 +77,7 @@ describe("Sandbox3DSProvider - Test", () => {
 
     it("should return token with all security props validated", async () => {
       const tokenResponse = await sandboxProvider.validateSandbox3dsToken(
+        kushkiInstanceMock,
         tokenMock,
         {}
       );
@@ -85,6 +87,7 @@ describe("Sandbox3DSProvider - Test", () => {
 
     it("should return token if not needs validation", async () => {
       const tokenResponse = await sandboxProvider.validateSandbox3dsToken(
+        kushkiInstanceMock,
         { token: "1234" },
         {}
       );
@@ -95,6 +98,7 @@ describe("Sandbox3DSProvider - Test", () => {
     it("should throw error when token not have complete security props", async () => {
       try {
         await sandboxProvider.validateSandbox3dsToken(
+          kushkiInstanceMock,
           {
             security: {
               authRequired: true
@@ -113,7 +117,11 @@ describe("Sandbox3DSProvider - Test", () => {
       initProvider();
 
       try {
-        await sandboxProvider.validateSandbox3dsToken(tokenMock, {});
+        await sandboxProvider.validateSandbox3dsToken(
+          kushkiInstanceMock,
+          tokenMock,
+          {}
+        );
       } catch (error: any) {
         expect(error.code).toEqual("E006");
       }
@@ -127,7 +135,11 @@ describe("Sandbox3DSProvider - Test", () => {
       initProvider();
 
       try {
-        await sandboxProvider.validateSandbox3dsToken(tokenMock, {});
+        await sandboxProvider.validateSandbox3dsToken(
+          kushkiInstanceMock,
+          tokenMock,
+          {}
+        );
       } catch (error: any) {
         expect(error.code).toEqual("E006");
       }
@@ -138,7 +150,11 @@ describe("Sandbox3DSProvider - Test", () => {
       initProvider();
 
       try {
-        await sandboxProvider.validateSandbox3dsToken(tokenMock, {});
+        await sandboxProvider.validateSandbox3dsToken(
+          kushkiInstanceMock,
+          tokenMock,
+          {}
+        );
       } catch (error: any) {
         expect(error.code).toEqual("E005");
       }
