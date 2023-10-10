@@ -133,8 +133,18 @@ runs:
       if: ${{ steps.extract-number-branch.outputs.source_branch == 'master' }}
       run: |
         CURRENT_VERSION=$GET_VERSION
-        IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
-        NEW_VERSION="${VERSION_PARTS[0]}-alpha"
+        if [[ $CURRENT_VERSION =~  ^[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+-alpha\.[0-9]+$ ]]; then
+         IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+         IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[2]}"
+        
+         NEW_VERSION="${VERSION_PARTS[0]}-alpha.${VERSION_PARTS_SECOND[1]}"
+        
+        elfi [[ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+-tik-[0-9]+-patch\.[0-9]+$ ]]; then
+          IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+          IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[3]}"
+        
+          NEW_VERSION="${VERSION_PARTS[0]}-alpha.${VERSION_PARTS_SECOND[1]}"
+        fi
         echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
       shell: bash
 
