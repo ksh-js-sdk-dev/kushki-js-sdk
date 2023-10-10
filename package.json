@@ -1,6 +1,6 @@
 {
   "name": "@kushki/js-sdk",
-  "version": "0.1.1-14195.7",
+  "version": "0.1.1-14195.9",
   "scripts": {
     "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
     "dev": "npm run docs && cd ./showcase && vite --c vite.config.ts",
