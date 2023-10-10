@@ -4,6 +4,7 @@ outputs:
     value: ${{ steps.version.outputs.new-version }}
   branch:
     value: ${{ steps.extract-number-branch.outputs.branch }}
+description: 'Generate version'
 runs:
   using: 'composite'
   steps:
@@ -32,7 +33,7 @@ runs:
         echo "NUMBER_BRANCH=${FROM_BRANCH_PARTS[1]}" >> $GITHUB_ENV
       shell: bash
 
-    - name: Set Version Release
+    - name: Set Version feature -> Release
       if: ${{ steps.extract-number-branch.outputs.source_branch == 'release' }}
       run: |
         CURRENT_VERSION=$GET_VERSION
@@ -54,7 +55,8 @@ runs:
             NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
           fi
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-        else
+        
+        elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]; then
           IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
           MAJOR_VERSION="${VERSION_PARTS[0]}"
           MINOR_VERSION="${VERSION_PARTS[1]}"
@@ -62,10 +64,21 @@ runs:
           BRANCH_NUMBER=$BRANCH_NUMBER
           NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+        
+        else
+          IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+          IFS='.' read -ra VERSION_PARTS_FIRST <<< "${VERSION_PARTS[0]}"
+          MAJOR_VERSION="${VERSION_PARTS_FIRST[0]}"
+          MINOR_VERSION="${VERSION_PARTS_FIRST[1]}"
+          NEW_VERSION_MINOR=$((MINOR_VERSION + 1))
+          BRANCH_NUMBER=$BRANCH_NUMBER
+          NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
         fi
       shell: bash
 
-    - name: Set Version hotfix
+    - name: Set Version hotfix -> Develop
       if: ${{ steps.extract-from-number-branch.outputs.from_branch == 'hotfix' }}
       run: |
         CURRENT_VERSION=$GET_VERSION
@@ -92,7 +105,7 @@ runs:
           fi
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
-        else
+        elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]; then
           IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
           IFS='-' read -ra BRANCH_NUMBER_PARTS <<< "$NUMBER_BRANCH"
           MAJOR_VERSION="${VERSION_PARTS[0]}"
@@ -102,15 +115,62 @@ runs:
           IFS='-' read -ra BRANCH_NUMBER_PARTS <<< "$NUMBER_BRANCH"
           NEW_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${NEW_VERSION_PATCH}-tik-${BRANCH_NUMBER_PARTS[1]}-patch.1"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+        
+        else 
+          IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+          IFS='.' read -ra VERSION_PARTS_FIRST <<< "${VERSION_PARTS[0]}"
+          IFS='-' read -ra BRANCH_NUMBER_PARTS <<< "$NUMBER_BRANCH"
+          MAJOR_VERSION="${VERSION_PARTS_FIRST[0]}"
+          MINOR_VERSION="${VERSION_PARTS_FIRST[1]}"
+          PATCH_VERSION="${VERSION_PARTS_FIRST[2]}"
+          NEW_VERSION_PATCH=$((PATCH_VERSION + 1))
+          NEW_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${NEW_VERSION_PATCH}-tik-${BRANCH_NUMBER_PARTS[1]}-patch.1"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
         fi
       shell: bash
 
-    - name: Set Version Develop
-      if: ${{ steps.extract-from-number-branch.outputs.from_branch == 'develop' }}
+    - name: Set Version Master
+      if: ${{ steps.extract-from-number-branch.outputs.source_branch == 'master' }}
       run: |
         CURRENT_VERSION=$GET_VERSION
         IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
-        echo "NEW_VERSION=${VERSION_PARTS[0]}" >> $GITHUB_ENV
+        echo "NEW_VERSION=${VERSION_PARTS[0]}-alpha" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Set Version Release -> Develop
+      if: ${{ steps.extract-from-number-branch.outputs.from_branch == 'release' }}
+      run: |
+        CURRENT_VERSION=$GET_VERSION
+        if [[ $CURRENT_VERSION =~  ^[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+-alpha\.[0-9]+$ ]]; then
+         IFS='-' read -ra BRANCH_NUMBER_PARTS <<< "$NUMBER_BRANCH"
+         IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+         IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[2]}"
+         GET_BRANCH_NUMBER="${VERSION_PARTS[1]}"
+         echo "PART BRANCH is ${BRANCH_NUMBER_PARTS[1]}"
+         echo "GET BRANCH is $GET_BRANCH_NUMBER"
+        
+         if [[ $GET_BRANCH_NUMBER == ${BRANCH_NUMBER_PARTS[1]} ]]; then
+           CURRENT_NUMBER="${VERSION_PARTS_SECOND[1]}"
+           NEW_NUMBER=$((CURRENT_NUMBER + 1))
+           NEW_VERSION="${VERSION_PARTS[0]}-${VERSION_PARTS[1]}-alpha.${NEW_NUMBER}"
+         else
+           BRANCH_NUMBER=$NUMBER_BRANCH
+           NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}-alpha.1"
+         fi
+         echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+        elif [[ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+\.[0-9]+$ ]]; then
+          IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+          IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[1]}"
+          NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}-alpha.${VERSION_PARTS_SECOND[0]}"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          
+        else 
+         BRANCH_NUMBER=$NUMBER_BRANCH
+         IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+         NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}-alpha.1"
+         echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+        fi
       shell: bash
 
     - name: output Version
@@ -122,9 +182,10 @@ runs:
     - name: Log GITHUB_ENV
       run: |
         echo "GET_VERSION is $GET_VERSION"          
-        echo "SORUCE BRANCH is ${{ steps.extract-number-branch.outputs.source_branch }}"
+        echo "source_branch is ${{ steps.extract-number-branch.outputs.source_branch }}"
+        echo "from_branch is ${{ steps.extract-from-number-branch.outputs.from_branch }}"
         echo "branch is ${{ steps.extract-number-branch.outputs.branch }}"
         echo "BRANCH_NUMBER is $BRANCH_NUMBER"
         echo "NUMBER_BRANCH is $NUMBER_BRANCH"
-        echo "NEW VERSION is ${{ steps.version.outputs.new-version }}"
+        echo "new-version is ${{ steps.version.outputs.new-version }}"
       shell: bash
