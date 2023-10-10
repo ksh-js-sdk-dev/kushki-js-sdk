@@ -162,8 +162,8 @@ export const optionsDefault: CardOptions = {
     },
     otp: {
       inputType: "password",
-      label: "OTP",
-      placeholder: "OTP",
+      label: "OTP de verificación",
+      placeholder: "OTP de verificación",
       selector: "otp_id"
     }
   },
