@@ -1,7 +1,7 @@
 import { KushkiError, KushkiErrorAttr } from "infrastructure/KushkiError.ts";
 import { AxiosError } from "axios";
 
-export class UtilsService {
+export class UtilsProvider {
   public static validErrors = (
     error: Error | KushkiError | AxiosError | unknown,
     errorCode: KushkiErrorAttr

@@ -1,4 +1,4 @@
-import { UtilsService } from "service/UtilService";
+import { UtilsProvider } from "src/provider/UtilsProvider.ts";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { AxiosError } from "axios";
@@ -9,7 +9,7 @@ describe("UtilService - ", () => {
     const error: Error = new Error(errorMessage);
 
     try {
-      await UtilsService.validErrors(error, ERRORS.E012);
+      await UtilsProvider.validErrors(error, ERRORS.E012);
     } catch (e: any) {
       expect(e.detail).toEqual(errorMessage);
     }
@@ -19,7 +19,7 @@ describe("UtilService - ", () => {
     const error: KushkiError = new KushkiError(ERRORS.E007);
 
     try {
-      await UtilsService.validErrors(error, ERRORS.E007);
+      await UtilsProvider.validErrors(error, ERRORS.E007);
     } catch (e: any) {
       expect(e.message).toEqual("Error en la validación del formulario");
       expect(e.code).toEqual("E007");
@@ -31,7 +31,7 @@ describe("UtilService - ", () => {
     const error: AxiosError = new AxiosError(errorMessageAxios);
 
     try {
-      await UtilsService.validErrors(error, ERRORS.E012);
+      await UtilsProvider.validErrors(error, ERRORS.E012);
     } catch (e: any) {
       expect(e.detail).toEqual(errorMessageAxios);
     }
@@ -41,7 +41,7 @@ describe("UtilService - ", () => {
     const unknownValue: unknown = "Valor desconocido";
 
     try {
-      await UtilsService.validErrors(unknownValue, ERRORS.E012);
+      await UtilsProvider.validErrors(unknownValue, ERRORS.E012);
     } catch (e: any) {
       expect(e.code).toEqual(ERRORS.E012.code);
     }

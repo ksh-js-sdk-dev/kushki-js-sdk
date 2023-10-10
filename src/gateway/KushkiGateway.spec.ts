@@ -3,7 +3,7 @@ import axios, { AxiosError } from "axios";
 import { CONTAINER } from "infrastructure/Container";
 import { IDENTIFIERS } from "src/constant/Identifiers";
 import { Mock } from "ts-mockery";
-import { Kushki } from "Kushki";
+import { IKushki } from "Kushki";
 import { EnvironmentEnum } from "infrastructure/EnvironmentEnum";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
@@ -14,14 +14,14 @@ jest.mock("axios");
 
 describe("KushkiGateway - Test", () => {
   let kushkiGateway: KushkiGateway;
-  let mockKushki: Kushki;
+  let mockKushki: IKushki;
 
   beforeEach(async () => {
     CONTAINER.snapshot();
 
     kushkiGateway = CONTAINER.get(IDENTIFIERS.KushkiGateway);
 
-    mockKushki = Mock.of<Kushki>({
+    mockKushki = Mock.of<IKushki>({
       getBaseUrl: () => EnvironmentEnum.uat,
       getPublicCredentialId: () => "123456"
     });

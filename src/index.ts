@@ -1,11 +1,10 @@
-// Main Object
-export { Kushki } from "./Kushki.ts";
+import { KushkiOptions } from "types/kushki_options";
+import { IKushki } from "repository/IKushki.ts";
+import { Kushki } from "src/Kushki.ts";
 
+const init = (options: KushkiOptions): Promise<IKushki> => Kushki.init(options);
+
+// Main Object
+export { init };
 // Types
-export type { KushkiOptions } from "types/kushki_options";
-export type {
-  DeferredByBinResponse,
-  DeferredByBinOptionsResponse
-} from "types/deferred_by_bin_response";
-export type { DeferredInputValues } from "types/deferred_input_values";
-export type { FieldInstance } from "types/card_fields_values";
+export type { KushkiOptions, IKushki };

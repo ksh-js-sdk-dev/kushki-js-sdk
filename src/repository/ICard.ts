@@ -1,9 +1,9 @@
-import { FormValidity, TokenResponse } from "src/module";
+import { FormValidity, TokenResponse } from "module/Payments.index.ts";
 import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
 import { FieldTypeEnum } from "types/form_validity";
 import { FieldValidity } from "types/card_fields_values";
 
-export interface IPayment {
+export interface ICard {
   /**
    * Create token for payment
    * @return TokenResponse object with token and security info

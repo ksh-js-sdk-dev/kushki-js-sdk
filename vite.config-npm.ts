@@ -16,7 +16,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: {
-        Payment: "src/module/index.ts",
+        Payment: "src/module/Payments.index.ts",
         Kushki: "src/index.ts"
       }
     },

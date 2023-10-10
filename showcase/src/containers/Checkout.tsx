@@ -1,13 +1,14 @@
-import { Kushki } from "Kushki";
+import { IKushki, init } from "Kushki";
 import {
   CardOptions,
   Currency,
   Fields,
   FieldValidity,
   FormValidity,
-  Payment,
-  TokenResponse
-} from "../../../src/module";
+  TokenResponse,
+  initCardToken,
+  ICard
+} from "Kushki/payments";
 import { useEffect, useState } from "react";
 import { DeferredValuesResponse } from "../../../types/token_response";
 import "../../assets/css/checkout.css";
@@ -25,7 +26,7 @@ export const CheckoutContainer = () => {
   const [deferredValues, setDeferredValues] = useState<
     DeferredValuesResponse | undefined
   >({});
-  const [cardInstance, setCardinstance] = useState<Payment>();
+  const [cardInstance, setCardinstance] = useState<ICard>();
   const [fieldsValidityDemo, setFieldsValidityDemo] = useState<Fields>({
     cardholderName: { isValid: false },
     cardNumber: { isValid: false },
@@ -67,13 +68,13 @@ export const CheckoutContainer = () => {
 
   const initKushkiInstance = async (): Promise<void> => {
     try {
-      const kushkiInstance = await Kushki.init({
+      const kushkiInstance: IKushki = await init({
         inTest: true,
         publicCredentialId: publicMerchantIdDemo
       });
 
       if (kushkiInstance) {
-        setCardinstance(await Payment.initCardToken(kushkiInstance, options));
+        setCardinstance(await initCardToken(kushkiInstance, options));
       }
       // TODO validate remove ts lint warnings
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

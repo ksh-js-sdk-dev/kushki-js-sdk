@@ -3,9 +3,9 @@
  */
 import { injectable } from "inversify";
 import "reflect-metadata";
-import { ISiftScienceService } from "repository/ISiftScienceService.ts";
+import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
-import { Kushki } from "Kushki";
+import { IKushki } from "Kushki";
 import { v4 } from "uuid";
 import { SiftScienceObject } from "types/sift_science_object";
 
@@ -13,11 +13,11 @@ import { SiftScienceObject } from "types/sift_science_object";
  * Implementation
  */
 @injectable()
-export class SiftScienceService implements ISiftScienceService {
+export class SiftScienceProvider implements ISiftScienceProvider {
   public createSiftScienceSession(
     processor: string,
     clientIdentification: string,
-    kushkiInstance: Kushki,
+    kushkiInstance: IKushki,
     merchantSettingsResponse: MerchantSettingsResponse,
     userId?: string
   ): SiftScienceObject {

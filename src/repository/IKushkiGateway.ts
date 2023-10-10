@@ -1,5 +1,6 @@
 import { BinInfoResponse } from "types/bin_info_response";
-import { DeferredByBinOptionsResponse, Kushki } from "Kushki";
+import { IKushki } from "Kushki";
+import { DeferredByBinOptionsResponse } from "Kushki/payments";
 import { BinBody } from "types/bin_body";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
@@ -11,7 +12,7 @@ export interface IKushkiGateway {
    * Request bin card information
    */
   requestBinInfo(
-    kushkiInstance: Kushki,
+    kushkiInstance: IKushki,
     body: BinBody
   ): Promise<BinInfoResponse>;
 
@@ -21,7 +22,7 @@ export interface IKushkiGateway {
    * @param body
    */
   requestDeferredInfo(
-    kushkiInstance: Kushki,
+    kushkiInstance: IKushki,
     body: BinBody
   ): Promise<DeferredByBinOptionsResponse[]>;
 
@@ -29,21 +30,21 @@ export interface IKushkiGateway {
    * Request card Merchant Settings
    */
   requestMerchantSettings(
-    kushkiInstance: Kushki
+    kushkiInstance: IKushki
   ): Promise<MerchantSettingsResponse>;
 
   /**
    * Request Cybersource JWT
    */
   requestCybersourceJwt(
-    kushkiInstance: Kushki
+    kushkiInstance: IKushki
   ): Promise<CybersourceJwtResponse>;
 
   /**
    * Request Secure validation
    */
   requestSecureServiceValidation(
-    kushkiInstance: Kushki,
+    kushkiInstance: IKushki,
     body: SecureOtpRequest
   ): Promise<SecureOtpResponse>;
 }

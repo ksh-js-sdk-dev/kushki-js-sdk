@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Payment } from "../../../../src/module";
+import { Card } from "../../../../src/module/Payments.index.ts";
 import { Fields, FormValidity } from "../../../../types/form_validity";
 
 export interface ITableDemoGeneral {
-  cardInstance: Payment;
+  cardInstance: Card;
 }
 
 export const tableComponentStyles = {

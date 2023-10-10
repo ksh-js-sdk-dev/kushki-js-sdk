@@ -4,25 +4,23 @@ import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { FieldOptions } from "infrastructure/interfaces/FieldOptions.ts";
-import {
-  DeferredByBinOptionsResponse,
-  DeferredInputValues,
-  FieldInstance,
-  Kushki
-} from "Kushki";
+import { IKushki } from "Kushki";
 import KushkiHostedFields from "libs/HostedField.ts";
 import {
   CardFieldValues,
   CardOptions,
   CardTokenResponse,
+  DeferredByBinOptionsResponse,
+  DeferredInputValues,
   Field,
+  FieldInstance,
   Fields,
   TokenResponse
-} from "module/index.ts";
+} from "module/Payments.index.ts";
 import "reflect-metadata";
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
-import { IPayment } from "repository/IPayment.ts";
-import { ISiftScienceService } from "repository/ISiftScienceService.ts";
+import { ICard } from "repository/ICard.ts";
+import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
 import { CREDIT_CARD_ESPECIFICATIONS } from "src/constant/CreditCardEspecifications.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { BinInfoResponse } from "types/bin_info_response";
@@ -43,7 +41,7 @@ import { OTPEnum } from "infrastructure/OTPEnum.ts";
 import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
 import { Styles } from "types/card_options";
 import { buildCssStyle } from "utils/BuildCssStyle.ts";
-import { UtilsService } from "service/UtilService.ts";
+import { UtilsProvider } from "src/provider/UtilsProvider.ts";
 import { PathEnum } from "infrastructure/PathEnum.ts";
 
 declare global {
@@ -54,14 +52,14 @@ declare global {
   }
 }
 
-export class Payment implements IPayment {
+export class Card implements ICard {
   private readonly options: CardOptions;
-  private readonly kushkiInstance: Kushki;
+  private readonly kushkiInstance: IKushki;
   private inputValues: CardFieldValues;
   private currentBin: string;
   private currentBinHasDeferredOptions: boolean;
   private readonly _gateway: IKushkiGateway;
-  private readonly _siftScienceService: ISiftScienceService;
+  private readonly _siftScienceService: ISiftScienceProvider;
   private readonly listenerFieldValidity: string = "fieldValidity";
   private readonly listenerFieldFocus: string = "fieldFocus";
   private readonly listenerFieldBlur: string = "fieldBlur";
@@ -71,27 +69,27 @@ export class Payment implements IPayment {
   private readonly deferredDefaultWidth: number = 300;
   private firstHostedFieldType: string = "";
 
-  private constructor(kushkiInstance: Kushki, options: CardOptions) {
+  private constructor(kushkiInstance: IKushki, options: CardOptions) {
     this.options = this.setDefaultValues(options);
     this.kushkiInstance = kushkiInstance;
     this.inputValues = {};
     this.currentBin = "";
     this.currentBinHasDeferredOptions = false;
     this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
-    this._siftScienceService = CONTAINER.get<ISiftScienceService>(
+    this._siftScienceService = CONTAINER.get<ISiftScienceProvider>(
       IDENTIFIERS.SiftScienceService
     );
   }
 
   public static async initCardToken(
-    kushkiInstance: Kushki,
+    kushkiInstance: IKushki,
     options: CardOptions
-  ): Promise<Payment> {
+  ): Promise<Card> {
     // eslint-disable-next-line no-useless-catch
     try {
       this.validParamsInitCardToken(kushkiInstance, options);
 
-      const payment: Payment = new Payment(kushkiInstance, options);
+      const payment: Card = new Card(kushkiInstance, options);
 
       await payment.initFields(options.fields, options.styles);
 
@@ -102,7 +100,7 @@ export class Payment implements IPayment {
 
       return payment;
     } catch (error) {
-      return await UtilsService.validErrors(error, ERRORS.E012);
+      return await UtilsProvider.validErrors(error, ERRORS.E012);
     }
   }
 
@@ -162,7 +160,7 @@ export class Payment implements IPayment {
       }
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
-      return await UtilsService.validErrors(error, ERRORS.E002);
+      return await UtilsProvider.validErrors(error, ERRORS.E002);
     } finally {
       if (window.Cardinal) {
         window.Cardinal.off("payments.setupComplete");
@@ -1171,7 +1169,7 @@ export class Payment implements IPayment {
   }
 
   private static validParamsInitCardToken(
-    kushkiInstance: Kushki,
+    kushkiInstance: IKushki,
     options: CardOptions
   ): void {
     if (!options || !kushkiInstance) {
