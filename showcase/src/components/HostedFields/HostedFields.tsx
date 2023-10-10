@@ -43,15 +43,14 @@ const HostedFields = ({
       return fieldsErrorEmpty[field] || `El campo ${field} es requerido`;
     }
 
-    if(field !== InputModelEnum.DEFERRED)
+    if (field !== InputModelEnum.DEFERRED)
       return fieldsErrorInvalid[field] || `${field} is ${errorType}`;
 
+    if (errorType === ErrorTypeEnum.DEFERRED_TYPE_REQUERED)
+      return "El tipo de diferido es requerido";
 
-    if(errorType === ErrorTypeEnum.DEFERRED_TYPE_REQUERED)
-      return 'El tipo de diferido es requerido';
-
-    if(errorType === ErrorTypeEnum.DEFERRED_MONTHS_REQUERED)
-      return 'La cantidad de meses son requeridos';
+    if (errorType === ErrorTypeEnum.DEFERRED_MONTHS_REQUERED)
+      return "La cantidad de meses son requeridos";
   };
 
   const validError = (
