@@ -37,8 +37,9 @@
   "exclude": ["node_modules", "showcase"],
   "references": [{ "path": "./tsconfig.node.json" }],
   "typedocOptions": {
+    "plugin": "typedoc-plugin-markdown",
     "lightHighlightTheme": "light-plus",
-    "entryPoints": ["src/repository/ICard.ts", "types/token_response.d.ts"],
+    "entryPoints": ["src/repository/ICard.ts", "types/token_response.d.ts", "src/repository/IKushki.ts"],
     "out": "docs"
   }
 }
