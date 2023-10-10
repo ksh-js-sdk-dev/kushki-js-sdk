@@ -3,10 +3,11 @@
   "version": "0.1.1-14195.9",
   "scripts": {
     "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
-    "dev": "cd ./showcase && vite --c vite.config.ts",
+    "dev": "npm run docs && cd ./showcase && vite --c vite.config.ts",
+    "docs": "typedoc --tsconfig ./tsconfig.json",
     "build:npm": "tsc && vite build --c vite.config-npm.ts && yarn cp:package",
     "build:cdn": "npx webpack --config webpack-cdn.config.js",
-    "build": "npm run validate && npm run build:npm && npm run build:cdn",
+    "build": "npm run validate && npm run build:npm && npm run build:cdn && npm run docs",
     "lint": "npm run format && npm run lint:fix && eslint src/**/*.ts",
     "preview": "vite preview --c vite.config-npm.ts",
     "lint:fix": "eslint --fix src/**/*.ts",
@@ -37,9 +38,11 @@
   "dependencies": {
     "@krakenjs/zoid": "^10.3.1",
     "@kushki/cardinal-sandbox-js": "^1.0.4",
+    "@microsoft/tsdoc": "^0.14.2",
     "axios": "^1.5.0",
     "inversify": "^6.0.1",
     "reflect-metadata": "^0.1.13",
+    "typedoc": "^0.25.2",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

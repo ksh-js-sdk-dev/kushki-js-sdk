@@ -35,5 +35,10 @@
     }
   },
   "exclude": ["node_modules", "showcase"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "typedocOptions": {
+    "lightHighlightTheme": "light-plus",
+    "entryPoints": ["src/repository/IPayment.ts", "types/token_response.d.ts"],
+    "out": "docs"
+  }
 }
