@@ -6,6 +6,8 @@ on:
     branches:
       - "release/*"
       - "feature/*"
+      - "master"
+      - "develop"
     types: [closed]
 
   workflow_dispatch:
@@ -44,105 +46,15 @@ jobs:
     needs: validate
     runs-on: ubuntu-latest
     outputs:
-      new-version: ${{ steps.version.outputs.new-version }}
-      branch: ${{ steps.extract-number-branch.outputs.branch }}
+      new-version: ${{ steps.generate-version.outputs.new-version }}
+      branch: ${{ steps.generate-version.outputs.branch }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
 
-      - name: Get current version
-        run: |
-          GET_VERSION=$(node -p -e "require('./package.json').version")
-          echo "GET_VERSION=${GET_VERSION}" >> $GITHUB_ENV
-
-      - name: Extract branch number
-        id: extract-number-branch
-        run: |
-          BRANCH=${{ github.base_ref }}
-          IFS='/' read -ra BRANCH_PARTS <<< "$BRANCH"
-          echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
-          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
-          echo "BRANCH_SOURCE=${BRANCH_PARTS[0]}" >> $GITHUB_ENV
-          echo "BRANCH_NUMBER=${BRANCH_PARTS[1]}" >> $GITHUB_ENV
-
-      - name: Validate version format
-        run: |
-          CURRENT_VERSION=$GET_VERSION
-          if [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]; then
-            TYPE_FORMAT_VERSION="latest"
-          elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+-[0-9]+\.[0-9]+$ ]; then
-            TYPE_FORMAT_VERSION="release"
-          elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+-tik-[0-9]+-patch\.[0-9]+$ ]; then
-            TYPE_FORMAT_VERSION="hotfix"
-          elif [ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+-[0-9]+-alpha\.[0-9]+$ ]; then
-            TYPE_FORMAT_VERSION="develop"
-          fi
-          echo "TYPE_FORMAT_VERSION=${TYPE_FORMAT_VERSION}" >> $GITHUB_ENV
-
-      - name: Determine Version Format
-        run: |
-          CURRENT_VERSION=$GET_VERSION
-          if [[ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            IS_NEW_FORMAT=false
-          else
-            IS_NEW_FORMAT=true
-          fi
-          echo "IS_NEW_FORMAT=${IS_NEW_FORMAT}" >> $GITHUB_ENV
-
-      - name: Set Version
-        id: version
-        run: |
-          CURRENT_VERSION=$GET_VERSION
-          if [[ $IS_NEW_FORMAT == "true" ]]; then
-          
-            IFS='-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
-  
-            if [ "$BRANCH_SOURCE" == "feature" ]; then
-              IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[2]}"
-              GET_BRANCH_NUMBER="${VERSION_PARTS[1]}-${VERSION_PARTS_SECOND[0]}"
-            elif [ "$BRANCH_SOURCE" == "hotfix" ]; then
-              IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[2]}"
-              GET_BRANCH_NUMBER="${VERSION_PARTS[1]}-${VERSION_PARTS_SECOND[0]}"
-            elif [ "$BRANCH_SOURCE" == "release" ]; then
-              IFS='.' read -ra VERSION_PARTS_SECOND <<< "${VERSION_PARTS[1]}"
-              GET_BRANCH_NUMBER="${VERSION_PARTS_SECOND[0]}"
-            fi
-  
-            if [[ $GET_BRANCH_NUMBER == $BRANCH_NUMBER ]]; then
-              CURRENT_NUMBER="${VERSION_PARTS_SECOND[1]}"
-              NEW_NUMBER=$((CURRENT_NUMBER + 1))
-              NEW_VERSION="${VERSION_PARTS[0]}-${BRANCH_NUMBER}.${NEW_NUMBER}"
-            else
-              IFS='.' read -ra VERSION_PARTS_FIRST <<< "${VERSION_PARTS[0]}"
-              MAJOR_VERSION="${VERSION_PARTS_FIRST[0]}"
-              MINOR_VERSION="${VERSION_PARTS_FIRST[1]}"
-              NEW_VERSION_MINOR=$((MINOR_VERSION + 1))
-              BRANCH_NUMBER=$BRANCH_NUMBER
-              NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
-            fi
-            echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-            echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"          
-          
-          else
-            IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
-            MAJOR_VERSION="${VERSION_PARTS[0]}"
-            MINOR_VERSION="${VERSION_PARTS[1]}"
-            NEW_VERSION_MINOR=$((MINOR_VERSION + 1))
-            BRANCH_NUMBER=$BRANCH_NUMBER
-            NEW_VERSION="${MAJOR_VERSION}.${NEW_VERSION_MINOR}.0-${BRANCH_NUMBER}.1"
-            echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-            echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Log GITHUB_ENV
-        run: |
-          echo "GET_VERSION is $GET_VERSION"          
-          echo "BRANCH_SOURCE is $BRANCH_SOURCE"
-          echo "BRANCH_NUMBER is $BRANCH_NUMBER"
-          echo "NEW_VERSION is $NEW_VERSION"          
-          echo "IS_NEW_FORMAT is $IS_NEW_FORMAT"
-          echo "TYPE_FORMAT_VERSION is $TYPE_FORMAT_VERSION"
-  
+      - name: Generate new version
+        id: generate-version
+        uses: ./.github/actions/generate-version
 
   build:
     needs: build-version
