@@ -3,7 +3,7 @@ import { ErrorTypeEnum } from "../../../../src/infrastructure/ErrorTypeEnum.ts";
 
 export enum ErrorLabelsSpanishEnum {
   CARDHOLDER_NAME_REQUIRED = "Nombre del tarjeta habiente es requerido",
-  CARD_NUMBER_REQUIRED = "Número de tarjeta es un campo requerido",
+  CARD_NUMBER_REQUIRED = "Número de tarjeta es requerido",
   EXPIRATION_DATE_REQUIRED = "Fecha de vencimiento es requerido",
   CVV_REQUIRED = "El campo CVV es requerido",
   CARDHOLDER_NAME_INVALID = "Nombre del tarjeta habiente es inválido",
