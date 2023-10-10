@@ -1,17 +1,17 @@
 /**
- * SiftScienceService Unit Tests
+ * SiftScienceProvider Unit Tests
  */
 import { CONTAINER } from "infrastructure/Container.ts";
 import { IKushki } from "Kushki";
 import { Mock } from "ts-mockery";
 import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
-import { ISiftScienceService } from "repository/ISiftScienceService.ts";
+import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { SiftScienceEnum } from "infrastructure/SiftScienceEnum.ts";
 
 describe("SiftScience Gateway - ", () => {
-  let siftScienceService: ISiftScienceService;
+  let siftScienceService: ISiftScienceProvider;
   let mockKushki: IKushki;
   const processor: string = "kushki";
   const clientIdentification: string = "2014098375";
@@ -40,7 +40,7 @@ describe("SiftScience Gateway - ", () => {
   });
 
   it("test createSiftScienceSession request with environment uat - success", async () => {
-    siftScienceService = CONTAINER.get<ISiftScienceService>(
+    siftScienceService = CONTAINER.get<ISiftScienceProvider>(
       IDENTIFIERS.SiftScienceService
     );
 
@@ -56,7 +56,7 @@ describe("SiftScience Gateway - ", () => {
   });
 
   it("test createSiftScienceSession request with environment prod - success", async () => {
-    siftScienceService = CONTAINER.get<ISiftScienceService>(
+    siftScienceService = CONTAINER.get<ISiftScienceProvider>(
       IDENTIFIERS.SiftScienceService
     );
 
@@ -78,7 +78,7 @@ describe("SiftScience Gateway - ", () => {
       sandboxBaconKey: null
     };
 
-    siftScienceService = CONTAINER.get<ISiftScienceService>(
+    siftScienceService = CONTAINER.get<ISiftScienceProvider>(
       IDENTIFIERS.SiftScienceService
     );
 

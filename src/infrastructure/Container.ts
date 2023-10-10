@@ -6,13 +6,13 @@ import { IKushkiGateway } from "repository/IKushkiGateway";
 import { KushkiGateway } from "gateway/KushkiGateway";
 import { Container } from "inversify";
 import { IDENTIFIERS } from "src/constant/Identifiers";
-import { ISiftScienceService } from "repository/ISiftScienceService";
-import { SiftScienceService } from "src/service/SiftScienceService";
+import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
+import { SiftScienceProvider } from "src/provider/SiftScienceProvider.ts";
 
 const CONTAINER: Container = new Container();
 
-CONTAINER.bind<ISiftScienceService>(IDENTIFIERS.SiftScienceService).to(
-  SiftScienceService
+CONTAINER.bind<ISiftScienceProvider>(IDENTIFIERS.SiftScienceService).to(
+  SiftScienceProvider
 );
 
 // Gateway

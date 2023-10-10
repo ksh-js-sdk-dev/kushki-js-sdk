@@ -3,7 +3,7 @@ import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
 import { SiftScienceEnum } from "infrastructure/SiftScienceEnum";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
-import { UtilsService } from "service/UtilService.ts";
+import { UtilsProvider } from "src/provider/UtilsProvider.ts";
 import {IKushki} from "repository/IKushki.ts";
 
 export class Kushki implements IKushki {
@@ -27,7 +27,7 @@ export class Kushki implements IKushki {
 
       return Promise.resolve(kushki);
     } catch (e) {
-      return UtilsService.validErrors(e, ERRORS.E011);
+      return UtilsProvider.validErrors(e, ERRORS.E011);
     }
   }
 

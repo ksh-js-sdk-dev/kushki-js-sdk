@@ -7,7 +7,7 @@ import {
   FormValidity,
   TokenResponse,
   initCardToken,
-  IPayments
+  ICard
 } from "Kushki/payments";
 import { useEffect, useState } from "react";
 import { DeferredValuesResponse } from "../../../types/token_response";
@@ -25,7 +25,7 @@ export const CheckoutContainer = () => {
   const [deferredValues, setDeferredValues] = useState<
     DeferredValuesResponse | undefined
   >({});
-  const [cardInstance, setCardinstance] = useState<IPayments>();
+  const [cardInstance, setCardinstance] = useState<ICard>();
   const [fieldsValidityDemo, setFieldsValidityDemo] = useState<Fields>({
     cardholderName: { isValid: false },
     cardNumber: { isValid: false },

@@ -7,18 +7,18 @@ import {
   Currency,
   Field
 } from "types/card_options";
-import { IPayments } from "repository/IPayments.ts";
+import { ICard } from "repository/ICard.ts";
 
 const initCardToken = (
   kushkiInstance: IKushki,
   options: CardOptions
-): Promise<IPayments> => Card.initCardToken(kushkiInstance, options);
+): Promise<ICard> => Card.initCardToken(kushkiInstance, options);
 
 // Main Object
 export { initCardToken };
 
 // Types
-export type { IPayments, Currency, CssProperties, CardOptions, Field, Amount };
+export type { ICard, Currency, CssProperties, CardOptions, Field, Amount };
 export type { CardFieldValues, FieldInstance } from "types/card_fields_values";
 export type { CardTokenRequest } from "types/card_token_request";
 export type { CardTokenResponse } from "types/card_token_response";

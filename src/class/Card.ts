@@ -19,8 +19,8 @@ import {
 } from "module/Payments.index.ts";
 import "reflect-metadata";
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
-import { IPayments } from "repository/IPayments.ts";
-import { ISiftScienceService } from "repository/ISiftScienceService.ts";
+import { ICard } from "repository/ICard.ts";
+import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
 import { CREDIT_CARD_ESPECIFICATIONS } from "src/constant/CreditCardEspecifications.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { BinInfoResponse } from "types/bin_info_response";
@@ -41,7 +41,7 @@ import { OTPEnum } from "infrastructure/OTPEnum.ts";
 import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
 import { Styles } from "types/card_options";
 import { buildCssStyle } from "utils/BuildCssStyle.ts";
-import { UtilsService } from "service/UtilService.ts";
+import { UtilsProvider } from "src/provider/UtilsProvider.ts";
 import { PathEnum } from "infrastructure/PathEnum.ts";
 
 declare global {
@@ -52,14 +52,14 @@ declare global {
   }
 }
 
-export class Card implements IPayments {
+export class Card implements ICard {
   private readonly options: CardOptions;
   private readonly kushkiInstance: IKushki;
   private inputValues: CardFieldValues;
   private currentBin: string;
   private currentBinHasDeferredOptions: boolean;
   private readonly _gateway: IKushkiGateway;
-  private readonly _siftScienceService: ISiftScienceService;
+  private readonly _siftScienceService: ISiftScienceProvider;
   private readonly listenerFieldValidity: string = "fieldValidity";
   private readonly listenerFieldFocus: string = "fieldFocus";
   private readonly listenerFieldBlur: string = "fieldBlur";
@@ -75,7 +75,7 @@ export class Card implements IPayments {
     this.currentBin = "";
     this.currentBinHasDeferredOptions = false;
     this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
-    this._siftScienceService = CONTAINER.get<ISiftScienceService>(
+    this._siftScienceService = CONTAINER.get<ISiftScienceProvider>(
       IDENTIFIERS.SiftScienceService
     );
   }
@@ -99,7 +99,7 @@ export class Card implements IPayments {
 
       return payment;
     } catch (error) {
-      return await UtilsService.validErrors(error, ERRORS.E012);
+      return await UtilsProvider.validErrors(error, ERRORS.E012);
     }
   }
 
@@ -159,7 +159,7 @@ export class Card implements IPayments {
       }
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
-      return await UtilsService.validErrors(error, ERRORS.E002);
+      return await UtilsProvider.validErrors(error, ERRORS.E002);
     } finally {
       if (window.Cardinal) {
         window.Cardinal.off("payments.setupComplete");
