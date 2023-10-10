@@ -18,6 +18,7 @@ import ResultsPayment from "../components/ConfigurationDemo/Components/ResultsPa
 import HostedFields from "../components/HostedFields/HostedFields.tsx";
 import { IDefaultInformation } from "../components/ConfigurationDemo/ConfigurationDemo.interface.ts";
 import { optionsDefault } from "./Checkout.constants.ts";
+import { InputModelEnum } from "../../../src/infrastructure/InputModel.enum.ts";
 
 export const CheckoutContainer = () => {
   const [token, setToken] = useState<string>("");
@@ -120,7 +121,7 @@ export const CheckoutContainer = () => {
 
   useEffect(() => {
     const errorForm: boolean = Object.keys(fieldsValidityDemo)
-      .filter((fieldName) => fieldName !== "deferred")
+      .filter((fieldName) => fieldName !== InputModelEnum.DEFERRED)
       .some(
         (fieldName) => !fieldsValidityDemo[fieldName as keyof Fields]?.isValid
       );

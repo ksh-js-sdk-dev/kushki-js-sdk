@@ -4,6 +4,11 @@ import { Fields } from "../../../../types/form_validity";
 import { IDefaultInformation } from "../ConfigurationDemo/ConfigurationDemo.interface.ts";
 import { useEffect, useState } from "react";
 import { InputModelEnum } from "../../../../src/infrastructure/InputModel.enum.ts";
+import {
+  deferredErrors,
+  fieldsErrorEmpty,
+  fieldsErrorInvalid
+} from "../../shared/enums/ErrorLabels.enum.ts";
 
 export interface IHostedFieldsProps {
   showOTP: boolean;
@@ -22,23 +27,6 @@ const HostedFields = ({
 }: IHostedFieldsProps) => {
   const [cardHelper, setCardHelper] = useState<string>("4195614311940576");
   const customMessageValidity = (field: string, errorType: ErrorTypeEnum) => {
-    const fieldsErrorEmpty: Record<string, string> = {
-      [InputModelEnum.CARDHOLDER_NAME]:
-        "Nombre del tarjeta habiente es requerido",
-      [InputModelEnum.CARD_NUMBER]: "Número de tarjeta es un campo requerido",
-      [InputModelEnum.EXPIRATION_DATE]: "Fecha de vencimiento es requerido",
-      [InputModelEnum.CVV]: "El campo CVV es requerido"
-    };
-
-    const fieldsErrorInvalid: Record<string, string> = {
-      [InputModelEnum.CARDHOLDER_NAME]:
-        "Nombre del tarjeta habiente es inválido",
-      [InputModelEnum.CARD_NUMBER]:
-        "Verifique los dígitos ingresados en su tarjeta",
-      [InputModelEnum.EXPIRATION_DATE]: "El formato es incorrecto",
-      [InputModelEnum.CVV]: "El código es incorrecto"
-    };
-
     if (errorType === "empty") {
       return fieldsErrorEmpty[field] || `El campo ${field} es requerido`;
     }
@@ -46,11 +34,7 @@ const HostedFields = ({
     if (field !== InputModelEnum.DEFERRED)
       return fieldsErrorInvalid[field] || `${field} is ${errorType}`;
 
-    if (errorType === ErrorTypeEnum.DEFERRED_TYPE_REQUERED)
-      return "El tipo de diferido es requerido";
-
-    if (errorType === ErrorTypeEnum.DEFERRED_MONTHS_REQUERED)
-      return "La cantidad de meses son requeridos";
+    return deferredErrors[errorType];
   };
 
   const validError = (
