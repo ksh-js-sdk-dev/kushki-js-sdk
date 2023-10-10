@@ -1,4 +1,3 @@
-import { Cardinal3DSProvider } from "src/provider/Cardinal3DSProvider.ts";
 import { Kushki } from "src/Kushki.ts";
 import { IKushki } from "Kushki";
 import { SecureOtpResponse } from "types/secure_otp_response";
@@ -6,31 +5,23 @@ import { CONTAINER } from "infrastructure/Container.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import { Sandbox3DSProvider } from "src/provider/Sandbox3DSProvider.ts";
+import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 
-describe("Cardinal3DSProvider - Test", () => {
-  let cardinalProvider: Cardinal3DSProvider;
-  const setUpMock = jest.fn();
-  const triggerMock = jest.fn();
-  const onMock = jest
-    .fn()
-    .mockImplementation((_: string, callback: () => void) => {
-      callback();
-    });
+describe("Sandbox3DSProvider - Test", () => {
+  let sandboxProvider: Sandbox3DSProvider;
+  let initSpy: jest.SpyInstance;
 
-  const mockCardinal = (complete: any = undefined) => {
-    jest.mock("libs/cardinal/prod", () => ({
-      default: jest.fn()
-    }));
-    jest.mock("libs/cardinal/staging", () => ({
-      default: jest.fn()
-    }));
-    window.Cardinal = {};
-    window.Cardinal.off = jest.fn();
-    window.Cardinal.setup = setUpMock;
-    window.Cardinal.continue = jest.fn();
-    window.Cardinal.on = onMock;
-    window.Cardinal.complete = complete;
-    window.Cardinal.trigger = triggerMock;
+  const mockSandbox = (isError?: boolean) => {
+    initSpy = jest.spyOn(KushkiCardinalSandbox, "init");
+    jest.spyOn(KushkiCardinalSandbox, "continue").mockReturnValue();
+    jest
+      .spyOn(KushkiCardinalSandbox, "on")
+      .mockImplementation(
+        (_: string, callback: (isErrorFlow?: boolean) => void) => {
+          callback(isError);
+        }
+      );
   };
 
   const mockKushkiGateway = (
@@ -53,48 +44,21 @@ describe("Cardinal3DSProvider - Test", () => {
       publicCredentialId: "1234456789"
     });
 
-    cardinalProvider = new Cardinal3DSProvider(kushkiInstanceMock);
+    sandboxProvider = new Sandbox3DSProvider(kushkiInstanceMock);
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCardinal();
+    mockSandbox();
     mockKushkiGateway();
     initProvider();
   });
 
-  describe("initCardinal - method", () => {
-    it("should call setupCardinal for prod Lib", async () => {
-      await cardinalProvider.initCardinal("JWT", "4242 4242");
+  describe("initSandbox - method", () => {
+    it("should call init of KushkiCardinalSandbox", async () => {
+      await sandboxProvider.initSandbox();
 
-      expect(setUpMock).toBeCalledTimes(1);
-    });
-
-    it("should call trigger for staging Lib and retry", async () => {
-      mockCardinal(jest.fn().mockReturnValue({}));
-      initProvider(true);
-
-      await cardinalProvider.initCardinal("JWT", "4242 4242");
-
-      expect(triggerMock).toBeCalledTimes(2);
-    });
-  });
-
-  describe("getCardinal3dsToken - method", () => {
-    it("should call on for callback", async () => {
-      await cardinalProvider.getCardinal3dsToken(() => {
-        expect(onMock).toBeCalledTimes(1);
-      });
-    });
-
-    it("should call complete for callback on retry ", async () => {
-      const completeMock = jest.fn().mockReturnValue({});
-
-      mockCardinal(completeMock);
-
-      await cardinalProvider.getCardinal3dsToken(() => {
-        expect(completeMock).toBeCalledTimes(1);
-      });
+      expect(initSpy).toBeCalledTimes(1);
     });
   });
 
@@ -111,7 +75,7 @@ describe("Cardinal3DSProvider - Test", () => {
     };
 
     it("should return token with all security props validated", async () => {
-      const tokenResponse = await cardinalProvider.validateCardinal3dsToken(
+      const tokenResponse = await sandboxProvider.validateSandbox3dsToken(
         tokenMock,
         {}
       );
@@ -120,7 +84,7 @@ describe("Cardinal3DSProvider - Test", () => {
     });
 
     it("should return token if not needs validation", async () => {
-      const tokenResponse = await cardinalProvider.validateCardinal3dsToken(
+      const tokenResponse = await sandboxProvider.validateSandbox3dsToken(
         { token: "1234" },
         {}
       );
@@ -130,7 +94,7 @@ describe("Cardinal3DSProvider - Test", () => {
 
     it("should throw error when token not have complete security props", async () => {
       try {
-        await cardinalProvider.validateCardinal3dsToken(
+        await sandboxProvider.validateSandbox3dsToken(
           {
             security: {
               authRequired: true
@@ -149,7 +113,7 @@ describe("Cardinal3DSProvider - Test", () => {
       initProvider();
 
       try {
-        await cardinalProvider.validateCardinal3dsToken(tokenMock, {});
+        await sandboxProvider.validateSandbox3dsToken(tokenMock, {});
       } catch (error: any) {
         expect(error.code).toEqual("E006");
       }
@@ -163,9 +127,20 @@ describe("Cardinal3DSProvider - Test", () => {
       initProvider();
 
       try {
-        await cardinalProvider.validateCardinal3dsToken(tokenMock, {});
+        await sandboxProvider.validateSandbox3dsToken(tokenMock, {});
       } catch (error: any) {
         expect(error.code).toEqual("E006");
+      }
+    });
+
+    it("should throw error when modal validation fails", async () => {
+      mockSandbox(true);
+      initProvider();
+
+      try {
+        await sandboxProvider.validateSandbox3dsToken(tokenMock, {});
+      } catch (error: any) {
+        expect(error.code).toEqual("E005");
       }
     });
   });
