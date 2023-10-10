@@ -122,9 +122,9 @@ runs:
     - name: Log GITHUB_ENV
       run: |
         echo "GET_VERSION is $GET_VERSION"          
-        echo "source_branch is ${{ steps.extract-number-branch.outputs.source_branch }}"
+        echo "SORUCE BRANCH is ${{ steps.extract-number-branch.outputs.source_branch }}"
         echo "branch is ${{ steps.extract-number-branch.outputs.branch }}"
         echo "BRANCH_NUMBER is $BRANCH_NUMBER"
         echo "NUMBER_BRANCH is $NUMBER_BRANCH"
-        echo "new-version is ${{ steps.version.outputs.new-version }}"
+        echo "NEW VERSION is ${{ steps.version.outputs.new-version }}"
       shell: bash
