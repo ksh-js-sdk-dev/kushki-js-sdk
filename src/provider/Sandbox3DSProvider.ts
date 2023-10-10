@@ -14,49 +14,22 @@ import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { CONTAINER } from "infrastructure/Container.ts";
 import { KushkiGateway } from "gateway/KushkiGateway.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
-import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
+import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
+import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
 import { injectable } from "inversify";
-import {
-  CardinalValidationCodeEnum,
-  ICardinalValidation
-} from "infrastructure/CardinalValidationEnum.ts";
-
-declare global {
-  // tslint:disable-next-line
-  interface Window {
-    // tslint:disable-next-line:no-any
-    Cardinal: any;
-  }
-}
 
 @injectable()
-export class Cardinal3DSProvider implements ICardinal3DSProvider {
+export class Sandbox3DSProvider implements ISandbox3DSProvider {
   private readonly _gateway: IKushkiGateway;
   constructor() {
     this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
   }
 
-  public async initCardinal(
-    kushkiInstance: IKushki,
-    jwt: string,
-    cardBin: string
-  ) {
-    if (kushkiInstance.isInTest()) await import("libs/cardinal/staging.ts");
-    else await import("libs/cardinal/prod.ts");
-
-    await this._setupCardinal(jwt, cardBin);
+  public initSandbox() {
+    KushkiCardinalSandbox.init();
   }
 
-  public async onSetUpComplete(callback: () => void): Promise<void> {
-    if (await this._isCardinalInitialized()) {
-      callback();
-    } else
-      window.Cardinal.on("payments.setupComplete", () => {
-        callback();
-      });
-  }
-
-  public async validateCardinal3dsToken(
+  public async validateSandbox3dsToken(
     kushkiInstance: IKushki,
     cardTokenResponse: CardTokenResponse,
     deferredValues: DeferredValues
@@ -67,11 +40,8 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
         token: cardTokenResponse.token
       });
     }
-    if (tokenHasAllSecurityProperties(cardTokenResponse, false)) {
-      await this._launch3DSCardinalValidation(
-        kushkiInstance,
-        cardTokenResponse
-      );
+    if (tokenHasAllSecurityProperties(cardTokenResponse, true)) {
+      await this._launch3DSSandboxValidation(kushkiInstance, cardTokenResponse);
 
       return Promise.resolve({
         deferred: deferredValues,
@@ -82,29 +52,26 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
     return Promise.reject(new KushkiError(ERRORS.E005));
   }
 
-  private async _launch3DSCardinalValidation(
+  private async _launch3DSSandboxValidation(
     kushkiInstance: IKushki,
     token: CardTokenResponse
   ): Promise<CardTokenResponse> {
-    this._launchCardinalModal(token);
+    this._launchSandboxModal(token);
 
-    if (
-      await this._onCardinalPaymentValidation(kushkiInstance, token.secureId!)
-    )
+    if (await this._onSandboxPaymentValidation(kushkiInstance, token.secureId!))
       return Promise.resolve(token);
     else return Promise.reject(new KushkiError(ERRORS.E006));
   }
 
-  private async _onCardinalPaymentValidation(
+  private async _onSandboxPaymentValidation(
     kushkiInstance: IKushki,
     secureServiceId: string
   ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      window.Cardinal.on(
+      KushkiCardinalSandbox.on(
         "payments.validated",
-        async (data: ICardinalValidation) => {
-          if (data.ActionCode !== CardinalValidationCodeEnum.SUCCESS)
-            reject(new KushkiError(ERRORS.E005));
+        async (isErrorFlow?: boolean) => {
+          if (isErrorFlow) reject(new KushkiError(ERRORS.E005));
 
           try {
             const secureValidation: SecureOtpResponse =
@@ -119,16 +86,13 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
             resolve(is3dsValid(secureValidation));
           } catch (error) {
             reject(new KushkiError(ERRORS.E006));
-          } finally {
-            window.Cardinal.off("payments.setupComplete");
-            window.Cardinal.off("payments.validated");
           }
         }
       );
     });
   }
 
-  private _launchCardinalModal(token: CardTokenResponse) {
+  private _launchSandboxModal(token: CardTokenResponse) {
     const ccaParameters = {
       AcsUrl: token.security!.acsURL!,
       Payload: token.security!.paReq!
@@ -139,36 +103,6 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
       }
     };
 
-    window.Cardinal.continue("cca", ccaParameters, ccaOrderDetails);
-  }
-
-  private async _setupCardinal(jwt: string, cardBin: string) {
-    if (await this._isCardinalInitialized()) {
-      window.Cardinal.trigger("accountNumber.update", cardBin);
-      window.Cardinal.trigger("jwt.update", jwt);
-    } else {
-      window.Cardinal.setup("init", {
-        jwt,
-        order: {
-          Consumer: {
-            Account: {
-              AccountNumber: cardBin
-            }
-          }
-        }
-      });
-    }
-  }
-
-  private async _isCardinalInitialized(): Promise<boolean> {
-    try {
-      const cardinalStatus = await window.Cardinal.complete({
-        Status: "Success"
-      });
-
-      return !!cardinalStatus;
-    } catch (error) {
-      return false;
-    }
+    KushkiCardinalSandbox.continue("cca", ccaParameters, ccaOrderDetails);
   }
 }
