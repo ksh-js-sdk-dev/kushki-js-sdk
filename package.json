@@ -1,6 +1,6 @@
 {
   "name": "@kushki/js-sdk",
-  "version": "0.2.1-tik-2445-patch.2",
+  "version": "0.2.1-tik-2445-patch.3",
   "scripts": {
     "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
     "dev": "cd ./showcase && vite --c vite.config.ts",
