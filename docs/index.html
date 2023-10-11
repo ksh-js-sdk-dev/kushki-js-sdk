@@ -12,12 +12,30 @@
 <div class="col-content">
 <div class="tsd-page-title">
 <h2>@kushki/js-sdk</h2></div>
-<div class="tsd-panel tsd-typography"><a id="md:kushki-js-sdk" class="tsd-anchor"></a><h1><a href="#md:kushki-js-sdk">kushki-js-sdk</a></h1><p>Kushki Javascript Client Library</p>
-<a id="md:getting-started" class="tsd-anchor"></a><h2><a href="#md:getting-started">Getting Started</a></h2><a id="md:running-the-tests" class="tsd-anchor"></a><h2><a href="#md:running-the-tests">Running the tests</a></h2><a id="md:authors" class="tsd-anchor"></a><h2><a href="#md:authors">Authors</a></h2><ul>
-<li><strong>Kushki Dev Team</strong></li>
+<div class="tsd-panel tsd-typography"><a id="md:kushki-js-sdk" class="tsd-anchor"></a><h1><a href="#md:kushki-js-sdk">kushki-js-sdk</a></h1><p>Notas:</p>
+<ul>
+<li><p>La documentación debe ser en inglés</p>
+</li>
+<li><p>Basarse en como se documentó la versión de Kushki JS V1</p>
+</li>
+<li><p>Basarse para documentar como se realizó en Animación Visa/Mastercard</p>
+</li>
+<li><p>Tomar como estándar el nivel de detalle que se da en la documentación de Braintree</p>
+</li>
 </ul>
-<a id="md:acknowledgments" class="tsd-anchor"></a><h2><a href="#md:acknowledgments">Acknowledgments</a></h2><p>“..........” - author</p>
-</div></div>
+<a id="md:table-of-contents" class="tsd-anchor"></a><h2><a href="#md:table-of-contents">Table of Contents</a></h2><ul>
+<li><a href="#instalation">Instalation (instalación con NPM y CDN)</a></li>
+<li><a href="#library-setup">Library setup (init de la clase Kushki)</a></li>
+<li><a href="#get-a-payment-card-token">Get a payment card token</a><ul>
+<li><a href="#form-initialization">Form initialization(initCard de la clase Payment, documentar styles de forma básica)</a></li>
+<li><a href="#styling">Styling (objeto styles de initCard de la clase Payment con ejemplos de uso)</a></li>
+<li><a href="#events">Events (eventos disponibles de la clase Payment, no documentar onOtpValidation)</a></li>
+<li><a href="#otp-validation">OTP Validation (evento onOtpValidation de la clase Payment)</a></li>
+<li><a href="#tokenization">Tokenization (requestToken de la clase Payment)</a></li>
+</ul>
+</li>
+</ul>
+<a id="md:bull-instalation" class="tsd-anchor"></a><h2><a href="#md:bull-instalation">&bull; Instalation</a></h2><a id="md:bull-library-setup" class="tsd-anchor"></a><h2><a href="#md:bull-library-setup">&bull; Library setup</a></h2><a id="md:bull-get-a-payment-card-token" class="tsd-anchor"></a><h2><a href="#md:bull-get-a-payment-card-token">&bull; Get a payment card token</a></h2><a id="md:xa0xa0bull-form-initialization" class="tsd-anchor"></a><h3><a href="#md:xa0xa0bull-form-initialization">&#xa0;&#xa0;&bull; Form initialization</a></h3><a id="md:xa0xa0bull-styling" class="tsd-anchor"></a><h3><a href="#md:xa0xa0bull-styling">&#xa0;&#xa0;&bull; Styling</a></h3><a id="md:xa0xa0bull-events" class="tsd-anchor"></a><h3><a href="#md:xa0xa0bull-events">&#xa0;&#xa0;&bull; Events</a></h3><a id="md:xa0xa0bull-otp-validation" class="tsd-anchor"></a><h3><a href="#md:xa0xa0bull-otp-validation">&#xa0;&#xa0;&bull; OTP Validation</a></h3><a id="md:xa0xa0bull-tokenization" class="tsd-anchor"></a><h3><a href="#md:xa0xa0bull-tokenization">&#xa0;&#xa0;&bull; Tokenization</a></h3></div></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -42,10 +60,17 @@
 <li><a href="#md:kushki-js-sdk"><span>kushki-<wbr/>js-<wbr/>sdk</span></a></li>
 <li>
 <ul>
-<li><a href="#md:getting-started"><span>Getting <wbr/>Started</span></a></li>
-<li><a href="#md:running-the-tests"><span>Running the tests</span></a></li>
-<li><a href="#md:authors"><span>Authors</span></a></li>
-<li><a href="#md:acknowledgments"><span>Acknowledgments</span></a></li></ul></li></ul></li></ul></div></details></div>
+<li><a href="#md:table-of-contents"><span>Table of <wbr/>Contents</span></a></li>
+<li><a href="#md:bull-instalation"><span>• <wbr/>Instalation</span></a></li>
+<li><a href="#md:bull-library-setup"><span>• <wbr/>Library setup</span></a></li>
+<li><a href="#md:bull-get-a-payment-card-token"><span>• <wbr/>Get a payment card token</span></a></li>
+<li>
+<ul>
+<li><a href="#md:xa0xa0bull-form-initialization"><span>  • <wbr/>Form initialization</span></a></li>
+<li><a href="#md:xa0xa0bull-styling"><span>  • <wbr/>Styling</span></a></li>
+<li><a href="#md:xa0xa0bull-events"><span>  • <wbr/>Events</span></a></li>
+<li><a href="#md:xa0xa0bull-otp-validation"><span>  • OTP <wbr/>Validation</span></a></li>
+<li><a href="#md:xa0xa0bull-tokenization"><span>  • <wbr/>Tokenization</span></a></li></ul></li></ul></li></ul></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="index.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1"></use></svg><span>@kushki/js-sdk</span></a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container" data-base=".">
