@@ -165,7 +165,7 @@ jobs:
         run: |
           NEW_VERSION=${{ needs.deploy-npm.outputs.new-version }}
           echo "NEW_VERSION is $NEW_VERSION"
-          aws s3 sync ./lib s3://js-sdk-build-gha-demo/"$NEW_VERSION"
+          aws s3 sync ./lib s3://js-sdk-build-gha-demo/js/"$NEW_VERSION"
 
       - name: Configure AWS Credentials CloudFront
         uses: aws-actions/configure-aws-credentials@v4
