@@ -21,7 +21,7 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "Kushki": ["../src"],
-      "Kushki/payments": ["../src/module/Payments.index.ts"]
+      "Kushki/payment": ["../src/module/Payment.index.ts"]
     }
   },
   "include": ["src"],

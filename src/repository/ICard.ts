@@ -1,4 +1,4 @@
-import { FormValidity, TokenResponse } from "module/Payments.index.ts";
+import { FormValidity, TokenResponse } from "module/Payment.index.ts";
 import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
 import { FieldTypeEnum } from "types/form_validity";
 import { FieldValidity } from "types/card_fields_values";
@@ -205,7 +205,7 @@ export interface ICard {
    * @typedef {("cardNumber" | "cardholderName" | "cvv" | "deferred" | "expirationDate")} FieldTypeEnum
    *
    * @example
-   * // Example: Focus on the cardholder name field
+   * // Example: Focus no t on the cardholder name field
    * await focus(FieldTypeEnum.cardholderName);
    * console.log("Cardholder name field is now focused.");
    *

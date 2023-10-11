@@ -21,7 +21,7 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "Kushki": ["src/index.ts"],
-      "Kushki/payments": ["src/module/Payments.index.ts"],
+      "Kushki/payment": ["src/module/Payment.index.ts"],
       "module/*": ["src/module/*"],
       "gateway/*": ["src/gateway/*"],
       "infrastructure/*": ["src/infrastructure/*"],
@@ -38,7 +38,7 @@
   "references": [{ "path": "./tsconfig.node.json" }],
   "typedocOptions": {
     "lightHighlightTheme": "light-plus",
-    "entryPoints": ["src/repository/ICard.ts", "types/token_response.d.ts", "src/repository/IKushki.ts"],
+    "entryPoints": ["src/repository/ICard.ts", "types/token_response.d.ts", "src/repository/IKushki.ts", "src/index.ts"],
     "out": "docs"
   }
 }

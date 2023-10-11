@@ -4,7 +4,7 @@ import {
   Field,
   initCardToken,
   TokenResponse
-} from "Kushki/payments";
+} from "Kushki/payment";
 import KushkiHostedFields from "libs/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { CONTAINER } from "infrastructure/Container.ts";

@@ -8,7 +8,7 @@ import {
   TokenResponse,
   initCardToken,
   ICard
-} from "Kushki/payments";
+} from "Kushki/payment";
 import { useEffect, useState } from "react";
 import { DeferredValuesResponse } from "../../../types/token_response";
 import "../../assets/css/checkout.css";

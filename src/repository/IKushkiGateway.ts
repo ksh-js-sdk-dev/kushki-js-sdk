@@ -1,6 +1,6 @@
 import { BinInfoResponse } from "types/bin_info_response";
 import { IKushki } from "Kushki";
-import { DeferredByBinOptionsResponse } from "Kushki/payments";
+import { DeferredByBinOptionsResponse } from "Kushki/payment";
 import { BinBody } from "types/bin_body";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
