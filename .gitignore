@@ -1,7 +1,6 @@
 dist
 lib
 coverage
-docs/
 types/
 node_modules/
 .kushki/
