@@ -20,17 +20,26 @@
 <ul class="tsd-signatures">
 <li class="tsd-signature tsd-anchor-link" id="init"><span class="tsd-kind-call-signature">init</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/src_repository_IKushki.IKushki.html" class="tsd-signature-type tsd-kind-interface">IKushki</a><span class="tsd-signature-symbol">&gt;</span><a href="#init" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>init method</p>
+<div class="tsd-comment tsd-typography"><p>Initializes the Kushki payment gateway with the provided options.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">options</span>: <a href="../interfaces/src.KushkiOptions.html" class="tsd-signature-type tsd-kind-interface">KushkiOptions</a></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/src_repository_IKushki.IKushki.html" class="tsd-signature-type tsd-kind-interface">IKushki</a><span class="tsd-signature-symbol">&gt;</span></h4>
-<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<h5><span class="tsd-kind-parameter">options</span>: <a href="../interfaces/src.KushkiOptions.html" class="tsd-signature-type tsd-kind-interface">KushkiOptions</a></h5>
+<div class="tsd-comment tsd-typography"><p>The options for initializing the Kushki payment gateway.</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/src_repository_IKushki.IKushki.html" class="tsd-signature-type tsd-kind-interface">IKushki</a><span class="tsd-signature-symbol">&gt;</span></h4><p>A Promise that resolves to an instance of the initialized Kushki payment gateway.</p>
+
+<div class="tsd-comment tsd-typography">
+<h4>Throws</h4><p>Throws an error if the initialization fails due to invalid options, network issues or public credential id undefined.</p>
+
+<h4>Example</h4><pre><code class="language-ts"><span class="hl-0">// Example usage of the init function</span><br/><span class="hl-7">const</span><span class="hl-2"> </span><span class="hl-8">options</span><span class="hl-2"> = {</span><br/><span class="hl-2">  </span><span class="hl-4">apiKey:</span><span class="hl-2"> </span><span class="hl-5">&#39;YOUR_API_KEY&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-4">environment:</span><span class="hl-2"> </span><span class="hl-5">&#39;sandbox&#39;</span><br/><span class="hl-2">};</span><br/><br/><span class="hl-3">init</span><span class="hl-2">(</span><span class="hl-4">options</span><span class="hl-2">)</span><br/><span class="hl-2">  .</span><span class="hl-3">then</span><span class="hl-2">((</span><span class="hl-4">kushkiInstance</span><span class="hl-2">) </span><span class="hl-7">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-0">// The Kushki payment gateway is now initialized and ready to use.</span><br/><span class="hl-2">    </span><span class="hl-0">// You can call methods like kushkiInstance.processPayment() or kushkiInstance.refundPayment().</span><br/><span class="hl-2">  })</span><br/><span class="hl-2">  .</span><span class="hl-3">catch</span><span class="hl-2">((</span><span class="hl-4">error</span><span class="hl-2">) </span><span class="hl-7">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-4">console</span><span class="hl-2">.</span><span class="hl-3">error</span><span class="hl-2">(</span><span class="hl-5">&#39;Error initializing Kushki:&#39;</span><span class="hl-2">, </span><span class="hl-4">error</span><span class="hl-2">);</span><br/><span class="hl-2">  });</span>
+</code><button>Copy</button></pre>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ksh-sdk-js/kushki-js-sdk/blob/fc71d25/src/index.ts#L8">src/index.ts:8</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/b638881/src/index.ts#L39">src/index.ts:39</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

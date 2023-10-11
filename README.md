@@ -1,19 +1,12 @@
 # kushki-js-sdk
 
-Notas:
+kushki-js-sdk.js is our JavaScript library for building payment flows with your own style. You can collect all the card information from your client and generate a token that will safely save and send that data to your servers.
 
-- La documentación debe ser en inglés
-
-- Basarse en como se documentó la versión de Kushki JS V1
-
-- Basarse para documentar como se realizó en Animación Visa/Mastercard
-
-- Tomar como estándar el nivel de detalle que se da en la documentación de Braintree
-
+We make it easier!
 
 ## Table of Contents
 
-- [Instalation (instalación con NPM y CDN)](#instalation)
+- [Instalation (instalación con NPM y CDN)](#Install)
 - [Library setup (init de la clase Kushki)](#library-setup)
 - [Get a payment card token](#get-a-payment-card-token)
   - [Form initialization(initCard de la clase Payment, documentar styles de forma básica)](#form-initialization)
@@ -22,9 +15,54 @@ Notas:
   - [OTP Validation (evento onOtpValidation de la clase Payment)](#otp-validation)
   - [Tokenization (requestToken de la clase Payment)](#tokenization)
 
-## &bull; Instalation
+
+# Install
+
+## &bull; Option 1 - NPM
+
+Install the npm with the following code:
+
+```
+npm install --save @kushki/js-sdk
+```
+
+## &bull; Option 2 - YARN
+
+Install the yarn with the following code:
+
+```
+yarn install @kushki/js-sdk
+```
+
+## &bull; Option 3 - CDN
+
+Use a script tag inside your page to add the feature. When adding the following code to your page it will be imported.
+
+```
+<script src="https://cdn.kushkipagos.com/js/kushki.min.js"></script>
+<script src="https://cdn.kushkipagos.com/js/payment/payment.min.js"></script>
+```
 
 ## &bull; Library setup
+
+Begin creating your IKushki, it will allow you to perform all the functions available in Kushki-js-sdk.
+
+```ts
+// Example usage of the init function
+const options = {
+  apiKey: 'YOUR_API_KEY',
+  environment: 'sandbox'
+};
+
+init(options)
+  .then((kushkiInstance) => {
+    // The Kushki payment gateway is now initialized and ready to use.
+    // You can call methods like kushkiInstance.processPayment() or kushkiInstance.refundPayment().
+  })
+  .catch((error) => {
+    console.error('Error initializing Kushki:', error);
+  });
+```
 
 ## &bull; Get a payment card token
 
