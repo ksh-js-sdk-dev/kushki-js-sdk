@@ -200,8 +200,8 @@ const ConfigurationDemo = ({
           label={"Monto"}
           mask={"9999999"}
         />
-        <div className="mui-checkbox divContainer">
-          <label>
+        <div className="mui-checkbox divContainer" >
+          <label className="label-container">
             <input
               className={"inputCheck"}
               type="checkbox"
@@ -210,6 +210,7 @@ const ConfigurationDemo = ({
               checked={isSubscriptionOption}
               onClick={() => setIsSubscriptionOption(!isSubscriptionOption)}
             />
+            <span className="checkmark"></span>
             Crear suscripción
           </label>
         </div>
