@@ -1,4 +1,4 @@
-import { FormValidity, TokenResponse } from "module/Payment.index.ts";
+import { FormValidity, TokenResponse } from "module/Payment.ts";
 import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
 import { FieldTypeEnum } from "types/form_validity";
 import { FieldValidity } from "types/card_fields_values";

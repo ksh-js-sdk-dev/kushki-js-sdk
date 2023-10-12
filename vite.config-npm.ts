@@ -1,6 +1,5 @@
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
-import { PreRenderedChunk } from "rollup";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 // https://vitejs.dev/config/
@@ -16,16 +15,14 @@ export default defineConfig({
   build: {
     lib: {
       entry: {
-        Payment: "src/module/Payment.index.ts",
-        Kushki: "src/index.ts"
+        Payment: "src/module/Payment.ts",
+        Kushki: "src/module/Kushki.ts"
       }
     },
     rollupOptions: {
       output: {
-        entryFileNames: (chunkInfo: PreRenderedChunk) => {
-          if (chunkInfo.name === "Kushki") return "[name].js";
-
-          return "module/[name]/[name].js";
+        entryFileNames: () => {
+          return "module/[name].js";
         }
       }
     }

@@ -20,7 +20,8 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-input-mask": "2.0.4"
+    "react-input-mask": "2.0.4",
+    "@kushki/js-sdk": "../dist"
   },
   "devDependencies": {
     "@babel/core": "^7.22.10",

@@ -1,19 +1,29 @@
-import { IKushki, init } from "Kushki";
+import { IKushki, init, KushkiError } from "Kushki";
+// import { IKushki, init, KushkiError } from "@kushki/js-sdk";
 import {
   CardOptions,
   Currency,
   Fields,
   FieldValidity,
   FormValidity,
-  TokenResponse,
+  ICard,
   initCardToken,
-  ICard
-} from "Kushki/payment";
+  TokenResponse
+} from "Kushki/Payment";
+// import {
+//   CardOptions,
+//   Currency,
+//   Fields,
+//   FieldValidity,
+//   FormValidity,
+//   ICard,
+//   initCardToken,
+//   TokenResponse
+// } from "@kushki/js-sdk/Payment";
 import { useEffect, useState } from "react";
 import { DeferredValuesResponse } from "../../../types/token_response";
 import "../../assets/css/checkout.css";
 import "./Checkout.css";
-import { KushkiError } from "../../../src/infrastructure/KushkiError.ts";
 import ConfigurationDemo from "../components/ConfigurationDemo/ConfigurationDemo.tsx";
 import ResultsPayment from "../components/ConfigurationDemo/Components/ResultsPayment.tsx";
 import HostedFields from "../components/HostedFields/HostedFields.tsx";

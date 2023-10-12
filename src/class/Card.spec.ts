@@ -15,7 +15,7 @@ import { CountryEnum } from "infrastructure/CountryEnum.ts";
 import { DeferredValues } from "types/card_fields_values";
 import { BinInfoResponse } from "types/bin_info_response";
 import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
-import { Card } from "src/class/Card.ts";
+import { Card } from "class/Card.ts";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
