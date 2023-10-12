@@ -71,7 +71,9 @@ export class Sandbox3DSProvider implements ISandbox3DSProvider {
       KushkiCardinalSandbox.on(
         "payments.validated",
         async (isErrorFlow?: boolean) => {
-          if (isErrorFlow) reject(new KushkiError(ERRORS.E005));
+          if (isErrorFlow) {
+            return reject(new KushkiError(ERRORS.E005));
+          }
 
           try {
             const secureValidation: SecureOtpResponse =
@@ -83,9 +85,9 @@ export class Sandbox3DSProvider implements ISandbox3DSProvider {
                 }
               );
 
-            resolve(is3dsValid(secureValidation));
+            return resolve(is3dsValid(secureValidation));
           } catch (error) {
-            reject(new KushkiError(ERRORS.E006));
+            return reject(new KushkiError(ERRORS.E006));
           }
         }
       );

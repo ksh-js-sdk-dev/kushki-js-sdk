@@ -104,7 +104,7 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
         "payments.validated",
         async (data: ICardinalValidation) => {
           if (data.ActionCode !== CardinalValidationCodeEnum.SUCCESS)
-            reject(new KushkiError(ERRORS.E005));
+            return reject(new KushkiError(ERRORS.E005));
 
           try {
             const secureValidation: SecureOtpResponse =
@@ -116,9 +116,9 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
                 }
               );
 
-            resolve(is3dsValid(secureValidation));
+            return resolve(is3dsValid(secureValidation));
           } catch (error) {
-            reject(new KushkiError(ERRORS.E006));
+            return reject(new KushkiError(ERRORS.E006));
           } finally {
             window.Cardinal.off("payments.setupComplete");
             window.Cardinal.off("payments.validated");
