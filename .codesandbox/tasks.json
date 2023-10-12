@@ -1,0 +1,113 @@
+{
+  // These tasks will run in order when initializing your CodeSandbox project.
+  "setupTasks": [
+    {
+      "name": "Install Dependencies",
+      "command": "yarn bootstrap:codesandbox"
+    }
+  ],
+
+  // These tasks can be run from CodeSandbox. Running one will open a log in the app.
+  "tasks": {
+    "bootstrap": {
+      "name": "bootstrap",
+      "command": "yarn bootstrap",
+      "runAtStart": false
+    },
+    "dev": {
+      "name": "dev",
+      "command": "yarn dev",
+      "runAtStart": true
+    },
+    "docs": {
+      "name": "docs",
+      "command": "yarn docs",
+      "runAtStart": false
+    },
+    "docs:dev": {
+      "name": "docs:dev",
+      "command": "yarn docs:dev",
+      "runAtStart": false
+    },
+    "build:npm": {
+      "name": "build:npm",
+      "command": "yarn build:npm",
+      "runAtStart": false
+    },
+    "build:cdn": {
+      "name": "build:cdn",
+      "command": "yarn build:cdn",
+      "runAtStart": false
+    },
+    "build": {
+      "name": "build",
+      "command": "yarn build",
+      "runAtStart": false
+    },
+    "lint": {
+      "name": "lint",
+      "command": "yarn lint",
+      "runAtStart": false
+    },
+    "preview": {
+      "name": "preview",
+      "command": "yarn preview",
+      "runAtStart": false
+    },
+    "lint:fix": {
+      "name": "lint:fix",
+      "command": "yarn lint:fix",
+      "runAtStart": false
+    },
+    "format": {
+      "name": "format",
+      "command": "yarn format",
+      "runAtStart": false
+    },
+    "prepare": {
+      "name": "prepare",
+      "command": "yarn prepare",
+      "runAtStart": false
+    },
+    "tsc:interface": {
+      "name": "tsc:interface",
+      "command": "yarn tsc:interface",
+      "runAtStart": false
+    },
+    "test:unit": {
+      "name": "test:unit",
+      "command": "yarn test:unit",
+      "runAtStart": false
+    },
+    "test:coverage": {
+      "name": "test:coverage",
+      "command": "yarn test:coverage",
+      "runAtStart": false
+    },
+    "test": {
+      "name": "test",
+      "command": "yarn test",
+      "runAtStart": false
+    },
+    "validate": {
+      "name": "validate",
+      "command": "yarn validate",
+      "runAtStart": false
+    },
+    "cp:package": {
+      "name": "cp:package",
+      "command": "yarn cp:package",
+      "runAtStart": false
+    },
+    "publish:alpha": {
+      "name": "publish:alpha",
+      "command": "yarn publish:alpha",
+      "runAtStart": false
+    },
+    "publish:latest": {
+      "name": "publish:latest",
+      "command": "yarn publish:latest",
+      "runAtStart": false
+    }
+  }
+}
