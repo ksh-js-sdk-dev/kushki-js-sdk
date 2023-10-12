@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@krakenjs/zoid": "^10.3.1",
-    "@kushki/cardinal-sandbox-js": "^1.0.4",
+    "cardinal-sandbox-js-santy": "^1.0.4",
     "axios": "^1.5.0",
     "inversify": "^6.0.1",
     "reflect-metadata": "^0.1.13",

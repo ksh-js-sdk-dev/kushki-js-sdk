@@ -6,7 +6,7 @@ import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { Sandbox3DSProvider } from "src/provider/Sandbox3DSProvider.ts";
-import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
+import { KushkiCardinalSandbox } from "cardinal-sandbox-js-santy";
 
 describe("Sandbox3DSProvider - Test", () => {
   let sandboxProvider: Sandbox3DSProvider;
