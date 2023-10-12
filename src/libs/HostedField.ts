@@ -36,7 +36,7 @@ const KushkiHostedFields = zoid.create({
     };
   },
   tag: KUSHKI_HOSTED_FIELD_EVENT,
-  url: import.meta.env.VITE_SPA_INPUTS_URL
+  url: import.meta.env.VITE_SPA_INPUTS_URL || "http://localhost:5173"
 });
 
 export default KushkiHostedFields;

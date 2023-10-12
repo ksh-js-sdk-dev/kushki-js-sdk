@@ -26,10 +26,10 @@
   },
   "exports": {
     ".": {
-      "import": "./Kushki.js"
+      "import": "./module/Kushki.js"
     },
     "./Payment": {
-      "import": "./module/Payment/Payment.js"
+      "import": "./module/Payment.js"
     }
   },
   "engines": {
