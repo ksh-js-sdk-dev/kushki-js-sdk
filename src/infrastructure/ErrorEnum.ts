@@ -1,8 +1,10 @@
-/**
- * ErrorEnum
- */
 import { KushkiErrors } from "infrastructure/KushkiError.ts";
 
+/**
+ * Enumeration defining error codes for the application.
+ * @readonly
+ * @enum {string}
+ */
 export enum ErrorCode {
   E001 = "E001",
   E002 = "E002",

@@ -4,9 +4,11 @@
   "additionalProperties": false,
   "properties": {
     "publicCredentialId": {
+      "description": "Kushki ID created for your merchant",
       "type": "string"
     },
     "inTest": {
+      "description": "Value to define if you are in production or test environment",
       "type": "boolean"
     }
   },
