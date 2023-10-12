@@ -39,7 +39,7 @@
   "references": [{ "path": "./tsconfig.node.json" }],
   "typedocOptions": {
     "lightHighlightTheme": "light-plus",
-    "entryPoints": ["src/repository/ICard.ts", "types/token_response.d.ts", "src/repository/IKushki.ts", "src/index.ts"],
+    "entryPoints": ["src/repository/ICard.ts", "types/token_response.d.ts", "src/module/Kushki.ts"],
     "out": "docs"
   }
 }
