@@ -1,6 +1,6 @@
 {
   "name": "@kushki/js-sdk",
-  "version": "0.1.1-14195.14",
+  "version": "0.1.1-14195.15",
   "scripts": {
     "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
     "bootstrap:codesandbox": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev --mode codesandbox",
@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@krakenjs/zoid": "^10.3.1",
-    "@kushki/cardinal-sandbox-js": "^1.0.4",
+    "@kushki/cardinal-sandbox-js": "1.0.5-alpha.1",
     "axios": "^1.5.0",
     "inversify": "^6.0.1",
     "reflect-metadata": "^0.1.13",
