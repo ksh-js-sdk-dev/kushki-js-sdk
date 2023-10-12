@@ -31,7 +31,7 @@
 }
 
 .button-pay {
-  margin-top: 20px
+  margin-top: 20px;
 }
 
 .input-configuration {
@@ -63,7 +63,56 @@
 }
 
 .inputCheck {
-  margin-top: 2px !important;
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 15px;
+  background-color: white;
+  border: 1px solid #4498ee;
+  border-radius: 4px;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.label-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkmark:after {
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid #4498ee;
+  border-width: 0 1px 1px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.label-container {
+  cursor: default !important;
+}
+
+.label-container input:checked ~ .checkmark {
+  background-color: white;
+}
+
+.label-container input:disabled ~ .checkmark {
+  cursor: not-allowed;
+  color: red !important;
 }
 
 .divContainer {
@@ -81,7 +130,7 @@
 
 .label-hostedFieldError {
   color: #b60000;
-  font-size: 14px;
+  font-size: 12px;
   margin-top: -10px;
   font-weight: 400;
   text-align: left;
