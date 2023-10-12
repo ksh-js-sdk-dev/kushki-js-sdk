@@ -1,6 +1,6 @@
-import { EnvironmentEnum } from "./infrastructure/EnvironmentEnum.ts";
-import { IKushki, init, KushkiOptions } from "./index.ts";
-import { SiftScienceEnum } from "infrastructure/SiftScienceEnum";
+import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
+import { IKushki, init, KushkiOptions } from "module/Kushki.ts";
+import { SiftScienceEnum } from "infrastructure/SiftScienceEnum.ts";
 
 describe("Kushki - test", () => {
   let options: KushkiOptions;
@@ -44,6 +44,7 @@ describe("Kushki - test", () => {
 
   it("when pass options with incorrect body, should return error controlled", async () => {
     try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       await init({});
     } catch (error: any) {

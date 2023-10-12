@@ -1,10 +1,10 @@
 import { KushkiOptions } from "Kushki";
 import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
-import { SiftScienceEnum } from "infrastructure/SiftScienceEnum";
+import { SiftScienceEnum } from "infrastructure/SiftScienceEnum.ts";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { UtilsProvider } from "src/provider/UtilsProvider.ts";
-import {IKushki} from "repository/IKushki.ts";
+import { IKushki } from "repository/IKushki.ts";
 
 export class Kushki implements IKushki {
   private readonly baseUrl: EnvironmentEnum;

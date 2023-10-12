@@ -1,6 +1,7 @@
 import { KushkiOptions } from "types/kushki_options";
 import { IKushki } from "repository/IKushki.ts";
-import { Kushki } from "src/Kushki.ts";
+import { Kushki } from "class/Kushki.ts";
+import { KushkiError } from "infrastructure/KushkiError.ts";
 
 /**
  * Initializes the Kushki payment gateway with the provided options.
@@ -41,4 +42,4 @@ const init = (options: KushkiOptions): Promise<IKushki> => Kushki.init(options);
 // Main Object
 export { init };
 // Types
-export type { KushkiOptions, IKushki };
+export type { KushkiOptions, IKushki, KushkiError };

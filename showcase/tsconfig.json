@@ -20,8 +20,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "Kushki": ["../src"],
-      "Kushki/payment": ["../src/module/Payment.index.ts"]
+      "Kushki": ["../src/module/Kushki.ts"],
+      "Kushki/Payment": ["../src/module/Payment.ts"]
     }
   },
   "include": ["src"],

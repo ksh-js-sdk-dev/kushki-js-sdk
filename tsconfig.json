@@ -20,8 +20,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "Kushki": ["src/index.ts"],
-      "Kushki/payment": ["src/module/Payment.index.ts"],
+      "Kushki": ["src/module/Kushki.ts"],
+      "Kushki/payment": ["src/module/Payment.ts"],
       "module/*": ["src/module/*"],
       "gateway/*": ["src/gateway/*"],
       "infrastructure/*": ["src/infrastructure/*"],
@@ -31,7 +31,8 @@
       "environment/*": ["src/environments/*"],
       "utils/*": ["src/utils/*"],
       "libs/*": ["src/libs/*"],
-      "src/*": ["src/*"]
+      "src/*": ["src/*"],
+      "class/*": ["src/class/*"]
     }
   },
   "exclude": ["node_modules", "showcase"],

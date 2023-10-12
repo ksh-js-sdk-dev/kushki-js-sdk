@@ -121,7 +121,17 @@ const ConfigurationDemo = ({
   return (
     <>
       <div className={"content-title"}>
-        <h1 className={"titleDemo"}>Kushki Fields JS - DEMO</h1>
+        <h1 className={"titleDemo"}>Kushki JS SDK - Demo</h1>
+      </div>
+      <div className="mui--text-body2 mui-text-custom">
+        <a
+          href={
+            "https://ksh-js-sdk-dev.github.io/kushki-js-sdk/index.html#md:kushki-js-sdk"
+          }
+          target={"_blank"}
+        >
+          Link Docs
+        </a>
       </div>
       <div className="mui--text-body2 mui-text-custom">
         Usar datos de prueba
