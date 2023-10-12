@@ -36,7 +36,11 @@ const KushkiHostedFields = zoid.create({
     };
   },
   tag: KUSHKI_HOSTED_FIELD_EVENT,
-  url: import.meta.env.VITE_SPA_INPUTS_URL
+  url:
+    import.meta.env.VITE_SPA_INPUTS_URL ||
+    "https://qa-spa-js-inputs.kushkipagos.blue"
+  // import.meta.env.VITE_SPA_INPUTS_URL ||
+  //   "https://qa-spa-js-inputs.kushkipagos.blue" // uncomment dev locally
 });
 
 export default KushkiHostedFields;

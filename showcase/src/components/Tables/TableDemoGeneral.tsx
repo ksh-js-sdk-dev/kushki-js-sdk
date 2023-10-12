@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card } from "../../../../src/module/Payment.index.ts";
+import { Card } from "../../../../src/module/Payment.ts";
 import { Fields, FormValidity } from "../../../../types/form_validity";
 
 export interface ITableDemoGeneral {
