@@ -1,5 +1,5 @@
 import { Cardinal3DSProvider } from "src/provider/Cardinal3DSProvider.ts";
-import { Kushki } from "src/Kushki.ts";
+import { Kushki } from "class/Kushki.ts";
 import { IKushki } from "Kushki";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { CONTAINER } from "infrastructure/Container.ts";

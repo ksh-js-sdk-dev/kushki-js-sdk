@@ -14,7 +14,7 @@ import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { CONTAINER } from "infrastructure/Container.ts";
 import { KushkiGateway } from "gateway/KushkiGateway.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
-import { KushkiCardinalSandbox } from "cardinal-sandbox-js-santy";
+import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
 import { injectable } from "inversify";
 

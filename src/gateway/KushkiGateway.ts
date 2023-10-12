@@ -5,7 +5,7 @@ import { PathEnum } from "infrastructure/PathEnum.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import axios from "axios";
 import { IKushki } from "Kushki";
-import { DeferredByBinOptionsResponse } from "Kushki/payments";
+import { DeferredByBinOptionsResponse } from "Kushki/payment";
 import { IKushkiGateway } from "repository/IKushkiGateway";
 import { injectable } from "inversify";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";

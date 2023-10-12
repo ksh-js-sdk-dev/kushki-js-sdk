@@ -956,6 +956,11 @@
     "@krakenjs/post-robot" "^11.0.0"
     "@krakenjs/zalgo-promise" "^2.0.0"
 
+"@kushki/cardinal-sandbox-js@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@kushki/cardinal-sandbox-js/-/cardinal-sandbox-js-1.0.4.tgz#9fa6934419bb6fb969b27f634cd1eef051143d0c"
+  integrity sha512-Mobzd4YiU9+Pvfmg+nP/b2INV+PkFnx1GTZyYzVg5b1A94QVKoaRP+ubd28AYgZSBwHhJ0yrwk5BMIdxjr7eUg==
+
 "@microsoft/api-extractor-model@7.28.1":
   version "7.28.1"
   resolved "https://registry.yarnpkg.com/@microsoft/api-extractor-model/-/api-extractor-model-7.28.1.tgz#014dcd6718b6f754dae1ae2ffc2fb1811b3e9ee6"
@@ -2196,11 +2201,6 @@ caniuse-lite@^1.0.30001538:
   version "1.0.30001539"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001539.tgz#325a387ab1ed236df2c12dc6cd43a4fff9903a44"
   integrity sha512-hfS5tE8bnNiNvEOEkm8HElUHroYwlqMMENEzELymy77+tJ6m+gA2krtHl5hxJaj71OlpC2cHZbdSMX1/YEqEkA==
-
-cardinal-sandbox-js-santy@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/cardinal-sandbox-js-santy/-/cardinal-sandbox-js-santy-1.0.4.tgz#d49823af6b735aac2b3de04f52aa9126e84efc37"
-  integrity sha512-yK3CeG9vaxvyaHFjVP/jviffq7cXlziBW5A1m8etK25mMjakjIysdtw1QhOSkyWEAcbL1bM7W+Egklyyjhg4Rw==
 
 chalk@^2.4.2:
   version "2.4.2"

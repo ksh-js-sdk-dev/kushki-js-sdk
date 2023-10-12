@@ -1,8 +1,9 @@
 {
   "name": "@kushki/js-sdk",
-  "version": "0.1.1-14195.13",
+  "version": "0.1.1-14195.14",
   "scripts": {
     "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
+    "bootstrap:codesandbox": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev --mode codesandbox",
     "dev": "cd ./showcase && vite --c vite.config.ts",
     "docs": "typedoc --tsconfig ./tsconfig.json",
     "docs:dev": "typedoc --watch --tsconfig ./tsconfig.json",
@@ -25,10 +26,10 @@
   },
   "exports": {
     ".": {
-      "import": "./Kushki.js"
+      "import": "./module/Kushki.js"
     },
     "./Payment": {
-      "import": "./module/Payment/Payment.js"
+      "import": "./module/Payment.js"
     }
   },
   "engines": {
@@ -38,7 +39,7 @@
   },
   "dependencies": {
     "@krakenjs/zoid": "^10.3.1",
-    "cardinal-sandbox-js-santy": "^1.0.4",
+    "@kushki/cardinal-sandbox-js": "^1.0.4",
     "axios": "^1.5.0",
     "inversify": "^6.0.1",
     "reflect-metadata": "^0.1.13",
