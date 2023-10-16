@@ -1,6 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "TokenResponse",
+  "description": "@public Contains the card token, and if exist, the deferred data object.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -9,20 +10,20 @@
       "pattern": "^[a-zA-Z0-9]{32}$"
     },
     "deferred": {
-      "description": "@public",
+      "description": "@public Contains the deferred params data that was collected in the form with the hosted fields.",
       "type": "object",
       "title": "DeferredValuesResponse",
       "properties": {
         "graceMonths": {
-          "description": "@typeParam  number - from 0 to more",
+          "description": "@typeParam  number - From 0 to more",
           "type": "number"
         },
         "creditType": {
-          "description": "@typeParam  string - code of credit type.",
+          "description": "@typeParam  string - Code of credit type.",
           "type": "string"
         },
         "months": {
-          "description": "@typeParam  number - from 0 to more",
+          "description": "@typeParam  number - From 0 to more",
           "type": "number"
         }
       }

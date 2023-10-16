@@ -5,15 +5,23 @@ import { FieldValidity } from "types/card_fields_values";
 
 export interface ICard {
   /**
-   * Create token for payment
-   * @return TokenResponse object with token and security info
+   * Create card token for payment.
+   *
+   * This method validate if all hosted fields inputs are valid, otherwise it will throw an exception.
+   *
+   * if the merchant is configured with OTP, 3DS or SiftScience rules, this method automatically do validations for each rule
+   * @return TokenResponse object with token, if deferred info exists return this data
    * @throws KushkiErrorResponse object with code and message of error
    * @example
-   *  try {
-   *    var tokenResponse;
-   *    const token: TokenResponse = await cardInstance.requestToken();
-   *    tokenResponse = token.token;
-   *  } catch (error: any) {}
+   *
+   * try {
+   *    const tokenResponse: TokenResponse = await cardInstance.requestToken();
+   *    // On Success, can get card token response
+   *    console.log("This is a card Token", tokenResponse.token)
+   *  } catch (error: any) {
+   *      // On Error catch response
+   *      console.error("Catch error on request card Token", error.code, error.message);
+   *  }
    */
   requestToken(): Promise<TokenResponse>;
 
