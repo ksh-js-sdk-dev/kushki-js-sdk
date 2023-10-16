@@ -7,10 +7,7 @@ module.exports = {
   },
   mode: "production",
   output: {
-    filename: (pathData) =>
-      pathData.chunk.name === "kushki"
-        ? "[name].min.js"
-        : "[name]/[name].min.js",
+    filename: () => "[name].min.js",
     libraryTarget: "umd",
     path: path.resolve(__dirname, "lib")
   }

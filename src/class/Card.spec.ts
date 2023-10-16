@@ -5,7 +5,7 @@ import {
   initCardToken,
   TokenResponse
 } from "Kushki/payment";
-import KushkiHostedFields from "libs/HostedField.ts";
+import KushkiHostedFields from "libs/zoid/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { CONTAINER } from "infrastructure/Container.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
@@ -22,7 +22,7 @@ import { ERRORS } from "infrastructure/ErrorEnum.ts";
 
 const mockKushkiHostedFieldsHide = jest.fn().mockResolvedValue({});
 
-jest.mock("../libs/HostedField.ts", () =>
+jest.mock("../libs/zoid/HostedField.ts", () =>
   jest.fn().mockImplementation(() => ({
     hide: mockKushkiHostedFieldsHide,
     render: jest.fn(),

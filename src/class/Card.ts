@@ -3,9 +3,9 @@ import { CONTAINER } from "infrastructure/Container.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import { FieldOptions } from "infrastructure/interfaces/FieldOptions.ts";
+import { FieldOptions } from "src/interfaces/FieldOptions.ts";
 import { IKushki } from "Kushki";
-import KushkiHostedFields from "libs/HostedField.ts";
+import KushkiHostedFields from "libs/zoid/HostedField.ts";
 import {
   CardFieldValues,
   CardOptions,
