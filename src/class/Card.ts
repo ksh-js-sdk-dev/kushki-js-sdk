@@ -140,16 +140,7 @@ export class Card implements ICard {
           );
         const deferredValues: DeferredValues = this.getDeferredValues();
 
-        const inputOTPValidation: TokenResponse | undefined =
-          await this.validInputOTP(
-            cardTokenResponse.token,
-            deferredValues,
-            cardTokenResponse.secureService,
-            cardTokenResponse.secureId
-          );
-
-        if (inputOTPValidation !== undefined)
-          return this.buildTokenResponse(inputOTPValidation);
+        await this.validationOTPFLow(cardTokenResponse, deferredValues);
 
         return Promise.resolve(
           this.buildTokenResponse({
@@ -326,13 +317,18 @@ export class Card implements ICard {
         deferredValues,
         siftScienceSession
       );
-    } else
-      return this.getCardinalToken(
+    } else {
+      const tokenResponse = await this.getCardinalToken(
         jwt,
         merchantSettings,
         deferredValues,
         siftScienceSession
       );
+
+      await this.validationOTPFLow(tokenResponse, deferredValues);
+
+      return tokenResponse;
+    }
   }
 
   private async getSandboxToken(
@@ -347,6 +343,8 @@ export class Card implements ICard {
       siftScienceSession
     );
 
+    await this.validationOTPFLow(token, deferredValues);
+
     return this._sandbox3DSProvider.validateSandbox3dsToken(
       this.kushkiInstance,
       token,
@@ -360,7 +358,7 @@ export class Card implements ICard {
     deferredValues: DeferredValues,
     siftScienceSession?: SiftScienceObject
   ) {
-    return new Promise<TokenResponse>((resolve, reject) => {
+    return new Promise<CardTokenResponse>((resolve, reject) => {
       this._cardinal3DSProvider.onSetUpComplete(async () => {
         try {
           const token =
@@ -906,6 +904,22 @@ export class Card implements ICard {
         }
       }) as unknown as EventListener);
     });
+  }
+
+  private async validationOTPFLow(
+    tokenResponse: CardTokenResponse,
+    deferredValues: DeferredValues
+  ) {
+    const inputOTPValidation: TokenResponse | undefined =
+      await this.validInputOTP(
+        tokenResponse.token,
+        deferredValues,
+        tokenResponse.secureService,
+        tokenResponse.secureId
+      );
+
+    if (inputOTPValidation !== undefined)
+      return this.buildTokenResponse(inputOTPValidation);
   }
 
   private async validInputOTP(

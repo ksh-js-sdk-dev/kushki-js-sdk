@@ -64,6 +64,8 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
     if (tokenNotNeedsAuth(cardTokenResponse)) {
       return Promise.resolve({
         deferred: deferredValues,
+        secureId: cardTokenResponse.secureId,
+        secureService: cardTokenResponse.secureService,
         token: cardTokenResponse.token
       });
     }

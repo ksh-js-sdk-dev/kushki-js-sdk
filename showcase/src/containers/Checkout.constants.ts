@@ -107,7 +107,7 @@ export const hostedFieldsStyles: Styles = {
 
 export const optionsDefault: CardOptions = {
   amount: {
-    iva: 26,
+    iva: 0,
     subtotalIva: 0,
     subtotalIva0: 0
   },
