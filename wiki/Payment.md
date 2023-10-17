@@ -332,7 +332,7 @@ const buildCardInstance = async () => {
 
 #### Defined in
 
-[src/module/Payment.ts:296](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9717afc/src/module/Payment.ts#L296)
+[src/module/Payment.ts:296](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/module/Payment.ts#L296)
 
 ## Types
 
@@ -421,4 +421,4 @@ export const ERRORS = {
 
 #### Defined in
 
-[src/infrastructure/ErrorEnum.ts:85](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9717afc/src/infrastructure/ErrorEnum.ts#L85)
+[src/infrastructure/ErrorEnum.ts:85](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/infrastructure/ErrorEnum.ts#L85)

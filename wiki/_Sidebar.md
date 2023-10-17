@@ -4,5 +4,5 @@
 
 ### Modules
 
-- [Kushki](../wiki/Kushki)
-- [Payment](../wiki/Payment)
+- [Kushki](../wiki/Kushki.md)
+- [Payment](../wiki/Payment.md)

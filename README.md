@@ -107,6 +107,7 @@ const buildCardInstance = async () => {
   }
 }
 ```
+[More Examples](./wiki/Payment.md)
 
 ### &#xa0;&#xa0;&bull; Styling
 
