@@ -41,8 +41,8 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
     jwt: string,
     cardBin: string
   ) {
-    if (kushkiInstance.isInTest()) await import("libs/cardinal/staging.ts");
-    else await import("libs/cardinal/prod.ts");
+    if (kushkiInstance.isInTest()) await import("libs/cardinal/Staging.ts");
+    else await import("libs/cardinal/Prod.ts");
 
     await this._setupCardinal(jwt, cardBin);
   }
@@ -64,6 +64,8 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
     if (tokenNotNeedsAuth(cardTokenResponse)) {
       return Promise.resolve({
         deferred: deferredValues,
+        secureId: cardTokenResponse.secureId,
+        secureService: cardTokenResponse.secureService,
         token: cardTokenResponse.token
       });
     }

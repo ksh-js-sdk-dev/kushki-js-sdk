@@ -1,11 +1,12 @@
 import { IKushki, init } from "Kushki";
 import {
   CardOptions,
+  CardTokenResponse,
   Field,
   initCardToken,
   TokenResponse
 } from "Kushki/payment";
-import KushkiHostedFields from "libs/HostedField.ts";
+import KushkiHostedFields from "libs/zoid/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { CONTAINER } from "infrastructure/Container.ts";
 import { IDENTIFIERS } from "src/constant/Identifiers.ts";
@@ -19,10 +20,11 @@ import { Card } from "class/Card.ts";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import { OTPEnum } from "infrastructure/OTPEnum.ts";
 
 const mockKushkiHostedFieldsHide = jest.fn().mockResolvedValue({});
 
-jest.mock("../libs/HostedField.ts", () =>
+jest.mock("../libs/zoid/HostedField.ts", () =>
   jest.fn().mockImplementation(() => ({
     hide: mockKushkiHostedFieldsHide,
     render: jest.fn(),
@@ -322,6 +324,8 @@ describe("Card test", () => {
   describe("requestToken - Test", () => {
     const tokenMock = "1234567890";
     let deferredValueDefault: DeferredValues;
+    const secureServiceMock: string = OTPEnum.secureService;
+    const secureIdMock: string = "555444-1213233-1234243-2324";
 
     const mockKushkiGateway = (
       is3ds?: boolean,
@@ -617,6 +621,15 @@ describe("Card test", () => {
     });
 
     describe("3DS Tokens Validation", () => {
+      const tokenResponseMock3DSFlow: CardTokenResponse = {
+        secureId: secureIdMock,
+        secureService: secureServiceMock,
+        token: tokenMock
+      };
+      const otpSuccessMock: SecureOtpResponse = {
+        code: OTPEnum.secureCodeSuccess,
+        message: "OTP válido"
+      };
       const mock3DSProviders = (
         validateCardinalMock?: jest.Mock,
         validateSandboxMock?: jest.Mock
@@ -643,6 +656,16 @@ describe("Card test", () => {
         CONTAINER.bind(IDENTIFIERS.Sandbox3DSProvider).toConstantValue(
           mockSandboxProvider
         );
+      };
+
+      const mockWindowEventListener3DSFlow = () => {
+        window.addEventListener = jest
+          .fn()
+          .mockImplementationOnce((_, callback) => {
+            callback(
+              new CustomEvent("onInputOTP", { detail: { otpValue: "555" } })
+            );
+          });
       };
 
       beforeEach(() => {
@@ -672,12 +695,68 @@ describe("Card test", () => {
         expect(response.token).toEqual(tokenMock);
       });
 
+      it("it should execute Card 3ds token with OTP response, should execute OTP validation and response success token", async () => {
+        options.fields.otp = {
+          selector: "id_test"
+        };
+
+        mock3DSProviders(
+          jest.fn().mockResolvedValue(tokenResponseMock3DSFlow),
+          jest.fn().mockResolvedValue({
+            token: tokenMock
+          })
+        );
+        mockKushkiGateway(
+          true,
+          false,
+          merchantSettingsResponseDefault,
+          otpSuccessMock
+        );
+
+        const cardInstance = await initCardToken(kushki, options);
+
+        KushkiHostedFields.mock.calls[4][0].handleOnOtpChange("532");
+
+        mockValidityInputs();
+        mockWindowEventListener3DSFlow();
+
+        const response = await cardInstance.requestToken();
+
+        expect(response.token).toEqual(tokenMock);
+      });
+
       it("it should execute Card 3ds SANDBOX token with modal validation", async () => {
         mockKushkiGateway(true, true, merchantSettingsResponseDefault);
 
         const cardInstance = await initCardToken(kushki, options);
 
         mockValidityInputs();
+
+        const response = await cardInstance.requestToken();
+
+        expect(response.token).toEqual(tokenMock);
+      });
+
+      it("it should execute Card 3ds sandbox with OTP response, should execute otp validation and response success token", async () => {
+        options.fields.otp = {
+          selector: "id_test"
+        };
+
+        mockRequestPaymentToken(
+          jest.fn().mockResolvedValue(tokenResponseMock3DSFlow)
+        );
+        mockKushkiGateway(
+          true,
+          true,
+          merchantSettingsResponseDefault,
+          otpSuccessMock
+        );
+
+        const cardInstance = await initCardToken(kushki, options);
+
+        KushkiHostedFields.mock.calls[4][0].handleOnOtpChange("532");
+        mockValidityInputs();
+        mockWindowEventListener3DSFlow();
 
         const response = await cardInstance.requestToken();
 

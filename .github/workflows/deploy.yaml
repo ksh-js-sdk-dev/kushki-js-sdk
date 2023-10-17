@@ -117,35 +117,35 @@ jobs:
           BRANCH=${{ needs.build-version.outputs.branch }}
           git push --follow-tags origin HEAD:"$BRANCH"
 
-#  deploy-npm:
-#    needs: build
-#    runs-on: ubuntu-latest
-#    outputs:
-#      new-version: ${{ steps.version.outputs.new-version }}
-#    steps:
-#      - name: Get dist artifacts
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: dist-files
-#          path: ./
-#
-#      - name: Publish to npm
-#        env:
-#          NPM_PUB_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
-#        run: |
-#          printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
-#          npm publish --tag alpha
-#
-#      - name: Set new version in package.json
-#        id: version
-#        run: |
-#          NEW_VERSION=${{ needs.build.outputs.new-version }}
-#          echo "NEW_VERSION is $NEW_VERSION"
-#          echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+  deploy-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      new-version: ${{ steps.version.outputs.new-version }}
+    steps:
+      - name: Get dist artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
+          path: ./
+
+      - name: Publish to npm
+        env:
+          NPM_PUB_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
+        run: |
+          printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
+          npm publish --tag alpha
+
+      - name: Set new version in package.json
+        id: version
+        run: |
+          NEW_VERSION=${{ needs.build.outputs.new-version }}
+          echo "NEW_VERSION is $NEW_VERSION"
+          echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
   deploy-cdn:
-#    needs: deploy-npm
-    needs: build
+    needs: deploy-npm
+#    needs: build
     runs-on: ubuntu-latest
     permissions:
       id-token: write

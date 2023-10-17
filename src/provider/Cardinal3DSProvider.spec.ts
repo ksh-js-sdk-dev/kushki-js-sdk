@@ -23,10 +23,10 @@ describe("Cardinal3DSProvider - Test", () => {
     });
 
   const mockCardinal = (complete: any = undefined, on: jest.Mock = onMock) => {
-    jest.mock("libs/cardinal/prod", () => ({
+    jest.mock("libs/cardinal/Prod", () => ({
       default: jest.fn()
     }));
-    jest.mock("libs/cardinal/staging", () => ({
+    jest.mock("libs/cardinal/Staging", () => ({
       default: jest.fn()
     }));
     window.Cardinal = {};
