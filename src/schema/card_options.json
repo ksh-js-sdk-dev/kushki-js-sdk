@@ -16,6 +16,15 @@
         "container": {
           "$ref": "#/definitions/cssProperties"
         },
+        "focus": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "valid": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "invalid": {
+          "$ref": "#/definitions/cssProperties"
+        },
         "cardholderName": {
           "$ref": "#/definitions/cssProperties"
         },

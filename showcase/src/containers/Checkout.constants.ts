@@ -25,6 +25,17 @@ export const hostedFieldsStyles: Styles = {
     },
     fontSize: "14px"
   },
+  focus: {
+    border: "1px solid #0077ff",
+    borderRadius: "10px",
+    fontFamily: "Arial,Verdana,Tahoma",
+    fontSize: "14px",
+    fontWeight: "400",
+    height: "40px",
+    outline: "none",
+    paddingLeft: "8px",
+    width: "300px"
+  },
   input: {
     "& + label": {
       color: "transparent",
@@ -43,17 +54,6 @@ export const hostedFieldsStyles: Styles = {
       fontFamily: "Arial,Verdana,Tahoma",
       fontSize: "14px"
     },
-    "&:focus": {
-      border: "1px solid #0077ff",
-      borderRadius: "10px",
-      fontFamily: "Arial,Verdana,Tahoma",
-      fontSize: "14px",
-      fontWeight: "400",
-      height: "40px",
-      outline: "none",
-      paddingLeft: "8px",
-      width: "300px"
-    },
     "&:focus + label": {
       background: "white",
       color: "#6D7781",
@@ -61,17 +61,6 @@ export const hostedFieldsStyles: Styles = {
     },
     "&:focus::placeholder": {
       color: "transparent"
-    },
-    "&:invalid": {
-      border: "1px solid #B60000",
-      borderRadius: "10px",
-      fontFamily: "Arial,Verdana,Tahoma",
-      fontSize: "14px",
-      fontWeight: "400",
-      height: "40px",
-      outline: "none",
-      paddingLeft: "8px",
-      width: "300px"
     },
     "&:invalid + label": {
       background: "white",
@@ -94,6 +83,19 @@ export const hostedFieldsStyles: Styles = {
     border: "1px solid rgba(203, 213, 224, 1)",
     borderRadius: "10px",
     boxSizing: "border-box",
+    fontFamily: "Arial,Verdana,Tahoma",
+    fontSize: "14px",
+    fontWeight: "400",
+    height: "40px",
+    outline: "none",
+    paddingLeft: "8px",
+    width: "300px"
+  },
+  invalid: {
+    borderColor: "#B60000",
+    borderRadius: "10px",
+    borderStyle: "solid",
+    borderWidth: "1px",
     fontFamily: "Arial,Verdana,Tahoma",
     fontSize: "14px",
     fontWeight: "400",
