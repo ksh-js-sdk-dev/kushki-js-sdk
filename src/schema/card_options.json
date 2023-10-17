@@ -40,6 +40,7 @@
     "currency": {
       "title": "Currency",
       "type": "string",
+      "description": "@group Types",
       "enum": [
         "USD",
         "COP",
@@ -161,6 +162,7 @@
     },
     "cssProperties": {
       "title": "CssProperties",
+      "description": "@group Types",
       "oneOf": [
         {
           "additionalProperties": true,
