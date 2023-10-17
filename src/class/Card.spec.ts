@@ -19,7 +19,7 @@ import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
 import { Card } from "class/Card.ts";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { KushkiError } from "infrastructure/KushkiError.ts";
-import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import { ErrorCode, ERRORS } from "infrastructure/ErrorEnum.ts";
 import { OTPEnum } from "infrastructure/OTPEnum.ts";
 
 const mockKushkiHostedFieldsHide = jest.fn().mockResolvedValue({});
@@ -229,7 +229,7 @@ describe("Card test", () => {
     };
 
     initCardToken(kushki, options).catch((error) => {
-      expect(error.detail).toEqual("element don't exist");
+      expect(error.message).toEqual(ERRORS[ErrorCode.E013].message);
     });
   });
 
