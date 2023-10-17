@@ -12,16 +12,16 @@ import { ICard } from "repository/ICard.ts";
 
 /**
  * #### Introduction
- * Static function to init an instance of ICard.
+ * Function to init an instance of {@link ICard}
  * @group Methods
  * @param kushkiInstance - Object that implemented IKushki
  * @param options - You must define setup of card fields
- * - Define {@link Amount} of transaction, [example](#md:basic-setup-to-card-token).
- * - Define {@link Currency}  of transaction, [example](#md:basic-setup-to-card-token).
- * - if transaction is {@link CardOptions.isSubscription | subscription} (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields).
- * - if you want to  {@link CardOptions.preventAutofill | prevent autofill}  fields (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields).
- * - Set Custom {@link Field | Fields}, [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields).
- * - Set custom {@link Styles | Styles}, [example](#md:to-start-with-it-necessary-define-style-object).
+ * - Define {@link Amount} of transaction, [example](#md:basic-setup-to-card-token)
+ * - Define {@link Currency}  of transaction, [example](#md:basic-setup-to-card-token)
+ * - if transaction is {@link CardOptions.isSubscription | subscription} (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields)
+ * - if you want to  {@link CardOptions.preventAutofill | prevent autofill}  fields (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields)
+ * - Set Custom {@link Field | Fields}, [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields)
+ * - Set custom {@link Styles | Styles}, [example](#md:to-start-with-it-necessary-define-style-object)
  * @returns Promise<ICard> - instance of ICard
  * @throws
  *  - if params: `options` or `kushkiInstance` are null or undefined then throw {@link ERRORS | ERRORS.E012}
@@ -312,13 +312,12 @@ export type {
   Styles
 };
 export type { CardFieldValues, FieldInstance } from "types/card_fields_values";
-export type { CardTokenRequest } from "types/card_token_request";
 export type { CardTokenResponse } from "types/card_token_response";
-export type { TokenResponse } from "types/token_response";
-export type { Fields, FieldValidity, FormValidity } from "types/form_validity";
 export type {
-  DeferredByBinResponse,
-  DeferredByBinOptionsResponse
-} from "types/deferred_by_bin_response";
+  TokenResponse,
+  DeferredValuesResponse
+} from "types/token_response";
+export type { Fields, FieldValidity, FormValidity } from "types/form_validity";
+export type { DeferredByBinOptionsResponse } from "types/deferred_by_bin_response";
 export type { DeferredInputValues } from "types/deferred_input_values";
 export type { ERRORS } from "infrastructure/ErrorEnum.ts";

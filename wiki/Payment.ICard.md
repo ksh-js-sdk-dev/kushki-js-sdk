@@ -2,6 +2,8 @@
 
 [Payment](../wiki/Payment).ICard
 
+This interface contains all methods to use when resolve [initCardToken](../wiki/Payment#initcardtoken)
+
 ## Table of contents
 
 ### Methods
@@ -52,7 +54,7 @@ console.log("CVV field is now focused.");
 
 #### Defined in
 
-[src/repository/ICard.ts:217](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/ICard.ts#L217)
+[src/repository/ICard.ts:252](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L252)
 
 ___
 
@@ -76,7 +78,7 @@ cardInstance.getFormValidity();
 
 #### Defined in
 
-[src/repository/ICard.ts:66](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/ICard.ts#L66)
+[src/repository/ICard.ts:101](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L101)
 
 ___
 
@@ -130,7 +132,7 @@ onFieldBlur((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:157](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/ICard.ts#L157)
+[src/repository/ICard.ts:192](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L192)
 
 ___
 
@@ -184,7 +186,7 @@ onFieldFocus((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:120](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/ICard.ts#L120)
+[src/repository/ICard.ts:155](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L155)
 
 ___
 
@@ -238,7 +240,7 @@ onFieldSubmit((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:194](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/ICard.ts#L194)
+[src/repository/ICard.ts:229](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L229)
 
 ___
 
@@ -292,7 +294,7 @@ onFieldValidity((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:53](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/ICard.ts#L53)
+[src/repository/ICard.ts:88](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L88)
 
 ___
 
@@ -326,7 +328,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:81](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/ICard.ts#L81)
+[src/repository/ICard.ts:116](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L116)
 
 ▸ **onOTPValidation**(`onRequired`, `onError`, `onSuccess`): `void`
 
@@ -356,7 +358,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:252](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/ICard.ts#L252)
+[src/repository/ICard.ts:287](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L287)
 
 ___
 
@@ -364,31 +366,61 @@ ___
 
 ▸ **requestToken**(): `Promise`<[`TokenResponse`](../wiki/Payment.TokenResponse)\>
 
-Create token for payment
+Get a card payment token
+
+This method validates if all fields are valid and obtains a card payment token, otherwise it will throw an exception
+
+If the merchant is configured with OTP, 3DS or SiftScience rules, this method automatically do validations for each rule
 
 #### Returns
 
 `Promise`<[`TokenResponse`](../wiki/Payment.TokenResponse)\>
 
-TokenResponse object with token and security info
+TokenResponse object with token, if deferred info exists return this data
 
 **`Throws`**
 
 KushkiErrorResponse object with code and message of error
+- if error on request card token endpoint then throw [ERRORS.E002](../wiki/Payment#errors)
+- if error on request merchant settings endpoint, then throw [ERRORS.E003](../wiki/Payment#errors)
+- if merchant is configured with 3DS rule and error on request JWT endpoint, then throw [ERRORS.E004](../wiki/Payment#errors)
+- if merchant is configured with 3DS rule and error on 3DS authentication, then throw [ERRORS.E005](../wiki/Payment#errors)
+- if merchant is configured with 3DS rule and error on 3DS session validation, then throw [ERRORS.E006](../wiki/Payment#errors)
+- if any hosted field is invalid, then throw [ERRORS.E007](../wiki/Payment#errors)
+- if merchant is configured with OTP rule and error on OTP validation, then throw [ERRORS.E008](../wiki/Payment#errors)
 
 **`Example`**
 
 ```ts
+// Basic example
 try {
-   var tokenResponse;
-   const token: TokenResponse = await cardInstance.requestToken();
-   tokenResponse = token.token;
- } catch (error: any) {}
+   const tokenResponse: TokenResponse = await cardInstance.requestToken();
+   // On Success, can get card token response, ex. {token: "a2b74b7e3cf24e368a20380f16844d16"}
+   console.log("This is a card Token", tokenResponse.token)
+ } catch (error: any) {
+     // On Error, catch response, ex. {code:"E002", message: "Error en solicitud de token"}
+     console.error("Catch error on request card Token", error.code, error.message);
+ }
+```
+
+**`Example`**
+
+```ts
+// If deferred data is generated in the process, can obtain that data from response
+try {
+   const tokenResponse: TokenResponse = await cardInstance.requestToken();
+   // On Success, if deferred data exist can get deferred options, ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}
+   if(tokenResponse.deferred)
+     console.log("This is a deferred options", tokenResponse.deferred)
+ } catch (error: any) {
+     // On Error, catch response
+     console.error("Catch error on request card Token", error.code, error.message);
+ }
 ```
 
 #### Defined in
 
-[src/repository/ICard.ts:18](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/ICard.ts#L18)
+[src/repository/ICard.ts:53](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L53)
 
 ___
 
@@ -426,4 +458,4 @@ console.log("CVV field is now reset.");
 
 #### Defined in
 
-[src/repository/ICard.ts:237](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/ICard.ts#L237)
+[src/repository/ICard.ts:272](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L272)

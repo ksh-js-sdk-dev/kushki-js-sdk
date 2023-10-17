@@ -11,22 +11,24 @@
 - [CssProperties](../wiki/Payment#cssproperties)
 - [Currency](../wiki/Payment#currency)
 
+### Card Interface
+
+- [ICard](../wiki/Payment.ICard)
+
 ### Interfaces
 
 - [Amount](../wiki/Payment.Amount)
 - [CardFieldValues](../wiki/Payment.CardFieldValues)
 - [CardOptions](../wiki/Payment.CardOptions)
-- [CardTokenRequest](../wiki/Payment.CardTokenRequest)
 - [CardTokenResponse](../wiki/Payment.CardTokenResponse)
 - [DeferredByBinOptionsResponse](../wiki/Payment.DeferredByBinOptionsResponse)
-- [DeferredByBinResponse](../wiki/Payment.DeferredByBinResponse)
 - [DeferredInputValues](../wiki/Payment.DeferredInputValues)
+- [DeferredValuesResponse](../wiki/Payment.DeferredValuesResponse)
 - [Field](../wiki/Payment.Field)
 - [FieldInstance](../wiki/Payment.FieldInstance)
 - [FieldValidity](../wiki/Payment.FieldValidity)
 - [Fields](../wiki/Payment.Fields)
 - [FormValidity](../wiki/Payment.FormValidity)
-- [ICard](../wiki/Payment.ICard)
 - [Styles](../wiki/Payment.Styles)
 - [TokenResponse](../wiki/Payment.TokenResponse)
 
@@ -41,14 +43,14 @@
 ▸ **initCardToken**(`kushkiInstance`, `options`): `Promise`<[`ICard`](../wiki/Payment.ICard)\>
 
 #### Introduction
-Static function to init an instance of ICard.
+Function to init an instance of [ICard](../wiki/Payment.ICard)
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `kushkiInstance` | [`IKushki`](../wiki/Kushki.IKushki) | Object that implemented IKushki |
-| `options` | [`CardOptions`](../wiki/Payment.CardOptions) | You must define setup of card fields - Define [Amount](../wiki/Payment.Amount) of transaction, [example](#md:basic-setup-to-card-token). - Define [Currency](../wiki/Payment#currency) of transaction, [example](#md:basic-setup-to-card-token). - if transaction is [subscription](../wiki/Payment.CardOptions#issubscription) (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields). - if you want to [prevent autofill](../wiki/Payment.CardOptions#preventautofill) fields (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields). - Set Custom [Fields](../wiki/Payment.Fields), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields). - Set custom [Styles](../wiki/Payment.Styles), [example](#md:to-start-with-it-necessary-define-style-object). |
+| `options` | [`CardOptions`](../wiki/Payment.CardOptions) | You must define setup of card fields - Define [Amount](../wiki/Payment.Amount) of transaction, [example](#md:basic-setup-to-card-token) - Define [Currency](../wiki/Payment#currency) of transaction, [example](#md:basic-setup-to-card-token) - if transaction is [subscription](../wiki/Payment.CardOptions#issubscription) (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields) - if you want to [prevent autofill](../wiki/Payment.CardOptions#preventautofill) fields (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields) - Set Custom [Fields](../wiki/Payment.Fields), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields) - Set custom [Styles](../wiki/Payment.Styles), [example](#md:to-start-with-it-necessary-define-style-object) |
 
 #### Returns
 
@@ -332,7 +334,7 @@ const buildCardInstance = async () => {
 
 #### Defined in
 
-[src/module/Payment.ts:296](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/module/Payment.ts#L296)
+[src/module/Payment.ts:296](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/module/Payment.ts#L296)
 
 ## Types
 
@@ -421,4 +423,4 @@ export const ERRORS = {
 
 #### Defined in
 
-[src/infrastructure/ErrorEnum.ts:85](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/infrastructure/ErrorEnum.ts#L85)
+[src/infrastructure/ErrorEnum.ts:85](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/infrastructure/ErrorEnum.ts#L85)

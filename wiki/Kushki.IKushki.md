@@ -29,7 +29,7 @@ Get Kushki API url UAT or PROD
 
 #### Defined in
 
-[src/repository/IKushki.ts:7](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/IKushki.ts#L7)
+[src/repository/IKushki.ts:7](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/IKushki.ts#L7)
 
 ___
 
@@ -49,7 +49,7 @@ Get Sift Science env
 
 #### Defined in
 
-[src/repository/IKushki.ts:17](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/IKushki.ts#L17)
+[src/repository/IKushki.ts:17](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/IKushki.ts#L17)
 
 ___
 
@@ -69,7 +69,7 @@ Get Merchant Public Credential
 
 #### Defined in
 
-[src/repository/IKushki.ts:12](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/IKushki.ts#L12)
+[src/repository/IKushki.ts:12](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/IKushki.ts#L12)
 
 ___
 
@@ -89,4 +89,4 @@ Get if Kushki instance is in test
 
 #### Defined in
 
-[src/repository/IKushki.ts:22](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/d3e2477/src/repository/IKushki.ts#L22)
+[src/repository/IKushki.ts:22](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/IKushki.ts#L22)
