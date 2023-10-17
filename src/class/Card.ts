@@ -693,12 +693,17 @@ export class Card implements ICard {
 
     if (deferredValues.isDeferred) {
       this.inputValues.deferred?.hostedField?.resize({
-        height: 125,
+        height: 110,
         width: this.deferredDefaultWidth
       });
     }
 
-    if (deferredValues.isDeferred && deferredValues.creditType !== "") {
+    if (deferredValues.isDeferred && deferredValues.creditType === "all") {
+      this.inputValues.deferred?.hostedField?.resize({
+        height: 110,
+        width: this.deferredDefaultWidth
+      });
+    } else if (deferredValues.isDeferred && deferredValues.creditType !== "") {
       this.inputValues.deferred?.hostedField?.resize({
         height: 160,
         width: this.deferredDefaultWidth
