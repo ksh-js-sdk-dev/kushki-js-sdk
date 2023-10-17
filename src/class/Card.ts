@@ -776,7 +776,7 @@ export class Card implements ICard {
 
   private hideContainers() {
     this.getContainers().forEach((htmlElement) => {
-      if (!htmlElement) throw new Error("element don't exist");
+      if (!htmlElement) throw new KushkiError(ERRORS.E013);
 
       htmlElement!.style.cssText += "display:none";
     });
@@ -785,7 +785,7 @@ export class Card implements ICard {
   private showContainers() {
     this.getContainers().forEach((htmlElement) => {
       /* istanbul ignore next */
-      if (!htmlElement) throw new Error("element don't exist");
+      if (!htmlElement) throw new KushkiError(ERRORS.E013);
 
       htmlElement!.removeAttribute("style");
     });

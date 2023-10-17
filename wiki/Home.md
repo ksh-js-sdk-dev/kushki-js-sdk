@@ -15,7 +15,6 @@ We make it easier!
   - [OTP Validation (evento onOtpValidation de la clase Payment)](#otp-validation)
   - [Tokenization (requestToken de la clase Payment)](#tokenization)
 
-
 # Install
 
 ## &bull; Option 1 - NPM

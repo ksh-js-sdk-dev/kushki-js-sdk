@@ -36,10 +36,5 @@
     }
   },
   "exclude": ["node_modules", "showcase"],
-  "references": [{ "path": "./tsconfig.node.json" }],
-  "typedocOptions": {
-    "lightHighlightTheme": "light-plus",
-    "entryPoints": ["src/repository/ICard.ts", "types/token_response.d.ts", "src/module/Kushki.ts"],
-    "out": "docs"
-  }
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

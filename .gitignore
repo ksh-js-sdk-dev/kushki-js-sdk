@@ -4,6 +4,7 @@ coverage
 types/
 node_modules/
 .kushki/
+docs-json/
 --watch
 .idea
 yarn-error.log

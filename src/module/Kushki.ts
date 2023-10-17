@@ -5,7 +5,7 @@ import { KushkiError } from "infrastructure/KushkiError.ts";
 
 /**
  * Initializes the Kushki payment gateway with the provided options.
- *
+ * @group Methods
  * @param {KushkiOptions} options - The options for initializing the Kushki payment gateway.
  * @returns {Promise<IKushki>} A Promise that resolves to an instance of the initialized Kushki payment gateway.
  *
@@ -24,8 +24,8 @@ import { KushkiError } from "infrastructure/KushkiError.ts";
  *  @example
  * // Example usage of the init function
  * const options = {
- *   apiKey: 'YOUR_API_KEY',
- *   environment: 'sandbox'
+ *   publicCredentialId: 'public-merchant-id',
+ *   inTest: true
  * };
  *
  * init(options)
