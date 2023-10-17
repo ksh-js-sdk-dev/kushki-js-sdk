@@ -1,7 +1,6 @@
 /**
  * Interface Cardinal 3DS file.
  */
-import { TokenResponse } from "types/token_response";
 import { CardTokenResponse } from "types/card_token_response";
 import { DeferredValues } from "types/card_fields_values";
 import { IKushki } from "Kushki";
@@ -28,5 +27,5 @@ export interface ICardinal3DSProvider {
     kushkiInstance: IKushki,
     cardTokenResponse: CardTokenResponse,
     deferredValues: DeferredValues
-  ): Promise<TokenResponse>;
+  ): Promise<CardTokenResponse>;
 }

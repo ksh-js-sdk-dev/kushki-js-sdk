@@ -1,0 +1,15 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "htmlLang": "es",
+  "excludeInternal": true,
+  "excludePrivate": true,
+  "navigationLinks": {
+    "Kushki-Docs": "https://docs.kushki.com/"
+  },
+  "navigation": {
+    "includeCategories": false,
+    "includeGroups": true
+  },
+  "categorizeByGroup": true,
+  "groupOrder": ["Methods", "Classes", "Types","*"]
+}

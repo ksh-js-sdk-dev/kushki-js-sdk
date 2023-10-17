@@ -17,9 +17,71 @@ export enum ErrorCode {
   E009 = "E009",
   E010 = "E010",
   E011 = "E011",
-  E012 = "E012"
+  E012 = "E012",
+  E013 = "E013"
 }
 
+/**
+ * Errors List of SDK
+ * @readonly
+ * ```
+ * export const ERRORS = {
+ *   E001: {
+ *     code: "E001",
+ *     message: "Error en solicitud de bin"
+ *   },
+ *   E002: {
+ *     code: "E002",
+ *     message: "Error en solicitud de token"
+ *   },
+ *   E003: {
+ *     code: "E003",
+ *     message: "Error en solicitud de datos del comercio"
+ *   },
+ *   E004: {
+ *     code: "E004",
+ *     message: "Error en solicitud de JWT"
+ *   },
+ *   E005: {
+ *     code: "E005",
+ *     message: "Campos 3DS inválidos"
+ *   },
+ *   E006: {
+ *     code: "E006",
+ *     message: "Error en solicitud de validación de token"
+ *   },
+ *   E007: {
+ *     code: "E007",
+ *     message: "Error en la validación del formulario"
+ *   },
+ *   E008: {
+ *     code: "E008",
+ *     message: "Error en la validación de OTP"
+ *   },
+ *   E009: {
+ *     code: "E009",
+ *     message: "Error al limpiar el campo"
+ *   },
+ *   E010: {
+ *     code: "E010",
+ *     message: "Error al realizar focus en el campo"
+ *   },
+ *   E011: {
+ *     code: "E011",
+ *     message: "Error en inicializacion de la libreria"
+ *   },
+ *   E012: {
+ *     code: "E012",
+ *     message: "Error en inicialización de campos"
+ *   },
+ *   E013: {
+ *     code: "E013",
+ *     message: "El Id del contenedor de un input no fue encontrado"
+ *   }
+ * }
+ * ```
+ * @enum
+ */
 export const ERRORS: KushkiErrors = {
   [ErrorCode.E001]: {
     code: ErrorCode.E001,
@@ -68,5 +130,9 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E012]: {
     code: ErrorCode.E012,
     message: "Error en inicialización de campos"
+  },
+  [ErrorCode.E013]: {
+    code: ErrorCode.E013,
+    message: "El Id del contenedor de un input no fue encontrado"
   }
 };
