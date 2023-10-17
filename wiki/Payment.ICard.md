@@ -54,7 +54,7 @@ console.log("CVV field is now focused.");
 
 #### Defined in
 
-[src/repository/ICard.ts:252](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L252)
+[src/repository/ICard.ts:253](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L253)
 
 ___
 
@@ -78,7 +78,7 @@ cardInstance.getFormValidity();
 
 #### Defined in
 
-[src/repository/ICard.ts:101](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L101)
+[src/repository/ICard.ts:102](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L102)
 
 ___
 
@@ -132,7 +132,7 @@ onFieldBlur((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:192](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L192)
+[src/repository/ICard.ts:193](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L193)
 
 ___
 
@@ -186,7 +186,7 @@ onFieldFocus((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:155](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L155)
+[src/repository/ICard.ts:156](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L156)
 
 ___
 
@@ -240,7 +240,7 @@ onFieldSubmit((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:229](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L229)
+[src/repository/ICard.ts:230](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L230)
 
 ___
 
@@ -294,7 +294,7 @@ onFieldValidity((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:88](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L88)
+[src/repository/ICard.ts:89](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L89)
 
 ___
 
@@ -328,7 +328,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:116](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L116)
+[src/repository/ICard.ts:117](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L117)
 
 ▸ **onOTPValidation**(`onRequired`, `onError`, `onSuccess`): `void`
 
@@ -358,7 +358,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:287](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L287)
+[src/repository/ICard.ts:288](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L288)
 
 ___
 
@@ -399,6 +399,7 @@ try {
    console.log("This is a card Token", tokenResponse.token)
  } catch (error: any) {
      // On Error, catch response, ex. {code:"E002", message: "Error en solicitud de token"}
+     // On Error, catch response, ex. {code:"E007", message: "Error en la validación del formulario"}
      console.error("Catch error on request card Token", error.code, error.message);
  }
 ```
@@ -406,7 +407,7 @@ try {
 **`Example`**
 
 ```ts
-// If deferred data is generated in the process, can obtain that data from response
+// If deferred data is generated, you can use this data in the charge of the payment
 try {
    const tokenResponse: TokenResponse = await cardInstance.requestToken();
    // On Success, if deferred data exist can get deferred options, ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}
@@ -420,7 +421,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:53](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L53)
+[src/repository/ICard.ts:54](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L54)
 
 ___
 
@@ -458,4 +459,4 @@ console.log("CVV field is now reset.");
 
 #### Defined in
 
-[src/repository/ICard.ts:272](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/6c15ee3/src/repository/ICard.ts#L272)
+[src/repository/ICard.ts:273](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L273)

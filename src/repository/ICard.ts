@@ -35,11 +35,12 @@ export interface ICard {
    *    console.log("This is a card Token", tokenResponse.token)
    *  } catch (error: any) {
    *      // On Error, catch response, ex. {code:"E002", message: "Error en solicitud de token"}
+   *      // On Error, catch response, ex. {code:"E007", message: "Error en la validación del formulario"}
    *      console.error("Catch error on request card Token", error.code, error.message);
    *  }
    *
    *  @example
-   * // If deferred data is generated in the process, can obtain that data from response
+   * // If deferred data is generated, you can use this data in the charge of the payment
    * try {
    *    const tokenResponse: TokenResponse = await cardInstance.requestToken();
    *    // On Success, if deferred data exist can get deferred options, ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}

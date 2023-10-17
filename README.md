@@ -116,9 +116,13 @@ const buildCardInstance = async () => {
 ### &#xa0;&#xa0;&bull; OTP Validation
 
 ### &#xa0;&#xa0;&bull; Tokenization
-**requestToken**(): `Promise`<[`TokenResponse`](../wiki/Payment.TokenResponse)\>
 
-Get a card payment token. If one of the hosted fields are invalid, will throw an exception
+To get a card payment token, you should call the [`requestToken`](../wiki/Payment.ICard.md) method on your card instance that was previously initialized, this method also validates if all the fields are valid, otherwise it will throw an exception
+
+This method returns a [`TokenResponse`](../wiki/Payment.TokenResponse.md) object that you will send to you backend and proceed with the charge of the payment
+
+If the  [`initCardToken`](../wiki/Payment.md)  method was configured as subscription you should call the create subscription method on your backend, otherwise you can proceed normally with the charge method for card
+
 #### Basic Example
 This method automatically validates all merchant rules like 3DS, OTP or Sift Science
 ```ts
@@ -128,12 +132,13 @@ try {
   console.log("This is a card Token", tokenResponse.token)
 } catch (error: any) {
   // On Error, catch response, ex. {code:"E002", message: "Error en solicitud de token"}
+  // On Error, catch response, ex. {code:"E007", message: "Error en la validación del formulario"}
   console.error("Catch error on request card Token", error.code, error.message);
 }
 ```
 
 #### Deferred Example
-If deferred data is generated, can use this data for charge a payment
+If deferred data is generated, you can use this data in the charge of the payment
 ```ts
 try {
   const tokenResponse: TokenResponse = await cardInstance.requestToken();
