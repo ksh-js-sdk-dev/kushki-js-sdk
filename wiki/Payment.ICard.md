@@ -54,7 +54,7 @@ console.log("CVV field is now focused.");
 
 #### Defined in
 
-[src/repository/ICard.ts:253](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L253)
+[src/repository/ICard.ts:253](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L253)
 
 ___
 
@@ -78,7 +78,7 @@ cardInstance.getFormValidity();
 
 #### Defined in
 
-[src/repository/ICard.ts:102](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L102)
+[src/repository/ICard.ts:102](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L102)
 
 ___
 
@@ -132,7 +132,7 @@ onFieldBlur((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:193](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L193)
+[src/repository/ICard.ts:193](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L193)
 
 ___
 
@@ -186,7 +186,7 @@ onFieldFocus((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:156](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L156)
+[src/repository/ICard.ts:156](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L156)
 
 ___
 
@@ -240,7 +240,7 @@ onFieldSubmit((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:230](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L230)
+[src/repository/ICard.ts:230](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L230)
 
 ___
 
@@ -294,7 +294,7 @@ onFieldValidity((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:89](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L89)
+[src/repository/ICard.ts:89](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L89)
 
 ___
 
@@ -328,7 +328,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:117](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L117)
+[src/repository/ICard.ts:117](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L117)
 
 ▸ **onOTPValidation**(`onRequired`, `onError`, `onSuccess`): `void`
 
@@ -358,7 +358,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:288](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L288)
+[src/repository/ICard.ts:288](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L288)
 
 ___
 
@@ -421,7 +421,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:54](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L54)
+[src/repository/ICard.ts:54](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L54)
 
 ___
 
@@ -459,4 +459,4 @@ console.log("CVV field is now reset.");
 
 #### Defined in
 
-[src/repository/ICard.ts:273](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L273)
+[src/repository/ICard.ts:273](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L273)
