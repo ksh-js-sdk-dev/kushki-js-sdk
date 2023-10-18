@@ -29,6 +29,28 @@ import { ICard } from "repository/ICard.ts";
  *
  * #### Examples
  * ##### Basic setup to Card Token
+ *
+ * ###### Definition containers in html
+ * ```html
+ * <!DOCTYPE html>
+ * <html lang="en">
+ * <head>
+ *     <meta charset="UTF-8">
+ *     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ *     <title>Document</title>
+ * </head>
+ * <body>
+ *     <section>
+ *         <div id="id_div_cardholderName"></div>
+ *         <div id="id_div_cardNumber"></div>
+ *         <div id="id_div_cvv"></div>
+ *         <div id="id_div_expirationDate"></div>
+ *     </section>
+ * </body>
+ * </html>
+ * ```
+ *
+ * ###### Init card token instance
  * ```ts
  * import { IKushki, init, KushkiError } from "Kushki";
  * import {
@@ -75,9 +97,31 @@ import { ICard } from "repository/ICard.ts";
  * }
  * ```
  *
- * ### Card Token to subscriptions, prevent autofill and custom fields
+ * ##### Card Token to subscriptions, prevent autofill and custom fields
  * - To Enable subscriptions the `isSubscription` flag must be true
  * - To Enable prevent autofill in fields the `preventAutofill` flag must be true
+ *
+ * ###### Definition containers in html
+ * ```html
+ * <!DOCTYPE html>
+ * <html lang="en">
+ * <head>
+ *     <meta charset="UTF-8">
+ *     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ *     <title>Document</title>
+ * </head>
+ * <body>
+ *     <section>
+ *         <div id="id_div_cardholderName"></div>
+ *         <div id="id_div_cardNumber"></div>
+ *         <div id="id_div_cvv"></div>
+ *         <div id="id_div_expirationDate"></div>
+ *     </section>
+ * </body>
+ * </html>
+ * ```
+ *
+ * ###### Init card token instance
  * ```ts
  * import { IKushki, init, KushkiError } from "Kushki";
  * import {
@@ -101,14 +145,14 @@ import { ICard } from "repository/ICard.ts";
  *   fields: {
  *       cardholderName: {
  *          inputType: "text",
- *          label: "card holder Name",
- *          placeholder: "card holder Name",
+ *          label: "Cardholder Name",
+ *          placeholder: "Cardholder Name",
  *          selector: "id_div_cardholderName"
  *       },
  *       cardNumber: {
  *          inputType: "number",
- *          label: "card Number",
- *          placeholder: "card Number",
+ *          label: "Card Number",
+ *          placeholder: "Card Number",
  *          selector: "id_div_cardNumber"
  *       },
  *       cvv: {
@@ -119,8 +163,8 @@ import { ICard } from "repository/ICard.ts";
  *       },
  *      expirationDate: {
  *          inputType: "text",
- *          label: "expiration date",
- *          placeholder: "expiration date",
+ *          label: "Expiration Date",
+ *          placeholder: "Expiration Date",
  *          selector: "id_div_expirationDate"
  *      }
  *   },
@@ -138,18 +182,39 @@ import { ICard } from "repository/ICard.ts";
  * }
  * ```
  *
- * ###  Enable field OTP and set custom styles
- * #### To Start with it necessary define style object
+ * #####  Enable field OTP and set custom styles
+ *
+ * ###### Definition containers in html
+ * ```html
+ * <!DOCTYPE html>
+ * <html lang="en">
+ * <head>
+ *     <meta charset="UTF-8">
+ *     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ *     <title>Document</title>
+ * </head>
+ * <body>
+ *     <section>
+ *         <div id="id_div_cardholderName"></div>
+ *         <div id="id_div_cardNumber"></div>
+ *         <div id="id_div_cvv"></div>
+ *         <div id="id_div_expirationDate"></div>
+ *         <div id="id_div_otp"></div>
+ *     </section>
+ * </body>
+ * </html>
+ * ```
+ * ###### To Start with it necessary define style object
  * ```ts
  * ```
- * #### Then Set basic custom styles from class css
+ * ###### Then Set basic custom styles from class css
  * ```ts
  * ```
- * #### (Optional) Set advance custom styles with JSS
+ * ###### (Optional) Set advance custom styles with JSS
  * ```ts
  * ```
  * @see [JSS Documentation](https://cssinjs.org/react-jss/?v=v10.3.0)
- * #### Finally you can init card token instance
+ * ###### Init card token instance
  * - To Enable field OTP, you need define the attribute `CardOptions.fields.otp`
  * ```ts
  * import { IKushki, init, KushkiError } from "Kushki";
@@ -174,14 +239,14 @@ import { ICard } from "repository/ICard.ts";
  *   fields: {
  *       cardholderName: {
  *          inputType: "text",
- *          label: "card holder Name",
- *          placeholder: "card holder Name",
+ *          label: "Cardholder Name",
+ *          placeholder: "Cardholder Name",
  *          selector: "id_div_cardholderName"
  *       },
  *       cardNumber: {
  *          inputType: "number",
- *          label: "card Number",
- *          placeholder: "card Number",
+ *          label: "Card Number",
+ *          placeholder: "Card Number",
  *          selector: "id_div_cardNumber"
  *       },
  *       cvv: {
@@ -192,14 +257,14 @@ import { ICard } from "repository/ICard.ts";
  *       },
  *      expirationDate: {
  *          inputType: "text",
- *          label: "expiration date",
- *          placeholder: "expiration date",
+ *          label: "Expiration Date",
+ *          placeholder: "Expiration Date",
  *          selector: "id_div_expirationDate"
  *      },
  *      otp: {
  *       inputType: "password",
- *       label: "OTP verification",
- *       placeholder: "OTP verification",
+ *       label: "OTP Verification",
+ *       placeholder: "OTP Verification",
  *       selector: "id_div_otp"
  *     }
  *   }
@@ -215,14 +280,33 @@ import { ICard } from "repository/ICard.ts";
  * }
  * ```
  *
- * ### Enable field Deferred and set custom styles to Deferred inputs
+ * ##### Enable field Deferred and set custom styles to Deferred inputs
  * Deferred Field has one checkbox and three or one select (It depends on merchant settings). If you need set a custom styles
  * Kushki SDK expose the following selectors
- * #### Selectors to set custom styles to Deferred inputs
+ *
+ * ###### Definition containers in html
+ * ```html
+ * <!DOCTYPE html>
+ * <html lang="en">
+ * <head>
+ *     <meta charset="UTF-8">
+ *     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ *     <title>Document</title>
+ * </head>
+ * <body>
+ *     <section>
+ *         <div id="id_div_cardholderName"></div>
+ *         <div id="id_div_cardNumber"></div>
+ *         <div id="id_div_cvv"></div>
+ *         <div id="id_div_expirationDate"></div>
+ *     </section>
+ * </body>
+ * </html>
+ * ```
+ * ###### Selectors to set custom styles to Deferred inputs
  * ```ts
  * ```
- * @see [JSS Documentation](https://cssinjs.org/react-jss/?v=v10.3.0)
- * #### Finally you can init card token instance
+ * ##### Init card token instance
  * - To Enable field deferred, you need define the attribute `CardOptions.fields.deferred`
  * ```ts
  * import { IKushki, init, KushkiError } from "Kushki";
@@ -263,18 +347,18 @@ import { ICard } from "repository/ICard.ts";
  *           label: "I want to pay in installments"
  *         },
  *         deferredType: {
- *           hiddenLabel: "deferred Type",
- *           label: "deferred Type",
+ *           hiddenLabel: "deferred_Type",
+ *           label: "Deferred Type",
  *           placeholder: "deferred Type"
  *         },
  *         graceMonths: {
- *           hiddenLabel: "grace months",
- *           label: "grace months",
+ *           hiddenLabel: "grace_months",
+ *           label: "Grace Months",
  *           placeholder: "grace months"
  *         },
  *         months: {
  *           hiddenLabel: "months",
- *           label: "months",
+ *           label: "Months",
  *           placeholder: "months"
  *         }
  *       },

@@ -12,9 +12,12 @@
 - [cvv](../wiki/Payment.Styles#cvv)
 - [deferred](../wiki/Payment.Styles#deferred)
 - [expirationDate](../wiki/Payment.Styles#expirationdate)
+- [focus](../wiki/Payment.Styles#focus)
 - [input](../wiki/Payment.Styles#input)
+- [invalid](../wiki/Payment.Styles#invalid)
 - [label](../wiki/Payment.Styles#label)
 - [otp](../wiki/Payment.Styles#otp)
+- [valid](../wiki/Payment.Styles#valid)
 
 ## Properties
 
@@ -24,7 +27,7 @@
 
 #### Defined in
 
-types/card_options.d.ts:89
+types/card_options.d.ts:92
 
 ___
 
@@ -34,7 +37,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:88
+types/card_options.d.ts:91
 
 ___
 
@@ -54,7 +57,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:91
+types/card_options.d.ts:94
 
 ___
 
@@ -64,7 +67,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:92
+types/card_options.d.ts:95
 
 ___
 
@@ -74,7 +77,17 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:90
+types/card_options.d.ts:93
+
+___
+
+### focus
+
+• `Optional` **focus**: [`CssProperties`](../wiki/Payment#cssproperties)
+
+#### Defined in
+
+types/card_options.d.ts:88
 
 ___
 
@@ -85,6 +98,16 @@ ___
 #### Defined in
 
 types/card_options.d.ts:85
+
+___
+
+### invalid
+
+• `Optional` **invalid**: [`CssProperties`](../wiki/Payment#cssproperties)
+
+#### Defined in
+
+types/card_options.d.ts:90
 
 ___
 
@@ -104,4 +127,14 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:93
+types/card_options.d.ts:96
+
+___
+
+### valid
+
+• `Optional` **valid**: [`CssProperties`](../wiki/Payment#cssproperties)
+
+#### Defined in
+
+types/card_options.d.ts:89
