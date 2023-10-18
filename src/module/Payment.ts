@@ -30,7 +30,7 @@ import { ICard } from "repository/ICard.ts";
  * #### Examples
  * ##### Basic setup to Card Token
  *
- * ###### Definition containers in html
+ * ###### Define the containers for the hosted fields
  * ```html
  * <!DOCTYPE html>
  * <html lang="en">
@@ -41,10 +41,10 @@ import { ICard } from "repository/ICard.ts";
  * </head>
  * <body>
  *     <section>
- *         <div id="id_div_cardholderName"></div>
- *         <div id="id_div_cardNumber"></div>
- *         <div id="id_div_cvv"></div>
- *         <div id="id_div_expirationDate"></div>
+ *         <div id="id_cardholderName"></div>
+ *         <div id="id_cardNumber"></div>
+ *         <div id="id_cvv"></div>
+ *         <div id="id_expirationDate"></div>
  *     </section>
  * </body>
  * </html>
@@ -73,16 +73,16 @@ import { ICard } from "repository/ICard.ts";
  *   currency: "USD",
  *   fields: {
  *       cardholderName: {
- *          selector: "id_div_cardholderName"
+ *          selector: "id_cardholderName"
  *       },
  *       cardNumber: {
- *          selector: "id_div_cardNumber"
+ *          selector: "id_cardNumber"
  *       },
  *       cvv: {
- *          selector: "id_div_cvv"
+ *          selector: "id_cvv"
  *       },
  *      expirationDate: {
- *          selector: "id_div_expirationDate"
+ *          selector: "id_expirationDate"
  *      }
  *   }
  * }
@@ -112,10 +112,10 @@ import { ICard } from "repository/ICard.ts";
  * </head>
  * <body>
  *     <section>
- *         <div id="id_div_cardholderName"></div>
- *         <div id="id_div_cardNumber"></div>
- *         <div id="id_div_cvv"></div>
- *         <div id="id_div_expirationDate"></div>
+ *         <div id="id_cardholderName"></div>
+ *         <div id="id_cardNumber"></div>
+ *         <div id="id_cvv"></div>
+ *         <div id="id_expirationDate"></div>
  *     </section>
  * </body>
  * </html>
@@ -147,25 +147,25 @@ import { ICard } from "repository/ICard.ts";
  *          inputType: "text",
  *          label: "Cardholder Name",
  *          placeholder: "Cardholder Name",
- *          selector: "id_div_cardholderName"
+ *          selector: "id_cardholderName"
  *       },
  *       cardNumber: {
  *          inputType: "number",
  *          label: "Card Number",
  *          placeholder: "Card Number",
- *          selector: "id_div_cardNumber"
+ *          selector: "id_cardNumber"
  *       },
  *       cvv: {
  *          inputType: "password",
  *          label: "CVV",
  *          placeholder: "CVV",
- *          selector: "id_div_cvv"
+ *          selector: "id_cvv"
  *       },
  *      expirationDate: {
  *          inputType: "text",
  *          label: "Expiration Date",
  *          placeholder: "Expiration Date",
- *          selector: "id_div_expirationDate"
+ *          selector: "id_expirationDate"
  *      }
  *   },
  *   isSubscription: true, //To Enable subscriptions this flag must be true
@@ -195,11 +195,11 @@ import { ICard } from "repository/ICard.ts";
  * </head>
  * <body>
  *     <section>
- *         <div id="id_div_cardholderName"></div>
- *         <div id="id_div_cardNumber"></div>
- *         <div id="id_div_cvv"></div>
- *         <div id="id_div_expirationDate"></div>
- *         <div id="id_div_otp"></div>
+ *         <div id="id_cardholderName"></div>
+ *         <div id="id_cardNumber"></div>
+ *         <div id="id_cvv"></div>
+ *         <div id="id_expirationDate"></div>
+ *         <div id="id_otp"></div>
  *     </section>
  * </body>
  * </html>
@@ -241,31 +241,31 @@ import { ICard } from "repository/ICard.ts";
  *          inputType: "text",
  *          label: "Cardholder Name",
  *          placeholder: "Cardholder Name",
- *          selector: "id_div_cardholderName"
+ *          selector: "id_cardholderName"
  *       },
  *       cardNumber: {
  *          inputType: "number",
  *          label: "Card Number",
  *          placeholder: "Card Number",
- *          selector: "id_div_cardNumber"
+ *          selector: "id_cardNumber"
  *       },
  *       cvv: {
  *          inputType: "password",
  *          label: "CVV",
  *          placeholder: "CVV",
- *          selector: "id_div_cvv"
+ *          selector: "id_cvv"
  *       },
  *      expirationDate: {
  *          inputType: "text",
  *          label: "Expiration Date",
  *          placeholder: "Expiration Date",
- *          selector: "id_div_expirationDate"
+ *          selector: "id_expirationDate"
  *      },
  *      otp: {
  *       inputType: "password",
  *       label: "OTP Verification",
  *       placeholder: "OTP Verification",
- *       selector: "id_div_otp"
+ *       selector: "id_otp"
  *     }
  *   }
  * }
@@ -295,10 +295,11 @@ import { ICard } from "repository/ICard.ts";
  * </head>
  * <body>
  *     <section>
- *         <div id="id_div_cardholderName"></div>
- *         <div id="id_div_cardNumber"></div>
- *         <div id="id_div_cvv"></div>
- *         <div id="id_div_expirationDate"></div>
+ *         <div id="id_cardholderName"></div>
+ *         <div id="id_cardNumber"></div>
+ *         <div id="id_cvv"></div>
+ *         <div id="id_expirationDate"></div>
+ *         <div id="id_deferred"></div>
  *     </section>
  * </body>
  * </html>
@@ -330,16 +331,16 @@ import { ICard } from "repository/ICard.ts";
  *   currency: "USD",
  *   fields: {
  *       cardholderName: {
- *          selector: "id_div_cardholderName"
+ *          selector: "id_cardholderName"
  *       },
  *       cardNumber: {
- *          selector: "id_div_cardNumber"
+ *          selector: "id_cardNumber"
  *       },
  *       cvv: {
- *          selector: "id_div_cvv"
+ *          selector: "id_cvv"
  *       },
  *      expirationDate: {
- *          selector: "id_div_expirationDate"
+ *          selector: "id_expirationDate"
  *      },
  *     deferred: {
  *       deferredInputs: {
@@ -362,7 +363,7 @@ import { ICard } from "repository/ICard.ts";
  *           placeholder: "months"
  *         }
  *       },
- *       selector: "id_div_deferred"
+ *       selector: "id_deferred"
  *     },
  *   }
  * }
