@@ -3,17 +3,53 @@ import { KushkiErrorAttr } from "infrastructure/KushkiError.ts";
 import { FieldTypeEnum } from "types/form_validity";
 import { FieldValidity } from "types/card_fields_values";
 
+/**
+ * This interface contains all methods to use when resolve {@link initCardToken}
+ * @group Card Interface
+ *
+ */
 export interface ICard {
   /**
-   * Create token for payment
-   * @return TokenResponse object with token and security info
+   * Get a card payment token
+   *
+   * This method validates if all fields are valid and obtains a card payment token, otherwise it will throw an exception
+   *
+   * If the merchant is configured with OTP, 3DS or SiftScience rules, this method automatically do validations for each rule
+   *
+   * @group Methods
+   * @return TokenResponse object with token, if deferred info exists return this data
    * @throws KushkiErrorResponse object with code and message of error
+   * - if error on request card token endpoint then throw {@link ERRORS | ERRORS.E002}
+   * - if error on request merchant settings endpoint, then throw {@link ERRORS | ERRORS.E003}
+   * - if merchant is configured with 3DS rule and error on request JWT endpoint, then throw {@link ERRORS | ERRORS.E004}
+   * - if merchant is configured with 3DS rule and error on 3DS authentication, then throw {@link ERRORS | ERRORS.E005}
+   * - if merchant is configured with 3DS rule and error on 3DS session validation, then throw {@link ERRORS | ERRORS.E006}
+   * - if any hosted field is invalid, then throw {@link ERRORS | ERRORS.E007}
+   * - if merchant is configured with OTP rule and error on OTP validation, then throw {@link ERRORS | ERRORS.E008}
+   *
    * @example
-   *  try {
-   *    var tokenResponse;
-   *    const token: TokenResponse = await cardInstance.requestToken();
-   *    tokenResponse = token.token;
-   *  } catch (error: any) {}
+   * // Basic example
+   * try {
+   *    const tokenResponse: TokenResponse = await cardInstance.requestToken();
+   *    // On Success, can get card token response, ex. {token: "a2b74b7e3cf24e368a20380f16844d16"}
+   *    console.log("This is a card Token", tokenResponse.token)
+   *  } catch (error: any) {
+   *      // On Error, catch response, ex. {code:"E002", message: "Error en solicitud de token"}
+   *      // On Error, catch response, ex. {code:"E007", message: "Error en la validación del formulario"}
+   *      console.error("Catch error on request card Token", error.code, error.message);
+   *  }
+   *
+   *  @example
+   * // If deferred data is generated, you can use this data in the charge of the payment
+   * try {
+   *    const tokenResponse: TokenResponse = await cardInstance.requestToken();
+   *    // On Success, if deferred data exist can get deferred options, ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}
+   *    if(tokenResponse.deferred)
+   *      console.log("This is a deferred options", tokenResponse.deferred)
+   *  } catch (error: any) {
+   *      // On Error, catch response
+   *      console.error("Catch error on request card Token", error.code, error.message);
+   *  }
    */
   requestToken(): Promise<TokenResponse>;
 
