@@ -1665,16 +1665,16 @@
     "@krakenjs/post-robot" "^11.0.0"
     "@krakenjs/zalgo-promise" "^2.0.0"
 
-"@kushki/cardinal-sandbox-js@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@kushki/cardinal-sandbox-js/-/cardinal-sandbox-js-1.0.4.tgz#9fa6934419bb6fb969b27f634cd1eef051143d0c"
-  integrity sha512-Mobzd4YiU9+Pvfmg+nP/b2INV+PkFnx1GTZyYzVg5b1A94QVKoaRP+ubd28AYgZSBwHhJ0yrwk5BMIdxjr7eUg==
+"@kushki/cardinal-sandbox-js@1.0.5-alpha.1":
+  version "1.0.5-alpha.1"
+  resolved "https://registry.yarnpkg.com/@kushki/cardinal-sandbox-js/-/cardinal-sandbox-js-1.0.5-alpha.1.tgz#1461b73b2e6ffe50480d5c27e264170935d79cb7"
+  integrity sha512-1bMIW7mvgBxjQ7NGPi8lZqd0TWy1Rh0YeDmZCQSyp6qUikXgEugreIzzq4krpF2a7UUQPc0ZGGdrmxRe10VeAg==
 
 "@kushki/js-sdk@../dist":
-  version "0.1.1-14195.14"
+  version "0.1.1-14195.19"
   dependencies:
     "@krakenjs/zoid" "^10.3.1"
-    "@kushki/cardinal-sandbox-js" "^1.0.4"
+    "@kushki/cardinal-sandbox-js" "1.0.5-alpha.1"
     axios "^1.5.0"
     inversify "^6.0.1"
     reflect-metadata "^0.1.13"
