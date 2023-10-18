@@ -23,7 +23,7 @@
 
 #### Defined in
 
-types/card_options.d.ts:100
+types/card_options.d.ts:103
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:103
+types/card_options.d.ts:106
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:98
+types/card_options.d.ts:101
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:101
+types/card_options.d.ts:104
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:102
+types/card_options.d.ts:105
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:99
+types/card_options.d.ts:102
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:97
+types/card_options.d.ts:100
 
 ___
 
@@ -93,4 +93,4 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:96
+types/card_options.d.ts:99

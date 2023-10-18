@@ -101,8 +101,7 @@ export const hostedFieldsStyles: Styles = {
     fontWeight: "400",
     height: "40px",
     outline: "none",
-    paddingLeft: "8px",
-    width: "300px"
+    paddingLeft: "8px"
   },
   label: ".kushki-hosted-field-label"
 };

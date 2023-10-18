@@ -66,6 +66,30 @@ init(options)
 ## &bull; Get a payment card token
 
 ### &#xa0;&#xa0;&bull; Form initialization
+The following steps describes how you can init a card token instance
+#### Definition containers in html
+Before to call method ```initCardToken```, you need create div elements for each hosted field
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <section>
+        <div id="id_div_cardholderName"></div>
+        <div id="id_div_cardNumber"></div>
+        <div id="id_div_cvv"></div>
+        <div id="id_div_expirationDate"></div>
+    </section>
+</body>
+</html>
+```
+
+#### Init card token instance
+Then you must define a ```CardOptions``` and finally you call method ```initCardToken```
 ```ts
 import { IKushki, init, KushkiError } from "Kushki";
 import {

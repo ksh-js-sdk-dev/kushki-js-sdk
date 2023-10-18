@@ -409,6 +409,12 @@ describe("Card test", () => {
       );
     };
 
+    const mockDeferredField = () => {
+      options.fields.deferred = {
+        selector: "id_test"
+      };
+    };
+
     it("it should execute Card token request and return token", async () => {
       const cardInstance = await initCardToken(kushki, options);
 
@@ -420,9 +426,7 @@ describe("Card test", () => {
     });
 
     it("it should execute Card token request but deferred values is undefined", async () => {
-      options.fields.deferred = {
-        selector: "id_test"
-      };
+      mockDeferredField();
 
       const cardInstance = await initCardToken(kushki, options);
 
@@ -439,9 +443,7 @@ describe("Card test", () => {
     });
 
     it("it should execute Card token request but deferred values are incorrect", async () => {
-      options.fields.deferred = {
-        selector: "id_test"
-      };
+      mockDeferredField();
 
       const cardInstance = await initCardToken(kushki, options);
 
@@ -460,9 +462,7 @@ describe("Card test", () => {
     });
 
     it("it should execute Card token request but isDeferred is false", async () => {
-      options.fields.deferred = {
-        selector: "id_test"
-      };
+      mockDeferredField();
 
       const cardInstance = await initCardToken(kushki, options);
 
@@ -481,9 +481,7 @@ describe("Card test", () => {
     });
 
     it("it should execute Payment token request but credit type is empty", async () => {
-      options.fields.deferred = {
-        selector: "id_test"
-      };
+      mockDeferredField();
 
       const cardInstance = await initCardToken(kushki, options);
 
@@ -518,9 +516,7 @@ describe("Card test", () => {
     });
 
     it("it should execute Payment token request but deferred values are correct", async () => {
-      options.fields.deferred = {
-        selector: "id_test"
-      };
+      mockDeferredField();
 
       const cardInstance = await Card.initCardToken(kushki, options);
 
@@ -542,9 +538,7 @@ describe("Card test", () => {
     });
 
     it("it shouldn't execute Card token request but deferred values are required", async () => {
-      options.fields.deferred = {
-        selector: "id_test"
-      };
+      mockDeferredField();
 
       const cardInstance = await initCardToken(kushki, options);
 
@@ -605,6 +599,49 @@ describe("Card test", () => {
         deferredValue
       );
       expect(response.token).toEqual(tokenMock);
+    });
+
+    it("it should execute Card token request but deferred values and country Ecuador", async () => {
+      const deferredValuesMock = {
+        creditType: "03",
+        graceMonths: 2,
+        isDeferred: true,
+        months: 1
+      };
+
+      mockDeferredField();
+      mockRequestPaymentToken(
+        jest.fn().mockResolvedValue({
+          security: {
+            acsURL: "url",
+            authenticationTransactionId: "1234",
+            authRequired: true,
+            paReq: "req",
+            specificationVersion: "2.0.1"
+          },
+          token: tokenMock
+        })
+      );
+
+      mockKushkiGateway(false, false, {
+        ...merchantSettingsResponseDefault,
+        country: CountryEnum.CHL
+      });
+
+      const cardInstance = await Card.initCardToken(kushki, options);
+
+      mockValidityInputs();
+
+      KushkiHostedFields.mock.calls[4][0].handleOnDeferredChange(
+        deferredValuesMock
+      );
+
+      expect(KushkiHostedFields.mock.calls[4][0].fieldType).toEqual(
+        InputModelEnum.DEFERRED
+      );
+      expect(cardInstance["inputValues"].deferred!.value).toEqual(
+        deferredValuesMock
+      );
     });
 
     it("it should execute Card Subscription token request and return token", async () => {

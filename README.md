@@ -67,6 +67,24 @@ init(options)
 ## &bull; Get a payment card token
 
 ### &#xa0;&#xa0;&bull; Form initialization
+The following steps describes how you can init a card token instance
+#### Define the containers for the hosted fields
+Before you call the method ```initCardToken```, you need create div elements for each hosted field
+```html
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <form>
+        <div id="id_cardholderName"></div>
+        <div id="id_cardNumber"></div>
+        <div id="id_cvv"></div>
+        <div id="id_expirationDate"></div>
+    </form>
+</body>
+</html>
+```
+
+Then you must define a ```CardOptions``` and call the method ```initCardToken```, this will render the hosted fields in your side and the user will be able to enter the card details to later finish the tokenization
 ```ts
 import { IKushki, init, KushkiError } from "Kushki";
 import {
@@ -84,16 +102,16 @@ const options : CardOptions = {
   currency: "USD",
   fields: {
     cardholderName: {
-      selector: "id_div_cardholderName"
+      selector: "id_cardholderName"
     },
     cardNumber: {
-      selector: "id_div_cardNumber"
+      selector: "id_cardNumber"
     },
     cvv: {
-      selector: "id_div_cvv"
+      selector: "id_cvv"
     },
     expirationDate: {
-      selector: "id_div_expirationDate"
+      selector: "id_expirationDate"
     }
   }
 }

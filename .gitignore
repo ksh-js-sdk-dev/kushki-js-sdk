@@ -2,6 +2,7 @@ dist
 lib
 coverage
 types/
+!docs/types
 node_modules/
 .kushki/
 docs-json/
