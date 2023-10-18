@@ -60,4 +60,4 @@ init(options)
 
 #### Defined in
 
-[src/module/Kushki.ts:40](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/module/Kushki.ts#L40)
+[src/module/Kushki.ts:40](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/module/Kushki.ts#L40)
