@@ -10,7 +10,7 @@ export const hostedFieldsStyles: Styles = {
   },
   deferred: {
     "&#ksh-deferred-checkbox>label": {
-      fontFamily: "Arial,Verdana,Tahoma",
+      fontFamily: "IBM Plex Sans,sans-serif",
       fontSize: "14px",
       width: "max-content"
     },
@@ -28,7 +28,7 @@ export const hostedFieldsStyles: Styles = {
   focus: {
     border: "1px solid #0077ff",
     borderRadius: "10px",
-    fontFamily: "Arial,Verdana,Tahoma",
+    fontFamily: "IBM Plex Sans,sans-serif",
     fontSize: "14px",
     fontWeight: "400",
     height: "40px",
@@ -39,7 +39,7 @@ export const hostedFieldsStyles: Styles = {
   input: {
     "& + label": {
       color: "transparent",
-      fontFamily: "Arial,Verdana,Tahoma",
+      fontFamily: "IBM Plex Sans,sans-serif",
       fontSize: "12px",
       fontWeight: "400",
       left: "16px",
@@ -51,7 +51,7 @@ export const hostedFieldsStyles: Styles = {
     },
     "&::placeholder": {
       color: "rgba(0,0,0,.26)",
-      fontFamily: "Arial,Verdana,Tahoma",
+      fontFamily: "IBM Plex Sans,sans-serif",
       fontSize: "14px"
     },
     "&:focus + label": {
@@ -83,7 +83,8 @@ export const hostedFieldsStyles: Styles = {
     border: "1px solid rgba(203, 213, 224, 1)",
     borderRadius: "10px",
     boxSizing: "border-box",
-    fontFamily: "Arial,Verdana,Tahoma",
+    color: "#293036",
+    fontFamily: "IBM Plex Sans,sans-serif",
     fontSize: "14px",
     fontWeight: "400",
     height: "40px",
@@ -96,7 +97,7 @@ export const hostedFieldsStyles: Styles = {
     borderRadius: "10px",
     borderStyle: "solid",
     borderWidth: "1px",
-    fontFamily: "Arial,Verdana,Tahoma",
+    fontFamily: "IBM Plex Sans,sans-serif",
     fontSize: "14px",
     fontWeight: "400",
     height: "40px",
@@ -116,8 +117,8 @@ export const optionsDefault: CardOptions = {
   fields: {
     cardholderName: {
       inputType: "text",
-      label: "Nombre del tarjeta habiente",
-      placeholder: "Nombre del tarjeta habiente",
+      label: "Nombre del tarjetahabiente",
+      placeholder: "Nombre del tarjetahabiente",
       selector: "cardHolderName_id"
     },
     cardNumber: {

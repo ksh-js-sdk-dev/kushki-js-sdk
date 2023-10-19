@@ -133,7 +133,7 @@ const ConfigurationDemo = ({
           Link Docs
         </a>
       </div>
-      <div className="mui--text-body2 mui-text-custom">
+      <div className="mui--text-subhead mui-text-custom">
         Usar datos de prueba
       </div>
       <div className={"box-buttons"}>
@@ -166,7 +166,7 @@ const ConfigurationDemo = ({
           disableButtons={disableButtons}
         />
       </div>
-      <div className="mui--text-body2 mui-text-custom">
+      <div className="mui--text-subhead mui-text-custom">
         o completar el formulario
       </div>
       <div className={"box-input-prev"}>
@@ -177,7 +177,7 @@ const ConfigurationDemo = ({
           label={"Merchant ID"}
         />
 
-        <div className="mui-select divContainer divContainerSelect">
+        <div className="mui-select divContainer">
           <select
             className={"selectExample"}
             disabled={disableInputPrev}
@@ -202,6 +202,9 @@ const ConfigurationDemo = ({
             <option>NIO</option>
             <option>BRL</option>
           </select>
+          {inputCurrency && (
+            <label className={"label-input-configuration"}>Moneda</label>
+          )}
         </div>
         <InputConfigurationDemo
           disableInputPrev={disableInputPrev}
