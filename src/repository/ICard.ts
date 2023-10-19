@@ -16,6 +16,8 @@ export interface ICard {
    *
    * If the merchant is configured with OTP, 3DS or SiftScience rules, this method automatically do validations for each rule
    *
+   * When {@link initCardToken} method is configured as subscription, the token must be used to create a subscription, otherwise you can proceed normally with the charge method for card
+   *
    * @group Methods
    * @return TokenResponse object with token, if deferred info exists return this data
    * @throws KushkiErrorResponse object with code and message of error
@@ -28,7 +30,7 @@ export interface ICard {
    * - if merchant is configured with OTP rule and error on OTP validation, then throw {@link ERRORS | ERRORS.E008}
    *
    * @example
-   * // Basic example
+   * // Basic example for unique payment or subscription
    * try {
    *    const tokenResponse: TokenResponse = await cardInstance.requestToken();
    *    // On Success, can get card token response, ex. {token: "a2b74b7e3cf24e368a20380f16844d16"}
@@ -43,7 +45,9 @@ export interface ICard {
    * // If deferred data is generated, you can use this data in the charge of the payment
    * try {
    *    const tokenResponse: TokenResponse = await cardInstance.requestToken();
-   *    // On Success, if deferred data exist can get deferred options, ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}
+   *    // On Success, if deferred data exist can get deferred options
+   *    // For Ecuador, Mexico ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}
+   *    // For Chile, Colombia, Peru ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {months: 12}}
    *    if(tokenResponse.deferred)
    *      console.log("This is a deferred options", tokenResponse.deferred)
    *  } catch (error: any) {
