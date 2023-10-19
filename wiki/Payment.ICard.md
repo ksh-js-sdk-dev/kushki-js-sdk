@@ -54,7 +54,7 @@ console.log("CVV field is now focused.");
 
 #### Defined in
 
-[src/repository/ICard.ts:253](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L253)
+[src/repository/ICard.ts:257](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/repository/ICard.ts#L257)
 
 ___
 
@@ -78,7 +78,7 @@ cardInstance.getFormValidity();
 
 #### Defined in
 
-[src/repository/ICard.ts:102](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L102)
+[src/repository/ICard.ts:106](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/repository/ICard.ts#L106)
 
 ___
 
@@ -132,7 +132,7 @@ onFieldBlur((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:193](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L193)
+[src/repository/ICard.ts:197](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/repository/ICard.ts#L197)
 
 ___
 
@@ -186,7 +186,7 @@ onFieldFocus((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:156](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L156)
+[src/repository/ICard.ts:160](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/repository/ICard.ts#L160)
 
 ___
 
@@ -240,7 +240,7 @@ onFieldSubmit((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:230](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L230)
+[src/repository/ICard.ts:234](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/repository/ICard.ts#L234)
 
 ___
 
@@ -294,7 +294,7 @@ onFieldValidity((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:89](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L89)
+[src/repository/ICard.ts:93](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/repository/ICard.ts#L93)
 
 ___
 
@@ -328,7 +328,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:117](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L117)
+[src/repository/ICard.ts:121](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/repository/ICard.ts#L121)
 
 ▸ **onOTPValidation**(`onRequired`, `onError`, `onSuccess`): `void`
 
@@ -358,7 +358,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:288](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L288)
+[src/repository/ICard.ts:292](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/repository/ICard.ts#L292)
 
 ___
 
@@ -371,6 +371,8 @@ Get a card payment token
 This method validates if all fields are valid and obtains a card payment token, otherwise it will throw an exception
 
 If the merchant is configured with OTP, 3DS or SiftScience rules, this method automatically do validations for each rule
+
+When [initCardToken](../wiki/Payment#initcardtoken) method is configured as subscription, the token must be used to create a subscription, otherwise you can proceed normally with the charge method for card
 
 #### Returns
 
@@ -392,7 +394,7 @@ KushkiErrorResponse object with code and message of error
 **`Example`**
 
 ```ts
-// Basic example
+// Basic example for unique payment or subscription
 try {
    const tokenResponse: TokenResponse = await cardInstance.requestToken();
    // On Success, can get card token response, ex. {token: "a2b74b7e3cf24e368a20380f16844d16"}
@@ -410,7 +412,9 @@ try {
 // If deferred data is generated, you can use this data in the charge of the payment
 try {
    const tokenResponse: TokenResponse = await cardInstance.requestToken();
-   // On Success, if deferred data exist can get deferred options, ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}
+   // On Success, if deferred data exist can get deferred options
+   // For Ecuador, Mexico ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}
+   // For Chile, Colombia, Peru ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {months: 12}}
    if(tokenResponse.deferred)
      console.log("This is a deferred options", tokenResponse.deferred)
  } catch (error: any) {
@@ -421,7 +425,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:54](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L54)
+[src/repository/ICard.ts:58](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/repository/ICard.ts#L58)
 
 ___
 
@@ -459,4 +463,4 @@ console.log("CVV field is now reset.");
 
 #### Defined in
 
-[src/repository/ICard.ts:273](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/3b55809/src/repository/ICard.ts#L273)
+[src/repository/ICard.ts:277](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/repository/ICard.ts#L277)
