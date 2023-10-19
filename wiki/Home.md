@@ -50,7 +50,7 @@ Begin calling the method init [`init`](../wiki/Kushki.md), With an object of typ
 import { IKushki, init, KushkiError } from "Kushki";
 
 const kushkiOptions : KushkiOptions = {
-  publicCredentialId: '<public-credential-id>',
+  publicCredentialId: '<public-credential-id>', // This corresponds to the public credential of the merchant
   inTest: true
 };
 
@@ -131,18 +131,96 @@ const buildCardInstance = async () => {
 
 ## &#xa0;&#xa0;&bull; Events
 
+### Handling event focus on field Example
+This event is emitted when the field loses focus
+```ts
+try {
+  cardInstance.onFieldFocus((event: FormValidity) => {
+    // Implement your logic to handle the event FormValidity here
+    if (event.fields[event.triggeredBy].isValid) {
+      console.log("Form valid", event);
+    } else {
+      console.log("Form invalid", event);
+    }
+  });
+  // On Success, can get onFieldFocus, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+} catch (error: any) {
+  console.error("Catch error on onFieldFocus", error.code, error.message);
+}
+```
+
+### Field Blur Example
+This event is emitted when the field loses focus
+```ts
+try {
+  cardInstance.onFieldBlur((event: FormValidity) => {
+    // Implement your logic to handle the event FormValidity here
+    if (event.fields[event.triggeredBy].isValid) {
+      console.log("Form valid", event);
+    } else {
+      console.log("Form invalid", event);
+    }
+  });
+  // On Success, can get onFieldBlur, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+} catch (error: any) {
+  console.error("Catch error on onFieldBlur", error.code, error.message);
+}
+```
+
+### Field Submit Example
+This event is emitted when the field has submit.
+```ts
+try {
+  cardInstance.onFieldSubmit((event: FormValidity) => {
+    // Implement your logic to handle the event FormValidity here
+    if (event.fields[event.triggeredBy].isValid) {
+      console.log("Form valid", event);
+    } else {
+      console.log("Form invalid", event);
+    }
+  });
+  // On Success, can get onFieldSubmit, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+} catch (error: any) {
+  console.error("Catch error on onFieldSubmit", error.code, error.message);
+}
+```
+
+### Focus a hosted field Example
+This method asynchronously focus a form field of the specified type, otherwise it will throw an exception
+```ts
+try {
+  await cardInstance.focus(FieldTypeEnum.cardholderName);
+  // On Success, can focus field, ex. cardholderName focus
+} catch (error: any) {
+  // On Error, catch response, ex. {code:"E010", message: "Error al realizar focus en el campo"}
+  console.error("Catch error on focus field", error.code, error.message);
+}
+```
+
+### Reset a hosted field Example
+This method asynchronously reset a form field of the specified type to its default state, otherwise it will throw an exception
+```ts
+try {
+  await cardInstance.reset(FieldTypeEnum.cardholderName);
+  // On Success, can reset field, ex. cardholderName empty
+} catch (error: any) {
+  // On Error, catch response, ex. {code:"E009", message: "Error al limpiar el campo"}
+  console.error("Catch error on reset field", error.code, error.message);
+}
+```
+
 ## &#xa0;&#xa0;&bull; OTP Validation
 
 ## &#xa0;&#xa0;&bull; Tokenization
 
-To get a card payment token, you should call the [`requestToken`](../wiki/Payment.ICard.md) method on your card instance that was previously initialized, this method also validates if all the fields are valid, otherwise it will throw an exception
+To get a card payment token, you should call the [`requestToken`](../wiki/Payment.ICard.md#requestToken) method on your card instance that was previously initialized, this method also validates if all the fields are valid, otherwise it will throw an exception
 
-This method returns a [`TokenResponse`](../wiki/Payment.TokenResponse.md) object that you will send to you backend and proceed with the charge of the payment
+This method returns a [`TokenResponse`](../wiki/Payment.TokenResponse.md#TokenResponse) object that you will send to you backend and proceed with the charge of the payment
 
-If the  [`initCardToken`](../wiki/Payment.md)  method was configured as subscription you should call the create subscription method on your backend, otherwise you can proceed normally with the charge method for card
+If the  [`initCardToken`](../wiki/Payment.md#initCardToken)  method was configured as subscription you should call the create subscription method on your backend, otherwise you can proceed normally with the charge method for card
 
 ### Basic Example
-This method automatically validates all merchant rules like 3DS, OTP or Sift Science
+For unique payment or subscription. This method automatically validates all merchant rules like 3DS, OTP or Sift Science
 ```ts
 try {
   const tokenResponse: TokenResponse = await cardInstance.requestToken();
@@ -160,7 +238,9 @@ If deferred data is generated, you can use this data in the charge of the paymen
 ```ts
 try {
   const tokenResponse: TokenResponse = await cardInstance.requestToken();
-  // On Success, if deferred data exist can get deferred options, ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}
+  // On Success, if deferred data exist can get deferred options
+  // For Ecuador, Mexico ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}
+  // For Chile, Colombia, Peru ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {months: 12}}
   if(tokenResponse.deferred)
     console.log("This is a deferred options", tokenResponse.deferred)
 } catch (error: any) {

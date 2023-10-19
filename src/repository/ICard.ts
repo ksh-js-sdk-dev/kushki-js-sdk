@@ -125,18 +125,17 @@ export interface ICard {
   ): void;
 
   /**
-   * onFieldFocus a field specify or form field
+   * This event is emitted when the field gains focus
    *
-   * This event is emitted when the field gains focus, otherwise it will throw an exception
    *
    * @group Methods
-   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is focused
-   * @param {FieldTypeEnum} fieldType - The type of field (optional)
+   * @param {(FormValidity | FieldValidity) => void} event - Callback is executed when the hosted field is focused
+   * @param {FieldTypeEnum} fieldType - (optional) Set type of field if you want handle event focus of specific hosted field
    *
    * @returns {Promise<void>}
    *
    * @example
-   * Handling a basic onFieldFocus notify event FormValidity
+   * Handling events 'focus' of all hosted fields
    *
    * ```ts
    * try {
@@ -154,7 +153,7 @@ export interface ICard {
    *  }
    * ```
    *
-   * Handling a basic onFieldFocus notify event FieldValidity
+   * Handling event 'focus' of an especific hosted field
    *
    * ```ts
    * try {
@@ -179,18 +178,16 @@ export interface ICard {
   ): void;
 
   /**
-   * onFieldBlur a field specify or form field
-   *
-   * This event is emitted when the field loses focus, otherwise it will throw an exception
+   * This event is emitted when the field loses focus
    *
    * @group Methods
-   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is blurred
-   * @param {FieldTypeEnum} fieldType - The type of field (optional)
+   * @param {(FormValidity | FieldValidity) => void} event - Callback is executed when the hosted field is blurred
+   * @param {FieldTypeEnum} fieldType - (optional) Set type of field if you want handle event blur of specific hosted field
    *
    * @returns {Promise<void>}
    *
    * @example
-   * Handling a basic onFieldBlur notify event FormValidity
+   * Handling events 'blur' of all hosted fields
    *
    * ```ts
    * try {
@@ -208,7 +205,7 @@ export interface ICard {
    *  }
    * ```
    *
-   * Handling a basic onFieldBlur notify event FieldValidity
+   * Handling event 'blur' of an especific hosted field
    *
    * ```ts
    * try {
@@ -233,18 +230,16 @@ export interface ICard {
   ): void;
 
   /**
-   * onFieldSubmit a field specify or form field
-   *
-   * This event is emitted when the field has submit, otherwise it will throw an exception
+   * This event is emitted when the field has submit.
    *
    * @group Methods
-   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is submitted
-   * @param {FieldTypeEnum} fieldType - The type of field (optional)
+   * @param {(FormValidity | FieldValidity) => void} event - Callback is executed when the hosted field is submitted
+   * @param {FieldTypeEnum} fieldType - (optional) Set type of field if you want handle event submit of specific hosted field
    *
    * @returns {Promise<void>}
    *
    * @example
-   * Handling a basic onFieldSubmit notify event FormValidity
+   * Handling events 'submit' of all hosted fields
    *
    * ```ts
    * try {
@@ -262,7 +257,7 @@ export interface ICard {
    *  }
    * ```
    *
-   * Handling a basic onFieldSubmit notify event FieldValidity
+   * Handling event 'submit' of an especific hosted field
    *
    * ```ts
    * try {
@@ -287,7 +282,7 @@ export interface ICard {
   ): void;
 
   /**
-   * Focus a form field
+   * Focus a hosted field
    *
    * This method asynchronously focus a form field of the specified type, otherwise it will throw an exception
    *
@@ -315,7 +310,7 @@ export interface ICard {
   focus(fieldType: FieldTypeEnum): Promise<void>;
 
   /**
-   * Reset a form field
+   * Reset a hosted field
    *
    * This method asynchronously reset a form field of the specified type to its default state, otherwise it will throw an exception
    *

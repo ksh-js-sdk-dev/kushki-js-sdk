@@ -24,7 +24,7 @@ This interface contains all methods to use when resolve [initCardToken](../wiki/
 
 ▸ **focus**(`fieldType`): `Promise`<`void`\>
 
-Focus a form field
+Focus a hosted field
 
 This method asynchronously focus a form field of the specified type, otherwise it will throw an exception
 
@@ -57,7 +57,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:311](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L311)
+[src/repository/ICard.ts:310](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/408d919/src/repository/ICard.ts#L310)
 
 ___
 
@@ -81,7 +81,7 @@ cardInstance.getFormValidity();
 
 #### Defined in
 
-[src/repository/ICard.ts:102](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L102)
+[src/repository/ICard.ts:106](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/408d919/src/repository/ICard.ts#L106)
 
 ___
 
@@ -89,16 +89,14 @@ ___
 
 ▸ **onFieldBlur**(`event`, `fieldType?`): `void`
 
-onFieldBlur a field specify or form field
-
-This event is emitted when the field loses focus, otherwise it will throw an exception
+This event is emitted when the field loses focus
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | The function called when the form field is blurred |
-| `fieldType?` | [`FieldTypeEnum`](../wiki/Payment#fieldtypeenum) | The type of field (optional) |
+| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | Callback is executed when the hosted field is blurred |
+| `fieldType?` | [`FieldTypeEnum`](../wiki/Payment#fieldtypeenum) | (optional) Set type of field if you want handle event blur of specific hosted field |
 
 #### Returns
 
@@ -106,7 +104,7 @@ This event is emitted when the field loses focus, otherwise it will throw an exc
 
 **`Example`**
 
-Handling a basic onFieldBlur notify event FormValidity
+Handling events 'blur' of all hosted fields
 
 ```ts
 try {
@@ -124,7 +122,7 @@ try {
  }
 ```
 
-Handling a basic onFieldBlur notify event FieldValidity
+Handling event 'blur' of an especific hosted field
 
 ```ts
 try {
@@ -144,7 +142,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:226](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L226)
+[src/repository/ICard.ts:227](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/408d919/src/repository/ICard.ts#L227)
 
 ___
 
@@ -152,16 +150,14 @@ ___
 
 ▸ **onFieldFocus**(`event`, `fieldType?`): `void`
 
-onFieldFocus a field specify or form field
-
-This event is emitted when the field gains focus, otherwise it will throw an exception
+This event is emitted when the field gains focus
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | The function called when the form field is focused |
-| `fieldType?` | [`FieldTypeEnum`](../wiki/Payment#fieldtypeenum) | The type of field (optional) |
+| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | Callback is executed when the hosted field is focused |
+| `fieldType?` | [`FieldTypeEnum`](../wiki/Payment#fieldtypeenum) | (optional) Set type of field if you want handle event focus of specific hosted field |
 
 #### Returns
 
@@ -169,7 +165,7 @@ This event is emitted when the field gains focus, otherwise it will throw an exc
 
 **`Example`**
 
-Handling a basic onFieldFocus notify event FormValidity
+Handling events 'focus' of all hosted fields
 
 ```ts
 try {
@@ -187,7 +183,7 @@ try {
  }
 ```
 
-Handling a basic onFieldFocus notify event FieldValidity
+Handling event 'focus' of an especific hosted field
 
 ```ts
 try {
@@ -207,7 +203,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:172](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L172)
+[src/repository/ICard.ts:175](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/408d919/src/repository/ICard.ts#L175)
 
 ___
 
@@ -215,16 +211,14 @@ ___
 
 ▸ **onFieldSubmit**(`event`, `fieldType?`): `void`
 
-onFieldSubmit a field specify or form field
-
-This event is emitted when the field has submit, otherwise it will throw an exception
+This event is emitted when the field has submit.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | The function called when the form field is submitted |
-| `fieldType?` | [`FieldTypeEnum`](../wiki/Payment#fieldtypeenum) | The type of field (optional) |
+| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | Callback is executed when the hosted field is submitted |
+| `fieldType?` | [`FieldTypeEnum`](../wiki/Payment#fieldtypeenum) | (optional) Set type of field if you want handle event submit of specific hosted field |
 
 #### Returns
 
@@ -232,7 +226,7 @@ This event is emitted when the field has submit, otherwise it will throw an exce
 
 **`Example`**
 
-Handling a basic onFieldSubmit notify event FormValidity
+Handling events 'submit' of all hosted fields
 
 ```ts
 try {
@@ -250,7 +244,7 @@ try {
  }
 ```
 
-Handling a basic onFieldSubmit notify event FieldValidity
+Handling event 'submit' of an especific hosted field
 
 ```ts
 try {
@@ -270,7 +264,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:280](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L280)
+[src/repository/ICard.ts:279](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/408d919/src/repository/ICard.ts#L279)
 
 ___
 
@@ -324,7 +318,7 @@ onFieldValidity((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:89](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L89)
+[src/repository/ICard.ts:93](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/408d919/src/repository/ICard.ts#L93)
 
 ___
 
@@ -358,7 +352,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:117](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L117)
+[src/repository/ICard.ts:121](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/408d919/src/repository/ICard.ts#L121)
 
 ▸ **onOTPValidation**(`onRequired`, `onError`, `onSuccess`): `void`
 
@@ -388,7 +382,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:354](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L354)
+[src/repository/ICard.ts:353](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/408d919/src/repository/ICard.ts#L353)
 
 ___
 
@@ -401,6 +395,8 @@ Get a card payment token
 This method validates if all fields are valid and obtains a card payment token, otherwise it will throw an exception
 
 If the merchant is configured with OTP, 3DS or SiftScience rules, this method automatically do validations for each rule
+
+When [initCardToken](../wiki/Payment#initcardtoken) method is configured as subscription, the token must be used to create a subscription, otherwise you can proceed normally with the charge method for card
 
 #### Returns
 
@@ -422,7 +418,7 @@ KushkiErrorResponse object with code and message of error
 **`Example`**
 
 ```ts
-// Basic example
+// Basic example for unique payment or subscription
 try {
    const tokenResponse: TokenResponse = await cardInstance.requestToken();
    // On Success, can get card token response, ex. {token: "a2b74b7e3cf24e368a20380f16844d16"}
@@ -440,7 +436,9 @@ try {
 // If deferred data is generated, you can use this data in the charge of the payment
 try {
    const tokenResponse: TokenResponse = await cardInstance.requestToken();
-   // On Success, if deferred data exist can get deferred options, ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}
+   // On Success, if deferred data exist can get deferred options
+   // For Ecuador, Mexico ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}
+   // For Chile, Colombia, Peru ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {months: 12}}
    if(tokenResponse.deferred)
      console.log("This is a deferred options", tokenResponse.deferred)
  } catch (error: any) {
@@ -451,7 +449,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:54](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L54)
+[src/repository/ICard.ts:58](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/408d919/src/repository/ICard.ts#L58)
 
 ___
 
@@ -459,7 +457,7 @@ ___
 
 ▸ **reset**(`fieldType`): `Promise`<`void`\>
 
-Reset a form field
+Reset a hosted field
 
 This method asynchronously reset a form field of the specified type to its default state, otherwise it will throw an exception
 
@@ -492,4 +490,4 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:339](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L339)
+[src/repository/ICard.ts:338](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/408d919/src/repository/ICard.ts#L338)

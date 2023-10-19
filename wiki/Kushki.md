@@ -42,22 +42,22 @@ Throws an error if the initialization fails due to invalid options, network issu
 **`Example`**
 
 ```ts
-// Example usage of the init function
-const options = {
-  publicCredentialId: 'public-merchant-id',
+import { IKushki, init, KushkiError } from "Kushki";
+
+const kushkiOptions : KushkiOptions = {
+  publicCredentialId: '<public-credential-id>',
   inTest: true
 };
 
-init(options)
-  .then((kushkiInstance) => {
-    // The Kushki payment gateway is now initialized and ready to use.
-    // You can call methods like kushkiInstance.processPayment() or kushkiInstance.refundPayment().
-  })
-  .catch((error) => {
-    console.error('Error initializing Kushki:', error);
-  });
+const buildKushkiInstance = async () => {
+  try {
+    const kushkiInstance : Ikushki =  await init(kushkiOptions);
+  } catch (e: KushkiError) {
+    console.error(e.message);
+  }
+}
 ```
 
 #### Defined in
 
-[src/module/Kushki.ts:40](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/module/Kushki.ts#L40)
+[src/module/Kushki.ts:42](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/408d919/src/module/Kushki.ts#L42)

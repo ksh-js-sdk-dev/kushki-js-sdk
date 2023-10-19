@@ -51,7 +51,7 @@ Begin calling the method init [`init`](../wiki/Kushki.md), With an object of typ
 import { IKushki, init, KushkiError } from "Kushki";
 
 const kushkiOptions : KushkiOptions = {
-  publicCredentialId: '<public-credential-id>',
+  publicCredentialId: '<public-credential-id>', // This corresponds to the public credential of the merchant
   inTest: true
 };
 
@@ -131,6 +131,84 @@ const buildCardInstance = async () => {
 ## &#xa0;&#xa0;&bull; Styling
 
 ## &#xa0;&#xa0;&bull; Events
+
+### Handling event focus on field Example
+This event is emitted when the field loses focus
+```ts
+try {
+  cardInstance.onFieldFocus((event: FormValidity) => {
+    // Implement your logic to handle the event FormValidity here
+    if (event.fields[event.triggeredBy].isValid) {
+      console.log("Form valid", event);
+    } else {
+      console.log("Form invalid", event);
+    }
+  });
+  // On Success, can get onFieldFocus, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+} catch (error: any) {
+  console.error("Catch error on onFieldFocus", error.code, error.message);
+}
+```
+
+### Field Blur Example
+This event is emitted when the field loses focus
+```ts
+try {
+  cardInstance.onFieldBlur((event: FormValidity) => {
+    // Implement your logic to handle the event FormValidity here
+    if (event.fields[event.triggeredBy].isValid) {
+      console.log("Form valid", event);
+    } else {
+      console.log("Form invalid", event);
+    }
+  });
+  // On Success, can get onFieldBlur, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+} catch (error: any) {
+  console.error("Catch error on onFieldBlur", error.code, error.message);
+}
+```
+
+### Field Submit Example
+This event is emitted when the field has submit.
+```ts
+try {
+  cardInstance.onFieldSubmit((event: FormValidity) => {
+    // Implement your logic to handle the event FormValidity here
+    if (event.fields[event.triggeredBy].isValid) {
+      console.log("Form valid", event);
+    } else {
+      console.log("Form invalid", event);
+    }
+  });
+  // On Success, can get onFieldSubmit, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+} catch (error: any) {
+  console.error("Catch error on onFieldSubmit", error.code, error.message);
+}
+```
+
+### Focus a hosted field Example
+This method asynchronously focus a form field of the specified type, otherwise it will throw an exception
+```ts
+try {
+  await cardInstance.focus(FieldTypeEnum.cardholderName);
+  // On Success, can focus field, ex. cardholderName focus
+} catch (error: any) {
+  // On Error, catch response, ex. {code:"E010", message: "Error al realizar focus en el campo"}
+  console.error("Catch error on focus field", error.code, error.message);
+}
+```
+
+### Reset a hosted field Example
+This method asynchronously reset a form field of the specified type to its default state, otherwise it will throw an exception
+```ts
+try {
+  await cardInstance.reset(FieldTypeEnum.cardholderName);
+  // On Success, can reset field, ex. cardholderName empty
+} catch (error: any) {
+  // On Error, catch response, ex. {code:"E009", message: "Error al limpiar el campo"}
+  console.error("Catch error on reset field", error.code, error.message);
+}
+```
 
 ## &#xa0;&#xa0;&bull; OTP Validation
 
