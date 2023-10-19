@@ -190,7 +190,7 @@ export class Card implements ICard {
 
       return Promise.resolve();
     } else {
-      return Promise.reject(new KushkiError(ERRORS.E008));
+      return Promise.reject(new KushkiError(ERRORS.E010));
     }
   }
 

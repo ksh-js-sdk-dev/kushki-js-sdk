@@ -10,6 +10,7 @@
 
 - [CssProperties](../wiki/Payment#cssproperties)
 - [Currency](../wiki/Payment#currency)
+- [FieldTypeEnum](../wiki/Payment#fieldtypeenum)
 
 ### Card Interface
 
@@ -65,6 +66,28 @@ Promise<ICard> - instance of ICard
 
 #### Examples
 ##### Basic setup to Card Token
+
+###### Define the containers for the hosted fields
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <section>
+        <div id="id_cardholderName"></div>
+        <div id="id_cardNumber"></div>
+        <div id="id_cvv"></div>
+        <div id="id_expirationDate"></div>
+    </section>
+</body>
+</html>
+```
+
+###### Init card token instance
 ```ts
 import { IKushki, init, KushkiError } from "Kushki";
 import {
@@ -87,16 +110,16 @@ const options : CardOptions = {
   currency: "USD",
   fields: {
       cardholderName: {
-         selector: "id_div_cardholderName"
+         selector: "id_cardholderName"
       },
       cardNumber: {
-         selector: "id_div_cardNumber"
+         selector: "id_cardNumber"
       },
       cvv: {
-         selector: "id_div_cvv"
+         selector: "id_cvv"
       },
      expirationDate: {
-         selector: "id_div_expirationDate"
+         selector: "id_expirationDate"
      }
   }
 }
@@ -111,9 +134,31 @@ const buildCardInstance = async () => {
 }
 ```
 
-### Card Token to subscriptions, prevent autofill and custom fields
+##### Card Token to subscriptions, prevent autofill and custom fields
 - To Enable subscriptions the `isSubscription` flag must be true
 - To Enable prevent autofill in fields the `preventAutofill` flag must be true
+
+###### Definition containers in html
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <section>
+        <div id="id_cardholderName"></div>
+        <div id="id_cardNumber"></div>
+        <div id="id_cvv"></div>
+        <div id="id_expirationDate"></div>
+    </section>
+</body>
+</html>
+```
+
+###### Init card token instance
 ```ts
 import { IKushki, init, KushkiError } from "Kushki";
 import {
@@ -137,27 +182,27 @@ const options : CardOptions = {
   fields: {
       cardholderName: {
          inputType: "text",
-         label: "card holder Name",
-         placeholder: "card holder Name",
-         selector: "id_div_cardholderName"
+         label: "Cardholder Name",
+         placeholder: "Cardholder Name",
+         selector: "id_cardholderName"
       },
       cardNumber: {
          inputType: "number",
-         label: "card Number",
-         placeholder: "card Number",
-         selector: "id_div_cardNumber"
+         label: "Card Number",
+         placeholder: "Card Number",
+         selector: "id_cardNumber"
       },
       cvv: {
          inputType: "password",
          label: "CVV",
          placeholder: "CVV",
-         selector: "id_div_cvv"
+         selector: "id_cvv"
       },
      expirationDate: {
          inputType: "text",
-         label: "expiration date",
-         placeholder: "expiration date",
-         selector: "id_div_expirationDate"
+         label: "Expiration Date",
+         placeholder: "Expiration Date",
+         selector: "id_expirationDate"
      }
   },
   isSubscription: true, //To Enable subscriptions this flag must be true
@@ -174,21 +219,42 @@ const buildCardInstance = async () => {
 }
 ```
 
-###  Enable field OTP and set custom styles
-#### To Start with it necessary define style object
+#####  Enable field OTP and set custom styles
+
+###### Definition containers in html
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <section>
+        <div id="id_cardholderName"></div>
+        <div id="id_cardNumber"></div>
+        <div id="id_cvv"></div>
+        <div id="id_expirationDate"></div>
+        <div id="id_otp"></div>
+    </section>
+</body>
+</html>
+```
+###### To Start with it necessary define style object
 ```ts
 ```
-#### Then Set basic custom styles from class css
+###### Then Set basic custom styles from class css
 ```ts
 ```
-#### (Optional) Set advance custom styles with JSS
+###### (Optional) Set advance custom styles with JSS
 ```ts
 ```
 
 **`See`**
 
- - [JSS Documentation](https://cssinjs.org/react-jss/?v=v10.3.0)
-#### Finally you can init card token instance
+[JSS Documentation](https://cssinjs.org/react-jss/?v=v10.3.0)
+###### Init card token instance
 - To Enable field OTP, you need define the attribute `CardOptions.fields.otp`
 ```ts
 import { IKushki, init, KushkiError } from "Kushki";
@@ -213,33 +279,33 @@ const options : CardOptions = {
   fields: {
       cardholderName: {
          inputType: "text",
-         label: "card holder Name",
-         placeholder: "card holder Name",
-         selector: "id_div_cardholderName"
+         label: "Cardholder Name",
+         placeholder: "Cardholder Name",
+         selector: "id_cardholderName"
       },
       cardNumber: {
          inputType: "number",
-         label: "card Number",
-         placeholder: "card Number",
-         selector: "id_div_cardNumber"
+         label: "Card Number",
+         placeholder: "Card Number",
+         selector: "id_cardNumber"
       },
       cvv: {
          inputType: "password",
          label: "CVV",
          placeholder: "CVV",
-         selector: "id_div_cvv"
+         selector: "id_cvv"
       },
      expirationDate: {
          inputType: "text",
-         label: "expiration date",
-         placeholder: "expiration date",
-         selector: "id_div_expirationDate"
+         label: "Expiration Date",
+         placeholder: "Expiration Date",
+         selector: "id_expirationDate"
      },
      otp: {
       inputType: "password",
-      label: "OTP verification",
-      placeholder: "OTP verification",
-      selector: "id_div_otp"
+      label: "OTP Verification",
+      placeholder: "OTP Verification",
+      selector: "id_otp"
     }
   }
 }
@@ -254,14 +320,34 @@ const buildCardInstance = async () => {
 }
 ```
 
-### Enable field Deferred and set custom styles to Deferred inputs
+##### Enable field Deferred and set custom styles to Deferred inputs
 Deferred Field has one checkbox and three or one select (It depends on merchant settings). If you need set a custom styles
 Kushki SDK expose the following selectors
-#### Selectors to set custom styles to Deferred inputs
+
+###### Definition containers in html
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <section>
+        <div id="id_cardholderName"></div>
+        <div id="id_cardNumber"></div>
+        <div id="id_cvv"></div>
+        <div id="id_expirationDate"></div>
+        <div id="id_deferred"></div>
+    </section>
+</body>
+</html>
+```
+###### Selectors to set custom styles to Deferred inputs
 ```ts
 ```
- - [JSS Documentation](https://cssinjs.org/react-jss/?v=v10.3.0)
-#### Finally you can init card token instance
+##### Init card token instance
 - To Enable field deferred, you need define the attribute `CardOptions.fields.deferred`
 ```ts
 import { IKushki, init, KushkiError } from "Kushki";
@@ -285,16 +371,16 @@ const options : CardOptions = {
   currency: "USD",
   fields: {
       cardholderName: {
-         selector: "id_div_cardholderName"
+         selector: "id_cardholderName"
       },
       cardNumber: {
-         selector: "id_div_cardNumber"
+         selector: "id_cardNumber"
       },
       cvv: {
-         selector: "id_div_cvv"
+         selector: "id_cvv"
       },
      expirationDate: {
-         selector: "id_div_expirationDate"
+         selector: "id_expirationDate"
      },
     deferred: {
       deferredInputs: {
@@ -302,22 +388,22 @@ const options : CardOptions = {
           label: "I want to pay in installments"
         },
         deferredType: {
-          hiddenLabel: "deferred Type",
-          label: "deferred Type",
+          hiddenLabel: "deferred_Type",
+          label: "Deferred Type",
           placeholder: "deferred Type"
         },
         graceMonths: {
-          hiddenLabel: "grace months",
-          label: "grace months",
+          hiddenLabel: "grace_months",
+          label: "Grace Months",
           placeholder: "grace months"
         },
         months: {
           hiddenLabel: "months",
-          label: "months",
+          label: "Months",
           placeholder: "months"
         }
       },
-      selector: "id_div_deferred"
+      selector: "id_deferred"
     },
   }
 }
@@ -334,7 +420,7 @@ const buildCardInstance = async () => {
 
 #### Defined in
 
-[src/module/Payment.ts:296](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/module/Payment.ts#L296)
+[src/module/Payment.ts:382](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/module/Payment.ts#L382)
 
 ## Types
 
@@ -355,6 +441,16 @@ ___
 #### Defined in
 
 types/card_options.d.ts:6
+
+___
+
+### FieldTypeEnum
+
+Ƭ **FieldTypeEnum**: ``"cardNumber"`` \| ``"cardholderName"`` \| ``"cvv"`` \| ``"deferred"`` \| ``"expirationDate"`` \| ``"otp"``
+
+#### Defined in
+
+types/form_validity.d.ts:6
 
 ## Variables
 
@@ -423,4 +519,4 @@ export const ERRORS = {
 
 #### Defined in
 
-[src/infrastructure/ErrorEnum.ts:85](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/infrastructure/ErrorEnum.ts#L85)
+[src/infrastructure/ErrorEnum.ts:85](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/infrastructure/ErrorEnum.ts#L85)

@@ -4,12 +4,15 @@
 
 ## Table of contents
 
-### Properties
+### Types
 
 - [errorType](../wiki/Payment.FieldValidity#errortype)
+
+### Properties
+
 - [isValid](../wiki/Payment.FieldValidity#isvalid)
 
-## Properties
+## Types
 
 ### errorType
 
@@ -17,9 +20,9 @@
 
 #### Defined in
 
-types/form_validity.d.ts:20
+types/form_validity.d.ts:26
 
-___
+## Properties
 
 ### isValid
 
@@ -27,4 +30,4 @@ ___
 
 #### Defined in
 
-types/form_validity.d.ts:19
+types/form_validity.d.ts:22

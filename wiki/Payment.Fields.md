@@ -20,7 +20,7 @@
 
 #### Defined in
 
-types/form_validity.d.ts:13
+types/form_validity.d.ts:16
 
 ___
 
@@ -30,7 +30,7 @@ ___
 
 #### Defined in
 
-types/form_validity.d.ts:12
+types/form_validity.d.ts:15
 
 ___
 
@@ -40,7 +40,7 @@ ___
 
 #### Defined in
 
-types/form_validity.d.ts:14
+types/form_validity.d.ts:17
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-types/form_validity.d.ts:15
+types/form_validity.d.ts:18
 
 ___
 
@@ -60,4 +60,4 @@ ___
 
 #### Defined in
 
-types/form_validity.d.ts:16
+types/form_validity.d.ts:19

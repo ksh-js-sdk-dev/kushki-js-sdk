@@ -42,54 +42,49 @@ Use a script tag inside your page to add the feature. When adding the following 
 <script src="https://cdn.kushkipagos.com/js/payment/payment.min.js"></script>
 ```
 
-## &bull; Library setup
+# Library setup
 
-Begin creating your IKushki, it will allow you to perform all the functions available in Kushki-js-sdk.
+Begin calling the method init [`init`](../wiki/Kushki.md), With an object of type [`KushkiOptions`](../wiki/Kushki.KushkiOptions.md) 
 
 ```ts
-// Example usage of the init function
-const options = {
-  apiKey: 'YOUR_API_KEY',
-  environment: 'sandbox'
+import { IKushki, init, KushkiError } from "Kushki";
+
+const kushkiOptions : KushkiOptions = {
+  publicCredentialId: '<public-credential-id>',
+  inTest: true
 };
 
-init(options)
-  .then((kushkiInstance) => {
-    // The Kushki payment gateway is now initialized and ready to use.
-    // You can call methods like kushkiInstance.processPayment() or kushkiInstance.refundPayment().
-  })
-  .catch((error) => {
-    console.error('Error initializing Kushki:', error);
-  });
+const buildKushkiInstance = async () => {
+  try {
+    const kushkiInstance : Ikushki =  await init(kushkiOptions);
+  } catch (e: KushkiError) {
+    console.error(e.message);
+  }
+}
 ```
 
-## &bull; Get a payment card token
+# Get a payment card token
 
-### &#xa0;&#xa0;&bull; Form initialization
+## &#xa0;&#xa0;&bull; Form initialization
 The following steps describes how you can init a card token instance
-#### Definition containers in html
-Before to call method ```initCardToken```, you need create div elements for each hosted field
+
+# Define the containers for the hosted fields
+Before you call the method ```initCardToken```, you need create div elements for each hosted field
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
 <body>
-    <section>
-        <div id="id_div_cardholderName"></div>
-        <div id="id_div_cardNumber"></div>
-        <div id="id_div_cvv"></div>
-        <div id="id_div_expirationDate"></div>
-    </section>
+    <form>
+        <div id="id_cardholderName"></div>
+        <div id="id_cardNumber"></div>
+        <div id="id_cvv"></div>
+        <div id="id_expirationDate"></div>
+    </form>
 </body>
 </html>
 ```
 
-#### Init card token instance
-Then you must define a ```CardOptions``` and finally you call method ```initCardToken```
+Then you must define a ```CardOptions``` and call the method ```initCardToken```, this will render the hosted fields in your side and the user will be able to enter the card details to later finish the tokenization
 ```ts
 import { IKushki, init, KushkiError } from "Kushki";
 import {
@@ -107,16 +102,16 @@ const options : CardOptions = {
   currency: "USD",
   fields: {
     cardholderName: {
-      selector: "id_div_cardholderName"
+      selector: "id_cardholderName"
     },
     cardNumber: {
-      selector: "id_div_cardNumber"
+      selector: "id_cardNumber"
     },
     cvv: {
-      selector: "id_div_cvv"
+      selector: "id_cvv"
     },
     expirationDate: {
-      selector: "id_div_expirationDate"
+      selector: "id_expirationDate"
     }
   }
 }
@@ -132,13 +127,13 @@ const buildCardInstance = async () => {
 ```
 [More Examples](./wiki/Payment.md)
 
-### &#xa0;&#xa0;&bull; Styling
+## &#xa0;&#xa0;&bull; Styling
 
-### &#xa0;&#xa0;&bull; Events
+## &#xa0;&#xa0;&bull; Events
 
-### &#xa0;&#xa0;&bull; OTP Validation
+## &#xa0;&#xa0;&bull; OTP Validation
 
-### &#xa0;&#xa0;&bull; Tokenization
+## &#xa0;&#xa0;&bull; Tokenization
 
 To get a card payment token, you should call the [`requestToken`](../wiki/Payment.ICard.md) method on your card instance that was previously initialized, this method also validates if all the fields are valid, otherwise it will throw an exception
 
@@ -146,7 +141,7 @@ This method returns a [`TokenResponse`](../wiki/Payment.TokenResponse.md) object
 
 If the  [`initCardToken`](../wiki/Payment.md)  method was configured as subscription you should call the create subscription method on your backend, otherwise you can proceed normally with the charge method for card
 
-#### Basic Example
+### Basic Example
 This method automatically validates all merchant rules like 3DS, OTP or Sift Science
 ```ts
 try {
@@ -160,7 +155,7 @@ try {
 }
 ```
 
-#### Deferred Example
+### Deferred Example
 If deferred data is generated, you can use this data in the charge of the payment
 ```ts
 try {

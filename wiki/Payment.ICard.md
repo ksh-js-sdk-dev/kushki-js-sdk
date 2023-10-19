@@ -24,37 +24,40 @@ This interface contains all methods to use when resolve [initCardToken](../wiki/
 
 ▸ **focus**(`fieldType`): `Promise`<`void`\>
 
-Asynchronously focuses on a form field of the specified type
+Focus a form field
+
+This method asynchronously focus a form field of the specified type, otherwise it will throw an exception
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `fieldType` | `FieldTypeEnum` | The type of form field to focus on |
+| `fieldType` | [`FieldTypeEnum`](../wiki/Payment#fieldtypeenum) | The type of field (optional) |
 
 #### Returns
 
 `Promise`<`void`\>
 
-**`Example`**
+**`Throws`**
 
-```ts
-// Example: Focus no t on the cardholder name field
-await focus(FieldTypeEnum.cardholderName);
-console.log("Cardholder name field is now focused.");
-```
+- if the specified field type is not valid [ERRORS.E010](../wiki/Payment#errors)
 
 **`Example`**
 
 ```ts
-// Example: Focus on the CVV field
-await focus(FieldTypeEnum.cvv);
-console.log("CVV field is now focused.");
+// Basic example
+try {
+   await cardInstance.focus(FieldTypeEnum.cardholderName);
+   // On Success, can focus field, ex. cardholderName focus
+ } catch (error: any) {
+     // On Error, catch response, ex. {code:"E010", message: "Error al realizar focus en el campo"}
+     console.error("Catch error on focus field", error.code, error.message);
+ }
 ```
 
 #### Defined in
 
-[src/repository/ICard.ts:253](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L253)
+[src/repository/ICard.ts:311](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L311)
 
 ___
 
@@ -78,7 +81,7 @@ cardInstance.getFormValidity();
 
 #### Defined in
 
-[src/repository/ICard.ts:102](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L102)
+[src/repository/ICard.ts:102](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L102)
 
 ___
 
@@ -86,53 +89,62 @@ ___
 
 ▸ **onFieldBlur**(`event`, `fieldType?`): `void`
 
-This event is emitted when the field loses focus
+onFieldBlur a field specify or form field
+
+This event is emitted when the field loses focus, otherwise it will throw an exception
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | The function called when the form field is blurred |
-| `fieldType?` | `FieldTypeEnum` | The type of form field (optional) |
+| `fieldType?` | [`FieldTypeEnum`](../wiki/Payment#fieldtypeenum) | The type of field (optional) |
 
 #### Returns
 
 `void`
 
-**`Function`**
-
 **`Example`**
 
+Handling a basic onFieldBlur notify event FormValidity
+
 ```ts
-// Example 1: Handling a basic form blur event
-onFieldBlur((event: FormValidity) => {
-  // Implement your logic to handle the form submission here
-  if (event.isFormValid) {
-    console.log("Form submitted valid", event);
-  } else {
-    console.log("Form submitted invalid", event);
-  }
-});
+try {
+     cardInstance.onFieldBlur((event: FormValidity) => {
+       // Implement your logic to handle the event FormValidity here
+       if (event.fields[event.triggeredBy].isValid) {
+         console.log("Form valid", event);
+       } else {
+         console.log("Form invalid", event);
+       }
+     });
+   // On Success, can get onFieldBlur, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+ } catch (error: any) {
+     console.error("Catch error on onFieldBlur", error.code, error.message);
+ }
 ```
 
-**`Example`**
+Handling a basic onFieldBlur notify event FieldValidity
 
 ```ts
-// Example 2: Handling a specific type of field blur event
-onFieldBlur((event: FieldValidity) => {
-  // Implement your logic to handle the specific field type here
-  if (event.isValid) {
-    console.log("Form field is valid", event);
-  } else {
-   console.log("Form field is invalid", event);
-   console.log("this is error", event.errorType);
-  }
-}, fieldType: FieldTypeEnum);
+try {
+    cardInstance.onFieldBlur((event: FieldValidity) => {
+       if (event.isValid) {
+         console.log("Form field is valid", event);
+       } else {
+         console.log("Form field is invalid", event);
+         console.log("this is error", event.errorType);
+       }
+     }, FieldTypeEnum.cardholderName);
+   // On Success, can get onFieldBlur, ex. FieldValidity : { isValid: false, errorType: "empty"}
+ } catch (error: any) {
+     console.error("Catch error on onFieldBlur", error.code, error.message);
+ }
 ```
 
 #### Defined in
 
-[src/repository/ICard.ts:193](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L193)
+[src/repository/ICard.ts:226](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L226)
 
 ___
 
@@ -140,53 +152,62 @@ ___
 
 ▸ **onFieldFocus**(`event`, `fieldType?`): `void`
 
-This event is emitted when the field gains focus
+onFieldFocus a field specify or form field
+
+This event is emitted when the field gains focus, otherwise it will throw an exception
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | The function called when the form field is focused |
-| `fieldType?` | `FieldTypeEnum` | The type of form field (optional) |
+| `fieldType?` | [`FieldTypeEnum`](../wiki/Payment#fieldtypeenum) | The type of field (optional) |
 
 #### Returns
 
 `void`
 
-**`Function`**
-
 **`Example`**
 
+Handling a basic onFieldFocus notify event FormValidity
+
 ```ts
-// Example 1: Handling a basic form focus event
-onFieldFocus((event: FormValidity) => {
-  // Implement your logic to handle the form submission here
-  if (event.isFormValid) {
-    console.log("Form submitted valid", event);
-  } else {
-    console.log("Form submitted invalid", event);
-  }
-});
+try {
+     cardInstance.onFieldFocus((event: FormValidity) => {
+       // Implement your logic to handle the event FormValidity here
+       if (event.fields[event.triggeredBy].isValid) {
+         console.log("Form valid", event);
+       } else {
+         console.log("Form invalid", event);
+       }
+     });
+   // On Success, can get onFieldFocus, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+ } catch (error: any) {
+     console.error("Catch error on onFieldFocus", error.code, error.message);
+ }
 ```
 
-**`Example`**
+Handling a basic onFieldFocus notify event FieldValidity
 
 ```ts
-// Example 2: Handling a specific type of field focus event
-onFieldFocus((event: FieldValidity) => {
-  // Implement your logic to handle the specific field type here
-  if (event.isValid) {
-    console.log("Form field is valid", event);
-  } else {
-   console.log("Form field is invalid", event);
-   console.log("this is error", event.errorType);
-  }
-}, fieldType: FieldTypeEnum);
+try {
+    cardInstance.onFieldFocus((event: FieldValidity) => {
+       if (event.isValid) {
+         console.log("Form field is valid", event);
+       } else {
+         console.log("Form field is invalid", event);
+         console.log("this is error", event.errorType);
+       }
+     }, FieldTypeEnum.cardholderName);
+   // On Success, can get onFieldFocus, ex. FieldValidity : { isValid: false, errorType: "empty"}
+ } catch (error: any) {
+     console.error("Catch error on onFieldFocus", error.code, error.message);
+ }
 ```
 
 #### Defined in
 
-[src/repository/ICard.ts:156](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L156)
+[src/repository/ICard.ts:172](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L172)
 
 ___
 
@@ -194,53 +215,62 @@ ___
 
 ▸ **onFieldSubmit**(`event`, `fieldType?`): `void`
 
-This event is emitted when the field has submit
+onFieldSubmit a field specify or form field
+
+This event is emitted when the field has submit, otherwise it will throw an exception
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | The function called when the form field is submitted |
-| `fieldType?` | `FieldTypeEnum` | The type of form field (optional) |
+| `fieldType?` | [`FieldTypeEnum`](../wiki/Payment#fieldtypeenum) | The type of field (optional) |
 
 #### Returns
 
 `void`
 
-**`Function`**
-
 **`Example`**
 
+Handling a basic onFieldSubmit notify event FormValidity
+
 ```ts
-// Example 1: Handling a basic form submit field
-onFieldSubmit((event: FormValidity) => {
-  // Implement your logic to handle the form submission here
-  if (event.isFormValid) {
-    console.log("Form submitted valid", event);
-  } else {
-    console.log("Form submitted invalid", event);
-  }
-});
+try {
+     cardInstance.onFieldSubmit((event: FormValidity) => {
+       // Implement your logic to handle the event FormValidity here
+       if (event.fields[event.triggeredBy].isValid) {
+         console.log("Form valid", event);
+       } else {
+         console.log("Form invalid", event);
+       }
+     });
+   // On Success, can get onFieldSubmit, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+ } catch (error: any) {
+     console.error("Catch error on onFieldSubmit", error.code, error.message);
+ }
 ```
 
-**`Example`**
+Handling a basic onFieldSubmit notify event FieldValidity
 
 ```ts
-// Example 2: Handling a specific type of field submission
-onFieldSubmit((event: FieldValidity) => {
-  // Implement your logic to handle the specific field type here
-  if (event.isValid) {
-    console.log("Form field is valid", event);
-  } else {
-   console.log("Form field is invalid", event);
-   console.log("this is error", event.errorType);
-  }
-}, fieldType: FieldTypeEnum);
+try {
+    cardInstance.onFieldSubmit((event: FieldValidity) => {
+       if (event.isValid) {
+         console.log("Form field is valid", event);
+       } else {
+         console.log("Form field is invalid", event);
+         console.log("this is error", event.errorType);
+       }
+     }, FieldTypeEnum.cardholderName);
+   // On Success, can get onFieldSubmit, ex. FieldValidity : { isValid: false, errorType: "empty"}
+ } catch (error: any) {
+     console.error("Catch error on onFieldSubmit", error.code, error.message);
+ }
 ```
 
 #### Defined in
 
-[src/repository/ICard.ts:230](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L230)
+[src/repository/ICard.ts:280](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L280)
 
 ___
 
@@ -255,7 +285,7 @@ This event is emitted when the field validity changes
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | The function called when the form field is validited |
-| `fieldType?` | `FieldTypeEnum` | The type of form field (optional) |
+| `fieldType?` | [`FieldTypeEnum`](../wiki/Payment#fieldtypeenum) | The type of form field (optional) |
 
 #### Returns
 
@@ -294,7 +324,7 @@ onFieldValidity((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:89](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L89)
+[src/repository/ICard.ts:89](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L89)
 
 ___
 
@@ -328,7 +358,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:117](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L117)
+[src/repository/ICard.ts:117](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L117)
 
 ▸ **onOTPValidation**(`onRequired`, `onError`, `onSuccess`): `void`
 
@@ -358,7 +388,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:288](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L288)
+[src/repository/ICard.ts:354](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L354)
 
 ___
 
@@ -421,7 +451,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:54](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L54)
+[src/repository/ICard.ts:54](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L54)
 
 ___
 
@@ -429,34 +459,37 @@ ___
 
 ▸ **reset**(`fieldType`): `Promise`<`void`\>
 
-Asynchronously resets a form field of the specified type to its default state
+Reset a form field
+
+This method asynchronously reset a form field of the specified type to its default state, otherwise it will throw an exception
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `fieldType` | `FieldTypeEnum` | The type of form field to reset |
+| `fieldType` | [`FieldTypeEnum`](../wiki/Payment#fieldtypeenum) | The type of field (optional) |
 
 #### Returns
 
 `Promise`<`void`\>
 
-**`Example`**
+**`Throws`**
 
-```ts
-// Example: Reset the cardholder name field
-await reset(FieldTypeEnum.cardholderName);
-console.log("Cardholder name field is now reset.");
-```
+- if the specified field type is not valid [ERRORS.E009](../wiki/Payment#errors)
 
 **`Example`**
 
 ```ts
-// Example: Reset the CVV field
-await reset(FieldTypeEnum.cvv);
-console.log("CVV field is now reset.");
+// Basic example
+try {
+   await cardInstance.reset(FieldTypeEnum.cardholderName);
+   // On Success, can reset field, ex. cardholderName empty
+ } catch (error: any) {
+     // On Error, catch response, ex. {code:"E009", message: "Error al limpiar el campo"}
+     console.error("Catch error on reset field", error.code, error.message);
+ }
 ```
 
 #### Defined in
 
-[src/repository/ICard.ts:273](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L273)
+[src/repository/ICard.ts:339](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L339)

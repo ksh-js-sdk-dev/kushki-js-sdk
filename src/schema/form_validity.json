@@ -12,6 +12,7 @@
         },
         "errorType": {
           "type": "string",
+          "description": "@group Types",
           "enum": ["empty", "invalid", "number of months required", "credit type required"]
         }
       },
@@ -24,6 +25,7 @@
     },
     "triggeredBy": {
       "title": "FieldTypeEnum",
+      "description": "@group Types",
       "type": "string",
       "enum": [
         "cardNumber",

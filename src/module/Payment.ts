@@ -9,6 +9,7 @@ import {
   Styles
 } from "types/card_options";
 import { ICard } from "repository/ICard.ts";
+import { FieldTypeEnum } from "types/form_validity";
 
 /**
  * #### Introduction
@@ -394,7 +395,8 @@ export type {
   CardOptions,
   Field,
   Amount,
-  Styles
+  Styles,
+  FieldTypeEnum
 };
 export type { CardFieldValues, FieldInstance } from "types/card_fields_values";
 export type { CardTokenResponse } from "types/card_token_response";
