@@ -69,7 +69,7 @@ init(options)
 ### &#xa0;&#xa0;&bull; Form initialization
 The following steps describes how you can init a card token instance
 #### Define the containers for the hosted fields
-Before you call the method [initCardToken](./wiki/modules/Payment.md#initcardtoken), you need create div elements for each hosted field
+Before you call the method ```initCardToken```, you need create div elements for each hosted field
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -84,7 +84,7 @@ Before you call the method [initCardToken](./wiki/modules/Payment.md#initcardtok
 </html>
 ```
 
-Then you must define a [CardOptions](./wiki/interfaces/Payment.CardOptions.md) and call the method [initCardToken](./wiki/modules/Payment.md#initcardtoken), this will render the hosted fields in your side and the user will be able to enter the card details to later finish the tokenization
+Then you must define a ```CardOptions``` and call the method ```initCardToken```, this will render the hosted fields in your side and the user will be able to enter the card details to later finish the tokenization
 ```ts
 import { IKushki, init, KushkiError } from "Kushki";
 import {
@@ -125,65 +125,9 @@ const buildCardInstance = async () => {
   }
 }
 ```
-[More Examples](./wiki/Payment.md#examples)
+[More Examples](./wiki/Payment.md)
 
 ### &#xa0;&#xa0;&bull; Styling
-If you want to give custom styles to hosted files, Kushki SDK expose the interface [Styles](./wiki/interfaces/Payment.Styles.md), so you have two ways to set your styles:
-
-- Class Css.- The interface [CssProperties](./wiki/modules/Payment.md#cssproperties) allow received a string, You can put your class CSS
-- Object [JSS](https://cssinjs.org/react-jss/?v=v10.3.0).- The interface [CssProperties](./wiki/modules/Payment.md#cssproperties) allow received an object, You can put your object with all CSS properties
-
-**Note**: You could combine both options, some attributes of [Styles](./wiki/interfaces/Payment.Styles.md) can be classes CSS and others be a object.
-
-#### CSS class
-You cloud use class CSS from: local CSS file or framework CSS. In this example the classes was declared in local CSS file.
-
-```css
-.kushki-hosted-field-label {
-    color: red;
-}
-
-.kushki-hosted-field-input {
-   font-size: 14px;
-}
-```
-
-#### Define Styles object
-
-```ts
-const hostedFieldsStyles : Styles = {
-  container: { //set styles to all containers of inpus
-    display: "flex",
-  },
-  input: "kushki-hosted-field-input", //set styles to all inputs of inpus
-  label: "kushki-hosted-field-label", //set styles to all labels of inpus
-  focus: {
-    border: "1px solid #0077ff", //set styles in focus event to all inputs
-  },
-  cardNumber:  { //overwrite input styles
-    color: "red",
-    width: "400px",
-    "&:focus": {
-      borderColor: "#CD00DA"  //overwrite  focus event styles
-    }
-  } 
-}
-
-//Finally set styles values in Card options object
-const options : CardOptions = {
-    ...,
-    styles: hostedFieldsStyles, //Add new attribute with styles values
-    ...
-}
-```
-
-#### Other related articles
-- [Kushki JS - Definition of scopes for attributes of Styles](./wiki/modules/Payment.md#definition-of-attributes-scopes-of-styles)
-- [Kushki JS - Example.- Custom styles from class css](./wiki/modules/Payment.md#custom-styles-from-class-css)
-- [Kushki JS - Example.- Custom styles with JSS](./wiki/modules/Payment.md#custom-styles-with-jss)
-- [Kushki JS - Example.- Pseudo Elements with JSS](./wiki/modules/Payment.md#pseudo-elements-with-jss)
-- [JSS Documentation](https://cssinjs.org/?v=v10.3.0)
-- [CSS Pseudo-elements](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements)
 
 ### &#xa0;&#xa0;&bull; Events
 
@@ -191,14 +135,14 @@ const options : CardOptions = {
 
 ### &#xa0;&#xa0;&bull; Tokenization
 
-To get a card payment token, you should call the [`requestToken`](./wiki/Payment.ICard.md) method on your card instance that was previously initialized, this method also validates if all the fields are valid, otherwise it will throw an exception
+To get a card payment token, you should call the [`requestToken`](../wiki/Payment.ICard.md#requestToken) method on your card instance that was previously initialized, this method also validates if all the fields are valid, otherwise it will throw an exception
 
-This method returns a [`TokenResponse`](./wiki/Payment.TokenResponse.md) object that you will send to you backend and proceed with the charge of the payment
+This method returns a [`TokenResponse`](../wiki/Payment.TokenResponse.md#TokenResponse) object that you will send to you backend and proceed with the charge of the payment
 
-If the  [`initCardToken`](./wiki/Payment.md)  method was configured as subscription you should call the create subscription method on your backend, otherwise you can proceed normally with the charge method for card
+If the  [`initCardToken`](../wiki/Payment.md#initCardToken)  method was configured as subscription you should call the create subscription method on your backend, otherwise you can proceed normally with the charge method for card
 
 #### Basic Example
-This method automatically validates all merchant rules like 3DS, OTP or Sift Science
+For unique payment or subscription. This method automatically validates all merchant rules like 3DS, OTP or Sift Science
 ```ts
 try {
   const tokenResponse: TokenResponse = await cardInstance.requestToken();
@@ -216,7 +160,9 @@ If deferred data is generated, you can use this data in the charge of the paymen
 ```ts
 try {
   const tokenResponse: TokenResponse = await cardInstance.requestToken();
-  // On Success, if deferred data exist can get deferred options, ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}
+  // On Success, if deferred data exist can get deferred options
+  // For Ecuador, Mexico ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {creditType: "03", graceMonths: 2, months: 12}}
+  // For Chile, Colombia, Peru ex. {token: "a2b74b7e3cf24e368a20380f16844d16", deferred: {months: 12}}
   if(tokenResponse.deferred)
     console.log("This is a deferred options", tokenResponse.deferred)
 } catch (error: any) {
