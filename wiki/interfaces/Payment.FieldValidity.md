@@ -1,13 +1,15 @@
+[kushki-js-sdk](../README.md) / [Modules](../modules.md) / [Payment](../modules/Payment.md) / FieldValidity
+
 # Interface: FieldValidity
 
-[Payment](../wiki/Payment).FieldValidity
+[Payment](../modules/Payment.md).FieldValidity
 
 ## Table of contents
 
 ### Properties
 
-- [errorType](../wiki/Payment.FieldValidity#errortype)
-- [isValid](../wiki/Payment.FieldValidity#isvalid)
+- [errorType](Payment.FieldValidity.md#errortype)
+- [isValid](Payment.FieldValidity.md#isvalid)
 
 ## Properties
 

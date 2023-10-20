@@ -1,13 +1,15 @@
+[kushki-js-sdk](../README.md) / [Modules](../modules.md) / [Kushki](../modules/Kushki.md) / KushkiOptions
+
 # Interface: KushkiOptions
 
-[Kushki](../wiki/Kushki).KushkiOptions
+[Kushki](../modules/Kushki.md).KushkiOptions
 
 ## Table of contents
 
 ### Properties
 
-- [inTest](../wiki/Kushki.KushkiOptions#intest)
-- [publicCredentialId](../wiki/Kushki.KushkiOptions#publiccredentialid)
+- [inTest](Kushki.KushkiOptions.md#intest)
+- [publicCredentialId](Kushki.KushkiOptions.md#publiccredentialid)
 
 ## Properties
 

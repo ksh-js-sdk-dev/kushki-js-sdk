@@ -1,25 +1,27 @@
+[kushki-js-sdk](../README.md) / [Modules](../modules.md) / Kushki
+
 # Module: Kushki
 
 ## Table of contents
 
 ### Methods
 
-- [init](../wiki/Kushki#init)
+- [init](Kushki.md#init)
 
 ### Classes
 
-- [KushkiError](../wiki/Kushki.KushkiError)
+- [KushkiError](../classes/Kushki.KushkiError.md)
 
 ### Interfaces
 
-- [IKushki](../wiki/Kushki.IKushki)
-- [KushkiOptions](../wiki/Kushki.KushkiOptions)
+- [IKushki](../interfaces/Kushki.IKushki.md)
+- [KushkiOptions](../interfaces/Kushki.KushkiOptions.md)
 
 ## Methods
 
 ### init
 
-▸ **init**(`options`): `Promise`<[`IKushki`](../wiki/Kushki.IKushki)\>
+▸ **init**(`options`): `Promise`<[`IKushki`](../interfaces/Kushki.IKushki.md)\>
 
 Initializes the Kushki payment gateway with the provided options.
 
@@ -27,11 +29,11 @@ Initializes the Kushki payment gateway with the provided options.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `options` | [`KushkiOptions`](../wiki/Kushki.KushkiOptions) | The options for initializing the Kushki payment gateway. |
+| `options` | [`KushkiOptions`](../interfaces/Kushki.KushkiOptions.md) | The options for initializing the Kushki payment gateway. |
 
 #### Returns
 
-`Promise`<[`IKushki`](../wiki/Kushki.IKushki)\>
+`Promise`<[`IKushki`](../interfaces/Kushki.IKushki.md)\>
 
 A Promise that resolves to an instance of the initialized Kushki payment gateway.
 
@@ -60,4 +62,4 @@ init(options)
 
 #### Defined in
 
-[src/module/Kushki.ts:40](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/module/Kushki.ts#L40)
+[src/module/Kushki.ts:40](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9405e54/src/module/Kushki.ts#L40)

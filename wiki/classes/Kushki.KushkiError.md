@@ -1,6 +1,8 @@
+[kushki-js-sdk](../README.md) / [Modules](../modules.md) / [Kushki](../modules/Kushki.md) / KushkiError
+
 # Class: KushkiError
 
-[Kushki](../wiki/Kushki).KushkiError
+[Kushki](../modules/Kushki.md).KushkiError
 
 KushkiError Generic captured error.
 
@@ -14,21 +16,21 @@ KushkiError Generic captured error.
 
 ### Methods
 
-- [captureStackTrace](../wiki/Kushki.KushkiError#capturestacktrace)
+- [captureStackTrace](Kushki.KushkiError.md#capturestacktrace)
 
 ### Constructors
 
-- [constructor](../wiki/Kushki.KushkiError#constructor)
+- [constructor](Kushki.KushkiError.md#constructor)
 
 ### Properties
 
-- [code](../wiki/Kushki.KushkiError#code)
-- [detail](../wiki/Kushki.KushkiError#detail)
-- [message](../wiki/Kushki.KushkiError#message)
-- [name](../wiki/Kushki.KushkiError#name)
-- [stack](../wiki/Kushki.KushkiError#stack)
-- [prepareStackTrace](../wiki/Kushki.KushkiError#preparestacktrace)
-- [stackTraceLimit](../wiki/Kushki.KushkiError#stacktracelimit)
+- [code](Kushki.KushkiError.md#code)
+- [detail](Kushki.KushkiError.md#detail)
+- [message](Kushki.KushkiError.md#message)
+- [name](Kushki.KushkiError.md#name)
+- [stack](Kushki.KushkiError.md#stack)
+- [prepareStackTrace](Kushki.KushkiError.md#preparestacktrace)
+- [stackTraceLimit](Kushki.KushkiError.md#stacktracelimit)
 
 ## Methods
 
@@ -76,7 +78,7 @@ Error.constructor
 
 #### Defined in
 
-[src/infrastructure/KushkiError.ts:23](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/infrastructure/KushkiError.ts#L23)
+[src/infrastructure/KushkiError.ts:23](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9405e54/src/infrastructure/KushkiError.ts#L23)
 
 ## Properties
 
@@ -86,7 +88,7 @@ Error.constructor
 
 #### Defined in
 
-[src/infrastructure/KushkiError.ts:19](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/infrastructure/KushkiError.ts#L19)
+[src/infrastructure/KushkiError.ts:19](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9405e54/src/infrastructure/KushkiError.ts#L19)
 
 ___
 
@@ -96,7 +98,7 @@ ___
 
 #### Defined in
 
-[src/infrastructure/KushkiError.ts:21](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/infrastructure/KushkiError.ts#L21)
+[src/infrastructure/KushkiError.ts:21](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9405e54/src/infrastructure/KushkiError.ts#L21)
 
 ___
 
@@ -110,7 +112,7 @@ Error.message
 
 #### Defined in
 
-[src/infrastructure/KushkiError.ts:20](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/67f1e3a/src/infrastructure/KushkiError.ts#L20)
+[src/infrastructure/KushkiError.ts:20](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9405e54/src/infrastructure/KushkiError.ts#L20)
 
 ___
 
