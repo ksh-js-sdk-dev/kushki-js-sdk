@@ -46,7 +46,7 @@ import { ICard } from "repository/ICard.ts";
  * ```
  *
  * ###### Init card token instance
- *  - To enable normal card transaction, you need to define an amouny, currency and fields. In background this method render the hosted fields
+ *  - To enable normal card transaction, you need to define an amount, currency and fields. In background this method render the hosted fields
  * ```ts
  * import { IKushki, init, KushkiError } from "Kushki";
  * import {
@@ -192,28 +192,28 @@ import { ICard } from "repository/ICard.ts";
  * </html>
  * ```
  * ###### Definition Custom Styles
- * If you want to give custom styles to hosted files, Kushki SDK expose the interface {@link Styles}, so you have two ways to set your styles:
+ * If you want to apply custom styles to hosted files, Kushki SDK expose the interface {@link Styles}, so you have two ways to set your styles:
  *  - Class Css.- The interface {@link CssProperties} allow received a string, You can put your class CSS
  *  - Object [JSS](https://cssinjs.org/react-jss/?v=v10.3.0).- The interface {@link CssProperties} allow received an object, You can put your object with all CSS properties
  *
  *  **Notes**:
- *  - You could combine both options, some attributes of {@link Styles} can be classes CSS and others be a object.
+ *  - You could combine both options, some attributes of {@link Styles} can be classes CSS and others be a object
  *
  * ###### Definition of scopes for attributes of {@link Styles}
  *
  *  Global Scopes
- * - {@link Styles.input  | input}: set styles to all inputs except in deferred input.
- * - {@link Styles.label  | label}: set styles to all labels of inputs except in deferred input.
- * - {@link Styles.container  | container}: set styles to all containers of inputs except in deferred input.
- * - {@link Styles.focus  | focus}: set styles to state focus of inputs except in deferred input.
- * - {@link Styles.valid  | valid}:  set styles to state valid of inputs.
- * - {@link Styles.invalid  | invalid}:  set styles to state invalid of inputs.
+ * - {@link Styles.input  | input}: set styles to all inputs except in deferred input
+ * - {@link Styles.label  | label}: set styles to all labels of inputs except in deferred input
+ * - {@link Styles.container  | container}: set styles to all containers of inputs except in deferred input
+ * - {@link Styles.focus  | focus}: set styles to state focus of inputs except in deferred input
+ * - {@link Styles.valid  | valid}:  set styles to state valid of inputs
+ * - {@link Styles.invalid  | invalid}:  set styles to state invalid of inputs
  * Specific Hosted Field Input
- * - {@link Styles.cardholderName  | cardholderName}: this styles overwrite the values of input styles only to cardholderName input.
- * - {@link Styles.cardNumber  | cardNumber}: this styles overwrite the values of input styles only to cardNumber input.
- * - {@link Styles.expirationDate  | expirationDate}: this styles overwrite the values of input styles only to expirationDate input.
- * - {@link Styles.cvv  | cvv}: this styles overwrite the values of input styles only to cvv input.
- * - {@link Styles.otp  | otp}: this styles overwrite the values of input styles only to otp input.
+ * - {@link Styles.cardholderName  | cardholderName}: this styles overwrite the values of input styles only to cardholderName input
+ * - {@link Styles.cardNumber  | cardNumber}: this styles overwrite the values of input styles only to cardNumber input
+ * - {@link Styles.expirationDate  | expirationDate}: this styles overwrite the values of input styles only to expirationDate input
+ * - {@link Styles.cvv  | cvv}: this styles overwrite the values of input styles only to cvv input
+ * - {@link Styles.otp  | otp}: this styles overwrite the values of input styles only to otp input
  * - {@link Styles.deferred  | deferred}: this styles overwrite default styles, and set styles to their subcomponents with custom selectors, [more details](#md:selectors-to-set-custom-styles-to-deferred-inputs)
  *
  * ###### Custom styles from class css
@@ -351,6 +351,8 @@ import { ICard } from "repository/ICard.ts";
  *
  * ##### Enable field Deferred and set custom styles to Deferred inputs
  * Deferred Field has one checkbox and three or one select (It depends on merchant settings). If you need set a custom styles
+ * Merchants from Ecuador or Mexico have three selects: credit type, months and grace months; nevertheless, merchants from Colombia, Peru and Chile have one select: months
+ *
  * Kushki SDK expose the following selectors
  *
  * ###### Definition containers in html
@@ -369,7 +371,7 @@ import { ICard } from "repository/ICard.ts";
  * </html>
  * ```
  * ###### Selectors to set custom styles to Deferred input
- * Deferred input has styles by default, but Kushki SDK allow custom each element.
+ * Deferred input has styles by default, but Kushki SDK allow custom each element
  *
  * Follow description define scope of each custom selector
  * **Apply Styles to Select elements**
@@ -384,9 +386,9 @@ import { ICard } from "repository/ICard.ts";
  * - ```&#ksh-deferred-checkbox>label``` this selector allow custom the label of checkbox
  *
  * **Apply Styles to containers elements**
- * - ```&#ksh-deferred-creditType```: this selector allow change width, high and others properties of 'credit type' container
+ * - ```&#ksh-deferred-creditType```: this selector allow change width, high and others properties of 'credit type' container. Just enable to merchants of Ecuador and Mexico
  * - ```&#ksh-deferred-months```: this selector allow change width, high and others properties of 'months' container
- * - ```&#ksh-deferred-graceMonths```: this selector allow change width, high and others properties of 'grace months' container
+ * - ```&#ksh-deferred-graceMonths```: this selector allow change width, high and others properties of 'grace months' container. Just enable to merchants of Ecuador and Mexico
  *
  *
  * ```ts
