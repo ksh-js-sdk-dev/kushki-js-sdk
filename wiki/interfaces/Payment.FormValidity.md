@@ -24,7 +24,7 @@
 
 #### Defined in
 
-types/form_validity.d.ts:8
+types/form_validity.d.ts:11
 
 ___
 
@@ -34,14 +34,14 @@ ___
 
 #### Defined in
 
-types/form_validity.d.ts:6
+types/form_validity.d.ts:9
 
 ___
 
 ### triggeredBy
 
-• `Optional` **triggeredBy**: `FieldTypeEnum`
+• `Optional` **triggeredBy**: [`FieldTypeEnum`](../modules/Payment.md#fieldtypeenum)
 
 #### Defined in
 
-types/form_validity.d.ts:7
+types/form_validity.d.ts:10

@@ -4,10 +4,6 @@
 
 [Payment](../modules/Payment.md).Styles
 
-test 1
- test 2
- test 3
-
 ## Table of contents
 
 ### Properties
@@ -33,7 +29,7 @@ test 1
 
 #### Defined in
 
-types/card_options.d.ts:97
+types/card_options.d.ts:92
 
 ___
 
@@ -43,7 +39,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:96
+types/card_options.d.ts:91
 
 ___
 
@@ -53,7 +49,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:92
+types/card_options.d.ts:87
 
 ___
 
@@ -63,7 +59,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:99
+types/card_options.d.ts:94
 
 ___
 
@@ -73,7 +69,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:100
+types/card_options.d.ts:95
 
 ___
 
@@ -83,7 +79,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:98
+types/card_options.d.ts:93
 
 ___
 
@@ -93,7 +89,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:93
+types/card_options.d.ts:88
 
 ___
 
@@ -103,7 +99,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:90
+types/card_options.d.ts:85
 
 ___
 
@@ -113,7 +109,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:95
+types/card_options.d.ts:90
 
 ___
 
@@ -123,7 +119,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:91
+types/card_options.d.ts:86
 
 ___
 
@@ -133,7 +129,7 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:101
+types/card_options.d.ts:96
 
 ___
 
@@ -143,4 +139,4 @@ ___
 
 #### Defined in
 
-types/card_options.d.ts:94
+types/card_options.d.ts:89

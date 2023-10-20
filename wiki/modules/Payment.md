@@ -12,6 +12,7 @@
 
 - [CssProperties](Payment.md#cssproperties)
 - [Currency](Payment.md#currency)
+- [FieldTypeEnum](Payment.md#fieldtypeenum)
 
 ### Card Interface
 
@@ -559,7 +560,7 @@ const buildCardInstance = async () => {
 
 #### Defined in
 
-[src/module/Payment.ts:524](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9405e54/src/module/Payment.ts#L524)
+[src/module/Payment.ts:525](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4f72c4a/src/module/Payment.ts#L525)
 
 ## Types
 
@@ -580,6 +581,16 @@ ___
 #### Defined in
 
 types/card_options.d.ts:6
+
+___
+
+### FieldTypeEnum
+
+Ƭ **FieldTypeEnum**: ``"cardNumber"`` \| ``"cardholderName"`` \| ``"cvv"`` \| ``"deferred"`` \| ``"expirationDate"`` \| ``"otp"``
+
+#### Defined in
+
+types/form_validity.d.ts:6
 
 ## Variables
 
@@ -648,4 +659,4 @@ export const ERRORS = {
 
 #### Defined in
 
-[src/infrastructure/ErrorEnum.ts:85](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9405e54/src/infrastructure/ErrorEnum.ts#L85)
+[src/infrastructure/ErrorEnum.ts:85](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4f72c4a/src/infrastructure/ErrorEnum.ts#L85)

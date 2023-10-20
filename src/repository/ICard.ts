@@ -127,35 +127,50 @@ export interface ICard {
   /**
    * This event is emitted when the field gains focus
    *
-   * @function
-   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is focused
-   * @param {FieldTypeEnum} [fieldType] - The type of form field (optional)
-   * @returns {void}
    *
-   * @typedef {("cardNumber" | "cardholderName" | "cvv" | "deferred" | "expirationDate")} FieldTypeEnum
+   * @group Methods
+   * @param {(FormValidity | FieldValidity) => void} event - Callback is executed when the hosted field is focused
+   * @param {FieldTypeEnum} fieldType - (optional) Set type of field if you want handle event focus of specific hosted field
    *
-   * @example
-   * // Example 1: Handling a basic form focus event
-   * onFieldFocus((event: FormValidity) => {
-   *   // Implement your logic to handle the form submission here
-   *   if (event.isFormValid) {
-   *     console.log("Form submitted valid", event);
-   *   } else {
-   *     console.log("Form submitted invalid", event);
-   *   }
-   * });
+   * @returns {Promise<void>}
    *
    * @example
-   * // Example 2: Handling a specific type of field focus event
-   * onFieldFocus((event: FieldValidity) => {
-   *   // Implement your logic to handle the specific field type here
-   *   if (event.isValid) {
-   *     console.log("Form field is valid", event);
-   *   } else {
-   *    console.log("Form field is invalid", event);
-   *    console.log("this is error", event.errorType);
-   *   }
-   * }, fieldType: FieldTypeEnum);
+   * Handling events 'focus' of all hosted fields
+   *
+   * ```ts
+   * try {
+   *      cardInstance.onFieldFocus((event: FormValidity) => {
+   *        // Implement your logic to handle the event FormValidity here
+   *        if (event.fields[event.triggeredBy].isValid) {
+   *          console.log("Form valid", event);
+   *        } else {
+   *          console.log("Form invalid", event);
+   *        }
+   *      });
+   *    // On Success, can get onFieldFocus, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+   *  } catch (error: any) {
+   *      console.error("Catch error on onFieldFocus", error.code, error.message);
+   *  }
+   * ```
+   *
+   * Handling event 'focus' of an especific hosted field
+   *
+   * ```ts
+   * try {
+   *     cardInstance.onFieldFocus((event: FieldValidity) => {
+   *        if (event.isValid) {
+   *          console.log("Form field is valid", event);
+   *        } else {
+   *          console.log("Form field is invalid", event);
+   *          console.log("this is error", event.errorType);
+   *        }
+   *      }, FieldTypeEnum.cardholderName);
+   *    // On Success, can get onFieldFocus, ex. FieldValidity : { isValid: false, errorType: "empty"}
+   *  } catch (error: any) {
+   *      console.error("Catch error on onFieldFocus", error.code, error.message);
+   *  }
+   * ```
+   *
    */
   onFieldFocus(
     event: (fieldEvent: FormValidity | FieldValidity) => void,
@@ -164,35 +179,50 @@ export interface ICard {
 
   /**
    * This event is emitted when the field loses focus
-   * @function
-   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is blurred
-   * @param {FieldTypeEnum} [fieldType] - The type of form field (optional)
-   * @returns {void}
    *
-   * @typedef {("cardNumber" | "cardholderName" | "cvv" | "deferred" | "expirationDate")} FieldTypeEnum
+   * @group Methods
+   * @param {(FormValidity | FieldValidity) => void} event - Callback is executed when the hosted field is blurred
+   * @param {FieldTypeEnum} fieldType - (optional) Set type of field if you want handle event blur of specific hosted field
    *
-   * @example
-   * // Example 1: Handling a basic form blur event
-   * onFieldBlur((event: FormValidity) => {
-   *   // Implement your logic to handle the form submission here
-   *   if (event.isFormValid) {
-   *     console.log("Form submitted valid", event);
-   *   } else {
-   *     console.log("Form submitted invalid", event);
-   *   }
-   * });
+   * @returns {Promise<void>}
    *
    * @example
-   * // Example 2: Handling a specific type of field blur event
-   * onFieldBlur((event: FieldValidity) => {
-   *   // Implement your logic to handle the specific field type here
-   *   if (event.isValid) {
-   *     console.log("Form field is valid", event);
-   *   } else {
-   *    console.log("Form field is invalid", event);
-   *    console.log("this is error", event.errorType);
-   *   }
-   * }, fieldType: FieldTypeEnum);
+   * Handling events 'blur' of all hosted fields
+   *
+   * ```ts
+   * try {
+   *      cardInstance.onFieldBlur((event: FormValidity) => {
+   *        // Implement your logic to handle the event FormValidity here
+   *        if (event.fields[event.triggeredBy].isValid) {
+   *          console.log("Form valid", event);
+   *        } else {
+   *          console.log("Form invalid", event);
+   *        }
+   *      });
+   *    // On Success, can get onFieldBlur, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+   *  } catch (error: any) {
+   *      console.error("Catch error on onFieldBlur", error.code, error.message);
+   *  }
+   * ```
+   *
+   * Handling event 'blur' of an especific hosted field
+   *
+   * ```ts
+   * try {
+   *     cardInstance.onFieldBlur((event: FieldValidity) => {
+   *        if (event.isValid) {
+   *          console.log("Form field is valid", event);
+   *        } else {
+   *          console.log("Form field is invalid", event);
+   *          console.log("this is error", event.errorType);
+   *        }
+   *      }, FieldTypeEnum.cardholderName);
+   *    // On Success, can get onFieldBlur, ex. FieldValidity : { isValid: false, errorType: "empty"}
+   *  } catch (error: any) {
+   *      console.error("Catch error on onFieldBlur", error.code, error.message);
+   *  }
+   * ```
+   *
    */
   onFieldBlur(
     event: (fieldEvent: FormValidity | FieldValidity) => void,
@@ -200,36 +230,51 @@ export interface ICard {
   ): void;
 
   /**
-   * This event is emitted when the field has submit
-   * @function
-   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is submitted
-   * @param {FieldTypeEnum} [fieldType] - The type of form field (optional)
-   * @returns {void}
+   * This event is emitted when the field has submit.
    *
-   * @typedef {("cardNumber" | "cardholderName" | "cvv" | "deferred" | "expirationDate")} FieldTypeEnum
+   * @group Methods
+   * @param {(FormValidity | FieldValidity) => void} event - Callback is executed when the hosted field is submitted
+   * @param {FieldTypeEnum} fieldType - (optional) Set type of field if you want handle event submit of specific hosted field
    *
-   * @example
-   * // Example 1: Handling a basic form submit field
-   * onFieldSubmit((event: FormValidity) => {
-   *   // Implement your logic to handle the form submission here
-   *   if (event.isFormValid) {
-   *     console.log("Form submitted valid", event);
-   *   } else {
-   *     console.log("Form submitted invalid", event);
-   *   }
-   * });
+   * @returns {Promise<void>}
    *
    * @example
-   * // Example 2: Handling a specific type of field submission
-   * onFieldSubmit((event: FieldValidity) => {
-   *   // Implement your logic to handle the specific field type here
-   *   if (event.isValid) {
-   *     console.log("Form field is valid", event);
-   *   } else {
-   *    console.log("Form field is invalid", event);
-   *    console.log("this is error", event.errorType);
-   *   }
-   * }, fieldType: FieldTypeEnum);
+   * Handling events 'submit' of all hosted fields
+   *
+   * ```ts
+   * try {
+   *      cardInstance.onFieldSubmit((event: FormValidity) => {
+   *        // Implement your logic to handle the event FormValidity here
+   *        if (event.fields[event.triggeredBy].isValid) {
+   *          console.log("Form valid", event);
+   *        } else {
+   *          console.log("Form invalid", event);
+   *        }
+   *      });
+   *    // On Success, can get onFieldSubmit, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+   *  } catch (error: any) {
+   *      console.error("Catch error on onFieldSubmit", error.code, error.message);
+   *  }
+   * ```
+   *
+   * Handling event 'submit' of an especific hosted field
+   *
+   * ```ts
+   * try {
+   *     cardInstance.onFieldSubmit((event: FieldValidity) => {
+   *        if (event.isValid) {
+   *          console.log("Form field is valid", event);
+   *        } else {
+   *          console.log("Form field is invalid", event);
+   *          console.log("this is error", event.errorType);
+   *        }
+   *      }, FieldTypeEnum.cardholderName);
+   *    // On Success, can get onFieldSubmit, ex. FieldValidity : { isValid: false, errorType: "empty"}
+   *  } catch (error: any) {
+   *      console.error("Catch error on onFieldSubmit", error.code, error.message);
+   *  }
+   * ```
+   *
    */
   onFieldSubmit(
     event: (fieldEvent: FormValidity | FieldValidity) => void,
@@ -237,42 +282,58 @@ export interface ICard {
   ): void;
 
   /**
-   * Asynchronously focuses on a form field of the specified type
+   * Focus a hosted field
    *
-   * @param {FieldTypeEnum} fieldType - The type of form field to focus on
+   * This method asynchronously focus a form field of the specified type, otherwise it will throw an exception
+   *
+   * @group Methods
+   * @param {FieldTypeEnum} fieldType - The type of field (optional)
+   *
    * @returns {Promise<void>}
    *
-   * @typedef {("cardNumber" | "cardholderName" | "cvv" | "deferred" | "expirationDate")} FieldTypeEnum
+   * @throws
+   * - if the specified field type is not valid {@link ERRORS | ERRORS.E010}
    *
    * @example
-   * // Example: Focus no t on the cardholder name field
-   * await focus(FieldTypeEnum.cardholderName);
-   * console.log("Cardholder name field is now focused.");
+   * ```ts
+   * // Basic example
+   * try {
+   *    await cardInstance.focus(FieldTypeEnum.cardholderName);
+   *    // On Success, can focus field, ex. cardholderName focus
+   *  } catch (error: any) {
+   *      // On Error, catch response, ex. {code:"E010", message: "Error al realizar focus en el campo"}
+   *      console.error("Catch error on focus field", error.code, error.message);
+   *  }
+   * ```
    *
-   * @example
-   * // Example: Focus on the CVV field
-   * await focus(FieldTypeEnum.cvv);
-   * console.log("CVV field is now focused.");
    */
   focus(fieldType: FieldTypeEnum): Promise<void>;
 
   /**
-   * Asynchronously resets a form field of the specified type to its default state
+   * Reset a hosted field
    *
-   * @param {FieldTypeEnum} fieldType - The type of form field to reset
+   * This method asynchronously reset a form field of the specified type to its default state, otherwise it will throw an exception
+   *
+   * @group Methods
+   * @param {FieldTypeEnum} fieldType - The type of field (optional)
+   *
    * @returns {Promise<void>}
    *
-   * @typedef {("cardNumber" | "cardholderName" | "cvv" | "deferred" | "expirationDate")} FieldTypeEnum
+   * @throws
+   * - if the specified field type is not valid {@link ERRORS | ERRORS.E009}
    *
    * @example
-   * // Example: Reset the cardholder name field
-   * await reset(FieldTypeEnum.cardholderName);
-   * console.log("Cardholder name field is now reset.");
+   * ```ts
+   * // Basic example
+   * try {
+   *    await cardInstance.reset(FieldTypeEnum.cardholderName);
+   *    // On Success, can reset field, ex. cardholderName empty
+   *  } catch (error: any) {
+   *      // On Error, catch response, ex. {code:"E009", message: "Error al limpiar el campo"}
+   *      console.error("Catch error on reset field", error.code, error.message);
+   *  }
+   * ```
    *
-   * @example
-   * // Example: Reset the CVV field
-   * await reset(FieldTypeEnum.cvv);
-   * console.log("CVV field is now reset.");
    */
   reset(fieldType: FieldTypeEnum): Promise<void>;
 

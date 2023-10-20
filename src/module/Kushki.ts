@@ -22,20 +22,22 @@ import { KushkiError } from "infrastructure/KushkiError.ts";
  * @throws {ErrorCode} Throws an error if the initialization fails due to invalid options, network issues or public credential id undefined.
  *
  *  @example
- * // Example usage of the init function
- * const options = {
- *   publicCredentialId: 'public-merchant-id',
+ * ```ts
+ * import { IKushki, init, KushkiError } from "Kushki";
+ *
+ * const kushkiOptions : KushkiOptions = {
+ *   publicCredentialId: '<public-credential-id>',
  *   inTest: true
  * };
  *
- * init(options)
- *   .then((kushkiInstance) => {
- *     // The Kushki payment gateway is now initialized and ready to use.
- *     // You can call methods like kushkiInstance.processPayment() or kushkiInstance.refundPayment().
- *   })
- *   .catch((error) => {
- *     console.error('Error initializing Kushki:', error);
- *   });
+ * const buildKushkiInstance = async () => {
+ *   try {
+ *     const kushkiInstance : Ikushki =  await init(kushkiOptions);
+ *   } catch (e: KushkiError) {
+ *     console.error(e.message);
+ *   }
+ * }
+ * ```
  */
 const init = (options: KushkiOptions): Promise<IKushki> => Kushki.init(options);
 

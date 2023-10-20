@@ -43,30 +43,30 @@ Use a script tag inside your page to add the feature. When adding the following 
 <script src="https://cdn.kushkipagos.com/js/payment/payment.min.js"></script>
 ```
 
-## &bull; Library setup
+# Library setup
 
-Begin creating your IKushki, it will allow you to perform all the functions available in Kushki-js-sdk.
+Begin calling the method init [`init`](../wiki/Kushki.md), With an object of type [`KushkiOptions`](../wiki/Kushki.KushkiOptions.md) 
 
 ```ts
-// Example usage of the init function
-const options = {
-  apiKey: 'YOUR_API_KEY',
-  environment: 'sandbox'
+import { IKushki, init, KushkiError } from "Kushki";
+
+const kushkiOptions : KushkiOptions = {
+  publicCredentialId: '<public-credential-id>', // This corresponds to the public credential of the merchant
+  inTest: true
 };
 
-init(options)
-  .then((kushkiInstance) => {
-    // The Kushki payment gateway is now initialized and ready to use.
-    // You can call methods like kushkiInstance.processPayment() or kushkiInstance.refundPayment().
-  })
-  .catch((error) => {
-    console.error('Error initializing Kushki:', error);
-  });
+const buildKushkiInstance = async () => {
+  try {
+    const kushkiInstance : Ikushki =  await init(kushkiOptions);
+  } catch (e: KushkiError) {
+    console.error(e.message);
+  }
+}
 ```
 
-## &bull; Get a payment card token
+# Get a payment card token
 
-### &#xa0;&#xa0;&bull; Form initialization
+## &#xa0;&#xa0;&bull; Form initialization
 The following steps describes how you can init a card token instance
 #### Define the containers for the hosted fields
 Before you call the method [initCardToken](./wiki/modules/Payment.md#initcardtoken), you need create div elements for each hosted field
@@ -184,11 +184,89 @@ const options : CardOptions = {
 - [JSS Documentation](https://cssinjs.org/?v=v10.3.0)
 - [CSS Pseudo-elements](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements)
 
-### &#xa0;&#xa0;&bull; Events
+## &#xa0;&#xa0;&bull; Events
 
-### &#xa0;&#xa0;&bull; OTP Validation
+### Handling event focus on field
+This event is emitted when the field loses focus, more details [Click here](./wiki/interfaces/Payment.ICard.md?plain=1#onfieldfocus)
+```ts
+try {
+  cardInstance.onFieldFocus((event: FormValidity) => {
+    // Implement your logic to handle the event FormValidity here
+    if (event.fields[event.triggeredBy].isValid) {
+      console.log("Form valid", event);
+    } else {
+      console.log("Form invalid", event);
+    }
+  });
+  // On Success, can get onFieldFocus, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+} catch (error: any) {
+  console.error("Catch error on onFieldFocus", error.code, error.message);
+}
+```
 
-### &#xa0;&#xa0;&bull; Tokenization
+### Handling event blur on field
+This event is emitted when the field loses focus, more details [Click here](./wiki/interfaces/Payment.ICard.md?plain=1#onfieldblur)
+```ts
+try {
+  cardInstance.onFieldBlur((event: FormValidity) => {
+    // Implement your logic to handle the event FormValidity here
+    if (event.fields[event.triggeredBy].isValid) {
+      console.log("Form valid", event);
+    } else {
+      console.log("Form invalid", event);
+    }
+  });
+  // On Success, can get onFieldBlur, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+} catch (error: any) {
+  console.error("Catch error on onFieldBlur", error.code, error.message);
+}
+```
+
+### Handling event submit on field
+This event is emitted when the field has submit, more details [Click here](./wiki/interfaces/Payment.ICard.md?plain=1#onfieldsubmit)
+```ts
+try {
+  cardInstance.onFieldSubmit((event: FormValidity) => {
+    // Implement your logic to handle the event FormValidity here
+    if (event.fields[event.triggeredBy].isValid) {
+      console.log("Form valid", event);
+    } else {
+      console.log("Form invalid", event);
+    }
+  });
+  // On Success, can get onFieldSubmit, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+} catch (error: any) {
+  console.error("Catch error on onFieldSubmit", error.code, error.message);
+}
+```
+
+### Set focus a hosted field
+This method asynchronously focus a form field of the specified type, otherwise it will throw an exception, more details [Click here](./wiki/interfaces/Payment.ICard.md?plain=1#focus)
+```ts
+try {
+  await cardInstance.focus(FieldTypeEnum.cardholderName);
+  // On Success, can focus field, ex. cardholderName focus
+} catch (error: any) {
+  // On Error, catch response, ex. {code:"E010", message: "Error al realizar focus en el campo"}
+  console.error("Catch error on focus field", error.code, error.message);
+}
+```
+
+### Set Reset a hosted field
+This method asynchronously reset a form field of the specified type to its default state, otherwise it will throw an exception, more details [Click here](./wiki/interfaces/Payment.ICard.md?plain=1#reset)
+```ts
+try {
+  await cardInstance.reset(FieldTypeEnum.cardholderName);
+  // On Success, can reset field, ex. cardholderName empty
+} catch (error: any) {
+  // On Error, catch response, ex. {code:"E009", message: "Error al limpiar el campo"}
+  console.error("Catch error on reset field", error.code, error.message);
+}
+```
+
+## &#xa0;&#xa0;&bull; OTP Validation
+
+## &#xa0;&#xa0;&bull; Tokenization
 
 To get a card payment token, you should call the [`requestToken`](./wiki/Payment.ICard.md#requestToken) method on your card instance that was previously initialized, this method also validates if all the fields are valid, otherwise it will throw an exception
 
@@ -196,7 +274,7 @@ This method returns a [`TokenResponse`](./wiki/Payment.TokenResponse.md#TokenRes
 
 If the  [`initCardToken`](./wiki/Payment.md#initCardToken)  method was configured as subscription you should call the create subscription method on your backend, otherwise you can proceed normally with the charge method for card
 
-#### Basic Example
+### Basic Example
 For unique payment or subscription. This method automatically validates all merchant rules like 3DS, OTP or Sift Science
 ```ts
 try {
@@ -210,7 +288,7 @@ try {
 }
 ```
 
-#### Deferred Example
+### Deferred Example
 If deferred data is generated, you can use this data in the charge of the payment
 ```ts
 try {

@@ -1124,13 +1124,13 @@ describe("Card test", () => {
       ).toBeCalled();
     });
 
-    it("rejects with ERRORS.E008 for invalid fieldType", async () => {
+    it("rejects with ERRORS.E010 for invalid fieldType", async () => {
       const cardInstance = await initCardToken(kushki, options);
       const fieldType = "InvalidFieldType";
 
       cardInstance
         .focus(fieldType as FieldTypeEnum)
-        .catch((error) => expect(error.code).toEqual("E008"));
+        .catch((error) => expect(error.code).toEqual("E010"));
     });
   });
 });
