@@ -57,7 +57,7 @@ const HostedFields = ({
   return (
     <div className={"box-hosted-fields"}>
       {displayHostedFields && (
-        <div className="mui--text-body2 mui-text-custom">
+        <div className="mui--text-subhead mui-text-custom">
           Completar el formulario
         </div>
       )}

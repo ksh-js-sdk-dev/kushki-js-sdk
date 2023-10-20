@@ -8,9 +8,9 @@ const ButtonsDefaultInfo = ({
   disableButtons
 }: IButtonsDefaultInfoProps) => {
   const btnActiveClass: string =
-    "mui-btn mui-btn--primary mui-btn--small button-contained";
+    "mui-btn mui-btn--primary mui-btn--small button-contained config-button";
   const btnDefaultClass: string =
-    "mui-btn mui-btn--primary mui-btn--small button-outlined";
+    "mui-btn mui-btn--small button-outlined config-button";
 
   return (
     <button

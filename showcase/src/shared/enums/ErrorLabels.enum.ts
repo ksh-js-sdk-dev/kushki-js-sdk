@@ -2,11 +2,11 @@ import { InputModelEnum } from "../../../../src/infrastructure/InputModel.enum.t
 import { ErrorTypeEnum } from "../../../../src/infrastructure/ErrorTypeEnum.ts";
 
 export enum ErrorLabelsSpanishEnum {
-  CARDHOLDER_NAME_REQUIRED = "Nombre del tarjeta habiente es un campo requerido",
+  CARDHOLDER_NAME_REQUIRED = "Nombre del tarjetahabiente es un campo requerido",
   CARD_NUMBER_REQUIRED = "Número de tarjeta es un campo requerido",
   EXPIRATION_DATE_REQUIRED = "Fecha de vencimiento es un campo requerido",
   CVV_REQUIRED = "CVV es un campo requerido",
-  CARDHOLDER_NAME_INVALID = "Nombre del tarjeta habiente es inválido",
+  CARDHOLDER_NAME_INVALID = "Nombre del tarjetahabiente es inválido",
   CARD_NUMBER_INVALID = "Verifique los dígitos impresos en su tarjeta",
   EXPIRATION_DATE_INVALID = "El formato es incorrecto",
   CVV_INVALID = "El código es incorrecto",

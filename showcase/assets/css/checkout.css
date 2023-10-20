@@ -1,3 +1,7 @@
+body {
+    font-family: IBM Plex Sans,sans-serif!important;
+}
+
 .kushki-hosted-field-label {
     color: transparent;
     padding: 0;
@@ -12,7 +16,7 @@
 }
 
 .kushki-hosted-field-select {
-    font-family: IBM Plex sans-serif;
+    font-family: IBM Plex Sans,sans-serif;
     width: 375px;
     padding: 10px;
     outline: none;
@@ -29,7 +33,7 @@
 .kushki-hosted-field-container:focus-within > label {
     background: white;
     color: #6D7781;
-    font-family: Arial,Verdana,Tahoma;
+    font-family: IBM Plex Sans,sans-serif;
     font-size: 12px;
     font-weight: 400;
     left: 16px;
