@@ -78,7 +78,7 @@ Error.constructor
 
 #### Defined in
 
-[src/infrastructure/KushkiError.ts:23](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/44c6f89/src/infrastructure/KushkiError.ts#L23)
+[src/infrastructure/KushkiError.ts:23](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9405e54/src/infrastructure/KushkiError.ts#L23)
 
 ## Properties
 
@@ -88,7 +88,7 @@ Error.constructor
 
 #### Defined in
 
-[src/infrastructure/KushkiError.ts:19](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/44c6f89/src/infrastructure/KushkiError.ts#L19)
+[src/infrastructure/KushkiError.ts:19](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9405e54/src/infrastructure/KushkiError.ts#L19)
 
 ___
 
@@ -98,7 +98,7 @@ ___
 
 #### Defined in
 
-[src/infrastructure/KushkiError.ts:21](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/44c6f89/src/infrastructure/KushkiError.ts#L21)
+[src/infrastructure/KushkiError.ts:21](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9405e54/src/infrastructure/KushkiError.ts#L21)
 
 ___
 
@@ -112,7 +112,7 @@ Error.message
 
 #### Defined in
 
-[src/infrastructure/KushkiError.ts:20](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/44c6f89/src/infrastructure/KushkiError.ts#L20)
+[src/infrastructure/KushkiError.ts:20](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9405e54/src/infrastructure/KushkiError.ts#L20)
 
 ___
 

@@ -193,8 +193,8 @@ import { ICard } from "repository/ICard.ts";
  * ```
  * ###### Definition Custom Styles
  * If you want to apply custom styles to hosted files, Kushki SDK expose the interface {@link Styles}, so you have two ways to set your styles:
- *  - Class Css.- The interface {@link CssProperties} allow received a string, You can put your class CSS
- *  - Object [JSS](https://cssinjs.org/react-jss/?v=v10.3.0).- The interface {@link CssProperties} allow received an object, You can put your object with all CSS properties
+ *  - Css Classes.- The interface {@link CssProperties} allows to receive a string, so you can configure a CSS class of your site
+ *  - [JSS](https://cssinjs.org/react-jss/?v=v10.3.0) Object.- The interface {@link CssProperties} allows to receive an object, so you can configure custom CSS styles
  *
  *  **Notes**:
  *  - You could combine both options, some attributes of {@link Styles} can be classes CSS and others be a object
@@ -287,7 +287,7 @@ import { ICard } from "repository/ICard.ts";
  *   cardNumber:  { //overwrite input styles
  *     color "red",
  *     width: "400px",
- *     "&:focus": {
+ *     "&:focus": { // this way you can configure styles for an specific field for the focus event
  *       borderColor: "#CD00DA"  //overwrite  focus event styles
  *     }
  *   }
@@ -329,14 +329,14 @@ import { ICard } from "repository/ICard.ts";
  *      expirationDate: {
  *          selector: "id_expirationDate"
  *      },
- *      otp: { //Add new attribute with otp field values
+ *      otp: { // Add new attribute with otp field values
  *       inputType: "password",
  *       label: "OTP Verification",
  *       placeholder: "OTP Verification",
  *       selector: "id_otp"
  *     }
  *   },
- *   styles: hostedFieldsStyles //Add new attribute with styles values
+ *   styles: hostedFieldsStyles // Add new attribute with styles values
  * }
  *
  * const buildCardInstance = async () => {

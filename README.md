@@ -69,7 +69,7 @@ init(options)
 ### &#xa0;&#xa0;&bull; Form initialization
 The following steps describes how you can init a card token instance
 #### Define the containers for the hosted fields
-Before you call the method ```initCardToken```, you need create div elements for each hosted field
+Before you call the method [initCardToken](./wiki/modules/Payment.md#initcardtoken), you need create div elements for each hosted field
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -84,7 +84,7 @@ Before you call the method ```initCardToken```, you need create div elements for
 </html>
 ```
 
-Then you must define a ```CardOptions``` and call the method ```initCardToken```, this will render the hosted fields in your side and the user will be able to enter the card details to later finish the tokenization
+Then you must define a [CardOptions](./wiki/interfaces/Payment.CardOptions.md) and call the method [initCardToken](./wiki/modules/Payment.md#initcardtoken), this will render the hosted fields in your side and the user will be able to enter the card details to later finish the tokenization
 ```ts
 import { IKushki, init, KushkiError } from "Kushki";
 import {
@@ -125,9 +125,64 @@ const buildCardInstance = async () => {
   }
 }
 ```
-[More Examples](./wiki/Payment.md)
+[More Examples](./wiki/Payment.md#examples)
 
 ### &#xa0;&#xa0;&bull; Styling
+If you want to give custom styles to hosted files, the interface [Styles](./wiki/interfaces/Payment.Styles.md) is exposed, so you have two ways:
+ - Css Classes.- The interface [CssProperties](./wiki/modules/Payment.md#cssproperties) allows to receive a string, so you can configure a CSS class of your site
+ - [JSS](https://cssinjs.org/react-jss/?v=v10.3.0) Object.- The interface [CssProperties](./wiki/modules/Payment.md#cssproperties) allows to receive an object, so you can configure custom CSS styles
+
+**Notes**: You could combine both options, some attributes of [Styles](./wiki/interfaces/Payment.Styles.md) can be classes CSS and others be a object
+
+#### CSS class
+You cloud use class CSS from: local CSS file or framework CSS. In this example the classes was declared in local CSS file.
+
+```css
+.kushki-hosted-field-label {
+    color: red;
+}
+
+.kushki-hosted-field-input {
+   font-size: 14px;
+}
+```
+
+#### Define Styles object
+
+```ts
+const hostedFieldsStyles : Styles = {
+  container: { //set styles to all containers of inpus
+    display: "flex",
+  },
+  input: "kushki-hosted-field-input", //set styles to all inputs of inpus
+  label: "kushki-hosted-field-label", //set styles to all labels of inpus
+  focus: {
+    border: "1px solid #0077ff", //set styles in focus event to all inputs
+  },
+  cardNumber:  { //overwrite input styles
+    color: "red",
+    width: "400px",
+    "&:focus": { // this way you can configure styles for an specific field for the focus event
+      borderColor: "#CD00DA"  //overwrite  focus event styles
+    }
+  } 
+}
+
+//Finally set styles values in Card options object
+const options : CardOptions = {
+    ...,
+    styles: hostedFieldsStyles, //Add new attribute with styles values
+    ...
+}
+```
+
+#### Other related articles
+- [Kushki JS - Definition of scopes for attributes of Styles](./wiki/modules/Payment.md#definition-of-attributes-scopes-of-styles)
+- [Kushki JS - Example.- Custom styles from class css](./wiki/modules/Payment.md#custom-styles-from-class-css)
+- [Kushki JS - Example.- Custom styles with JSS](./wiki/modules/Payment.md#custom-styles-with-jss)
+- [Kushki JS - Example.- Pseudo Elements with JSS](./wiki/modules/Payment.md#pseudo-elements-with-jss)
+- [JSS Documentation](https://cssinjs.org/?v=v10.3.0)
+- [CSS Pseudo-elements](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements)
 
 ### &#xa0;&#xa0;&bull; Events
 
@@ -135,11 +190,11 @@ const buildCardInstance = async () => {
 
 ### &#xa0;&#xa0;&bull; Tokenization
 
-To get a card payment token, you should call the [`requestToken`](../wiki/Payment.ICard.md#requestToken) method on your card instance that was previously initialized, this method also validates if all the fields are valid, otherwise it will throw an exception
+To get a card payment token, you should call the [`requestToken`](./wiki/Payment.ICard.md#requestToken) method on your card instance that was previously initialized, this method also validates if all the fields are valid, otherwise it will throw an exception
 
-This method returns a [`TokenResponse`](../wiki/Payment.TokenResponse.md#TokenResponse) object that you will send to you backend and proceed with the charge of the payment
+This method returns a [`TokenResponse`](./wiki/Payment.TokenResponse.md#TokenResponse) object that you will send to you backend and proceed with the charge of the payment
 
-If the  [`initCardToken`](../wiki/Payment.md#initCardToken)  method was configured as subscription you should call the create subscription method on your backend, otherwise you can proceed normally with the charge method for card
+If the  [`initCardToken`](./wiki/Payment.md#initCardToken)  method was configured as subscription you should call the create subscription method on your backend, otherwise you can proceed normally with the charge method for card
 
 #### Basic Example
 For unique payment or subscription. This method automatically validates all merchant rules like 3DS, OTP or Sift Science

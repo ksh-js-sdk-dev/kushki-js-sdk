@@ -84,7 +84,7 @@ Promise<ICard> - instance of ICard
 ```
 
 ###### Init card token instance
- - To enable normal card transaction, you need to define an amouny, currency and fields. In background this method render the hosted fields
+ - To enable normal card transaction, you need to define an amount, currency and fields. In background this method render the hosted fields
 ```ts
 import { IKushki, init, KushkiError } from "Kushki";
 import {
@@ -230,28 +230,28 @@ const buildCardInstance = async () => {
 </html>
 ```
 ###### Definition Custom Styles
-If you want to give custom styles to hosted files, Kushki SDK expose the interface [Styles](../interfaces/Payment.Styles.md), so you have two ways to set your styles:
- - Class Css.- The interface [CssProperties](Payment.md#cssproperties) allow received a string, You can put your class CSS
- - Object [JSS](https://cssinjs.org/react-jss/?v=v10.3.0).- The interface [CssProperties](Payment.md#cssproperties) allow received an object, You can put your object with all CSS properties
+If you want to apply custom styles to hosted files, Kushki SDK expose the interface [Styles](../interfaces/Payment.Styles.md), so you have two ways to set your styles:
+ - Css Classes.- The interface [CssProperties](Payment.md#cssproperties) allows to receive a string, so you can configure a CSS class of your site
+ - [JSS](https://cssinjs.org/react-jss/?v=v10.3.0) Object.- The interface [CssProperties](Payment.md#cssproperties) allows to receive an object, so you can configure custom CSS styles
 
  **Notes**:
- - You could combine both options, some attributes of [Styles](../interfaces/Payment.Styles.md) can be classes CSS and others be a object.
+ - You could combine both options, some attributes of [Styles](../interfaces/Payment.Styles.md) can be classes CSS and others be a object
 
 ###### Definition of scopes for attributes of [Styles](../interfaces/Payment.Styles.md)
 
  Global Scopes
-- [input](../interfaces/Payment.Styles.md#input): set styles to all inputs except in deferred input.
-- [label](../interfaces/Payment.Styles.md#label): set styles to all labels of inputs except in deferred input.
-- [container](../interfaces/Payment.Styles.md#container): set styles to all containers of inputs except in deferred input.
-- [focus](../interfaces/Payment.Styles.md#focus): set styles to state focus of inputs except in deferred input.
-- [valid](../interfaces/Payment.Styles.md#valid):  set styles to state valid of inputs.
-- [invalid](../interfaces/Payment.Styles.md#invalid):  set styles to state invalid of inputs.
+- [input](../interfaces/Payment.Styles.md#input): set styles to all inputs except in deferred input
+- [label](../interfaces/Payment.Styles.md#label): set styles to all labels of inputs except in deferred input
+- [container](../interfaces/Payment.Styles.md#container): set styles to all containers of inputs except in deferred input
+- [focus](../interfaces/Payment.Styles.md#focus): set styles to state focus of inputs except in deferred input
+- [valid](../interfaces/Payment.Styles.md#valid):  set styles to state valid of inputs
+- [invalid](../interfaces/Payment.Styles.md#invalid):  set styles to state invalid of inputs
 Specific Hosted Field Input
-- [cardholderName](../interfaces/Payment.Styles.md#cardholdername): this styles overwrite the values of input styles only to cardholderName input.
-- [cardNumber](../interfaces/Payment.Styles.md#cardnumber): this styles overwrite the values of input styles only to cardNumber input.
-- [expirationDate](../interfaces/Payment.Styles.md#expirationdate): this styles overwrite the values of input styles only to expirationDate input.
-- [cvv](../interfaces/Payment.Styles.md#cvv): this styles overwrite the values of input styles only to cvv input.
-- [otp](../interfaces/Payment.Styles.md#otp): this styles overwrite the values of input styles only to otp input.
+- [cardholderName](../interfaces/Payment.Styles.md#cardholdername): this styles overwrite the values of input styles only to cardholderName input
+- [cardNumber](../interfaces/Payment.Styles.md#cardnumber): this styles overwrite the values of input styles only to cardNumber input
+- [expirationDate](../interfaces/Payment.Styles.md#expirationdate): this styles overwrite the values of input styles only to expirationDate input
+- [cvv](../interfaces/Payment.Styles.md#cvv): this styles overwrite the values of input styles only to cvv input
+- [otp](../interfaces/Payment.Styles.md#otp): this styles overwrite the values of input styles only to otp input
 - [deferred](../interfaces/Payment.Styles.md#deferred): this styles overwrite default styles, and set styles to their subcomponents with custom selectors, [more details](#md:selectors-to-set-custom-styles-to-deferred-inputs)
 
 ###### Custom styles from class css
@@ -325,7 +325,7 @@ const hostedFieldsStyles : Styles = {
   cardNumber:  { //overwrite input styles
     color "red",
     width: "400px",
-    "&:focus": {
+    "&:focus": { // this way you can configure styles for an specific field for the focus event
       borderColor: "#CD00DA"  //overwrite  focus event styles
     }
   }
@@ -367,14 +367,14 @@ const options : CardOptions = {
      expirationDate: {
          selector: "id_expirationDate"
      },
-     otp: { //Add new attribute with otp field values
+     otp: { // Add new attribute with otp field values
       inputType: "password",
       label: "OTP Verification",
       placeholder: "OTP Verification",
       selector: "id_otp"
     }
   },
-  styles: hostedFieldsStyles //Add new attribute with styles values
+  styles: hostedFieldsStyles // Add new attribute with styles values
 }
 
 const buildCardInstance = async () => {
@@ -389,6 +389,8 @@ const buildCardInstance = async () => {
 
 ##### Enable field Deferred and set custom styles to Deferred inputs
 Deferred Field has one checkbox and three or one select (It depends on merchant settings). If you need set a custom styles
+Merchants from Ecuador or Mexico have three selects: credit type, months and grace months; nevertheless, merchants from Colombia, Peru and Chile have one select: months
+
 Kushki SDK expose the following selectors
 
 ###### Definition containers in html
@@ -407,7 +409,7 @@ Kushki SDK expose the following selectors
 </html>
 ```
 ###### Selectors to set custom styles to Deferred input
-Deferred input has styles by default, but Kushki SDK allow custom each element.
+Deferred input has styles by default, but Kushki SDK allow custom each element
 
 Follow description define scope of each custom selector
 **Apply Styles to Select elements**
@@ -422,9 +424,9 @@ Follow description define scope of each custom selector
 - ```&#ksh-deferred-checkbox>label``` this selector allow custom the label of checkbox
 
 **Apply Styles to containers elements**
-- ```&#ksh-deferred-creditType```: this selector allow change width, high and others properties of 'credit type' container
+- ```&#ksh-deferred-creditType```: this selector allow change width, high and others properties of 'credit type' container. Just enable to merchants of Ecuador and Mexico
 - ```&#ksh-deferred-months```: this selector allow change width, high and others properties of 'months' container
-- ```&#ksh-deferred-graceMonths```: this selector allow change width, high and others properties of 'grace months' container
+- ```&#ksh-deferred-graceMonths```: this selector allow change width, high and others properties of 'grace months' container. Just enable to merchants of Ecuador and Mexico
 
 ```ts
 const hostedFieldsStyles : Styles = {
@@ -557,7 +559,7 @@ const buildCardInstance = async () => {
 
 #### Defined in
 
-[src/module/Payment.ts:522](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/44c6f89/src/module/Payment.ts#L522)
+[src/module/Payment.ts:524](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9405e54/src/module/Payment.ts#L524)
 
 ## Types
 
@@ -646,4 +648,4 @@ export const ERRORS = {
 
 #### Defined in
 
-[src/infrastructure/ErrorEnum.ts:85](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/44c6f89/src/infrastructure/ErrorEnum.ts#L85)
+[src/infrastructure/ErrorEnum.ts:85](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9405e54/src/infrastructure/ErrorEnum.ts#L85)
