@@ -1,15 +1,17 @@
+[kushki-js-sdk](../README.md) / [Modules](../modules.md) / [Payment](../modules/Payment.md) / FieldInstance
+
 # Interface: FieldInstance
 
-[Payment](../wiki/Payment).FieldInstance
+[Payment](../modules/Payment.md).FieldInstance
 
 ## Table of contents
 
 ### Properties
 
-- [hostedField](../wiki/Payment.FieldInstance#hostedfield)
-- [selector](../wiki/Payment.FieldInstance#selector)
-- [validity](../wiki/Payment.FieldInstance#validity)
-- [value](../wiki/Payment.FieldInstance#value)
+- [hostedField](Payment.FieldInstance.md#hostedfield)
+- [selector](Payment.FieldInstance.md#selector)
+- [validity](Payment.FieldInstance.md#validity)
+- [value](Payment.FieldInstance.md#value)
 
 ## Properties
 

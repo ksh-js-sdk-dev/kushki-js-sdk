@@ -1,6 +1,8 @@
+[kushki-js-sdk](../README.md) / [Modules](../modules.md) / [Payment](../modules/Payment.md) / FormValidity
+
 # Interface: FormValidity
 
-[Payment](../wiki/Payment).FormValidity
+[Payment](../modules/Payment.md).FormValidity
 
 ## Indexable
 
@@ -10,15 +12,15 @@
 
 ### Properties
 
-- [fields](../wiki/Payment.FormValidity#fields)
-- [isFormValid](../wiki/Payment.FormValidity#isformvalid)
-- [triggeredBy](../wiki/Payment.FormValidity#triggeredby)
+- [fields](Payment.FormValidity.md#fields)
+- [isFormValid](Payment.FormValidity.md#isformvalid)
+- [triggeredBy](Payment.FormValidity.md#triggeredby)
 
 ## Properties
 
 ### fields
 
-• **fields**: [`Fields`](../wiki/Payment.Fields)
+• **fields**: [`Fields`](Payment.Fields.md)
 
 #### Defined in
 

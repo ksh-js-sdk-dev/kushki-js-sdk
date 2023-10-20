@@ -1,22 +1,24 @@
+[kushki-js-sdk](../README.md) / [Modules](../modules.md) / [Payment](../modules/Payment.md) / ICard
+
 # Interface: ICard
 
-[Payment](../wiki/Payment).ICard
+[Payment](../modules/Payment.md).ICard
 
-This interface contains all methods to use when resolve [initCardToken](../wiki/Payment#initcardtoken)
+This interface contains all methods to use when resolve [initCardToken](../modules/Payment.md#initcardtoken)
 
 ## Table of contents
 
 ### Methods
 
-- [focus](../wiki/Payment.ICard#focus)
-- [getFormValidity](../wiki/Payment.ICard#getformvalidity)
-- [onFieldBlur](../wiki/Payment.ICard#onfieldblur)
-- [onFieldFocus](../wiki/Payment.ICard#onfieldfocus)
-- [onFieldSubmit](../wiki/Payment.ICard#onfieldsubmit)
-- [onFieldValidity](../wiki/Payment.ICard#onfieldvalidity)
-- [onOTPValidation](../wiki/Payment.ICard#onotpvalidation)
-- [requestToken](../wiki/Payment.ICard#requesttoken)
-- [reset](../wiki/Payment.ICard#reset)
+- [focus](Payment.ICard.md#focus)
+- [getFormValidity](Payment.ICard.md#getformvalidity)
+- [onFieldBlur](Payment.ICard.md#onfieldblur)
+- [onFieldFocus](Payment.ICard.md#onfieldfocus)
+- [onFieldSubmit](Payment.ICard.md#onfieldsubmit)
+- [onFieldValidity](Payment.ICard.md#onfieldvalidity)
+- [onOTPValidation](Payment.ICard.md#onotpvalidation)
+- [requestToken](Payment.ICard.md#requesttoken)
+- [reset](Payment.ICard.md#reset)
 
 ## Methods
 
@@ -54,19 +56,19 @@ console.log("CVV field is now focused.");
 
 #### Defined in
 
-[src/repository/ICard.ts:253](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L253)
+[src/repository/ICard.ts:253](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L253)
 
 ___
 
 ### getFormValidity
 
-▸ **getFormValidity**(): [`FormValidity`](../wiki/Payment.FormValidity)
+▸ **getFormValidity**(): [`FormValidity`](Payment.FormValidity.md)
 
-This function returns an [FormValidity](../wiki/Payment.FormValidity) that represents the validation state of all fields
+This function returns an [FormValidity](Payment.FormValidity.md) that represents the validation state of all fields
 
 #### Returns
 
-[`FormValidity`](../wiki/Payment.FormValidity)
+[`FormValidity`](Payment.FormValidity.md)
 
 FormValidity object with form inputs information validation
 
@@ -78,7 +80,7 @@ cardInstance.getFormValidity();
 
 #### Defined in
 
-[src/repository/ICard.ts:102](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L102)
+[src/repository/ICard.ts:102](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L102)
 
 ___
 
@@ -92,7 +94,7 @@ This event is emitted when the field loses focus
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | The function called when the form field is blurred |
+| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](Payment.FormValidity.md)) => `void` | The function called when the form field is blurred |
 | `fieldType?` | `FieldTypeEnum` | The type of form field (optional) |
 
 #### Returns
@@ -132,7 +134,7 @@ onFieldBlur((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:193](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L193)
+[src/repository/ICard.ts:193](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L193)
 
 ___
 
@@ -146,7 +148,7 @@ This event is emitted when the field gains focus
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | The function called when the form field is focused |
+| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](Payment.FormValidity.md)) => `void` | The function called when the form field is focused |
 | `fieldType?` | `FieldTypeEnum` | The type of form field (optional) |
 
 #### Returns
@@ -186,7 +188,7 @@ onFieldFocus((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:156](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L156)
+[src/repository/ICard.ts:156](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L156)
 
 ___
 
@@ -200,7 +202,7 @@ This event is emitted when the field has submit
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | The function called when the form field is submitted |
+| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](Payment.FormValidity.md)) => `void` | The function called when the form field is submitted |
 | `fieldType?` | `FieldTypeEnum` | The type of form field (optional) |
 
 #### Returns
@@ -240,7 +242,7 @@ onFieldSubmit((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:230](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L230)
+[src/repository/ICard.ts:230](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L230)
 
 ___
 
@@ -254,7 +256,7 @@ This event is emitted when the field validity changes
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](../wiki/Payment.FormValidity)) => `void` | The function called when the form field is validited |
+| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](Payment.FormValidity.md)) => `void` | The function called when the form field is validited |
 | `fieldType?` | `FieldTypeEnum` | The type of form field (optional) |
 
 #### Returns
@@ -294,7 +296,7 @@ onFieldValidity((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:89](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L89)
+[src/repository/ICard.ts:89](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L89)
 
 ___
 
@@ -328,7 +330,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:117](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L117)
+[src/repository/ICard.ts:117](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L117)
 
 ▸ **onOTPValidation**(`onRequired`, `onError`, `onSuccess`): `void`
 
@@ -358,13 +360,13 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:288](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L288)
+[src/repository/ICard.ts:288](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L288)
 
 ___
 
 ### requestToken
 
-▸ **requestToken**(): `Promise`<[`TokenResponse`](../wiki/Payment.TokenResponse)\>
+▸ **requestToken**(): `Promise`<[`TokenResponse`](Payment.TokenResponse.md)\>
 
 Get a card payment token
 
@@ -374,20 +376,20 @@ If the merchant is configured with OTP, 3DS or SiftScience rules, this method au
 
 #### Returns
 
-`Promise`<[`TokenResponse`](../wiki/Payment.TokenResponse)\>
+`Promise`<[`TokenResponse`](Payment.TokenResponse.md)\>
 
 TokenResponse object with token, if deferred info exists return this data
 
 **`Throws`**
 
 KushkiErrorResponse object with code and message of error
-- if error on request card token endpoint then throw [ERRORS.E002](../wiki/Payment#errors)
-- if error on request merchant settings endpoint, then throw [ERRORS.E003](../wiki/Payment#errors)
-- if merchant is configured with 3DS rule and error on request JWT endpoint, then throw [ERRORS.E004](../wiki/Payment#errors)
-- if merchant is configured with 3DS rule and error on 3DS authentication, then throw [ERRORS.E005](../wiki/Payment#errors)
-- if merchant is configured with 3DS rule and error on 3DS session validation, then throw [ERRORS.E006](../wiki/Payment#errors)
-- if any hosted field is invalid, then throw [ERRORS.E007](../wiki/Payment#errors)
-- if merchant is configured with OTP rule and error on OTP validation, then throw [ERRORS.E008](../wiki/Payment#errors)
+- if error on request card token endpoint then throw [ERRORS.E002](../modules/Payment.md#errors)
+- if error on request merchant settings endpoint, then throw [ERRORS.E003](../modules/Payment.md#errors)
+- if merchant is configured with 3DS rule and error on request JWT endpoint, then throw [ERRORS.E004](../modules/Payment.md#errors)
+- if merchant is configured with 3DS rule and error on 3DS authentication, then throw [ERRORS.E005](../modules/Payment.md#errors)
+- if merchant is configured with 3DS rule and error on 3DS session validation, then throw [ERRORS.E006](../modules/Payment.md#errors)
+- if any hosted field is invalid, then throw [ERRORS.E007](../modules/Payment.md#errors)
+- if merchant is configured with OTP rule and error on OTP validation, then throw [ERRORS.E008](../modules/Payment.md#errors)
 
 **`Example`**
 
@@ -421,7 +423,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:54](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L54)
+[src/repository/ICard.ts:54](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L54)
 
 ___
 
@@ -459,4 +461,4 @@ console.log("CVV field is now reset.");
 
 #### Defined in
 
-[src/repository/ICard.ts:273](https://github.com/ksh-sdk-js/kushki-js-sdk/blob/ce25441/src/repository/ICard.ts#L273)
+[src/repository/ICard.ts:273](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/58b0a1b/src/repository/ICard.ts#L273)
