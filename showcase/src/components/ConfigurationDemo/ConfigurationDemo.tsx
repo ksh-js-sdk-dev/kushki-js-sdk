@@ -176,10 +176,13 @@ const ConfigurationDemo = ({
           valueInput={inputMerchantId}
           label={"Merchant ID"}
         />
-
         <div className="mui-select divContainer">
           <select
-            className={"selectExample"}
+            className={
+              inputCurrency
+                ? "selectExample selectLabelSelected"
+                : "selectExample selectLabelEmpty"
+            }
             disabled={disableInputPrev}
             onChange={(e) => {
               setInputCurrency(e.target.value as Currency);

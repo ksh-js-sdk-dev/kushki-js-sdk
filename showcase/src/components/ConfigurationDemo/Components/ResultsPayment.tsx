@@ -38,7 +38,7 @@ const ResultsPayment = ({
               "mui-btn mui-btn--primary mui-btn--small button-border button-pay"
             }
             data-testid="tokenRequestBtn"
-            onClick={() => getToken()}
+            onClick={getToken}
             disabled={errorHostedFields || disablePaymentButton}
           >
             Pagar
