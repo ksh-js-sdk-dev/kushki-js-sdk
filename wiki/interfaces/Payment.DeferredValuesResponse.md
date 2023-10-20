@@ -1,6 +1,8 @@
+[kushki-js-sdk](../README.md) / [Modules](../modules.md) / [Payment](../modules/Payment.md) / DeferredValuesResponse
+
 # Interface: DeferredValuesResponse
 
-[Payment](../wiki/Payment).DeferredValuesResponse
+[Payment](../modules/Payment.md).DeferredValuesResponse
 
 Contains the deferred params data that was collected in the form with the hosted fields
 
@@ -8,9 +10,9 @@ Contains the deferred params data that was collected in the form with the hosted
 
 ### Properties
 
-- [creditType](../wiki/Payment.DeferredValuesResponse#credittype)
-- [graceMonths](../wiki/Payment.DeferredValuesResponse#gracemonths)
-- [months](../wiki/Payment.DeferredValuesResponse#months)
+- [creditType](Payment.DeferredValuesResponse.md#credittype)
+- [graceMonths](Payment.DeferredValuesResponse.md#gracemonths)
+- [months](Payment.DeferredValuesResponse.md#months)
 
 ## Properties
 

@@ -1,6 +1,8 @@
+[kushki-js-sdk](../README.md) / [Modules](../modules.md) / [Payment](../modules/Payment.md) / DeferredByBinOptionsResponse
+
 # Interface: DeferredByBinOptionsResponse
 
-[Payment](../wiki/Payment).DeferredByBinOptionsResponse
+[Payment](../modules/Payment.md).DeferredByBinOptionsResponse
 
 ## Indexable
 
@@ -10,10 +12,10 @@
 
 ### Properties
 
-- [months](../wiki/Payment.DeferredByBinOptionsResponse#months)
-- [monthsOfGrace](../wiki/Payment.DeferredByBinOptionsResponse#monthsofgrace)
-- [name](../wiki/Payment.DeferredByBinOptionsResponse#name)
-- [type](../wiki/Payment.DeferredByBinOptionsResponse#type)
+- [months](Payment.DeferredByBinOptionsResponse.md#months)
+- [monthsOfGrace](Payment.DeferredByBinOptionsResponse.md#monthsofgrace)
+- [name](Payment.DeferredByBinOptionsResponse.md#name)
+- [type](Payment.DeferredByBinOptionsResponse.md#type)
 
 ## Properties
 

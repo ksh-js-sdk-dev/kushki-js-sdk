@@ -98,6 +98,7 @@ export const CheckoutContainer = () => {
     if (cardInstance) {
       try {
         setDisablePaymentButton(true);
+        setToken("");
         const token: TokenResponse = await cardInstance.requestToken();
 
         setToken(token.token);

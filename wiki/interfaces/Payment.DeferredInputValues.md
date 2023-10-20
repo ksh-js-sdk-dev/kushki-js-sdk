@@ -1,14 +1,16 @@
+[kushki-js-sdk](../README.md) / [Modules](../modules.md) / [Payment](../modules/Payment.md) / DeferredInputValues
+
 # Interface: DeferredInputValues
 
-[Payment](../wiki/Payment).DeferredInputValues
+[Payment](../modules/Payment.md).DeferredInputValues
 
 ## Table of contents
 
 ### Properties
 
-- [creditType](../wiki/Payment.DeferredInputValues#credittype)
-- [graceMonths](../wiki/Payment.DeferredInputValues#gracemonths)
-- [months](../wiki/Payment.DeferredInputValues#months)
+- [creditType](Payment.DeferredInputValues.md#credittype)
+- [graceMonths](Payment.DeferredInputValues.md#gracemonths)
+- [months](Payment.DeferredInputValues.md#months)
 
 ## Properties
 

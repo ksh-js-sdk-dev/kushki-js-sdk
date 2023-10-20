@@ -1,6 +1,8 @@
+[kushki-js-sdk](../README.md) / [Modules](../modules.md) / [Payment](../modules/Payment.md) / TokenResponse
+
 # Interface: TokenResponse
 
-[Payment](../wiki/Payment).TokenResponse
+[Payment](../modules/Payment.md).TokenResponse
 
 Contains the card token, and the deferred value if it exists
 
@@ -8,14 +10,14 @@ Contains the card token, and the deferred value if it exists
 
 ### Properties
 
-- [deferred](../wiki/Payment.TokenResponse#deferred)
-- [token](../wiki/Payment.TokenResponse#token)
+- [deferred](Payment.TokenResponse.md#deferred)
+- [token](Payment.TokenResponse.md#token)
 
 ## Properties
 
 ### deferred
 
-• `Optional` **deferred**: [`DeferredValuesResponse`](../wiki/Payment.DeferredValuesResponse)
+• `Optional` **deferred**: [`DeferredValuesResponse`](Payment.DeferredValuesResponse.md)
 
 #### Defined in
 

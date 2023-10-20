@@ -1,16 +1,18 @@
+[kushki-js-sdk](../README.md) / [Modules](../modules.md) / [Payment](../modules/Payment.md) / CardTokenResponse
+
 # Interface: CardTokenResponse
 
-[Payment](../wiki/Payment).CardTokenResponse
+[Payment](../modules/Payment.md).CardTokenResponse
 
 ## Table of contents
 
 ### Properties
 
-- [secureId](../wiki/Payment.CardTokenResponse#secureid)
-- [secureService](../wiki/Payment.CardTokenResponse#secureservice)
-- [security](../wiki/Payment.CardTokenResponse#security)
-- [settlement](../wiki/Payment.CardTokenResponse#settlement)
-- [token](../wiki/Payment.CardTokenResponse#token)
+- [secureId](Payment.CardTokenResponse.md#secureid)
+- [secureService](Payment.CardTokenResponse.md#secureservice)
+- [security](Payment.CardTokenResponse.md#security)
+- [settlement](Payment.CardTokenResponse.md#settlement)
+- [token](Payment.CardTokenResponse.md#token)
 
 ## Properties
 

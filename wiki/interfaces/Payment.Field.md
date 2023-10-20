@@ -1,19 +1,21 @@
+[kushki-js-sdk](../README.md) / [Modules](../modules.md) / [Payment](../modules/Payment.md) / Field
+
 # Interface: Field
 
-[Payment](../wiki/Payment).Field
+[Payment](../modules/Payment.md).Field
 
 ## Table of contents
 
 ### Properties
 
-- [defaultValue](../wiki/Payment.Field#defaultvalue)
-- [deferredInputs](../wiki/Payment.Field#deferredinputs)
-- [hiddenLabel](../wiki/Payment.Field#hiddenlabel)
-- [inputType](../wiki/Payment.Field#inputtype)
-- [label](../wiki/Payment.Field#label)
-- [maxCardLength](../wiki/Payment.Field#maxcardlength)
-- [placeholder](../wiki/Payment.Field#placeholder)
-- [selector](../wiki/Payment.Field#selector)
+- [defaultValue](Payment.Field.md#defaultvalue)
+- [deferredInputs](Payment.Field.md#deferredinputs)
+- [hiddenLabel](Payment.Field.md#hiddenlabel)
+- [inputType](Payment.Field.md#inputtype)
+- [label](Payment.Field.md#label)
+- [maxCardLength](Payment.Field.md#maxcardlength)
+- [placeholder](Payment.Field.md#placeholder)
+- [selector](Payment.Field.md#selector)
 
 ## Properties
 

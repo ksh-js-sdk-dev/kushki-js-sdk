@@ -9,4 +9,4 @@ npx typedoc --options ./config/docs/typedoc-html.json
 
 echo '** CREATE MARKDOWN DOCS **'
 
-npx typedoc --options ./config/docs/typedoc-html.json --out wiki --plugin typedoc-plugin-markdown --plugin typedoc-github-wiki-theme
+npx typedoc --options ./config/docs/typedoc-html.json --out wiki --plugin typedoc-plugin-markdown
