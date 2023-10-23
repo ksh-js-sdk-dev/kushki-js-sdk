@@ -22,7 +22,7 @@ import { FieldTypeEnum } from "types/form_validity";
  * - if transaction is {@link CardOptions.isSubscription | subscription} (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields)
  * - if you want to  {@link CardOptions.preventAutofill | prevent autofill}  fields (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields)
  * - Set Custom {@link Field | Fields}, [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields)
- * - Set custom {@link Styles | Styles}, [example](#md:to-start-with-it-necessary-define-style-object)
+ * - Set custom {@link Styles | Styles}, [example](#md:definition-custom-styles)
  * @returns Promise<ICard> - instance of ICard
  * @throws
  *  - if params: `options` or `kushkiInstance` are null or undefined then throw {@link ERRORS | ERRORS.E012}
@@ -209,13 +209,15 @@ import { FieldTypeEnum } from "types/form_validity";
  * - {@link Styles.focus  | focus}: set styles to state focus of inputs except in deferred input
  * - {@link Styles.valid  | valid}:  set styles to state valid of inputs
  * - {@link Styles.invalid  | invalid}:  set styles to state invalid of inputs
+ *
  * Specific Hosted Field Input
+ *
  * - {@link Styles.cardholderName  | cardholderName}: this styles overwrite the values of input styles only to cardholderName input
  * - {@link Styles.cardNumber  | cardNumber}: this styles overwrite the values of input styles only to cardNumber input
  * - {@link Styles.expirationDate  | expirationDate}: this styles overwrite the values of input styles only to expirationDate input
  * - {@link Styles.cvv  | cvv}: this styles overwrite the values of input styles only to cvv input
  * - {@link Styles.otp  | otp}: this styles overwrite the values of input styles only to otp input
- * - {@link Styles.deferred  | deferred}: this styles overwrite default styles, and set styles to their subcomponents with custom selectors, [more details](#md:selectors-to-set-custom-styles-to-deferred-inputs)
+ * - {@link Styles.deferred  | deferred}: this styles overwrite default styles, and set styles to their subcomponents with custom selectors, [more details](#md:selectors-to-set-custom-styles-to-deferred-input)
  *
  * ###### Custom styles from class css
  *

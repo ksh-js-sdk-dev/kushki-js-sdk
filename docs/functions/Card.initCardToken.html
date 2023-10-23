@@ -39,7 +39,7 @@
 <li>if transaction is <a href="../interfaces/Card.CardOptions.html#isSubscription" class="tsd-kind-property">subscription</a> (default value is false), <a href="#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields">example</a></li>
 <li>if you want to  <a href="../interfaces/Card.CardOptions.html#preventAutofill" class="tsd-kind-property">prevent autofill</a>  fields (default value is false), <a href="#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields">example</a></li>
 <li>Set Custom <a href="../interfaces/Card.Fields.html" class="tsd-kind-interface">Fields</a>, <a href="#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields">example</a></li>
-<li>Set custom <a href="../interfaces/Card.Styles.html" class="tsd-kind-interface">Styles</a>, <a href="#md:to-start-with-it-necessary-define-style-object">example</a></li>
+<li>Set custom <a href="../interfaces/Card.Styles.html" class="tsd-kind-interface">Styles</a>, <a href="#md:definition-custom-styles">example</a></li>
 </ul>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
@@ -83,14 +83,16 @@
 <li><a href="../interfaces/Card.Styles.html#container" class="tsd-kind-property">container</a>: set styles to all containers of inputs except in deferred input</li>
 <li><a href="../interfaces/Card.Styles.html#focus" class="tsd-kind-property">focus</a>: set styles to state focus of inputs except in deferred input</li>
 <li><a href="../interfaces/Card.Styles.html#valid" class="tsd-kind-property">valid</a>:  set styles to state valid of inputs</li>
-<li><a href="../interfaces/Card.Styles.html#invalid" class="tsd-kind-property">invalid</a>:  set styles to state invalid of inputs
-Specific Hosted Field Input</li>
+<li><a href="../interfaces/Card.Styles.html#invalid" class="tsd-kind-property">invalid</a>:  set styles to state invalid of inputs</li>
+</ul>
+<p>Specific Hosted Field Input</p>
+<ul>
 <li><a href="../interfaces/Card.Styles.html#cardholderName" class="tsd-kind-property">cardholderName</a>: this styles overwrite the values of input styles only to cardholderName input</li>
 <li><a href="../interfaces/Card.Styles.html#cardNumber" class="tsd-kind-property">cardNumber</a>: this styles overwrite the values of input styles only to cardNumber input</li>
 <li><a href="../interfaces/Card.Styles.html#expirationDate" class="tsd-kind-property">expirationDate</a>: this styles overwrite the values of input styles only to expirationDate input</li>
 <li><a href="../interfaces/Card.Styles.html#cvv" class="tsd-kind-property">cvv</a>: this styles overwrite the values of input styles only to cvv input</li>
 <li><a href="../interfaces/Card.Styles.html#otp" class="tsd-kind-property">otp</a>: this styles overwrite the values of input styles only to otp input</li>
-<li><a href="../interfaces/Card.Styles.html#deferred" class="tsd-kind-property">deferred</a>: this styles overwrite default styles, and set styles to their subcomponents with custom selectors, <a href="#md:selectors-to-set-custom-styles-to-deferred-inputs">more details</a></li>
+<li><a href="../interfaces/Card.Styles.html#deferred" class="tsd-kind-property">deferred</a>: this styles overwrite default styles, and set styles to their subcomponents with custom selectors, <a href="#md:selectors-to-set-custom-styles-to-deferred-input">more details</a></li>
 </ul>
 <a id="md:custom-styles-from-class-css" class="tsd-anchor"></a><h6><a href="#md:custom-styles-from-class-css">Custom styles from class css</a></h6><p>In a CSS file, define your class or classes</p>
 <pre><code class="language-css"><span class="hl-14">.kushki-hosted-field-label</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-11">color</span><span class="hl-1">: </span><span class="hl-15">red</span><span class="hl-1">;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-14">.kushki-hosted-field-input</span><span class="hl-1"> {</span><br/><span class="hl-1">   </span><span class="hl-11">font-size</span><span class="hl-1">: </span><span class="hl-13">14px</span><span class="hl-1">;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-14">.kushki-hosted-field-cardNumber</span><span class="hl-1"> {</span><br/><span class="hl-1">   </span><span class="hl-11">color</span><span class="hl-1">: </span><span class="hl-15">green</span><span class="hl-1">;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-14">.kushki-hosted-field-container</span><span class="hl-1"> {</span><br/><span class="hl-1">   </span><span class="hl-11">display</span><span class="hl-1">: </span><span class="hl-15">flex</span><span class="hl-1">;</span><br/><span class="hl-1">}</span>
@@ -141,7 +143,7 @@ Merchants from Ecuador or Mexico have three selects: credit type, months and gra
 </code><button>Copy</button></pre>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4c02c51/src/module/Card.ts#L525">src/module/Card.ts:525</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/5973155/src/module/Card.ts#L527">src/module/Card.ts:527</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

@@ -53,7 +53,7 @@ Function to init an instance of [ICard](../interfaces/Card.ICard.md)
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `kushkiInstance` | [`IKushki`](../interfaces/Kushki.IKushki.md) | Object that implemented IKushki |
-| `options` | [`CardOptions`](../interfaces/Card.CardOptions.md) | You must define setup of card fields - Define [Amount](../interfaces/Card.Amount.md) of transaction, [example](#md:basic-setup-to-card-token) - Define [Currency](Card.md#currency) of transaction, [example](#md:basic-setup-to-card-token) - if transaction is [subscription](../interfaces/Card.CardOptions.md#issubscription) (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields) - if you want to [prevent autofill](../interfaces/Card.CardOptions.md#preventautofill) fields (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields) - Set Custom [Fields](../interfaces/Card.Fields.md), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields) - Set custom [Styles](../interfaces/Card.Styles.md), [example](#md:to-start-with-it-necessary-define-style-object) |
+| `options` | [`CardOptions`](../interfaces/Card.CardOptions.md) | You must define setup of card fields - Define [Amount](../interfaces/Card.Amount.md) of transaction, [example](#md:basic-setup-to-card-token) - Define [Currency](Card.md#currency) of transaction, [example](#md:basic-setup-to-card-token) - if transaction is [subscription](../interfaces/Card.CardOptions.md#issubscription) (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields) - if you want to [prevent autofill](../interfaces/Card.CardOptions.md#preventautofill) fields (default value is false), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields) - Set Custom [Fields](../interfaces/Card.Fields.md), [example](#md:card-token-to-subscriptions-prevent-autofill-and-custom-fields) - Set custom [Styles](../interfaces/Card.Styles.md), [example](#md:definition-custom-styles) |
 
 #### Returns
 
@@ -247,13 +247,15 @@ If you want to apply custom styles to hosted files, Kushki SDK expose the interf
 - [focus](../interfaces/Card.Styles.md#focus): set styles to state focus of inputs except in deferred input
 - [valid](../interfaces/Card.Styles.md#valid):  set styles to state valid of inputs
 - [invalid](../interfaces/Card.Styles.md#invalid):  set styles to state invalid of inputs
+
 Specific Hosted Field Input
+
 - [cardholderName](../interfaces/Card.Styles.md#cardholdername): this styles overwrite the values of input styles only to cardholderName input
 - [cardNumber](../interfaces/Card.Styles.md#cardnumber): this styles overwrite the values of input styles only to cardNumber input
 - [expirationDate](../interfaces/Card.Styles.md#expirationdate): this styles overwrite the values of input styles only to expirationDate input
 - [cvv](../interfaces/Card.Styles.md#cvv): this styles overwrite the values of input styles only to cvv input
 - [otp](../interfaces/Card.Styles.md#otp): this styles overwrite the values of input styles only to otp input
-- [deferred](../interfaces/Card.Styles.md#deferred): this styles overwrite default styles, and set styles to their subcomponents with custom selectors, [more details](#md:selectors-to-set-custom-styles-to-deferred-inputs)
+- [deferred](../interfaces/Card.Styles.md#deferred): this styles overwrite default styles, and set styles to their subcomponents with custom selectors, [more details](#md:selectors-to-set-custom-styles-to-deferred-input)
 
 ###### Custom styles from class css
 
@@ -560,7 +562,7 @@ const buildCardInstance = async () => {
 
 #### Defined in
 
-[src/module/Card.ts:525](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4c02c51/src/module/Card.ts#L525)
+[src/module/Card.ts:527](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/5973155/src/module/Card.ts#L527)
 
 ## Types
 
@@ -659,4 +661,4 @@ export const ERRORS = {
 
 #### Defined in
 
-[src/infrastructure/ErrorEnum.ts:85](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4c02c51/src/infrastructure/ErrorEnum.ts#L85)
+[src/infrastructure/ErrorEnum.ts:85](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/5973155/src/infrastructure/ErrorEnum.ts#L85)
