@@ -7,6 +7,9 @@ import { SiftScienceObject } from "types/sift_science_object";
 import { DeferredValues } from "types/card_fields_values";
 import { IKushki } from "Kushki";
 import { KUSHKI_HOSTED_FIELD_TAG } from "src/constant/HostedFieldTags.ts";
+import { FieldOptions } from "src/interfaces/FieldOptions.ts";
+import { FieldTypeEnum } from "types/form_validity";
+import { HostedFieldUrlEnum } from "infrastructure/HostedFieldUrlEnum.ts";
 
 const KushkiHostedFields = zoid.create({
   dimensions: {
@@ -36,11 +39,14 @@ const KushkiHostedFields = zoid.create({
     };
   },
   tag: KUSHKI_HOSTED_FIELD_TAG,
-  url:
-    import.meta.env.VITE_SPA_INPUTS_URL ||
-    "https://qa-spa-js-inputs.kushkipagos.blue"
-  // import.meta.env.VITE_SPA_INPUTS_URL ||
-  //   "https://qa-spa-js-inputs.kushkipagos.blue" // uncomment dev locally
+  url: (options: { props: FieldOptions }) => {
+    const fieldType: FieldTypeEnum = options.props.fieldType;
+
+    return (
+      `${import.meta.env.VITE_SPA_INPUTS_URL}/${fieldType}.html` ||
+      `${HostedFieldUrlEnum.LOCAL_SPA_URL}/${fieldType}.html`
+    );
+  }
 });
 
 export default KushkiHostedFields;
