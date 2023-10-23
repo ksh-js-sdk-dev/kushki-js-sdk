@@ -3,7 +3,7 @@ const path = require("path");
 module.exports = {
   entry: {
     kushki: "./dist/module/Kushki.js",
-    payment: "./dist/module/Payment.js"
+    card: "./dist/module/Card.js"
   },
   mode: "production",
   output: {

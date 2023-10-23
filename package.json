@@ -27,8 +27,8 @@
     ".": {
       "import": "./module/Kushki.js"
     },
-    "./Payment": {
-      "import": "./module/Payment.js"
+    "./Card": {
+      "import": "./module/Card.js"
     }
   },
   "engines": {

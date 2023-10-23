@@ -16,7 +16,7 @@ import {
   FieldInstance,
   Fields,
   TokenResponse
-} from "module/Payment.ts";
+} from "module/Card.ts";
 import "reflect-metadata";
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { ICard } from "repository/ICard.ts";

@@ -44,9 +44,7 @@ const KushkiHostedFields = zoid.create({
     const fieldType: FieldTypeEnum = options.props.fieldType;
 
     return (
-      `${import.meta.env.VITE_SPA_INPUTS_URL}/${
-        PathsHtmlSpaInputs[fieldType]
-      }.html` ||
+
       `${HostedFieldUrlEnum.LOCAL_SPA_URL}/${PathsHtmlSpaInputs[fieldType]}.html`
     );
   }
