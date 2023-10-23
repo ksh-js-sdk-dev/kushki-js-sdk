@@ -59,7 +59,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:310](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4f72c4a/src/repository/ICard.ts#L310)
+[src/repository/ICard.ts:347](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/8694a90/src/repository/ICard.ts#L347)
 
 ___
 
@@ -73,17 +73,32 @@ This function returns an [FormValidity](Payment.FormValidity.md) that represents
 
 [`FormValidity`](Payment.FormValidity.md)
 
-FormValidity object with form inputs information validation
+FormValidity object with validation info of all fields
 
 **`Example`**
 
+Get field validity of all hosted fields
+
 ```ts
-cardInstance.getFormValidity();
-```
+try {
+    cardInstance.getFormValidity((event: FormValidity) => {
+      // Implement your logic to handle the event , here
+       if (event.isFormValid) {
+         console.log("Form valid", event);
+       } else {
+         console.log("Form invalid", event);
+       }
+   );
+  // On Success, can get FormValidity, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}   *  } catch (error: any) {
+     console.error("Catch error on getFormValidity", error.code, error.message);
+ } catch (error: any) {
+     console.error("Catch error on onFieldFocus", error.code, error.message);
+ }
+ ```
 
 #### Defined in
 
-[src/repository/ICard.ts:106](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4f72c4a/src/repository/ICard.ts#L106)
+[src/repository/ICard.ts:143](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/8694a90/src/repository/ICard.ts#L143)
 
 ___
 
@@ -144,7 +159,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:227](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4f72c4a/src/repository/ICard.ts#L227)
+[src/repository/ICard.ts:264](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/8694a90/src/repository/ICard.ts#L264)
 
 ___
 
@@ -205,7 +220,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:175](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4f72c4a/src/repository/ICard.ts#L175)
+[src/repository/ICard.ts:212](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/8694a90/src/repository/ICard.ts#L212)
 
 ___
 
@@ -266,7 +281,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:279](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4f72c4a/src/repository/ICard.ts#L279)
+[src/repository/ICard.ts:316](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/8694a90/src/repository/ICard.ts#L316)
 
 ___
 
@@ -280,47 +295,54 @@ This event is emitted when the field validity changes
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](Payment.FormValidity.md)) => `void` | The function called when the form field is validited |
-| `fieldType?` | [`FieldTypeEnum`](../modules/Payment.md#fieldtypeenum) | The type of form field (optional) |
+| `event` | (`fieldEvent`: `FieldValidity` \| [`FormValidity`](Payment.FormValidity.md)) => `void` | Callback is executed when the hosted field changes it's validity |
+| `fieldType?` | [`FieldTypeEnum`](../modules/Payment.md#fieldtypeenum) | (optional) Set type of field if you want handle event validity of specific hosted field |
 
 #### Returns
 
 `void`
 
-**`Function`**
-
 **`Example`**
 
+Handling events 'validity' of all hosted fields
+
 ```ts
-// Example 1: Handling a basic form validity event
-onFieldValidity((event: FormValidity) => {
-  // Implement your logic to handle the form submission here
-  if (event.isFormValid) {
-    console.log("Form submitted valid", event);
-  } else {
-    console.log("Form submitted invalid", event);
-  }
-});
+try {
+     cardInstance.onFieldValidity((event: FormValidity) => {
+       // Implement your logic to handle the event FormValidity here
+       if (event.fields[event.triggeredBy].isValid) {
+         console.log("Form valid", event);
+       } else {
+         console.log("Form invalid", event);
+       }
+     });
+   // On Success, can get onFieldFocus, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+ } catch (error: any) {
+     console.error("Catch error on onFieldFocus", error.code, error.message);
+ }
 ```
 
-**`Example`**
+Handling event 'validity' of an especific hosted field
 
 ```ts
-// Example 2: Handling a specific type of field focus event
-onFieldValidity((event: FieldValidity) => {
-  // Implement your logic to handle the specific field type here
-  if (event.isValid) {
-    console.log("Form field is valid", event);
-  } else {
-   console.log("Form field is invalid", event);
-   console.log("this is error", event.errorType);
-  }
-}, fieldType: FieldTypeEnum);
+try {
+    cardInstance.onFieldValidity((event: FieldValidity) => {
+       if (event.isValid) {
+         console.log("Form field is valid", event);
+       } else {
+         console.log("Form field is invalid", event);
+         console.log("this is error", event.errorType);
+       }
+     }, FieldTypeEnum.cardholderName);
+   // On Success, can get onFieldFocus, ex. FieldValidity : { isValid: false, errorType: "empty"}
+ } catch (error: any) {
+     console.error("Catch error on onFieldFocus", error.code, error.message);
+ }
 ```
 
 #### Defined in
 
-[src/repository/ICard.ts:93](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4f72c4a/src/repository/ICard.ts#L93)
+[src/repository/ICard.ts:107](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/8694a90/src/repository/ICard.ts#L107)
 
 ___
 
@@ -354,7 +376,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:121](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4f72c4a/src/repository/ICard.ts#L121)
+[src/repository/ICard.ts:158](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/8694a90/src/repository/ICard.ts#L158)
 
 ▸ **onOTPValidation**(`onRequired`, `onError`, `onSuccess`): `void`
 
@@ -384,7 +406,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:353](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4f72c4a/src/repository/ICard.ts#L353)
+[src/repository/ICard.ts:390](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/8694a90/src/repository/ICard.ts#L390)
 
 ___
 
@@ -451,7 +473,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:58](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4f72c4a/src/repository/ICard.ts#L58)
+[src/repository/ICard.ts:58](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/8694a90/src/repository/ICard.ts#L58)
 
 ___
 
@@ -492,4 +514,4 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:338](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4f72c4a/src/repository/ICard.ts#L338)
+[src/repository/ICard.ts:375](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/8694a90/src/repository/ICard.ts#L375)

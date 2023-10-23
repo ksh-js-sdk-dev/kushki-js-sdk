@@ -45,7 +45,7 @@ Use a script tag inside your page to add the feature. When adding the following 
 
 # Library setup
 
-Begin calling the method init [`init`](../wiki/Kushki.md), With an object of type [`KushkiOptions`](../wiki/Kushki.KushkiOptions.md) 
+Begin calling the method init [`init`](./wiki/modules/Kushki.md#init), With an object of type [`KushkiOptions`](./wiki/interfaces/Kushki.KushkiOptions.md) 
 
 ```ts
 import { IKushki, init, KushkiError } from "Kushki";
@@ -187,7 +187,7 @@ const options : CardOptions = {
 ## &#xa0;&#xa0;&bull; Events
 
 ### Handling event focus on field
-This event is emitted when the field loses focus, more details [Click here](./wiki/interfaces/Payment.ICard.md?plain=1#onfieldfocus)
+This event is emitted when the field focus, more details [Click here](./interfaces/Payment.ICard.md#onfieldfocus)
 ```ts
 try {
   cardInstance.onFieldFocus((event: FormValidity) => {
@@ -205,7 +205,7 @@ try {
 ```
 
 ### Handling event blur on field
-This event is emitted when the field loses focus, more details [Click here](./wiki/interfaces/Payment.ICard.md?plain=1#onfieldblur)
+This event is emitted when the field loses focus, more details [Click here](./wiki/interfaces/Payment.ICard.md#onfieldblur)
 ```ts
 try {
   cardInstance.onFieldBlur((event: FormValidity) => {
@@ -223,7 +223,7 @@ try {
 ```
 
 ### Handling event submit on field
-This event is emitted when the field has submit, more details [Click here](./wiki/interfaces/Payment.ICard.md?plain=1#onfieldsubmit)
+This event is emitted when the field has submit, more details [Click here](./wiki/interfaces/Payment.ICard.md#onfieldsubmit)
 ```ts
 try {
   cardInstance.onFieldSubmit((event: FormValidity) => {
@@ -240,8 +240,45 @@ try {
 }
 ```
 
+### Handling event validity on field
+This event is emitted when the field validity changes, more details [Click here](./wiki/interfaces/Payment.ICard.md#onfieldvalidity)
+```ts
+try {
+  cardInstance.onFieldValidity((event: FormValidity) => {
+    // Implement your logic to handle the event FormValidity here
+    if (event.fields[event.triggeredBy].isValid) {
+      console.log("Form valid", event);
+    } else {
+      console.log("Form invalid", event);
+    }
+  });
+  // On Success, can get onFieldValidity, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+} catch (error: any) {
+  console.error("Catch error on onFieldSubmit", error.code, error.message);
+}
+```
+
+### Handling get form validity of all hosted fields
+This event is emitted when the field validity changes, more details [Click here](./wiki/interfaces/Payment.ICard.md#getformvalidity)
+```ts
+try {
+    cardInstance.getFormValidity((event: FormValidity) => {
+      // Implement your logic to handle the event FormValidity here
+      if (event.fields[event.triggeredBy].isValid) {
+        console.log("Form valid", event);
+      } else {
+        console.log("Form invalid", event);
+      }
+    });
+  // On Success, can get FormValidity, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}   *  } catch (error: any) {
+     console.error("Catch error on getFormValidity", error.code, error.message);
+} catch (error: any) {
+  console.error("Catch error on onFieldFocus", error.code, error.message);
+}
+ ```
+
 ### Set focus a hosted field
-This method asynchronously focus a form field of the specified type, otherwise it will throw an exception, more details [Click here](./wiki/interfaces/Payment.ICard.md?plain=1#focus)
+This method asynchronously focus a form field of the specified type, otherwise it will throw an exception, more details [Click here](./wiki/interfaces/Payment.ICard.md#focus)
 ```ts
 try {
   await cardInstance.focus(FieldTypeEnum.cardholderName);
@@ -253,7 +290,7 @@ try {
 ```
 
 ### Set Reset a hosted field
-This method asynchronously reset a form field of the specified type to its default state, otherwise it will throw an exception, more details [Click here](./wiki/interfaces/Payment.ICard.md?plain=1#reset)
+This method asynchronously reset a form field of the specified type to its default state, otherwise it will throw an exception, more details [Click here](./wiki/interfaces/Payment.ICard.md#reset)
 ```ts
 try {
   await cardInstance.reset(FieldTypeEnum.cardholderName);
