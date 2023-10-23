@@ -60,35 +60,49 @@ export interface ICard {
   /**
    * This event is emitted when the field validity changes
    *
-   * @function
-   * @param {(FormValidity | FieldValidity) => void} event - The function called when the form field is validited
-   * @param {FieldTypeEnum} [fieldType] - The type of form field (optional)
-   * @returns {void}
+   * @group Methods
+   * @param {(FormValidity | FieldValidity) => void} event -  Callback is executed when the hosted field changes it's validity
+   * @param {FieldTypeEnum} fieldType - (optional) Set type of field if you want handle event validity of specific hosted field
    *
-   * @typedef {("cardNumber" | "cardholderName" | "cvv" | "deferred" | "expirationDate")} FieldTypeEnum
-   *
-   * @example
-   * // Example 1: Handling a basic form validity event
-   * onFieldValidity((event: FormValidity) => {
-   *   // Implement your logic to handle the form submission here
-   *   if (event.isFormValid) {
-   *     console.log("Form submitted valid", event);
-   *   } else {
-   *     console.log("Form submitted invalid", event);
-   *   }
-   * });
+   * @returns {Promise<void>}
    *
    * @example
-   * // Example 2: Handling a specific type of field focus event
-   * onFieldValidity((event: FieldValidity) => {
-   *   // Implement your logic to handle the specific field type here
-   *   if (event.isValid) {
-   *     console.log("Form field is valid", event);
-   *   } else {
-   *    console.log("Form field is invalid", event);
-   *    console.log("this is error", event.errorType);
-   *   }
-   * }, fieldType: FieldTypeEnum);
+   * Handling events 'validity' of all hosted fields
+   *
+   * ```ts
+   * try {
+   *      cardInstance.onFieldValidity((event: FormValidity) => {
+   *        // Implement your logic to handle the event FormValidity here
+   *        if (event.fields[event.triggeredBy].isValid) {
+   *          console.log("Form valid", event);
+   *        } else {
+   *          console.log("Form invalid", event);
+   *        }
+   *      });
+   *    // On Success, can get onFieldFocus, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}
+   *  } catch (error: any) {
+   *      console.error("Catch error on onFieldFocus", error.code, error.message);
+   *  }
+   * ```
+   *
+   * Handling event 'validity' of an especific hosted field
+   *
+   * ```ts
+   * try {
+   *     cardInstance.onFieldValidity((event: FieldValidity) => {
+   *        if (event.isValid) {
+   *          console.log("Form field is valid", event);
+   *        } else {
+   *          console.log("Form field is invalid", event);
+   *          console.log("this is error", event.errorType);
+   *        }
+   *      }, FieldTypeEnum.cardholderName);
+   *    // On Success, can get onFieldFocus, ex. FieldValidity : { isValid: false, errorType: "empty"}
+   *  } catch (error: any) {
+   *      console.error("Catch error on onFieldFocus", error.code, error.message);
+   *  }
+   * ```
+   *
    */
   onFieldValidity(
     event: (fieldEvent: FormValidity | FieldValidity) => void,
@@ -97,11 +111,34 @@ export interface ICard {
 
   /**
    * This function returns an {@link FormValidity} that represents the validation state of all fields
-   * @return FormValidity object with form inputs information validation
+   *
+   * @group Methods
+   *
+   * @return FormValidity object with validation info of all fields
    * @property {boolean} isFormValid Return validation form
    * @property {Fields} fields Object with Fields (cardholderName, cardNumber, cvv, expirationDate, deferred (optional))
+   *
    * @example
-   *  cardInstance.getFormValidity();
+   *
+   * Get field validity of all hosted fields
+   *
+   * ```ts
+   * try {
+   *     cardInstance.getFormValidity((event: FormValidity) => {
+   *       // Implement your logic to handle the event , here
+   *        if (event.isFormValid) {
+   *          console.log("Form valid", event);
+   *        } else {
+   *          console.log("Form invalid", event);
+   *        }
+   *    );
+   *   // On Success, can get FormValidity, ex. FormValidity: { isFormValid: true, triggeredBy: cardholderName, fields: Fields}   *  } catch (error: any) {
+   *      console.error("Catch error on getFormValidity", error.code, error.message);
+   *  } catch (error: any) {
+   *      console.error("Catch error on onFieldFocus", error.code, error.message);
+   *  }
+   *  ```
+   *
    */
   getFormValidity(): FormValidity;
 
