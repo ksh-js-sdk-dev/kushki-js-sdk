@@ -8,14 +8,14 @@ We make it easier!
 
 ## Table of Contents
 
-- [Instalation (instalación con NPM y CDN)](#Install)
-- [Library setup (init de la clase Kushki)](#library-setup)
+- [Instalation](#Install)
+- [Library setup](#library-setup)
 - [Get a payment card token](#get-a-payment-card-token)
-  - [Form initialization(initCard de la clase Payment, documentar styles de forma básica)](#form-initialization)
-  - [Styling (objeto styles de initCard de la clase Payment con ejemplos de uso)](#styling)
-  - [Events (eventos disponibles de la clase Payment, no documentar onOtpValidation)](#events)
-  - [OTP Validation (evento onOtpValidation de la clase Payment)](#otp-validation)
-  - [Tokenization (requestToken de la clase Payment)](#tokenization)
+  - [Form initialization](#form-initialization)
+  - [Styling](#styling)
+  - [Events](#events)
+  - [OTP Validation](#otp-validation)
+  - [Tokenization](#tokenization)
 
 # Install
 

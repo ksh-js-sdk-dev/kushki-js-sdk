@@ -59,7 +59,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:310](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/a814c2f/src/repository/ICard.ts#L310)
+[src/repository/ICard.ts:310](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4c02c51/src/repository/ICard.ts#L310)
 
 ___
 
@@ -83,7 +83,7 @@ cardInstance.getFormValidity();
 
 #### Defined in
 
-[src/repository/ICard.ts:106](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/a814c2f/src/repository/ICard.ts#L106)
+[src/repository/ICard.ts:106](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4c02c51/src/repository/ICard.ts#L106)
 
 ___
 
@@ -144,7 +144,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:227](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/a814c2f/src/repository/ICard.ts#L227)
+[src/repository/ICard.ts:227](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4c02c51/src/repository/ICard.ts#L227)
 
 ___
 
@@ -205,7 +205,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:175](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/a814c2f/src/repository/ICard.ts#L175)
+[src/repository/ICard.ts:175](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4c02c51/src/repository/ICard.ts#L175)
 
 ___
 
@@ -266,7 +266,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:279](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/a814c2f/src/repository/ICard.ts#L279)
+[src/repository/ICard.ts:279](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4c02c51/src/repository/ICard.ts#L279)
 
 ___
 
@@ -320,7 +320,7 @@ onFieldValidity((event: FieldValidity) => {
 
 #### Defined in
 
-[src/repository/ICard.ts:93](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/a814c2f/src/repository/ICard.ts#L93)
+[src/repository/ICard.ts:93](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4c02c51/src/repository/ICard.ts#L93)
 
 ___
 
@@ -354,7 +354,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:121](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/a814c2f/src/repository/ICard.ts#L121)
+[src/repository/ICard.ts:121](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4c02c51/src/repository/ICard.ts#L121)
 
 ▸ **onOTPValidation**(`onRequired`, `onError`, `onSuccess`): `void`
 
@@ -384,7 +384,7 @@ cardInstance.onOTPValidation(
 
 #### Defined in
 
-[src/repository/ICard.ts:353](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/a814c2f/src/repository/ICard.ts#L353)
+[src/repository/ICard.ts:353](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4c02c51/src/repository/ICard.ts#L353)
 
 ___
 
@@ -451,7 +451,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:58](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/a814c2f/src/repository/ICard.ts#L58)
+[src/repository/ICard.ts:58](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4c02c51/src/repository/ICard.ts#L58)
 
 ___
 
@@ -492,4 +492,4 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:338](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/a814c2f/src/repository/ICard.ts#L338)
+[src/repository/ICard.ts:338](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/4c02c51/src/repository/ICard.ts#L338)
