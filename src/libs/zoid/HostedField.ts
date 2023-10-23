@@ -10,6 +10,7 @@ import { KUSHKI_HOSTED_FIELD_TAG } from "src/constant/HostedFieldTags.ts";
 import { FieldOptions } from "src/interfaces/FieldOptions.ts";
 import { FieldTypeEnum } from "types/form_validity";
 import { HostedFieldUrlEnum } from "infrastructure/HostedFieldUrlEnum.ts";
+import { PathsHtmlSpaInputs } from "infrastructure/PathsHtmlSpaInputs.ts";
 
 const KushkiHostedFields = zoid.create({
   dimensions: {
@@ -43,8 +44,8 @@ const KushkiHostedFields = zoid.create({
     const fieldType: FieldTypeEnum = options.props.fieldType;
 
     return (
-      `${import.meta.env.VITE_SPA_INPUTS_URL}/${fieldType}.html` ||
-      `${HostedFieldUrlEnum.LOCAL_SPA_URL}/${fieldType}.html`
+
+      `${HostedFieldUrlEnum.LOCAL_SPA_URL}/${PathsHtmlSpaInputs[fieldType]}.html`
     );
   }
 });

@@ -47,7 +47,7 @@ Throws an error if the initialization fails due to invalid options, network issu
 import { IKushki, init, KushkiError } from "Kushki";
 
 const kushkiOptions : KushkiOptions = {
-  publicCredentialId: '<public-credential-id>', // This corresponds to the public credential of the merchant
+  publicCredentialId: '<public-credential-id>',
   inTest: true
 };
 
@@ -62,4 +62,4 @@ const buildKushkiInstance = async () => {
 
 #### Defined in
 
-[src/module/Kushki.ts:42](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/8694a90/src/module/Kushki.ts#L42)
+[src/module/Kushki.ts:42](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/5973155/src/module/Kushki.ts#L42)

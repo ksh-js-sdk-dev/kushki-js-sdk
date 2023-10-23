@@ -8,8 +8,8 @@ const config: Config = {
     "\\.(css)$": "identity-obj-proxy",
     "\\.(png)$": "identity-obj-proxy",
     "\\.(svg)$": "identity-obj-proxy",
-    "^Kushki$": "<rootDir>/src/module/Payment.ts",
-    "^Kushki/card$": "<rootDir>/src/module/card/Payment.ts"
+    "^Kushki$": "<rootDir>/src/module/Card.ts",
+    "^Kushki/card$": "<rootDir>/src/module/card/Card.ts"
   },
   coverageThreshold: {
     global: {

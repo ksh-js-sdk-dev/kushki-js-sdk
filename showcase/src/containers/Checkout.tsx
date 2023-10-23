@@ -9,7 +9,7 @@ import {
   ICard,
   initCardToken,
   TokenResponse
-} from "Kushki/Payment";
+} from "Kushki/Card";
 // import {
 //   CardOptions,
 //   Currency,
