@@ -187,7 +187,7 @@ const options : CardOptions = {
 ## &#xa0;&#xa0;&bull; Events
 
 ### Handling event focus on field
-This event is emitted when the field focus, more details [Click here](./wiki/interfaces/Card.ICard.md?plain=1#onfieldfocus)
+This event is emitted when the field focus, more details [Click here](./wiki/interfaces/Card.ICard.md#onfieldfocus)
 ```ts
 try {
   cardInstance.onFieldFocus((event: FormValidity) => {
@@ -205,7 +205,7 @@ try {
 ```
 
 ### Handling event blur on field
-This event is emitted when the field loses focus, more details [Click here](./wiki/interfaces/Card.ICard.md?plain=1#onfieldblur)
+This event is emitted when the field loses focus, more details [Click here](./wiki/interfaces/Card.ICard.md#onfieldblur)
 ```ts
 try {
   cardInstance.onFieldBlur((event: FormValidity) => {
@@ -223,7 +223,7 @@ try {
 ```
 
 ### Handling event submit on field
-This event is emitted when the field has submit, more details [Click here](./wiki/interfaces/Card.ICard.md?plain=1#onfieldsubmit)
+This event is emitted when the field has submit, more details [Click here](./wiki/interfaces/Card.ICard.md#onfieldsubmit)
 ```ts
 try {
   cardInstance.onFieldSubmit((event: FormValidity) => {
@@ -241,7 +241,7 @@ try {
 ```
 
 ### Handling event validity on field
-This event is emitted when the field validity changes, more details [Click here](./wiki/interfaces/Payment.ICard.md#onfieldvalidity)
+This event is emitted when the field validity changes, more details [Click here](./wiki/interfaces/Card.ICard.md#onfieldvalidity)
 ```ts
 try {
   cardInstance.onFieldValidity((event: FormValidity) => {
@@ -259,7 +259,7 @@ try {
 ```
 
 ### Handling get form validity of all hosted fields
-This event is emitted when the field validity changes, more details [Click here](./wiki/interfaces/Payment.ICard.md#getformvalidity)
+This event is emitted when the field validity changes, more details [Click here](./wiki/interfaces/Card.ICard.md#getformvalidity)
 ```ts
 try {
     cardInstance.getFormValidity((event: FormValidity) => {
@@ -278,7 +278,7 @@ try {
  ```
 
 ### Set focus a hosted field
-This method asynchronously focus a form field of the specified type, otherwise it will throw an exception, more details [Click here](./wiki/interfaces/Card.ICard.md?plain=1#focus)
+This method asynchronously focus a form field of the specified type, otherwise it will throw an exception, more details [Click here](./wiki/interfaces/Card.ICard.md#focus)
 ```ts
 try {
   await cardInstance.focus(FieldTypeEnum.cardholderName);
@@ -290,7 +290,7 @@ try {
 ```
 
 ### Set Reset a hosted field
-This method asynchronously reset a form field of the specified type to its default state, otherwise it will throw an exception, more details [Click here](./wiki/interfaces/Card.ICard.md?plain=1#reset)
+This method asynchronously reset a form field of the specified type to its default state, otherwise it will throw an exception, more details [Click here](./wiki/interfaces/Card.ICard.md#reset)
 ```ts
 try {
   await cardInstance.reset(FieldTypeEnum.cardholderName);
