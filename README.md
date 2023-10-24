@@ -301,7 +301,7 @@ try {
 }
 ```
 
-## &#xa0;&#xa0;&bull; OTP Validation <a name="otp-validation"></a>
+## &#xa0;&#xa0;&bull; OTP Validation <a name="-otp-validation-"></a>
 
 If you need validate OTP code, you can use method [`onOTPValidation`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#onOTPValidation) on your card instance.
 
