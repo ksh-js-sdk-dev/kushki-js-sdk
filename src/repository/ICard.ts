@@ -144,8 +144,11 @@ export interface ICard {
 
   /**
    * This event is emitted when enter value in OTP field to validate code.
-   * OTP authentication is a password that is valid for a single transaction. It aims to reduce fraud and provide extra security for your merchant’s online payments.
-   * The user will have 3 attempts to enter a valid OTP.
+   * OTP authentication is a password that is valid for a single transaction. It aims to reduce fraud and provide extra security for your merchant’s online payments. The user will have 3 attempts to enter a valid OTP.
+   *
+   * This validation will only be executed if the merchant has configured the security rule associated with OTP and the response token contains secureService with KushkiOTP.
+   *
+   * The OTP validation is triggered when you enter the third digit in the hosted input field. Each validation event will be fired, and you can capture these events using the onError or onSuccess callbacks.
    *
    * @group Methods
    * @param {() => void} onRequired -  Callback is executed when the token created need validation OTP.
