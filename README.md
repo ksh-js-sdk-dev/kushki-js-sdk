@@ -9,11 +9,11 @@ We make it easier!
 - [Instalation](#Install)
 - [Library setup](#library-setup)
 - [Get a payment card token](#get-a-payment-card-token)
-  - [Form initialization](#form-initialization)
-  - [Styling](#styling)
-  - [Events](#events)
-  - [OTP Validation](#otp-validation)
-  - [Tokenization](#tokenization)
+  - [Form initialization](#-form-initialization)
+  - [Styling](#-styling)
+  - [Events](#-events)
+  - [OTP Validation](#-otp-validation-)
+  - [Tokenization](#-tokenization)
 
 
 # Install
@@ -45,7 +45,7 @@ Use a script tag inside your page to add the feature. When adding the following 
 
 # Library setup
 
-Begin calling the method init [`init`](./wiki/modules/Kushki.md#init), With an object of type [`KushkiOptions`](./wiki/interfaces/Kushki.KushkiOptions.md) 
+Begin calling the method init [`init`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Kushki.init.html#init), With an object of type [`KushkiOptions`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Kushki.KushkiOptions.html) 
 
 ```ts
 import { IKushki, init, KushkiError } from "Kushki";
@@ -69,7 +69,7 @@ const buildKushkiInstance = async () => {
 ## &#xa0;&#xa0;&bull; Form initialization
 The following steps describes how you can init a card token instance
 #### Define the containers for the hosted fields
-Before you call the method [initCardToken](./wiki/modules/Card.md#initcardtoken), you need create div elements for each hosted field
+Before you call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html), you need create div elements for each hosted field
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -84,7 +84,7 @@ Before you call the method [initCardToken](./wiki/modules/Card.md#initcardtoken)
 </html>
 ```
 
-Then you must define a [CardOptions](./wiki/interfaces/Card.CardOptions.md) and call the method [initCardToken](./wiki/modules/Card.md#initcardtoken), this will render the hosted fields in your side and the user will be able to enter the card details to later finish the tokenization
+Then you must define a [CardOptions](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.CardOptions.html) and call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html), this will render the hosted fields in your side and the user will be able to enter the card details to later finish the tokenization
 ```ts
 import { IKushki, init, KushkiError } from "Kushki";
 import {
@@ -125,14 +125,14 @@ const buildCardInstance = async () => {
   }
 }
 ```
-[More Examples](./wiki/Card.md#examples)
+[More Examples](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html#md:examples)
 
 ### &#xa0;&#xa0;&bull; Styling
-If you want to give custom styles to hosted files, the interface [Styles](./wiki/interfaces/Card.Styles.md) is exposed, so you have two ways:
- - Css Classes.- The interface [CssProperties](./wiki/modules/Card.md#cssproperties) allows to receive a string, so you can configure a CSS class of your site
- - [JSS](https://cssinjs.org/react-jss/?v=v10.3.0) Object.- The interface [CssProperties](./wiki/modules/Card.md#cssproperties) allows to receive an object, so you can configure custom CSS styles
+If you want to give custom styles to hosted files, the interface [Styles](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.Styles.html) is exposed, so you have two ways:
+ - Css Classes.- The interface [CssProperties](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/types/Card.CssProperties.html) allows to receive a string, so you can configure a CSS class of your site
+ - [JSS](https://cssinjs.org/react-jss/?v=v10.3.0) Object.- The interface [CssProperties](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/types/Card.CssProperties.html) allows to receive an object, so you can configure custom CSS styles
 
-**Notes**: You could combine both options, some attributes of [Styles](./wiki/interfaces/Card.Styles.md) can be classes CSS and others be a object
+**Notes**: You could combine both options, some attributes of [Styles](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.Styles.html) can be classes CSS and others be a object
 
 #### CSS class
 You cloud use class CSS from: local CSS file or framework CSS. In this example the classes was declared in local CSS file.
@@ -177,17 +177,17 @@ const options : CardOptions = {
 ```
 
 #### Other related articles
-- [Kushki JS - Definition of scopes for attributes of Styles](./wiki/modules/Card.md#definition-of-attributes-scopes-of-styles)
-- [Kushki JS - Example.- Custom styles from class css](./wiki/modules/Card.md#custom-styles-from-class-css)
-- [Kushki JS - Example.- Custom styles with JSS](./wiki/modules/Card.md#custom-styles-with-jss)
-- [Kushki JS - Example.- Pseudo Elements with JSS](./wiki/modules/Card.md#pseudo-elements-with-jss)
+- [Kushki JS - Definition of scopes for attributes of Styles](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html#md:definition-of-scopes-for-attributes-of-styles)
+- [Kushki JS - Example.- Custom styles from class css](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html#md:custom-styles-from-class-css)
+- [Kushki JS - Example.- Custom styles with JSS](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html#md:custom-styles-with-jss)
+- [Kushki JS - Example.- Pseudo Elements with JSS](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html#md:pseudo-elements-with-jss)
 - [JSS Documentation](https://cssinjs.org/?v=v10.3.0)
 - [CSS Pseudo-elements](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements)
 
 ## &#xa0;&#xa0;&bull; Events
 
 ### Handling event focus on field
-This event is emitted when the field focus, more details [Click here](./wiki/interfaces/Card.ICard.md#onfieldfocus)
+This event is emitted when the field focus, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#onFieldFocus)
 ```ts
 try {
   cardInstance.onFieldFocus((event: FormValidity) => {
@@ -205,7 +205,7 @@ try {
 ```
 
 ### Handling event blur on field
-This event is emitted when the field loses focus, more details [Click here](./wiki/interfaces/Card.ICard.md#onfieldblur)
+This event is emitted when the field loses focus, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#onFieldBlur)
 ```ts
 try {
   cardInstance.onFieldBlur((event: FormValidity) => {
@@ -223,7 +223,7 @@ try {
 ```
 
 ### Handling event submit on field
-This event is emitted when the field has submit, more details [Click here](./wiki/interfaces/Card.ICard.md#onfieldsubmit)
+This event is emitted when the field has submit, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#onFieldSubmit)
 ```ts
 try {
   cardInstance.onFieldSubmit((event: FormValidity) => {
@@ -241,7 +241,7 @@ try {
 ```
 
 ### Handling event validity on field
-This event is emitted when the field validity changes, more details [Click here](./wiki/interfaces/Card.ICard.md#onfieldvalidity)
+This event is emitted when the field validity changes, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#onFieldValidity)
 ```ts
 try {
   cardInstance.onFieldValidity((event: FormValidity) => {
@@ -259,7 +259,7 @@ try {
 ```
 
 ### Handling get form validity of all hosted fields
-This event is emitted when the field validity changes, more details [Click here](./wiki/interfaces/Card.ICard.md#getformvalidity)
+This event is emitted when the field validity changes, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#getFormValidity)
 ```ts
 try {
     cardInstance.getFormValidity((event: FormValidity) => {
@@ -278,7 +278,7 @@ try {
  ```
 
 ### Set focus a hosted field
-This method asynchronously focus a form field of the specified type, otherwise it will throw an exception, more details [Click here](./wiki/interfaces/Card.ICard.md#focus)
+This method asynchronously focus a form field of the specified type, otherwise it will throw an exception, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#focus)
 ```ts
 try {
   await cardInstance.focus(FieldTypeEnum.cardholderName);
@@ -290,7 +290,7 @@ try {
 ```
 
 ### Set Reset a hosted field
-This method asynchronously reset a form field of the specified type to its default state, otherwise it will throw an exception, more details [Click here](./wiki/interfaces/Card.ICard.md#reset)
+This method asynchronously reset a form field of the specified type to its default state, otherwise it will throw an exception, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#reset)
 ```ts
 try {
   await cardInstance.reset(FieldTypeEnum.cardholderName);
@@ -303,7 +303,7 @@ try {
 
 ## &#xa0;&#xa0;&bull; OTP Validation <a name="otp-validation"></a>
 
-If you need validate OTP code, you can use method [`onOTPValidation`](./wiki/Card.ICard.md#onOTPValidation) on your card instance.
+If you need validate OTP code, you can use method [`onOTPValidation`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#onOTPValidation) on your card instance.
 
 This method return three callbacks (onSuccess, onError and onRequired), that will allow you to identify the OTP validation status in the hosted field.
 
@@ -332,11 +332,11 @@ This method return three callbacks (onSuccess, onError and onRequired), that wil
 
 ## &#xa0;&#xa0;&bull; Tokenization
 
-To get a card payment token, you should call the [`requestToken`](./wiki/Card.ICard.md#requestToken) method on your card instance that was previously initialized, this method also validates if all the fields are valid, otherwise it will throw an exception
+To get a card payment token, you should call the [`requestToken`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#requestToken) method on your card instance that was previously initialized, this method also validates if all the fields are valid, otherwise it will throw an exception
 
-This method returns a [`TokenResponse`](./wiki/Card.TokenResponse.md#TokenResponse) object that you will send to you backend and proceed with the charge of the payment
+This method returns a [`TokenResponse`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.TokenResponse.html) object that you will send to you backend and proceed with the charge of the payment
 
-If the  [`initCardToken`](./wiki/Card.md#initCardToken)  method was configured as subscription you should call the create subscription method on your backend, otherwise you can proceed normally with the charge method for card
+If the  [`initCardToken`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html)  method was configured as subscription you should call the create subscription method on your backend, otherwise you can proceed normally with the charge method for card
 
 ### Basic Example
 For unique payment or subscription. This method automatically validates all merchant rules like 3DS, OTP or Sift Science
