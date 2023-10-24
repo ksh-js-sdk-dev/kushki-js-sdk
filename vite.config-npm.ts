@@ -17,7 +17,8 @@ export default defineConfig({
       entry: {
         Card: "src/module/Card.ts",
         Kushki: "src/module/Kushki.ts"
-      }
+      },
+      formats: ["cjs"]
     },
     rollupOptions: {
       output: {
