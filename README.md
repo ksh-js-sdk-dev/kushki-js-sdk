@@ -301,7 +301,34 @@ try {
 }
 ```
 
-## &#xa0;&#xa0;&bull; OTP Validation
+## &#xa0;&#xa0;&bull; OTP Validation <a name="otp-validation"></a>
+
+If you need validate OTP code, you can use method [`onOTPValidation`](./wiki/Card.ICard.md#onOTPValidation) on your card instance.
+
+This method return three callbacks (onSuccess, onError and onRequired), that will allow you to identify the OTP validation status in the hosted field.
+
+### This is an example to call otpValidation
+
+```ts
+ try {
+  cardInstance.onOTPValidation(
+          () => {
+            // On required callback, is executed when flow requestToken need validate OTP.
+            console.log("You should implement logic for continue charge process.")
+          },
+          (error) => {
+            // On error callback, is executed when validation OTP is incorrect. You will receive an error with code E008.
+            console.error("Catch error", error.code, error.message);
+          },
+          () => {
+            // On success callback, is executed when validation OTP is success.
+            console.log("You should implement logic for continue charge process after validation OTP success")
+          }
+  );
+} catch (error: any) {
+  console.error("Catch error on onOTPValidation", error.code, error.message);
+}
+```
 
 ## &#xa0;&#xa0;&bull; Tokenization
 

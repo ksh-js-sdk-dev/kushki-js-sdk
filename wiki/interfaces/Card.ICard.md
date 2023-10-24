@@ -59,7 +59,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:347](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9b9a57c/src/repository/ICard.ts#L347)
+[src/repository/ICard.ts:375](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/e581dca/src/repository/ICard.ts#L375)
 
 ___
 
@@ -98,7 +98,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:143](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9b9a57c/src/repository/ICard.ts#L143)
+[src/repository/ICard.ts:143](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/e581dca/src/repository/ICard.ts#L143)
 
 ___
 
@@ -159,7 +159,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:264](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9b9a57c/src/repository/ICard.ts#L264)
+[src/repository/ICard.ts:292](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/e581dca/src/repository/ICard.ts#L292)
 
 ___
 
@@ -220,7 +220,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:212](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9b9a57c/src/repository/ICard.ts#L212)
+[src/repository/ICard.ts:240](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/e581dca/src/repository/ICard.ts#L240)
 
 ___
 
@@ -281,7 +281,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:316](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9b9a57c/src/repository/ICard.ts#L316)
+[src/repository/ICard.ts:344](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/e581dca/src/repository/ICard.ts#L344)
 
 ___
 
@@ -322,7 +322,7 @@ try {
  }
 ```
 
-Handling event 'validity' of an especific hosted field
+Handling event 'validity' of an specific hosted field
 
 ```ts
 try {
@@ -342,7 +342,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:107](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9b9a57c/src/repository/ICard.ts#L107)
+[src/repository/ICard.ts:107](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/e581dca/src/repository/ICard.ts#L107)
 
 ___
 
@@ -350,63 +350,54 @@ ___
 
 ▸ **onOTPValidation**(`onRequired`, `onError`, `onSuccess`): `void`
 
-This event is emitted when enter value in OTP field
+This event is emitted when enter value in OTP field for validation code
+OTP authentication is a password that is valid for a single transaction. It aims to reduce fraud and provide extra security for your merchant’s online payments.
+The user will have 3 attempts to enter a valid OTP.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `onRequired` | () => `void` |
-| `onError` | (`error`: `KushkiErrorAttr`) => `void` |
-| `onSuccess` | () => `void` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `onRequired` | () => `void` | Callback is executed when the token request need validation OTP. |
+| `onError` | (`error`: `KushkiErrorAttr`) => `void` | Callback is executed when validation OTP return an error. |
+| `onSuccess` | () => `void` | Callback is executed when validation OTP is success. |
 
 #### Returns
 
 `void`
 
+**`Throws`**
+
+- if the validation OTP is invalid, callback onError return error [ERRORS.E008](../modules/Card.md#errors)
+
 **`Example`**
 
-```ts
-cardInstance.onOTPValidation(
-   () => { setShowOTP(true);},
-   (error) => { setErrorOTP(error.message);},
-   () => { setErrorOTP("");}
- );
+Handling events 'otpValidation' of OTP hosted field
+
+ ```ts
+ try {
+     cardInstance.onOTPValidation(
+    () => {
+    // On required callback, is executed when flow requestToken need validate OTP.
+      console.log("You should implement logic for show OTP.")
+    },
+    (error) => {
+    // On error callback, is executed when validation OTP is incorrect. You will receive an error with code E008
+      console.error("Catch error otp", error.code, error.message);
+    },
+    () => {
+    // On success callback, is executed when validation OTP is success.
+      console.log("You should implement logic for continue flow requestToken")
+    }
+  );
+} catch (error: any) {
+  console.error("Catch error on onOTPValidation", error.code, error.message);
+}
 ```
 
 #### Defined in
 
-[src/repository/ICard.ts:158](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9b9a57c/src/repository/ICard.ts#L158)
-
-▸ **onOTPValidation**(`onRequired`, `onError`, `onSuccess`): `void`
-
-This event is emitted when enter value in OTP field
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `onRequired` | () => `void` |
-| `onError` | (`error`: `KushkiErrorAttr`) => `void` |
-| `onSuccess` | () => `void` |
-
-#### Returns
-
-`void`
-
-**`Example`**
-
-```ts
-cardInstance.onOTPValidation(
-   () => { setShowOTP(true);},
-   (error) => { setErrorOTP(error.message);},
-   () => { setErrorOTP("");}
- );
-```
-
-#### Defined in
-
-[src/repository/ICard.ts:390](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9b9a57c/src/repository/ICard.ts#L390)
+[src/repository/ICard.ts:186](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/e581dca/src/repository/ICard.ts#L186)
 
 ___
 
@@ -473,7 +464,7 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:58](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9b9a57c/src/repository/ICard.ts#L58)
+[src/repository/ICard.ts:58](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/e581dca/src/repository/ICard.ts#L58)
 
 ___
 
@@ -514,4 +505,4 @@ try {
 
 #### Defined in
 
-[src/repository/ICard.ts:375](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9b9a57c/src/repository/ICard.ts#L375)
+[src/repository/ICard.ts:403](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/e581dca/src/repository/ICard.ts#L403)

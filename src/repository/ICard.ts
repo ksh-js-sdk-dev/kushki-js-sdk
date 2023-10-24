@@ -85,7 +85,7 @@ export interface ICard {
    *  }
    * ```
    *
-   * Handling event 'validity' of an especific hosted field
+   * Handling event 'validity' of an specific hosted field
    *
    * ```ts
    * try {
@@ -143,17 +143,45 @@ export interface ICard {
   getFormValidity(): FormValidity;
 
   /**
-   * This event is emitted when enter value in OTP field
+   * This event is emitted when enter value in OTP field to validate code.
+   * OTP authentication is a password that is valid for a single transaction. It aims to reduce fraud and provide extra security for your merchant’s online payments.
+   * The user will have 3 attempts to enter a valid OTP.
+   *
+   * @group Methods
+   * @param {() => void} onRequired -  Callback is executed when the token created need validation OTP.
+   * @param {(ERRORS) => void} onError -  Callback is executed when validation OTP return an error.
+   * @param {() => void} onSuccess -  Callback is executed when validation OTP is success.
+   *
    * @return {void}
+   *
+   * @throws
+   * - if the validation OTP is invalid, callback onError return error {@link ERRORS | ERRORS.E008}
+   *
    * @example
-   *  cardInstance.onOTPValidation(
-   *    () => { setShowOTP(true);},
-   *    (error) => { setErrorOTP(error.message);},
-   *    () => { setErrorOTP("");}
-   *  );
-   * @param onRequired
-   * @param onError
-   * @param onSuccess
+   *
+   * Handling events 'otpValidation' of OTP hosted field
+   *
+   *  ```ts
+   *  try {
+   *      cardInstance.onOTPValidation(
+   *     () => {
+   *     // On required callback, is executed when flow requestToken need validate OTP.
+   *       console.log("You should implement logic for continue charge process.")
+   *     },
+   *     (error) => {
+   *     // On error callback, is executed when validation OTP is incorrect. You will receive an error with code E008
+   *       console.error("Catch error otp", error.code, error.message);
+   *     },
+   *     () => {
+   *     // On success callback, is executed when validation OTP is success.
+   *       console.log("You should implement logic for continue charge process after validation OTP success")
+   *     }
+   *   );
+   * } catch (error: any) {
+   *   console.error("Catch error on onOTPValidation", error.code, error.message);
+   * }
+   * ```
+   *
    */
   onOTPValidation(
     onRequired: () => void,
@@ -373,23 +401,4 @@ export interface ICard {
    *
    */
   reset(fieldType: FieldTypeEnum): Promise<void>;
-
-  /**
-   * This event is emitted when enter value in OTP field
-   * @return {void}
-   * @example
-   *  cardInstance.onOTPValidation(
-   *    () => { setShowOTP(true);},
-   *    (error) => { setErrorOTP(error.message);},
-   *    () => { setErrorOTP("");}
-   *  );
-   * @param onRequired
-   * @param onError
-   * @param onSuccess
-   */
-  onOTPValidation(
-    onRequired: () => void,
-    onError: (error: KushkiErrorAttr) => void,
-    onSuccess: () => void
-  ): void;
 }
