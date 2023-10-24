@@ -62,4 +62,4 @@ const buildKushkiInstance = async () => {
 
 #### Defined in
 
-[src/module/Kushki.ts:42](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/9b9a57c/src/module/Kushki.ts#L42)
+[src/module/Kushki.ts:42](https://github.com/ksh-js-sdk-dev/kushki-js-sdk/blob/e581dca/src/module/Kushki.ts#L42)
