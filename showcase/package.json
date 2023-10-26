@@ -18,10 +18,11 @@
     "npm": "please-use-yarn"
   },
   "dependencies": {
+    "@kushki/js-sdk": "../dist",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-input-mask": "2.0.4",
-    "@kushki/js-sdk": "../dist"
+    "react-router-dom": "^6.17.0"
   },
   "devDependencies": {
     "@babel/core": "^7.22.10",
@@ -29,7 +30,6 @@
     "@babel/preset-react": "^7.22.5",
     "@babel/preset-typescript": "^7.22.5",
     "@commitlint/cli": "^17.6.7",
-    "@types/react-input-mask": "3.0.2",
     "@commitlint/config-conventional": "^17.6.7",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
@@ -37,6 +37,7 @@
     "@types/node": "^20.5.1",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@types/react-input-mask": "3.0.2",
     "@types/sinon": "^10.0.16",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
     "@typescript-eslint/parser": "^6.3.0",
