@@ -44,12 +44,14 @@
     "axios": "^1.5.0",
     "inversify": "^6.0.1",
     "reflect-metadata": "^0.1.13",
+    "rollbar": "^2.26.2",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.7",
     "@commitlint/config-conventional": "^17.6.7",
     "@microsoft/tsdoc": "^0.14.2",
+    "@rollbar/react": "^0.11.1",
     "@testing-library/jest-dom": "^6.1.2",
     "@testing-library/react": "^14.0.0",
     "@types/axios": "^0.14.0",

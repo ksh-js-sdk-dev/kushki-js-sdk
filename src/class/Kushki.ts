@@ -5,6 +5,9 @@ import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { UtilsProvider } from "src/provider/UtilsProvider.ts";
 import { IKushki } from "repository/IKushki.ts";
+import Rollbar from "rollbar";
+import { TypeEnvironmentEnum } from "infrastructure/TypeEnvironmentEnum";
+import packageJson from "../../package.json";
 
 export class Kushki implements IKushki {
   private readonly baseUrl: EnvironmentEnum;
@@ -27,6 +30,33 @@ export class Kushki implements IKushki {
 
       return Promise.resolve(kushki);
     } catch (e) {
+      const rollbarConfig = new Rollbar({
+        accessToken: EnvironmentEnum.rollbarId,
+        addErrorContext: true,
+        autoInstrument: true,
+        captureUncaught: true,
+        captureUnhandledRejections: true,
+        environment: TypeEnvironmentEnum.uat,
+        payload: {
+          client: {
+            javascript: {
+              code_version: packageJson.version,
+              source_map_enabled: true
+            }
+          },
+          environment: TypeEnvironmentEnum.uat
+        }
+      });
+
+      rollbarConfig.configure({
+        payload: {
+          custom: options,
+          merchant: {
+            publicCredentialId: options.publicCredentialId
+          }
+        }
+      });
+
       return UtilsProvider.validErrors(e, ERRORS.E011);
     }
   }
