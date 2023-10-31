@@ -31,6 +31,10 @@
     "./Card": {
       "import": "./module/Card.js",
       "types": "./module/Card.d.ts"
+    },
+    "./Transfer": {
+      "import": "./module/Transfer.js",
+      "types": "./module/Transfer.d.ts"
     }
   },
   "engines": {

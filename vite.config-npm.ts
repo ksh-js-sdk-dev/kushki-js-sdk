@@ -16,6 +16,7 @@ export default defineConfig({
     lib: {
       entry: {
         Card: "src/module/Card.ts",
+        Transfer: "src/module/Transfer.ts",
         Kushki: "src/module/Kushki.ts"
       },
       formats: ["cjs"]
