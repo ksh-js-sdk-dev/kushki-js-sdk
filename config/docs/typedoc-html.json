@@ -2,7 +2,7 @@
   "$schema": "https://typedoc.org/schema.json",
   "htmlLang": "en",
   "name": "kushki-js-sdk",
-  "entryPoints": ["../../docs-json/Card.json", "../../docs-json/Kushki.json"],
+  "entryPoints": ["../../docs-json/Card.json", "../../docs-json/Kushki.json", "../../docs-json/Transfer.json"],
   "entryPointStrategy": "merge",
   "excludeInternal": true,
   "excludePrivate": true,

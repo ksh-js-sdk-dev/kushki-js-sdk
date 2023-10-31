@@ -1,6 +1,7 @@
-import { CheckoutContainer } from "./containers/Checkout.tsx";
+import { CheckoutContainer } from "./containers/Card/Checkout.tsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RoutesEnum } from "./shared/enums/Routes.enum.ts";
+import { GetBankList } from "./containers/Transfer/GetBankList/GetBankList.tsx";
 
 function App() {
   return (
@@ -10,7 +11,7 @@ function App() {
         {/*TODO: Aqui cambiar redireccion a los otros demos*/}
         <Route path={RoutesEnum.VALIDATE_3DS} element={<>{"VALIDATE_3DS"}</>} />
         <Route path={RoutesEnum.DEVICE_TOKEN} element={<>{"DEVICE_TOKEN"}</>} />
-        <Route path={RoutesEnum.BANK_LIST} element={<>{"BANK_LIST"}</>} />
+        <Route path={RoutesEnum.BANK_LIST} element={<GetBankList />} />
         <Route
           path={RoutesEnum.COMMISSION_CONFIG}
           element={<>{"COMMISSION_CONFIG"}</>}

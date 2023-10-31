@@ -13,9 +13,9 @@ We make it easier!
   - [Styling](#-styling)
   - [Events](#-events)
   - [OTP Validation](#-otp-validation-)
-  - [Tokenization](#-tokenization)
-
-
+  - [Tokenization](#tokenization)
+- [Transfer Transactions](#transfer-transactions)
+  - [Request Bank List](#request-bank-list)
 # Install
 
 ## &bull; Option 1 - NPM
@@ -330,7 +330,7 @@ This method return three callbacks (onSuccess, onError and onRequired), that wil
 }
 ```
 
-## &#xa0;&#xa0;&bull; Tokenization
+## Tokenization
 
 To get a card payment token, you should call the [`requestToken`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#requestToken) method on your card instance that was previously initialized, this method also validates if all the fields are valid, otherwise it will throw an exception
 
@@ -367,3 +367,30 @@ try {
   console.error("Catch error on request card Token", error.code, error.message);
 }
 ```
+# Transfer Transactions
+## Request Bank List
+To get Bank List for Transfer transactions, you should call [`requestBankList`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Transfer.requestBankList.html) method with Kushki instance that was previously initialized with init [`init`](#library-setup) method
+
+This method is useful in situations where the processor requires a list of banks and allows the customer to choose a specific bank to make their payment., more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Transfer.requestBankList.html)
+### Example
+
+```ts
+import { init } from "Kushki";
+import { requestBankList } from "Kushki/Transfer";
+
+const onRequestBankList = async () => {
+    try {
+      const kushkiInstance = await init({
+        inTest: true,
+        publicCredentialId: "merchantId"
+      });
+
+      const response = await requestBankList(kushkiInstance);
+      
+      // On Success, can get list of banks, ex. [{"code":"0","name":"A continuación seleccione su banco"},{"code":"0001","name":"Kushki bank Colombia"},{"code":"0002","name":"Kushki bank Ecuador"}]
+      console.log(response);
+    } catch (error: any) {
+      // On Error, catch response, ex. {code:"E014", message: "Error en solicitud de lista de bancos"}
+      console.error(error.message);
+    }
+  };

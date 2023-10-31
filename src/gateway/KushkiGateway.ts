@@ -13,6 +13,7 @@ import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import { SecureOtpRequest } from "types/secure_otp_request";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { KushkiError } from "infrastructure/KushkiError.ts";
+import { BankListResponse } from "types/bank_list_response";
 
 @injectable()
 export class KushkiGateway implements IKushkiGateway {
@@ -113,6 +114,22 @@ export class KushkiGateway implements IKushkiGateway {
       return Promise.resolve(data);
     } catch (error: any) {
       return Promise.reject(new KushkiError(ERRORS.E006, error.message));
+    }
+  };
+
+  public requestBankList = async (
+    kushkiInstance: IKushki
+  ): Promise<BankListResponse> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${PathEnum.bank_list}`;
+
+    try {
+      const { data } = await axios.get<BankListResponse>(url, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+      });
+
+      return Promise.resolve(data);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E014, error.message));
     }
   };
 
