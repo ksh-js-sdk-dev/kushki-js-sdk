@@ -1,5 +1,5 @@
-import { CardOptions } from "../../../src/module/Card.ts";
-import { Styles } from "../../../types/card_options";
+import { CardOptions } from "../../../../src/module/Card.ts";
+import { Styles } from "../../../../types/card_options";
 
 export const hostedFieldsStyles: Styles = {
   container: {

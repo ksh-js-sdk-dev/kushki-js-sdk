@@ -9,6 +9,7 @@ import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { SecureOtpRequest } from "types/secure_otp_request";
+import { BankListResponse } from "types/bank_list_response";
 
 jest.mock("axios");
 
@@ -194,6 +195,40 @@ describe("KushkiGateway - Test", () => {
         );
       } catch (error: any) {
         expect(error.code).toEqual("E006");
+      }
+    });
+  });
+
+  describe("requestBankList - Test", () => {
+    const mockBankList: BankListResponse = [
+      {
+        code: "1234567890",
+        name: "test1"
+      }
+    ];
+
+    it("when called requestBankList return data on success", async () => {
+      const axiosGetSpy = jest.fn(() => {
+        return Promise.resolve({
+          data: mockBankList
+        });
+      });
+
+      jest.spyOn(axios, "get").mockImplementation(axiosGetSpy);
+
+      const bankListResponse: BankListResponse =
+        await kushkiGateway.requestBankList(mockKushki);
+
+      expect(bankListResponse).toEqual(mockBankList);
+    });
+
+    it("When requestBankList throws an AxiosError", async () => {
+      jest.spyOn(axios, "get").mockRejectedValue(new AxiosError(""));
+
+      try {
+        await kushkiGateway.requestBankList(mockKushki);
+      } catch (error: any) {
+        expect(error.code).toEqual("E014");
       }
     });
   });

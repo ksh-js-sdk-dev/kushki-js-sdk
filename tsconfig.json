@@ -22,6 +22,7 @@
     "paths": {
       "Kushki": ["src/module/Kushki.ts"],
       "Kushki/Card": ["src/module/Card.ts"],
+      "Kushki/Transfer": ["src/module/Transfer.ts"],
       "module/*": ["src/module/*"],
       "gateway/*": ["src/gateway/*"],
       "infrastructure/*": ["src/infrastructure/*"],
