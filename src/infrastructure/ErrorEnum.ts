@@ -78,6 +78,10 @@ export enum ErrorCode {
  *   E013: {
  *     code: "E013",
  *     message: "El Id del contenedor de un input no fue encontrado"
+ *   },
+ *   E014: {
+ *     code: "E014",
+ *     message: "Error en solicitud de lista de bancos"
  *   }
  * }
  * ```
