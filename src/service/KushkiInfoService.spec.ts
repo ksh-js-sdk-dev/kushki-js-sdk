@@ -1,4 +1,4 @@
-import { KInfo } from "class/KushkiInfo.ts";
+import { KInfo } from "service/KushkiInfoService.ts";
 import { PlatformCodeEnum } from "infrastructure/PlatformCodes.enum.ts";
 import { version } from "../../package.json";
 

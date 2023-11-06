@@ -44,7 +44,7 @@ import { UtilsProvider } from "src/provider/UtilsProvider.ts";
 import { PathEnum } from "infrastructure/PathEnum.ts";
 import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
 import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
-import { KInfo } from "class/KushkiInfo.ts";
+import { KInfo } from "service/KushkiInfoService.ts";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
