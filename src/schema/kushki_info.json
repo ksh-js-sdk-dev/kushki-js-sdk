@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "KushkiInfo",
+  "additionalProperties": false,
+  "properties": {
+    "platformId": {
+      "type": "string",
+      "enum": [
+        "KP001",
+        "KP002",
+        "KP003",
+        "KP004",
+        "KP005",
+        "KP006",
+        "KP007",
+        "KP008",
+        "KP009",
+        "KP010",
+        "KP011",
+        "KP012",
+        "KP013",
+        "KP014",
+        "KP016"
+      ],
+      "description": "KP001=API\nKP002=KUSHKIJS\nKP003=ANDROID\nKP004=IOS\nKP005=SMARTLINKS\nKP006=KAJITA\nKP007=CAJITA\nKP008=VTEX\nKP009=MAGENTO\nKP010=PRESTASHOP\nKP011=WOOCOMERCE\nKP012=SHOPIFY\nKP013=WEBCHECKOUT\nKP014=EXPRESS_CHECKOUT\nKP016=KUSHKI_JS_SDK\n"
+    },
+    "platformVersion": {
+      "type": "string"
+    }
+  },
+  "required": ["platformId"],
+  "type": "object"
+}
