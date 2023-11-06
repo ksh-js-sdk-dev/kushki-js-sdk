@@ -30,7 +30,7 @@ import { BankListResponse } from "types/bank_list_response";
  *
  *       const response = await requestBankList(kushkiInstance);
  *
- *       // On Success, can get list of banks, ex. [{"code":"0","name":"A continuación seleccione su banco"},{"code":"0001","name":"Kushki bank Colombia"},{"code":"0002","name":"Kushki bank Ecuador"}]
+ *       // On Success, can get list of banks, ex.  [{"code":"0","name":"A continuación seleccione su banco"},{"code":"XXX1","name":"BANCO DE BOGOTA"},{"code":"XXX2","name":"BANCO POPULAR"},{"code":"XXX6","name":"BANCO ITAU"}]
  *       console.log(response);
  *     } catch (error: any) {
  *       // On Error, catch response, ex. {code:"E014", message: "Error en solicitud de lista de bancos"}
