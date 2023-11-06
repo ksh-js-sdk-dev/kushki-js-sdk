@@ -22,7 +22,8 @@
     "paths": {
       "Kushki": ["../src/module/Kushki.ts"],
       "Kushki/Card": ["../src/module/Card.ts"],
-      "Kushki/Transfer": ["../src/module/Transfer.ts"]
+      "Kushki/Transfer": ["../src/module/Transfer.ts"],
+      "Kushki/Merchant": ["../src/module/Merchant.ts"]
     }
   },
   "include": ["src"],

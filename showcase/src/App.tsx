@@ -2,6 +2,7 @@ import { CheckoutContainer } from "./containers/Card/Checkout.tsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RoutesEnum } from "./shared/enums/Routes.enum.ts";
 import { GetBankList } from "./containers/Transfer/GetBankList/GetBankList.tsx";
+import { RequestCommissionConfiguration } from "./containers/Merchant/RequestCommissionConfiguration/RequestCommissionConfiguration.tsx";
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
         <Route path={RoutesEnum.BANK_LIST} element={<GetBankList />} />
         <Route
           path={RoutesEnum.COMMISSION_CONFIG}
-          element={<>{"COMMISSION_CONFIG"}</>}
+          element={<RequestCommissionConfiguration />}
         />
         <Route
           path={RoutesEnum.INIT_ANTI_FRAUD}

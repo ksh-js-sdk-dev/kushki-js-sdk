@@ -35,6 +35,10 @@
     "./Transfer": {
       "import": "./module/Transfer.js",
       "types": "./module/Transfer.d.ts"
+    },
+    "./Merchant": {
+      "import": "./module/Merchant.js",
+      "types": "./module/Merchant.d.ts"
     }
   },
   "engines": {

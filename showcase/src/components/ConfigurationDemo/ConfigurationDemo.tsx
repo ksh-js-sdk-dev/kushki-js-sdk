@@ -7,6 +7,7 @@ import {
 import { OptionDefaultData } from "../../shared/enums/OptionDefaultData.ts";
 import ButtonsDefaultInfo from "./Components/ButtonsDefaultInfo.tsx";
 import InputConfigurationDemo from "./Components/InputConfigurationDemo.tsx";
+import CurrencyConfigurationDemo from "./Components/CurrencyConfigurationDemo.tsx";
 
 const ConfigurationDemo = ({
   setPublicMerchantIdDemo,
@@ -176,39 +177,11 @@ const ConfigurationDemo = ({
           valueInput={inputMerchantId}
           label={"Merchant ID"}
         />
-        <div className="mui-select divContainer">
-          <select
-            className={
-              inputCurrency
-                ? "selectExample selectLabelSelected"
-                : "selectExample selectLabelEmpty"
-            }
-            disabled={disableInputPrev}
-            onChange={(e) => {
-              setInputCurrency(e.target.value as Currency);
-            }}
-            defaultValue={""}
-            value={inputCurrency}
-          >
-            <option value={""} disabled hidden>
-              Seleccionar Moneda
-            </option>
-            <option value={"USD"}>USD</option>
-            <option>COP</option>
-            <option>CLP</option>
-            <option>UF</option>
-            <option>PEN</option>
-            <option>MXN</option>
-            <option>CRC</option>
-            <option>GTQ</option>
-            <option>HNL</option>
-            <option>NIO</option>
-            <option>BRL</option>
-          </select>
-          {inputCurrency && (
-            <label className={"label-input-configuration"}>Moneda</label>
-          )}
-        </div>
+        <CurrencyConfigurationDemo
+          disableInputPrev={disableInputPrev}
+          inputCurrency={inputCurrency}
+          setInputCurrency={setInputCurrency}
+        />
         <InputConfigurationDemo
           disableInputPrev={disableInputPrev}
           setInputOption={setInputAmount}

@@ -19,7 +19,8 @@ export enum ErrorCode {
   E011 = "E011",
   E012 = "E012",
   E013 = "E013",
-  E014 = "E014"
+  E014 = "E014",
+  E015 = "E015"
 }
 
 /**
@@ -139,5 +140,9 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E014]: {
     code: ErrorCode.E014,
     message: "Error en solicitud de lista de bancos"
+  },
+  [ErrorCode.E015]: {
+    code: ErrorCode.E015,
+    message: "Error en solicitud de configuración de comisión"
   }
 };

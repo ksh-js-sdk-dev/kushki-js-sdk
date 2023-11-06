@@ -13,7 +13,7 @@ import { BankListResponse } from "types/bank_list_response";
  * @returns {Promise<BankListResponse>} - List of available banks
  * @throws
  *  - if `options.publicCredentialId` into `kushkiInstance` is not valid or the request fails then throw {@link ERRORS | ERRORS.E014}
- *  
+ *
  * #### Example
  * ##### Basic request Bank List
  *

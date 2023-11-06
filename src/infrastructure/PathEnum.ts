@@ -9,5 +9,6 @@ export enum PathEnum {
   merchant_settings = "merchant/v1/merchant/settings",
   cybersource_jwt = "card/v1/authToken",
   secure_validation = "rules/v1/secureValidation",
-  bank_list = "transfer/v1/bankList"
+  bank_list = "transfer/v1/bankList",
+  commission_configuration = "commission/v1/configuration"
 }
