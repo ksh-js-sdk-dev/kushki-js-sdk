@@ -422,10 +422,10 @@ export class Card implements ICard {
         this.kushkiInstance,
         this.options,
         requestPath,
+        headers,
         jwt,
         siftScienceSession,
-        deferredValues,
-        headers
+        deferredValues
       );
 
       return Promise.resolve(token);
