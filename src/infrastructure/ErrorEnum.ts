@@ -18,7 +18,8 @@ export enum ErrorCode {
   E010 = "E010",
   E011 = "E011",
   E012 = "E012",
-  E013 = "E013"
+  E013 = "E013",
+  E014 = "E014"
 }
 
 /**
@@ -77,6 +78,10 @@ export enum ErrorCode {
  *   E013: {
  *     code: "E013",
  *     message: "El Id del contenedor de un input no fue encontrado"
+ *   },
+ *   E014: {
+ *     code: "E014",
+ *     message: "Error en solicitud de lista de bancos"
  *   }
  * }
  * ```
@@ -134,5 +139,9 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E013]: {
     code: ErrorCode.E013,
     message: "El Id del contenedor de un input no fue encontrado"
+  },
+  [ErrorCode.E014]: {
+    code: ErrorCode.E014,
+    message: "Error en solicitud de lista de bancos"
   }
 };

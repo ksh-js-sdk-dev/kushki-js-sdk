@@ -6,17 +6,17 @@ We make it easier!
 
 ## Table of Contents
 
-- [Instalation](#Install)
+- [Instalation](#install)
 - [Library setup](#library-setup)
 - [Get a payment card token](#get-a-payment-card-token)
-  - [Form initialization](#-form-initialization)
-  - [Styling](#-styling)
-  - [Events](#-events)
-  - [OTP Validation](#-otp-validation-)
-  - [Tokenization](#-tokenization)
-
-
-# Install
+  - [Form initialization](#form-initialization)
+  - [Styling](#styling)
+  - [Events](#events)
+  - [OTP Validation](#otp-validation)
+  - [Tokenization](#tokenization)
+- [Transfer Transactions](#transfer-transactions)
+  - [Request Bank List](#request-bank-list)
+# Install <a name="install"></a>
 
 ## &bull; Option 1 - NPM
 
@@ -43,7 +43,7 @@ Use a script tag inside your page to add the feature. When adding the following 
 <script src="https://cdn.kushkipagos.com/js/card.min.js"></script>
 ```
 
-# Library setup
+# Library setup <a name="library-setup"></a>
 
 Begin calling the method init [`init`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Kushki.init.html#init), With an object of type [`KushkiOptions`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Kushki.KushkiOptions.html) 
 
@@ -64,9 +64,9 @@ const buildKushkiInstance = async () => {
 }
 ```
 
-# Get a payment card token
+# Get a payment card token <a name="get-a-payment-card-token"></a>
 
-## &#xa0;&#xa0;&bull; Form initialization
+## &#xa0;&#xa0;&bull; Form initialization  <a name="form-initialization"></a>
 The following steps describes how you can init a card token instance
 #### Define the containers for the hosted fields
 Before you call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html), you need create div elements for each hosted field
@@ -127,7 +127,7 @@ const buildCardInstance = async () => {
 ```
 [More Examples](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html#md:examples)
 
-### &#xa0;&#xa0;&bull; Styling
+### &#xa0;&#xa0;&bull; Styling <a name="styling"></a>
 If you want to give custom styles to hosted files, the interface [Styles](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.Styles.html) is exposed, so you have two ways:
  - Css Classes.- The interface [CssProperties](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/types/Card.CssProperties.html) allows to receive a string, so you can configure a CSS class of your site
  - [JSS](https://cssinjs.org/react-jss/?v=v10.3.0) Object.- The interface [CssProperties](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/types/Card.CssProperties.html) allows to receive an object, so you can configure custom CSS styles
@@ -184,7 +184,7 @@ const options : CardOptions = {
 - [JSS Documentation](https://cssinjs.org/?v=v10.3.0)
 - [CSS Pseudo-elements](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements)
 
-## &#xa0;&#xa0;&bull; Events
+## &#xa0;&#xa0;&bull; Events <a name="events"></a>
 
 ### Handling event focus on field
 This event is emitted when the field focus, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#onFieldFocus)
@@ -301,7 +301,7 @@ try {
 }
 ```
 
-## &#xa0;&#xa0;&bull; OTP Validation <a name="-otp-validation-"></a>
+## &#xa0;&#xa0;&bull; OTP Validation <a name="otp-validation"></a>
 
 If you need validate OTP code, you can use method [`onOTPValidation`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#onOTPValidation) on your card instance.
 
@@ -330,7 +330,7 @@ This method return three callbacks (onSuccess, onError and onRequired), that wil
 }
 ```
 
-## &#xa0;&#xa0;&bull; Tokenization
+## Tokenization <a name="tokenization"></a>
 
 To get a card payment token, you should call the [`requestToken`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICard.html#requestToken) method on your card instance that was previously initialized, this method also validates if all the fields are valid, otherwise it will throw an exception
 
@@ -367,3 +367,30 @@ try {
   console.error("Catch error on request card Token", error.code, error.message);
 }
 ```
+#  Transfer Transactions <a name="transfer-transactions"></a>
+## Request Bank List <a name="request-bank-list"></a>
+To get Bank List for Transfer transactions, you should call [`requestBankList`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Transfer.requestBankList.html) method with Kushki instance that was previously initialized with init [`init`](#library-setup) method
+
+This method is useful in situations where the processor requires a list of banks and allows the customer to choose a specific bank to make their payment., more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Transfer.requestBankList.html)
+### Example
+
+```ts
+import { init } from "Kushki";
+import { requestBankList } from "Kushki/Transfer";
+
+const onRequestBankList = async () => {
+    try {
+      const kushkiInstance = await init({
+        inTest: true,
+        publicCredentialId: "merchantId"
+      });
+
+      const response = await requestBankList(kushkiInstance);
+      
+      // On Success, can get list of banks, ex. [{"code":"0","name":"A continuación seleccione su banco"},{"code":"XXX1","name":"BANCO DE BOGOTA"},{"code":"XXX2","name":"BANCO POPULAR"},{"code":"XXX6","name":"BANCO ITAU"}]
+      console.log(response);
+    } catch (error: any) {
+      // On Error, catch response, ex. {code:"E014", message: "Error en solicitud de lista de bancos"}
+      console.error(error.message);
+    }
+  };

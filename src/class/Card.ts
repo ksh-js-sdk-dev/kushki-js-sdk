@@ -44,6 +44,7 @@ import { UtilsProvider } from "src/provider/UtilsProvider.ts";
 import { PathEnum } from "infrastructure/PathEnum.ts";
 import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
 import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
+import { KInfo } from "service/KushkiInfoService.ts";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
@@ -413,6 +414,7 @@ export class Card implements ICard {
       const requestPath: string = this.options.isSubscription
         ? PathEnum.card_subscription_token
         : PathEnum.card_token;
+      const headers = this.buildCustomHeaders();
 
       const token = await this.inputValues[
         this.firstHostedFieldType
@@ -420,6 +422,7 @@ export class Card implements ICard {
         this.kushkiInstance,
         this.options,
         requestPath,
+        headers,
         jwt,
         siftScienceSession,
         deferredValues
@@ -429,6 +432,12 @@ export class Card implements ICard {
     } catch (error) {
       return Promise.reject(error);
     }
+  }
+
+  private buildCustomHeaders() {
+    return {
+      [KInfo.KUSHKI_INFO_HEADER]: KInfo.buildKushkiInfo()
+    };
   }
 
   private getDeferredValues = (
