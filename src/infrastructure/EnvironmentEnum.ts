@@ -4,5 +4,5 @@
 export enum EnvironmentEnum {
   uat = "https://api-uat.kushkipagos.com/",
   prod = "https://api.kushkipagos.com/",
-  rollbarId = "0b1e68ec160e46059d278f0d926f23ff"
+  rollbarId = "38ce2c1dbb3d4055a44c3c324ee9d993"
 }

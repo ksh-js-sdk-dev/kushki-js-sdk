@@ -12,6 +12,8 @@ import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
 import { Cardinal3DSProvider } from "src/provider/Cardinal3DSProvider.ts";
 import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
 import { Sandbox3DSProvider } from "src/provider/Sandbox3DSProvider.ts";
+import { IRollbarGateway } from "repository/IRollbarGateway.ts";
+import { RollbarGateway } from "gateway/RollbarGateway.ts";
 
 const CONTAINER: Container = new Container();
 
@@ -27,5 +29,7 @@ CONTAINER.bind<ISandbox3DSProvider>(IDENTIFIERS.Sandbox3DSProvider).to(
 
 // Gateway
 CONTAINER.bind<IKushkiGateway>(IDENTIFIERS.KushkiGateway).to(KushkiGateway);
+
+CONTAINER.bind<IRollbarGateway>(IDENTIFIERS.RollbarGateway).to(RollbarGateway);
 
 export { CONTAINER };

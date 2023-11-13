@@ -5,21 +5,20 @@ import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { UtilsProvider } from "src/provider/UtilsProvider.ts";
 import { IKushki } from "repository/IKushki.ts";
-import Rollbar from "rollbar";
-import { TypeEnvironmentEnum } from "infrastructure/TypeEnvironmentEnum";
-import packageJson from "../../package.json";
 
 export class Kushki implements IKushki {
   private readonly baseUrl: EnvironmentEnum;
   private readonly publicCredentialId: string;
   private readonly inTest: boolean;
   private readonly environmentSift: string;
+  private readonly options: KushkiOptions;
 
   constructor(options: KushkiOptions) {
     this.publicCredentialId = options.publicCredentialId;
     this.baseUrl = this._initBaseUrl(options.inTest);
     this.inTest = !!options.inTest;
     this.environmentSift = this._initEnvironmentSift(options.inTest);
+    this.options = options;
   }
 
   public static async init(options: KushkiOptions): Promise<Kushki> {
@@ -30,33 +29,6 @@ export class Kushki implements IKushki {
 
       return Promise.resolve(kushki);
     } catch (e) {
-      const rollbarConfig = new Rollbar({
-        accessToken: EnvironmentEnum.rollbarId,
-        addErrorContext: true,
-        autoInstrument: true,
-        captureUncaught: true,
-        captureUnhandledRejections: true,
-        environment: TypeEnvironmentEnum.uat,
-        payload: {
-          client: {
-            javascript: {
-              code_version: packageJson.version,
-              source_map_enabled: true
-            }
-          },
-          environment: TypeEnvironmentEnum.uat
-        }
-      });
-
-      rollbarConfig.configure({
-        payload: {
-          custom: options,
-          merchant: {
-            publicCredentialId: options.publicCredentialId
-          }
-        }
-      });
-
       return UtilsProvider.validErrors(e, ERRORS.E011);
     }
   }
@@ -75,6 +47,10 @@ export class Kushki implements IKushki {
 
   public isInTest(): boolean {
     return this.inTest;
+  }
+
+  public getOptions(): KushkiOptions {
+    return this.options;
   }
 
   private _initBaseUrl(inTest?: boolean): EnvironmentEnum {
