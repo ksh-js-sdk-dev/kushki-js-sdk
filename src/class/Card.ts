@@ -45,6 +45,7 @@ import { PathEnum } from "infrastructure/PathEnum.ts";
 import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
 import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
 import { KInfo } from "service/KushkiInfoService.ts";
+import { IRollbarGateway } from "repository/IRollbarGateway.ts";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
@@ -64,6 +65,7 @@ export class Card implements ICard {
   private readonly otpInputOTP: string = "onInputOTP";
   private readonly deferredDefaultWidth: number = 300;
   private firstHostedFieldType: string = "";
+  private rollbar: IRollbarGateway;
 
   private constructor(kushkiInstance: IKushki, options: CardOptions) {
     this.options = this.setDefaultValues(options);
@@ -81,6 +83,9 @@ export class Card implements ICard {
     this._sandbox3DSProvider = CONTAINER.get<ISandbox3DSProvider>(
       IDENTIFIERS.Sandbox3DSProvider
     );
+
+    this.rollbar = CONTAINER.get<IRollbarGateway>(IDENTIFIERS.RollbarGateway);
+    this.rollbar.init(kushkiInstance.getOptions());
   }
 
   public static async initCardToken(
@@ -375,6 +380,7 @@ export class Card implements ICard {
 
           resolve(token);
         } catch (error) {
+          this.rollbar.error(error);
           reject(error);
         }
       });
@@ -990,6 +996,7 @@ export class Card implements ICard {
           resolve(false);
         }
       } catch (error) {
+        this.rollbar.error(error);
         reject(error);
       }
     });

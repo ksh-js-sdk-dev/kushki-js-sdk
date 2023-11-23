@@ -11,12 +11,14 @@ export class Kushki implements IKushki {
   private readonly publicCredentialId: string;
   private readonly inTest: boolean;
   private readonly environmentSift: string;
+  private readonly options: KushkiOptions;
 
   constructor(options: KushkiOptions) {
     this.publicCredentialId = options.publicCredentialId;
     this.baseUrl = this._initBaseUrl(options.inTest);
     this.inTest = !!options.inTest;
     this.environmentSift = this._initEnvironmentSift(options.inTest);
+    this.options = options;
   }
 
   public static async init(options: KushkiOptions): Promise<Kushki> {
@@ -45,6 +47,10 @@ export class Kushki implements IKushki {
 
   public isInTest(): boolean {
     return this.inTest;
+  }
+
+  public getOptions(): KushkiOptions {
+    return this.options;
   }
 
   private _initBaseUrl(inTest?: boolean): EnvironmentEnum {

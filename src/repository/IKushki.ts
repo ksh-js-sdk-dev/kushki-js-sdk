@@ -1,4 +1,5 @@
 import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
+import { KushkiOptions } from "types/kushki_options";
 
 export interface IKushki {
   /**
@@ -15,6 +16,11 @@ export interface IKushki {
    * Get Sift Science env
    */
   getEnvironmentSift: () => string;
+
+  /**
+   * Get Kushki Options
+   */
+  getOptions: () => KushkiOptions;
 
   /**
    * Get if Kushki instance is in test

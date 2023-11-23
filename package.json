@@ -49,6 +49,7 @@
     "buffer": "6.0.3",
     "inversify": "^6.0.1",
     "reflect-metadata": "^0.1.13",
+    "rollbar": "^2.26.2",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

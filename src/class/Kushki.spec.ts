@@ -12,7 +12,7 @@ describe("Kushki - test", () => {
     };
   });
 
-  it("when init with isTes in true must return uat url", async () => {
+  it("when init with isTest in true must return uat url", async () => {
     options = {
       inTest: true,
       publicCredentialId: "1234"
@@ -25,9 +25,10 @@ describe("Kushki - test", () => {
       options.publicCredentialId
     );
     expect(kushkiInstance.getEnvironmentSift()).toEqual(SiftScienceEnum.uat);
+    expect(kushkiInstance.getOptions()).toEqual(options);
   });
 
-  it("when init with isTes in false must return prod url", async () => {
+  it("when init with isTest in false must return prod url", async () => {
     options = {
       inTest: false,
       publicCredentialId: "1234"
