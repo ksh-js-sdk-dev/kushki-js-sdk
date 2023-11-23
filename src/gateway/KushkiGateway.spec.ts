@@ -10,6 +10,8 @@ import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { SecureOtpRequest } from "types/secure_otp_request";
 import { BankListResponse } from "types/bank_list_response";
+import { CommissionConfigurationResponse } from "types/commission_configuration_response";
+import { CommissionConfigurationRequest } from "types/commission_configuration_request";
 
 jest.mock("axios");
 
@@ -229,6 +231,50 @@ describe("KushkiGateway - Test", () => {
         await kushkiGateway.requestBankList(mockKushki);
       } catch (error: any) {
         expect(error.code).toEqual("E014");
+      }
+    });
+  });
+
+  describe("requestCommissionConfiguration - Test", () => {
+    const request: CommissionConfigurationRequest = {
+      currency: "USD",
+      totalAmount: 444
+    };
+    const mockCommissionConfig: CommissionConfigurationResponse = {
+      amount: {
+        currency: "USD",
+        iva: 10,
+        subtotalIva: 20,
+        subtotalIva0: 30
+      },
+      commissionMerchantName: "test",
+      merchantId: "12334",
+      parentMerchantName: "test",
+      totalAmount: 444
+    };
+
+    it("when called requestCommissionConfiguration return data on success", async () => {
+      const axiosPostSpy = jest.fn(() => {
+        return Promise.resolve({
+          data: mockCommissionConfig
+        });
+      });
+
+      jest.spyOn(axios, "post").mockImplementation(axiosPostSpy);
+
+      const commissionConfigResponse: CommissionConfigurationResponse =
+        await kushkiGateway.requestCommissionConfiguration(mockKushki, request);
+
+      expect(commissionConfigResponse).toEqual(mockCommissionConfig);
+    });
+
+    it("When requestCommissionConfiguration throws an AxiosError", async () => {
+      jest.spyOn(axios, "post").mockRejectedValue(new AxiosError(""));
+
+      try {
+        await kushkiGateway.requestCommissionConfiguration(mockKushki, request);
+      } catch (error: any) {
+        expect(error.code).toEqual("E015");
       }
     });
   });

@@ -6,9 +6,10 @@
     "bootstrap:codesandbox": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev --mode codesandbox",
     "dev": "cd ./showcase && vite --c vite.config.ts",
     "docs": "sh generate-docs.sh",
-    "build:npm": "tsc && vite build --c vite.config-npm.ts && yarn cp:package",
+    "build:npm": "npm run genversion && tsc && vite build --c vite.config-npm.ts && yarn cp:package",
     "build:cdn": "npx webpack --config webpack-cdn.config.js",
     "build": "npm run validate && npm run build:npm && npm run build:cdn && npm run docs",
+    "genversion": "genversion --es6 --double --semi src/libs/genversion/version.ts",
     "lint": "npm run format && npm run lint:fix && eslint src/**/*.ts",
     "preview": "vite preview --c vite.config-npm.ts",
     "lint:fix": "eslint --fix src/**/*.ts",
@@ -17,7 +18,7 @@
     "tsc:interface": "cd json2ts/bin && node kushki json2ts ",
     "test:unit": "jest",
     "test:coverage": "jest --coverage",
-    "test": "npm run test:unit && npm run test:coverage",
+    "test": "npm run genversion && npm run test:unit && npm run test:coverage",
     "validate": "npm run lint && npm run test",
     "cp:package": "node cp-package-json.js",
     "publish:alpha": "npm run build && npm publish --tag alpha",
@@ -35,6 +36,10 @@
     "./Transfer": {
       "import": "./module/Transfer.js",
       "types": "./module/Transfer.d.ts"
+    },
+    "./Merchant": {
+      "import": "./module/Merchant.js",
+      "types": "./module/Merchant.d.ts"
     }
   },
   "engines": {
@@ -47,6 +52,7 @@
     "@kushki/cardinal-sandbox-js": "1.0.5-alpha.1",
     "axios": "^1.5.0",
     "buffer": "6.0.3",
+    "genversion": "^3.1.1",
     "inversify": "^6.0.1",
     "reflect-metadata": "^0.1.13",
     "rollbar": "^2.26.2",

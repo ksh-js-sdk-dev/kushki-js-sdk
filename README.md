@@ -16,6 +16,9 @@ We make it easier!
   - [Tokenization](#tokenization)
 - [Transfer Transactions](#transfer-transactions)
   - [Request Bank List](#request-bank-list)
+- [Merchant Methods](#merchant-methods)
+  - [Request Commission Configuration](#request-commission-configuration)
+
 # Install <a name="install"></a>
 
 ## &bull; Option 1 - NPM
@@ -369,7 +372,7 @@ try {
 ```
 #  Transfer Transactions <a name="transfer-transactions"></a>
 ## Request Bank List <a name="request-bank-list"></a>
-To get Bank List for Transfer transactions, you should call [`requestBankList`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Transfer.requestBankList.html) method with Kushki instance that was previously initialized with init [`init`](#library-setup) method
+To get Bank List for Transfer transactions, you should call [`requestBankList`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Transfer.requestBankList.html) method with Kushki instance that was previously initialized with [`init`](#library-setup) method
 
 This method is useful in situations where the processor requires a list of banks and allows the customer to choose a specific bank to make their payment., more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Transfer.requestBankList.html)
 ### Example
@@ -394,3 +397,39 @@ const onRequestBankList = async () => {
       console.error(error.message);
     }
   };
+```
+
+#  Merchant Methods <a name="merchant-methods"></a>
+## Request Commission Configuration <a name="request-commission-configuration"></a>
+To get merchant commission configuration, you should call [`requestCommissionConfiguration`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Merchant.requestCommissionConfiguration.html) method with Kushki instance that was previously initialized with [`init`](#library-setup) method
+and the object [`CommissionConfigurationRequest`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Merchant.CommissionConfigurationRequest.html)
+
+This method is useful when you need to get the information related to the commission charge configured for a specific merchant, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Merchant.requestCommissionConfiguration.html)
+### Example
+
+```ts
+import { init } from "Kushki";
+import {CommissionConfigurationRequest, requestCommissionConfiguration } from "Kushki/Merchant";
+
+const onRequestCommissionConfiguration = async () => {
+    try {
+      const kushkiInstance = await init({
+        inTest: true,
+        publicCredentialId: "merchantId"
+      });
+      const body: CommissionConfigurationRequest = {
+        totalAmount: 10,
+        currency: "USD"
+      };
+
+      const response = await requestCommissionConfiguration(kushkiInstance, body);
+
+      // On Success, can get commission config,
+      // ex. {"commissionMerchantName":"Name","parentMerchantName":"Name","amount":{"currency":"USD","iva":0.45,"subtotalIva":2.5,"subtotalIva0":0},"merchantId":"XXX","totalAmount":2.95}
+      console.log(response);
+    } catch (error: any) {
+      // On Error, catch response, ex. {code:"E015", message: "Error en solicitud de configuración de comisión"}
+      console.error(error.message);
+    }
+  };
+```

@@ -1,6 +1,6 @@
 import { KushkiInfo } from "types/kushki_info";
 import { PlatformCodeEnum } from "infrastructure/PlatformCodes.enum.ts";
-import { version } from "../../package.json";
+import { version } from "libs/genversion/version";
 import { Buffer } from "buffer";
 
 export class KInfo {

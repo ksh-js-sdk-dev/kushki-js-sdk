@@ -17,6 +17,7 @@ export default defineConfig({
       entry: {
         Card: "src/module/Card.ts",
         Transfer: "src/module/Transfer.ts",
+        Merchant: "src/module/Merchant.ts",
         Kushki: "src/module/Kushki.ts"
       },
       formats: ["cjs"]

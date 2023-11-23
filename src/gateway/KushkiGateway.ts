@@ -14,6 +14,8 @@ import { SecureOtpRequest } from "types/secure_otp_request";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { BankListResponse } from "types/bank_list_response";
+import { CommissionConfigurationRequest } from "types/commission_configuration_request";
+import { CommissionConfigurationResponse } from "types/commission_configuration_response";
 
 @injectable()
 export class KushkiGateway implements IKushkiGateway {
@@ -130,6 +132,29 @@ export class KushkiGateway implements IKushkiGateway {
       return Promise.resolve(data);
     } catch (error: any) {
       return Promise.reject(new KushkiError(ERRORS.E014, error.message));
+    }
+  };
+
+  public requestCommissionConfiguration = async (
+    kushkiInstance: IKushki,
+    body: CommissionConfigurationRequest
+  ): Promise<CommissionConfigurationResponse> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${
+      PathEnum.commission_configuration
+    }`;
+
+    try {
+      const { data } = await axios.post<CommissionConfigurationResponse>(
+        url,
+        body,
+        {
+          headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+        }
+      );
+
+      return Promise.resolve(data);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E015, error.message));
     }
   };
 

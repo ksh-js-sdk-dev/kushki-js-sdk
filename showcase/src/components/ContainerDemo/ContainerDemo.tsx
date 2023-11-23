@@ -9,7 +9,7 @@ export const ContainerDemo: FC<ContainerDemoProps> = ({ children }) => {
     <div className={"mui-container"}>
       <div className="mui-container-fluid">
         <div className="mui-row demo-container">
-          <div className="mui-col-xs-5 mui-col-md-5">
+          <div className="mui-col-lg-5 mui-col-md-7 mui-col-sm-8 mui-col-xs-10 ">
             <div className="mui-panel">{children}</div>
           </div>
         </div>
