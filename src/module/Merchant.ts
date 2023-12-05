@@ -20,8 +20,8 @@ import { MerchantService } from "service/MerchantService.ts";
  * ##### Basic request Commission Configuration
  *
  * ```ts
- * import { init } from "Kushki";
- * import {CommissionConfigurationRequest, requestCommissionConfiguration } from "Kushki/Merchant";
+ * import { init } from "@kushki/js-sdk";
+ * import {CommissionConfigurationRequest, requestCommissionConfiguration } from "@kushki/js-sdk/Merchant";
  *
  * const onRequestCommissionConfiguration = async () => {
  *     try {

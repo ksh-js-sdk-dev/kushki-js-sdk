@@ -51,7 +51,7 @@ Use a script tag inside your page to add the feature. When adding the following 
 Begin calling the method init [`init`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Kushki.init.html#init), With an object of type [`KushkiOptions`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Kushki.KushkiOptions.html) 
 
 ```ts
-import { IKushki, init, KushkiError } from "Kushki";
+import { IKushki, init, KushkiError } from "@kushki/js-sdk";
 
 const kushkiOptions : KushkiOptions = {
   publicCredentialId: '<public-credential-id>', // This corresponds to the public credential of the merchant
@@ -89,12 +89,12 @@ Before you call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kush
 
 Then you must define a [CardOptions](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.CardOptions.html) and call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html), this will render the hosted fields in your side and the user will be able to enter the card details to later finish the tokenization
 ```ts
-import { IKushki, init, KushkiError } from "Kushki";
+import { IKushki, init, KushkiError } from "@kushki/js-sdk";
 import {
   CardOptions,
   ICard,
   initCardToken
-} from "Kushki/Card";
+} from "@kushki/js-sdk/Card";
 
 const options : CardOptions = {
   amount: {
@@ -378,8 +378,8 @@ This method is useful in situations where the processor requires a list of banks
 ### Example
 
 ```ts
-import { init } from "Kushki";
-import { requestBankList } from "Kushki/Transfer";
+import { init } from "@kushki/js-sdk";
+import { requestBankList } from "@kushki/js-sdk/Transfer";
 
 const onRequestBankList = async () => {
     try {
@@ -408,8 +408,8 @@ This method is useful when you need to get the information related to the commis
 ### Example
 
 ```ts
-import { init } from "Kushki";
-import {CommissionConfigurationRequest, requestCommissionConfiguration } from "Kushki/Merchant";
+import { init } from "@kushki/js-sdk";
+import {CommissionConfigurationRequest, requestCommissionConfiguration } from "@kushki/js-sdk/Merchant";
 
 const onRequestCommissionConfiguration = async () => {
     try {

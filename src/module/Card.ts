@@ -49,12 +49,12 @@ import { FieldTypeEnum } from "types/form_validity";
  * ###### Init card token instance
  *  - To enable normal card transaction, you need to define an amount, currency and fields. In background this method render the hosted fields
  * ```ts
- * import { IKushki, init, KushkiError } from "Kushki";
+ * import { IKushki, init, KushkiError } from "@kushki/js-sdk";
  * import {
  *   CardOptions,
  *   ICard,
  *   initCardToken
- * } from "Kushki/Card";
+ * } from "@kushki/js-sdk/Card";
  *
  * const kushkiOptions : KushkiOptions = {
  *   publicCredentialId: 'public-merchant-id',
@@ -116,12 +116,12 @@ import { FieldTypeEnum } from "types/form_validity";
  * - To enable prevent autofill in fields the `preventAutofill` flag must be true
  *
  * ```ts
- * import { IKushki, init, KushkiError } from "Kushki";
+ * import { IKushki, init, KushkiError } from "@kushki/js-sdk";
  * import {
  *   CardOptions,
  *   ICard,
  *   initCardToken
- * } from "Kushki/Card";
+ * } from "@kushki/js-sdk/Card";
  *
  * const kushkiOptions : KushkiOptions = {
  *   publicCredentialId: 'public-merchant-id',
@@ -300,12 +300,12 @@ import { FieldTypeEnum } from "types/form_validity";
  * ###### Init card token instance
  * - To Enable field OTP, you need define the attribute `CardOptions.fields.otp`
  * ```ts
- * import { IKushki, init, KushkiError } from "Kushki";
+ * import { IKushki, init, KushkiError } from "@kushki/js-sdk";
  * import {
  *   CardOptions,
  *   ICard,
  *   initCardToken
- * } from "Kushki/Card";
+ * } from "@kushki/js-sdk/Card";
  *
  * const kushkiOptions : KushkiOptions = {
  *   publicCredentialId: 'public-merchant-id',
@@ -455,12 +455,12 @@ import { FieldTypeEnum } from "types/form_validity";
  *
  *
  * ```ts
- * import { IKushki, init, KushkiError } from "Kushki";
+ * import { IKushki, init, KushkiError } from "@kushki/js-sdk";
  * import {
  *   CardOptions,
  *   ICard,
  *   initCardToken
- * } from "Kushki/Card";
+ * } from "@kushki/js-sdk/Card";
  *
  * const kushkiOptions : KushkiOptions = {
  *   publicCredentialId: 'public-merchant-id',
@@ -553,3 +553,4 @@ export type { Fields, FieldValidity, FormValidity } from "types/form_validity";
 export type { DeferredByBinOptionsResponse } from "types/deferred_by_bin_response";
 export type { DeferredInputValues } from "types/deferred_input_values";
 export type { ERRORS } from "infrastructure/ErrorEnum.ts";
+export { InputModelEnum } from "../infrastructure/InputModel.enum.ts";

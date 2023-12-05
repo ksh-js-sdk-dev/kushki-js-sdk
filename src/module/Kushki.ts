@@ -23,7 +23,7 @@ import { KushkiError } from "infrastructure/KushkiError.ts";
  *
  *  @example
  * ```ts
- * import { IKushki, init, KushkiError } from "Kushki";
+ * import { IKushki, init, KushkiError } from "@kushki/js-sdk";
  *
  * const kushkiOptions : KushkiOptions = {
  *   publicCredentialId: '<public-credential-id>', // This corresponds to the public credential of the merchant
