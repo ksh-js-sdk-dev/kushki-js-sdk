@@ -18,8 +18,8 @@ import { BankListResponse } from "types/bank_list_response";
  * ##### Basic request Bank List
  *
  * ```ts
- * import { init } from "Kushki";
- * import { requestBankList } from "Kushki/Transfer";
+ * import { init } from "@kushki/js-sdk";
+ * import { requestBankList } from "@kushki/js-sdk/Transfer";
  *
  * const onRequestBankList = async () => {
  *     try {

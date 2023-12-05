@@ -1,5 +1,4 @@
 import { IKushki, init, KushkiError } from "Kushki";
-// import { IKushki, init, KushkiError } from "@kushki/js-sdk";
 import {
   CardOptions,
   Currency,
@@ -8,20 +7,11 @@ import {
   FormValidity,
   ICard,
   initCardToken,
-  TokenResponse
+  TokenResponse,
+  DeferredValuesResponse,
+  InputModelEnum
 } from "Kushki/Card";
-// import {
-//   CardOptions,
-//   Currency,
-//   Fields,
-//   FieldValidity,
-//   FormValidity,
-//   ICard,
-//   initCardToken,
-//   TokenResponse
-// } from "@kushki/js-sdk/Payment";
 import { useEffect, useState } from "react";
-import { DeferredValuesResponse } from "../../../../types/token_response";
 import "../../../assets/css/checkout.css";
 import "./Checkout.css";
 import ConfigurationDemo from "../../components/ConfigurationDemo/ConfigurationDemo.tsx";
@@ -29,7 +19,6 @@ import ResultsPayment from "../../components/ConfigurationDemo/Components/Result
 import HostedFields from "../../components/HostedFields/HostedFields.tsx";
 import { IDefaultInformation } from "../../components/ConfigurationDemo/ConfigurationDemo.interface.ts";
 import { optionsDefault } from "./Checkout.constants.ts";
-import { InputModelEnum } from "../../../../src/infrastructure/InputModel.enum.ts";
 
 export const CheckoutContainer = () => {
   const [token, setToken] = useState<string>("");
