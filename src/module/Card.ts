@@ -37,10 +37,10 @@ import { FieldTypeEnum } from "types/form_validity";
  * <html lang="en">
  * <body>
  *     <section>
- *         <div id="id_cardholderName"></div>
- *         <div id="id_cardNumber"></div>
- *         <div id="id_cvv"></div>
- *         <div id="id_expirationDate"></div>
+ *         <div id="cardholderName_id"></div>
+ *         <div id="cardNumber_id"></div>
+ *         <div id="cvv_id"></div>
+ *         <div id="expirationDate_id"></div>
  *     </section>
  * </body>
  * </html>
@@ -70,16 +70,16 @@ import { FieldTypeEnum } from "types/form_validity";
  *   currency: "USD",
  *   fields: {
  *       cardholderName: {
- *          selector: "id_cardholderName"
+ *          selector: "cardholderName_id"
  *       },
  *       cardNumber: {
- *          selector: "id_cardNumber"
+ *          selector: "cardNumber_id"
  *       },
  *       cvv: {
- *          selector: "id_cvv"
+ *          selector: "cvv_id"
  *       },
  *      expirationDate: {
- *          selector: "id_expirationDate"
+ *          selector: "expirationDate_id"
  *      }
  *   }
  * }
@@ -102,10 +102,10 @@ import { FieldTypeEnum } from "types/form_validity";
  * <html lang="en">
  * <body>
  *     <section>
- *         <div id="id_cardholderName"></div>
- *         <div id="id_cardNumber"></div>
- *         <div id="id_cvv"></div>
- *         <div id="id_expirationDate"></div>
+ *         <div id="cardholderName_id"></div>
+ *         <div id="cardNumber_id"></div>
+ *         <div id="cvv_id"></div>
+ *         <div id="expirationDate_id"></div>
  *     </section>
  * </body>
  * </html>
@@ -140,25 +140,25 @@ import { FieldTypeEnum } from "types/form_validity";
  *          inputType: "text",
  *          label: "Cardholder Name",
  *          placeholder: "Cardholder Name",
- *          selector: "id_cardholderName"
+ *          selector: "cardholderName_id"
  *       },
  *       cardNumber: {
  *          inputType: "number",
  *          label: "Card Number",
  *          placeholder: "Card Number",
- *          selector: "id_cardNumber"
+ *          selector: "cardNumber_id"
  *       },
  *       cvv: {
  *          inputType: "password",
  *          label: "CVV",
  *          placeholder: "CVV",
- *          selector: "id_cvv"
+ *          selector: "cvv_id"
  *       },
  *      expirationDate: {
  *          inputType: "text",
  *          label: "Expiration Date",
  *          placeholder: "Expiration Date",
- *          selector: "id_expirationDate"
+ *          selector: "expirationDate_id"
  *      }
  *   },
  *   isSubscription: true, //To Enable subscriptions this flag must be true
