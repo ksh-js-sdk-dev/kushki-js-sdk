@@ -78,10 +78,10 @@ Before you call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kush
 <html lang="en">
 <body>
     <form>
-        <div id="id_cardholderName"></div>
-        <div id="id_cardNumber"></div>
-        <div id="id_cvv"></div>
-        <div id="id_expirationDate"></div>
+        <div id="cardholderName_id"></div>
+        <div id="cardNumber_id"></div>
+        <div id="cvv_id"></div>
+        <div id="expirationDate_id"></div>
     </form>
 </body>
 </html>
@@ -105,16 +105,16 @@ const options : CardOptions = {
   currency: "USD",
   fields: {
     cardholderName: {
-      selector: "id_cardholderName"
+      selector: "cardholderName_id"
     },
     cardNumber: {
-      selector: "id_cardNumber"
+      selector: "cardNumber_id"
     },
     cvv: {
-      selector: "id_cvv"
+      selector: "cvv_id"
     },
     expirationDate: {
-      selector: "id_expirationDate"
+      selector: "expirationDate_id"
     }
   }
 }
