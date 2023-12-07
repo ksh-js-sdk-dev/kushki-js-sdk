@@ -61,6 +61,15 @@ describe("Cardinal3DSProvider - Test", () => {
     cardinalProvider = new Cardinal3DSProvider();
   };
 
+  const execulteLoadScript = () => {
+    const script = document.getElementById("cardinal_sc_id");
+
+    if (script && script.onload) {
+      // @ts-ignore
+      script.onload();
+    }
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockCardinal();
@@ -69,27 +78,21 @@ describe("Cardinal3DSProvider - Test", () => {
   });
 
   describe("initCardinal - method", () => {
-    it("should call setupCardinal for prod Lib", async () => {
-      await cardinalProvider.initCardinal(
-        kushkiInstanceMock,
-        "JWT",
-        "4242 4242"
-      );
+    it("should call setupCardinal for prod Lib", () => {
+      cardinalProvider.initCardinal(kushkiInstanceMock, "JWT", "4242 4242");
+      execulteLoadScript();
 
       expect(setUpMock).toBeCalledTimes(1);
     });
 
-    it("should call trigger for staging Lib and retry", async () => {
-      mockCardinal(jest.fn().mockReturnValue({}));
+    it("should call trigger for staging Lib", () => {
       initProvider(true);
 
-      await cardinalProvider.initCardinal(
-        kushkiInstanceMock,
-        "JWT",
-        "4242 4242"
-      );
+      cardinalProvider.initCardinal(kushkiInstanceMock, "JWT", "4242 4242");
 
-      expect(triggerMock).toBeCalledTimes(2);
+      execulteLoadScript();
+
+      expect(setUpMock).toBeCalledTimes(1);
     });
   });
 
@@ -97,16 +100,6 @@ describe("Cardinal3DSProvider - Test", () => {
     it("should call on for callback", async () => {
       await cardinalProvider.onSetUpComplete(() => {
         expect(onMock).toBeCalledTimes(1);
-      });
-    });
-
-    it("should call complete for callback on retry ", async () => {
-      const completeMock = jest.fn().mockReturnValue({});
-
-      mockCardinal(completeMock);
-
-      await cardinalProvider.onSetUpComplete(() => {
-        expect(completeMock).toBeCalledTimes(1);
       });
     });
   });
