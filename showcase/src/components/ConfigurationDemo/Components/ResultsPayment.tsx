@@ -22,28 +22,16 @@ const ResultsPayment = ({
   return (
     <>
       <div className={"content-buttons"}>
-        {hasToken && disablePaymentButton ? (
-          <button
-            className={
-              "mui-btn mui-btn--primary mui-btn--small button-border button-reload"
-            }
-            data-testid="tokenRequestBtn"
-            onClick={() => window.location.reload()}
-          >
-            Recargar
-          </button>
-        ) : (
-          <button
-            className={
-              "mui-btn mui-btn--primary mui-btn--small button-border button-pay"
-            }
-            data-testid="tokenRequestBtn"
-            onClick={getToken}
-            disabled={errorHostedFields || disablePaymentButton}
-          >
-            Pagar
-          </button>
-        )}
+        <button
+          className={
+            "mui-btn mui-btn--primary mui-btn--small button-border button-pay"
+          }
+          data-testid="tokenRequestBtn"
+          onClick={getToken}
+          disabled={errorHostedFields || disablePaymentButton}
+        >
+          Pagar
+        </button>
       </div>
 
       <div

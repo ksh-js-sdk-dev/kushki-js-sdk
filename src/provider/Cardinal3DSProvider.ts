@@ -41,19 +41,27 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
     jwt: string,
     cardBin: string
   ) {
-    if (kushkiInstance.isInTest()) await import("libs/cardinal/Staging.ts");
-    else await import("libs/cardinal/Prod.ts");
-
-    await this._setupCardinal(jwt, cardBin);
+    return new Promise<void>((resolve) => {
+      this._loadCardinalScript(kushkiInstance.isInTest(), async () => {
+        window.Cardinal.setup("init", {
+          jwt,
+          order: {
+            Consumer: {
+              Account: {
+                AccountNumber: cardBin
+              }
+            }
+          }
+        });
+        resolve();
+      });
+    });
   }
 
   public async onSetUpComplete(callback: () => void): Promise<void> {
-    if (await this._isCardinalInitialized()) {
+    await window.Cardinal.on("payments.setupComplete", () => {
       callback();
-    } else
-      window.Cardinal.on("payments.setupComplete", () => {
-        callback();
-      });
+    });
   }
 
   public async validateCardinal3dsToken(
@@ -84,6 +92,24 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
     return Promise.reject(new KushkiError(ERRORS.E005));
   }
 
+  private _loadCardinalScript(isTest: boolean, onLoad: () => void) {
+    const last_script = document.getElementById("cardinal_sc_id");
+
+    if (last_script) last_script.remove();
+
+    const head = document.getElementsByTagName("head")[0];
+    const script = document.createElement("script");
+
+    script.id = "cardinal_sc_id";
+    script.src = isTest
+      ? "https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js"
+      : "https://songbird.cardinalcommerce.com/cardinalcruise/v1/songbird.js";
+
+    head.appendChild(script);
+
+    script.onload = onLoad;
+  }
+
   private async _launch3DSCardinalValidation(
     kushkiInstance: IKushki,
     token: CardTokenResponse
@@ -105,9 +131,11 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
       window.Cardinal.on(
         "payments.validated",
         async (data: ICardinalValidation) => {
-          if (data.ActionCode !== CardinalValidationCodeEnum.SUCCESS)
-            return reject(new KushkiError(ERRORS.E005));
+          if (data.ActionCode !== CardinalValidationCodeEnum.SUCCESS) {
+            this._offCardinalEvents();
 
+            return reject(new KushkiError(ERRORS.E005));
+          }
           try {
             const secureValidation: SecureOtpResponse =
               await this._gateway.requestSecureServiceValidation(
@@ -122,8 +150,7 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
           } catch (error) {
             return reject(new KushkiError(ERRORS.E006));
           } finally {
-            window.Cardinal.off("payments.setupComplete");
-            window.Cardinal.off("payments.validated");
+            this._offCardinalEvents();
           }
         }
       );
@@ -144,33 +171,8 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
     window.Cardinal.continue("cca", ccaParameters, ccaOrderDetails);
   }
 
-  private async _setupCardinal(jwt: string, cardBin: string) {
-    if (await this._isCardinalInitialized()) {
-      window.Cardinal.trigger("accountNumber.update", cardBin);
-      window.Cardinal.trigger("jwt.update", jwt);
-    } else {
-      window.Cardinal.setup("init", {
-        jwt,
-        order: {
-          Consumer: {
-            Account: {
-              AccountNumber: cardBin
-            }
-          }
-        }
-      });
-    }
-  }
-
-  private async _isCardinalInitialized(): Promise<boolean> {
-    try {
-      const cardinalStatus = await window.Cardinal.complete({
-        Status: "Success"
-      });
-
-      return !!cardinalStatus;
-    } catch (error) {
-      return false;
-    }
+  private _offCardinalEvents() {
+    window.Cardinal.off("payments.setupComplete");
+    window.Cardinal.off("payments.validated");
   }
 }
