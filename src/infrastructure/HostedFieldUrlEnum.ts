@@ -1,3 +1,3 @@
 export enum HostedFieldUrlEnum {
-  LOCAL_SPA_URL = "https://qa-spa-js-inputs.kushkipagos.blue/inputs" // change to dev locally
+  LOCAL_SPA_URL = "https://uat-spa-js-inputs.kushkipagos.ninja/inputs" // change to dev locally
 }
