@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "CommissionConfigurationRequest",
+  "description": "@public Object to get the commission charge configured for a specific merchant",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "totalAmount": {
+      "description": "@typeParam string - The amount you are going to collect",
+      "type": "number"
+    },
+    "currency": {
+      "description": "@typeParam string - Code of currency used",
+      "type": "string",
+      "enum": [
+        "USD",
+        "COP",
+        "CLP",
+        "UF",
+        "PEN",
+        "MXN",
+        "CRC",
+        "NIO",
+        "HNL",
+        "GTQ",
+        "BRL"
+      ]
+    }
+  },
+  "required": ["totalAmount", "currency"]
+}

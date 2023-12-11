@@ -1,0 +1,276 @@
+/* styles.css */
+
+.boxPrincipal {
+  box-sizing: border-box;
+}
+
+.button-contained {
+  background-color: rgba(68, 152, 238, 1);
+  color: white;
+  border: 1px solid rgba(68, 152, 238, 1);
+  border-radius: 8px;
+  text-transform: none;
+  font-size: 14px;
+  font-weight: 400 !important;
+}
+
+.button-outlined {
+  background-color: white;
+  color: rgba(68, 152, 238, 1);
+  border: 1px solid rgba(68, 152, 238, 1);
+  border-radius: 8px;
+  text-transform: none;
+  font-size: 14px;
+  font-weight: 400 !important;
+}
+
+.button-outlined:hover {
+  color: rgba(68, 152, 238, 1);
+}
+
+.button-outlined:focus:not(:hover) {
+  background-color: white;
+  color: rgba(68, 152, 238, 1);
+}
+
+.button-border {
+  border: 1px solid rgba(68, 152, 238, 1);
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 400;
+  width: 300px;
+  height: 40px;
+  text-transform: none;
+}
+
+.button-pay {
+  margin-top: 20px;
+}
+
+.button-reload {
+  margin-top: 10px;
+  margin-left: 0 !important;
+}
+
+.input-configuration {
+  border: 1px solid rgba(203, 213, 224, 1) !important;
+  border-radius: 10px !important;
+  height: 40px !important;
+  width: 300px !important;
+  font-size: 14px !important;
+  padding-left: 8px !important;
+}
+
+.input-configuration:focus,
+.selectExample:focus {
+  border: 1px solid #0077ff !important;
+  border-radius: 10px;
+  outline: none !important;
+  height: 40px !important;
+  margin: 0px !important;
+  font-size: 14px !important;
+}
+
+.label-input-configuration {
+  padding-left: 8px !important;
+  font-size: 14px !important;
+  align-items: center;
+  overflow: hidden;
+}
+
+.inputCheck {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 15px;
+  background-color: white;
+  border: 1px solid #4498ee;
+  border-radius: 4px;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.label-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkmark:after {
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid #4498ee;
+  border-width: 0 1px 1px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.label-container {
+  color: #293036;
+  cursor: default !important;
+}
+
+.label-container input:checked ~ .checkmark {
+  background-color: white;
+}
+
+.label-container input:disabled ~ .checkmark {
+  cursor: not-allowed;
+  color: red !important;
+}
+
+.divContainer {
+  width: 300px;
+  margin: 10px 0px 10px 0px !important;
+  color: rgba(109, 119, 129, 1) !important;
+  font-size: 14px !important;
+}
+
+.label-hostedFieldError {
+  color: #b60000;
+  font-size: 12px;
+  margin-top: -10px;
+  font-weight: 400;
+  text-align: left;
+  width: 300px;
+}
+
+.cardNumberHelp {
+  width: 300px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardNumberHelp-text {
+  font-size: 10px !important;
+  color: rgba(109, 119, 129, 0.8) !important;
+  display: flex;
+  align-items: center;
+}
+
+.imgCopy {
+  cursor: pointer;
+  padding-left: 4px;
+  width: 12px;
+  height: 12px;
+}
+
+.selectExample {
+  border: 1px solid rgba(203, 213, 224, 1) !important;
+  border-radius: 10px !important;
+  background-position: calc(100% - 10px) center !important;
+  padding: 0px 15px 0px 10px !important;
+  padding-right: 20px !important;
+  font-size: 14px !important;
+  height: 40px !important;
+}
+
+.selectLabelEmpty {
+  color: rgba(0, 0, 0, 0.3) !important;
+}
+
+.selectLabelSelected {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.expiration-date-custom {
+  display: flex;
+  width: 300px;
+  justify-content: flex-start;
+}
+
+.titleDemo {
+  color: rgba(2, 51, 101, 1);
+  font-size: 23px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.mui-text-custom {
+  font-weight: 400;
+  color: rgba(109, 119, 129, 1) !important;
+  text-align: center;
+}
+.mui-text-result {
+  width: 300px;
+  font-weight: 400;
+  color: rgba(109, 119, 129, 1) !important;
+  text-align: left;
+}
+
+.box-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.box-input-prev {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+}
+
+.box-hosted-fields {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.mui-textfield {
+  margin: 0px !important;
+}
+
+.content-buttons {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.button-error {
+  background-color: red;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  height: 36px;
+  margin: 6px 0;
+  margin-left: 15px;
+  overflow: hidden;
+  padding: 0 26px;
+}
+
+.table-buttons {
+  background-color: #39a1f4;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  height: 36px;
+  margin: 6px 0;
+  margin-left: 15px;
+  overflow: hidden;
+  padding: 0 26px;
+}
+
+.content-title {
+  display: flex;
+  justify-content: center;
+  margin-right: 300px;
+  width: 100%;
+}

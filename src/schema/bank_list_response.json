@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "BankListResponse",
+  "description": "@public The list of banks available for transfer transactions",
+  "items": {
+    "additionalProperties": false,
+    "properties": {
+      "code": {
+        "description": "@typeParam string - Is bank code",
+        "type": "string"
+      },
+      "name": {
+        "description": "@typeParam string - Is the bank name",
+        "type": "string"
+      }
+    },
+    "required": ["code", "name"]
+  },
+  "type": "array"
+}

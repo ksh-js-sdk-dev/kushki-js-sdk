@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://ksh/DeferredInputValues",
+  "title": "DeferredInputValues",
+  "additionalProperties": false,
+  "type": "object",
+  "required": ["graceMonths", "creditType", "months"],
+  "properties": {
+    "graceMonths": {
+      "type": "number"
+    },
+    "creditType": {
+      "type": "string"
+    },
+    "months": {
+      "type": "number"
+    }
+  }
+}
