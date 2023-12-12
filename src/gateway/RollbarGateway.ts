@@ -3,7 +3,7 @@ import Rollbar from "rollbar";
 import { injectable } from "inversify";
 import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
 import { TypeEnvironmentEnum } from "infrastructure/TypeEnvironmentEnum.ts";
-import packageJson from "../../package.json";
+import { version } from "libs/genversion/version";
 import { KushkiOptions } from "types/kushki_options";
 
 @injectable()
@@ -22,7 +22,7 @@ export class RollbarGateway implements IRollbarGateway {
       payload: {
         client: {
           javascript: {
-            code_version: packageJson.version,
+            code_version: version,
             source_map_enabled: true
           }
         },
