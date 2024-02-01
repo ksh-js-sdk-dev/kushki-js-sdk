@@ -134,7 +134,7 @@ jobs:
           NPM_PUB_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
         run: |
           printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
-          npm publish --tag alpha
+          npm publish
 
       - name: Set new version in package.json
         id: version
