@@ -1,0 +1,8 @@
+{
+  "errorPrefix": "K",
+  "json2ts": {
+    "output": "./types",
+    "dirs": ["src/schema"],
+    "remote": []
+  }
+}

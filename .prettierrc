@@ -1,0 +1,26 @@
+{
+  "arrowParens": "always",
+  "bracketSpacing": true,
+  "insertPragma": false,
+  "proseWrap": "preserve",
+  "quoteProps": "as-needed",
+  "requirePragma": false,
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "none",
+  "endOfLine": "auto",
+  "overrides": [
+    {
+      "files": [
+        "*.json",
+        ".kushkirc",
+        ".lintstagerc",
+        ".huskyrc",
+        ".prettierrc"
+      ],
+      "options": {
+        "parser": "json"
+      }
+    }
+  ]
+}

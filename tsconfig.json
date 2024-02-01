@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "moduleResolution": "node",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "types": ["inversify", "reflect-metadata", "jest", "node"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "Kushki": ["src/module/Kushki.ts"],
+      "Kushki/Card": ["src/module/Card.ts"],
+      "Kushki/Transfer": ["src/module/Transfer.ts"],
+      "Kushki/Merchant": ["src/module/Merchant.ts"],
+      "module/*": ["src/module/*"],
+      "gateway/*": ["src/gateway/*"],
+      "infrastructure/*": ["src/infrastructure/*"],
+      "repository/*": ["src/repository/*"],
+      "service/*": ["src/service/*"],
+      "types/*": ["types/*"],
+      "environment/*": ["src/environments/*"],
+      "utils/*": ["src/utils/*"],
+      "libs/*": ["src/libs/*"],
+      "src/*": ["src/*"],
+      "class/*": ["src/class/*"]
+    }
+  },
+  "exclude": ["node_modules", "showcase"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

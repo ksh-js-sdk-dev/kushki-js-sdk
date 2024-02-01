@@ -1,0 +1,23 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "htmlLang": "en",
+  "name": "kushki-js-sdk",
+  "entryPoints": [
+    "../../docs-json/Card.json",
+    "../../docs-json/Kushki.json",
+    "../../docs-json/Transfer.json",
+    "../../docs-json/Merchant.json"
+  ],
+  "entryPointStrategy": "merge",
+  "excludeInternal": true,
+  "excludePrivate": true,
+  "navigationLinks": {
+    "Kushki": "https://docs.kushki.com/"
+  },
+  "navigation": {
+    "includeCategories": false,
+    "includeGroups": true
+  },
+  "categorizeByGroup": true,
+  "groupOrder": ["Methods", "Classes", "Types", "*"]
+}

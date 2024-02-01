@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "FormValidity",
+  "definitions": {
+    "fieldValidity": {
+      "type": "object",
+      "title": "FieldValidity",
+      "additionalProperties": false,
+      "properties": {
+        "isValid": {
+          "type": "boolean"
+        },
+        "errorType": {
+          "type": "string",
+          "description": "@group Types",
+          "enum": ["empty", "invalid", "number of months required", "credit type required"]
+        }
+      },
+      "required": ["isValid"]
+    }
+  },
+  "properties": {
+    "isFormValid": {
+      "type": "boolean"
+    },
+    "triggeredBy": {
+      "title": "FieldTypeEnum",
+      "description": "@group Types",
+      "type": "string",
+      "enum": [
+        "cardNumber",
+        "cardholderName",
+        "cvv",
+        "deferred",
+        "expirationDate",
+        "otp"
+      ]
+    },
+    "fields": {
+      "title": "Fields",
+      "additionalProperties": false,
+      "properties": {
+        "cardholderName": {
+          "$ref": "#/definitions/fieldValidity"
+        },
+        "cardNumber": {
+          "$ref": "#/definitions/fieldValidity"
+        },
+        "cvv": {
+          "$ref": "#/definitions/fieldValidity"
+        },
+        "deferred": {
+          "$ref": "#/definitions/fieldValidity"
+        },
+        "expirationDate": {
+          "$ref": "#/definitions/fieldValidity"
+        }
+      },
+      "required": ["cardholderName", "cardNumber", "cvv", "expirationDate"]
+    }
+  },
+  "required": ["fields", "isFormValid"],
+  "type": "object"
+}

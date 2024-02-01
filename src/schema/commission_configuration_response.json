@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "CommissionConfigurationResponse",
+  "description": "@public Object with information related to the commission charge configured for a specific merchant",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "totalAmount": {
+      "type": "number"
+    },
+    "parentMerchantName": {
+      "type": "string"
+    },
+    "commissionMerchantName": {
+      "type": "string"
+    },
+    "merchantId": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "currency": {
+          "type": "string",
+          "enum": [
+            "USD",
+            "COP",
+            "CLP",
+            "UF",
+            "PEN",
+            "MXN",
+            "PAB",
+            "CRC",
+            "NIO",
+            "HNL",
+            "GTQ",
+            "BRL"
+          ]
+        },
+        "iva": {
+          "type": "number"
+        },
+        "subtotalIva": {
+          "type": "number"
+        },
+        "subtotalIva0": {
+          "type": "number"
+        }
+      },
+      "required": ["currency", "iva", "subtotalIva", "subtotalIva0"]
+    }
+  },
+  "required": [
+    "totalAmount",
+    "parentMerchantName",
+    "commissionMerchantName",
+    "merchantId",
+    "amount"
+  ]
+}
