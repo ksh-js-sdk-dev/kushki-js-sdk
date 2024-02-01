@@ -956,10 +956,10 @@
     "@krakenjs/post-robot" "^11.0.0"
     "@krakenjs/zalgo-promise" "^2.0.0"
 
-"@kushki/cardinal-sandbox-js@1.0.5-alpha.1":
-  version "1.0.5-alpha.1"
-  resolved "https://registry.yarnpkg.com/@kushki/cardinal-sandbox-js/-/cardinal-sandbox-js-1.0.5-alpha.1.tgz#1461b73b2e6ffe50480d5c27e264170935d79cb7"
-  integrity sha512-1bMIW7mvgBxjQ7NGPi8lZqd0TWy1Rh0YeDmZCQSyp6qUikXgEugreIzzq4krpF2a7UUQPc0ZGGdrmxRe10VeAg==
+"@kushki/cardinal-sandbox-js@1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@kushki/cardinal-sandbox-js/-/cardinal-sandbox-js-1.0.5.tgz#dd7114a4b54ec945a5a77db43a628f1072b122e0"
+  integrity sha512-zCU4UDsQeniuPOkwjGbvj7nIpJSMXxJ69HcK0Yt7ZpTNBAq5kO0hkit7DGDbCQf06/mLJYtX8YUMR6VB3guJ8Q==
 
 "@microsoft/api-extractor-model@7.28.1":
   version "7.28.1"
