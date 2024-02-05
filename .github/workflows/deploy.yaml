@@ -63,6 +63,7 @@ jobs:
       contents: write
     outputs:
       new-version: ${{ steps.version.outputs.new-version }}
+      branch: ${{ needs.build-version.outputs.branch }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -122,6 +123,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       new-version: ${{ steps.version.outputs.new-version }}
+      branch: ${{ needs.build.outputs.branch }}
     steps:
       - name: Get dist artifacts
         uses: actions/download-artifact@v3
@@ -134,8 +136,11 @@ jobs:
           NPM_PUB_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
         run: |
           printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
-          npm publish
-
+          if [ "${{ needs.build.outputs.branch }}" == "master" ]; then
+            npm publish
+          else
+            npm publish --tag alpha
+          fi
       - name: Set new version in package.json
         id: version
         run: |
@@ -145,11 +150,16 @@ jobs:
 
   deploy-cdn:
     needs: deploy-npm
-#    needs: build
+    #    needs: build
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
+    env:
+      BRANCH: ${{ needs.deploy-npm.outputs.branch }}
+      ACCOUNT: ${{ if(env.BRANCH == 'master', secrets.PRIMARY_ACCOUNT, if(env.BRANCH == 'develop', secrets.UAT_ACCOUNT, secrets.QA_ACCOUNT)) }}
+      DESTINATION_BUCKET: ${{ if(env.BRANCH == 'master', secrets.PRIMARY_BUCKET, if(env.BRANCH == 'develop', secrets.UAT_BUCKET, secrets.QA_BUCKET)) }}
+      DISTRIBUTION: ${{ if(env.BRANCH == 'master', secrets.PRIMARY_DISTRIBUTION, if(env.BRANCH == 'develop', secrets.UAT_DISTRIBUTION, secrets.QA_DISTRIBUTION)) }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -164,7 +174,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           audience: sts.amazonaws.com
-          role-to-assume: arn:aws:iam::073501845287:role/GitHubActionsS3Full
+          role-to-assume: arn:aws:iam::${{ env.ACCOUNT }}:role/GitHubActionsS3Full
           aws-region: us-east-1
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
 
@@ -172,16 +182,16 @@ jobs:
         run: |
           NEW_VERSION=${{ needs.deploy-npm.outputs.new-version }}
           echo "NEW_VERSION is $NEW_VERSION"
-          aws s3 sync ./lib s3://kushki-js-sdk-primary/js/"$NEW_VERSION"
-          aws s3 sync ./lib s3://kushki-js-sdk-primary/js/latest
+          aws s3 sync ./lib s3://${{ env.DESTINATION_BUCKET }}/js/"$NEW_VERSION"
+          aws s3 sync ./lib s3://${{ env.DESTINATION_BUCKET }}/js/latest
 
       - name: Configure AWS Credentials CloudFront
         uses: aws-actions/configure-aws-credentials@v4
         with:
           audience: sts.amazonaws.com
-          role-to-assume: arn:aws:iam::073501845287:role/GitHubActionsCloudFrontFull
+          role-to-assume: arn:aws:iam::${{ env.ACCOUNT }}:role/GitHubActionsCloudFrontFull
           aws-region: us-east-1
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
 
       - name: Invalidate CloudFront Cache
-        run: aws cloudfront create-invalidation --distribution-id E1W0HFN8UZ5BFQ --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id ${{ env.DISTRIBUTION }} --paths "/*"
