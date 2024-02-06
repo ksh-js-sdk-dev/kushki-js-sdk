@@ -1,6 +1,7 @@
 export enum CardinalValidationCodeEnum {
   SUCCESS = "SUCCESS",
-  FAIL = "FAILURE"
+  FAIL = "FAILURE",
+  NO_ACTION = "NOACTION"
 }
 
 export interface ICardinalValidation {

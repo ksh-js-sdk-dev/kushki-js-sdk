@@ -230,5 +230,33 @@ describe("Cardinal3DSProvider - Test", () => {
         expect(error.code).toEqual("E005");
       }
     });
+
+    it("should throw error when challenge resolve NO_ACTION event", async () => {
+      mockCardinal(
+        undefined,
+        jest
+          .fn()
+          .mockImplementation(
+            (_: string, callback: (data: ICardinalValidation) => void) => {
+              callback({
+                ActionCode: CardinalValidationCodeEnum.NO_ACTION,
+                ErrorDescription: "test",
+                Validated: true
+              });
+            }
+          )
+      );
+      initProvider();
+
+      try {
+        await cardinalProvider.validateCardinal3dsToken(
+          kushkiInstanceMock,
+          tokenMock,
+          {}
+        );
+      } catch (error: any) {
+        expect(error.code).toEqual("E005");
+      }
+    });
   });
 });
