@@ -157,9 +157,6 @@ jobs:
       contents: read
     env:
       BRANCH: ${{ needs.deploy-npm.outputs.branch }}
-      ACCOUNT: ${{ if(env.BRANCH == 'master', secrets.PRIMARY_ACCOUNT, if(env.BRANCH == 'develop', secrets.UAT_ACCOUNT, secrets.QA_ACCOUNT)) }}
-      DESTINATION_BUCKET: ${{ if(env.BRANCH == 'master', secrets.PRIMARY_BUCKET, if(env.BRANCH == 'develop', secrets.UAT_BUCKET, secrets.QA_BUCKET)) }}
-      DISTRIBUTION: ${{ if(env.BRANCH == 'master', secrets.PRIMARY_DISTRIBUTION, if(env.BRANCH == 'develop', secrets.UAT_DISTRIBUTION, secrets.QA_DISTRIBUTION)) }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -169,6 +166,24 @@ jobs:
         with:
           name: lib-files
           path: ./lib
+
+      - name: Determine AWS account
+        if: always()
+        run: |
+          BRANCH="${{ env.BRANCH }}"
+          if [ "$BRANCH" == "master" ]; then
+            echo "ACCOUNT=${{ secrets.PRIMARY_ACCOUNT }}" >> $GITHUB_ENV
+            echo "DESTINATION_BUCKET=${{ secrets.PRIMARY_BUCKET }}" >> $GITHUB_ENV
+            echo "DISTRIBUTION=${{ secrets.PRIMARY_DISTRIBUTION }}" >> $GITHUB_ENV
+          elif [ "$BRANCH" == "develop" ]; then
+            echo "ACCOUNT=${{ secrets.UAT_ACCOUNT }}" >> $GITHUB_ENV
+            echo "DESTINATION_BUCKET=${{ secrets.UAT_BUCKET }}" >> $GITHUB_ENV
+            echo "DISTRIBUTION=${{ secrets.UAT_DISTRIBUTION }}" >> $GITHUB_ENV
+          else
+            echo "ACCOUNT=${{ secrets.QA_ACCOUNT }}" >> $GITHUB_ENV
+            echo "DESTINATION_BUCKET=${{ secrets.QA_BUCKET }}" >> $GITHUB_ENV
+            echo "DISTRIBUTION=${{ secrets.QA_DISTRIBUTION }}" >> $GITHUB_ENV
+          fi
 
       - name: Configure AWS Credentials S3
         uses: aws-actions/configure-aws-credentials@v4
