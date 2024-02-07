@@ -1,6 +1,6 @@
 {
   "name": "@kushki/js-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1-tik-4139-patch.1",
   "scripts": {
     "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
     "bootstrap:codesandbox": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev --mode codesandbox",

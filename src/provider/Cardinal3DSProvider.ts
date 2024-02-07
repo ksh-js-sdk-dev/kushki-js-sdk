@@ -131,7 +131,11 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
       window.Cardinal.on(
         "payments.validated",
         async (data: ICardinalValidation) => {
-          if (data.ActionCode !== CardinalValidationCodeEnum.SUCCESS) {
+          if (
+            (data.ActionCode === CardinalValidationCodeEnum.FAIL &&
+              !data.Validated) ||
+            data.ActionCode === CardinalValidationCodeEnum.NO_ACTION
+          ) {
             this._offCardinalEvents();
 
             return reject(new KushkiError(ERRORS.E005));

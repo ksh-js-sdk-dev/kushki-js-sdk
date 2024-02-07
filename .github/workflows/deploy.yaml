@@ -63,6 +63,7 @@ jobs:
       contents: write
     outputs:
       new-version: ${{ steps.version.outputs.new-version }}
+      branch: ${{ needs.build-version.outputs.branch }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -122,6 +123,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       new-version: ${{ steps.version.outputs.new-version }}
+      branch: ${{ needs.build.outputs.branch }}
     steps:
       - name: Get dist artifacts
         uses: actions/download-artifact@v3
@@ -134,8 +136,11 @@ jobs:
           NPM_PUB_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
         run: |
           printf "\n//registry.npmjs.org/:_authToken=\"${NPM_PUB_TOKEN}\"" >> .npmrc
-          npm publish
-
+          if [ "${{ needs.build.outputs.branch }}" == "master" ]; then
+            npm publish
+          else
+            npm publish --tag alpha
+          fi
       - name: Set new version in package.json
         id: version
         run: |
@@ -145,11 +150,13 @@ jobs:
 
   deploy-cdn:
     needs: deploy-npm
-#    needs: build
+    #    needs: build
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
+    env:
+      BRANCH: ${{ needs.deploy-npm.outputs.branch }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -160,11 +167,29 @@ jobs:
           name: lib-files
           path: ./lib
 
+      - name: Determine AWS account
+        if: always()
+        run: |
+          BRANCH="${{ env.BRANCH }}"
+          if [ "$BRANCH" == "master" ]; then
+            echo "ACCOUNT=${{ secrets.PRIMARY_ACCOUNT }}" >> $GITHUB_ENV
+            echo "DESTINATION_BUCKET=${{ secrets.PRIMARY_BUCKET }}" >> $GITHUB_ENV
+            echo "DISTRIBUTION=${{ secrets.PRIMARY_DISTRIBUTION }}" >> $GITHUB_ENV
+          elif [ "$BRANCH" == "develop" ]; then
+            echo "ACCOUNT=${{ secrets.UAT_ACCOUNT }}" >> $GITHUB_ENV
+            echo "DESTINATION_BUCKET=${{ secrets.UAT_BUCKET }}" >> $GITHUB_ENV
+            echo "DISTRIBUTION=${{ secrets.UAT_DISTRIBUTION }}" >> $GITHUB_ENV
+          else
+            echo "ACCOUNT=${{ secrets.QA_ACCOUNT }}" >> $GITHUB_ENV
+            echo "DESTINATION_BUCKET=${{ secrets.QA_BUCKET }}" >> $GITHUB_ENV
+            echo "DISTRIBUTION=${{ secrets.QA_DISTRIBUTION }}" >> $GITHUB_ENV
+          fi
+
       - name: Configure AWS Credentials S3
         uses: aws-actions/configure-aws-credentials@v4
         with:
           audience: sts.amazonaws.com
-          role-to-assume: arn:aws:iam::073501845287:role/GitHubActionsS3Full
+          role-to-assume: arn:aws:iam::${{ env.ACCOUNT }}:role/GitHubActionsS3Full
           aws-region: us-east-1
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
 
@@ -172,16 +197,16 @@ jobs:
         run: |
           NEW_VERSION=${{ needs.deploy-npm.outputs.new-version }}
           echo "NEW_VERSION is $NEW_VERSION"
-          aws s3 sync ./lib s3://kushki-js-sdk-primary/js/"$NEW_VERSION"
-          aws s3 sync ./lib s3://kushki-js-sdk-primary/js/latest
+          aws s3 sync ./lib s3://${{ env.DESTINATION_BUCKET }}/js/"$NEW_VERSION"
+          aws s3 sync ./lib s3://${{ env.DESTINATION_BUCKET }}/js/latest
 
       - name: Configure AWS Credentials CloudFront
         uses: aws-actions/configure-aws-credentials@v4
         with:
           audience: sts.amazonaws.com
-          role-to-assume: arn:aws:iam::073501845287:role/GitHubActionsCloudFrontFull
+          role-to-assume: arn:aws:iam::${{ env.ACCOUNT }}:role/GitHubActionsCloudFrontFull
           aws-region: us-east-1
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
 
       - name: Invalidate CloudFront Cache
-        run: aws cloudfront create-invalidation --distribution-id E1W0HFN8UZ5BFQ --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id ${{ env.DISTRIBUTION }} --paths "/*"
