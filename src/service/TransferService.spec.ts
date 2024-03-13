@@ -1,10 +1,11 @@
-import { CONTAINER } from "infrastructure/Container.ts";
-import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { BankListResponse } from "types/bank_list_response";
 import { init } from "Kushki";
 import { TransferService } from "service/TransferService.ts";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import { KushkiGateway } from "gateway/KushkiGateway.ts";
+
+jest.mock("gateway/KushkiGateway.ts");
 
 describe("TransferService - Test", () => {
   const initKushki = async () => {
@@ -12,12 +13,10 @@ describe("TransferService - Test", () => {
   };
 
   const mockKushkiGateway = (bankListMock: Promise<BankListResponse>) => {
-    const mockGateway = {
-      requestBankList: () => bankListMock
-    };
-
-    CONTAINER.unbind(IDENTIFIERS.KushkiGateway);
-    CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
+    // @ts-ignore
+    KushkiGateway.mockImplementation(() => ({
+      requestBankList: jest.fn().mockResolvedValue(bankListMock)
+    }));
   };
 
   describe("requestBankList - Test", () => {

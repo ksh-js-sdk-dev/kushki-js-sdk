@@ -1,8 +1,6 @@
 /**
  * SiftScience Service file
  */
-import { injectable } from "inversify";
-import "reflect-metadata";
 import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { IKushki } from "Kushki";
@@ -12,7 +10,6 @@ import { SiftScienceObject } from "types/sift_science_object";
 /**
  * Implementation
  */
-@injectable()
 export class SiftScienceProvider implements ISiftScienceProvider {
   public createSiftScienceSession(
     processor: string,

@@ -13,7 +13,7 @@
     "noEmit": true,
     "esModuleInterop": true,
     "strict": true,
-    "types": ["inversify", "reflect-metadata", "jest", "node"],
+    "types": ["jest", "node"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "noUnusedLocals": true,
@@ -34,7 +34,8 @@
       "utils/*": ["src/utils/*"],
       "libs/*": ["src/libs/*"],
       "src/*": ["src/*"],
-      "class/*": ["src/class/*"]
+      "class/*": ["src/class/*"],
+      "provider/*": ["src/provider/*"]
     }
   },
   "exclude": ["node_modules", "showcase"],

@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import { BinBody } from "types/bin_body";
 import { BinInfoResponse } from "types/bin_info_response";
 import { PathEnum } from "infrastructure/PathEnum.ts";
@@ -7,7 +6,6 @@ import axios from "axios";
 import { IKushki } from "Kushki";
 import { DeferredByBinOptionsResponse } from "Kushki/Card";
 import { IKushkiGateway } from "repository/IKushkiGateway";
-import { injectable } from "inversify";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import { SecureOtpRequest } from "types/secure_otp_request";
@@ -17,7 +15,6 @@ import { BankListResponse } from "types/bank_list_response";
 import { CommissionConfigurationRequest } from "types/commission_configuration_request";
 import { CommissionConfigurationResponse } from "types/commission_configuration_response";
 
-@injectable()
 export class KushkiGateway implements IKushkiGateway {
   private readonly _publicHeader: string = "Public-Merchant-Id";
 
