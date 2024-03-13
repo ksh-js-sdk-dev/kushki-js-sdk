@@ -1,14 +1,13 @@
 /**
  * SiftScienceProvider Unit Tests
  */
-import { CONTAINER } from "infrastructure/Container.ts";
 import { IKushki } from "Kushki";
 import { Mock } from "ts-mockery";
 import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
 import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
-import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { SiftScienceEnum } from "infrastructure/SiftScienceEnum.ts";
+import { SiftScienceProvider } from "src/provider/SiftScienceProvider.ts";
 
 describe("SiftScience Gateway - ", () => {
   let siftScienceService: ISiftScienceProvider;
@@ -24,12 +23,8 @@ describe("SiftScience Gateway - ", () => {
     sandboxEnable: false
   };
 
-  afterEach(() => {
-    CONTAINER.restore();
-  });
-
   beforeEach(async () => {
-    CONTAINER.snapshot();
+    siftScienceService = new SiftScienceProvider();
 
     mockKushki = Mock.of<IKushki>({
       getBaseUrl: () => EnvironmentEnum.prod,
@@ -40,10 +35,6 @@ describe("SiftScience Gateway - ", () => {
   });
 
   it("test createSiftScienceSession request with environment uat - success", async () => {
-    siftScienceService = CONTAINER.get<ISiftScienceProvider>(
-      IDENTIFIERS.SiftScienceService
-    );
-
     const data = siftScienceService.createSiftScienceSession(
       processor,
       clientIdentification,
@@ -56,10 +47,6 @@ describe("SiftScience Gateway - ", () => {
   });
 
   it("test createSiftScienceSession request with environment prod - success", async () => {
-    siftScienceService = CONTAINER.get<ISiftScienceProvider>(
-      IDENTIFIERS.SiftScienceService
-    );
-
     const data = await siftScienceService.createSiftScienceSession(
       processor,
       clientIdentification,
@@ -77,10 +64,6 @@ describe("SiftScience Gateway - ", () => {
       prodBaconKey: "",
       sandboxBaconKey: null
     };
-
-    siftScienceService = CONTAINER.get<ISiftScienceProvider>(
-      IDENTIFIERS.SiftScienceService
-    );
 
     const data = siftScienceService.createSiftScienceSession(
       processor,

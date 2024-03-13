@@ -2,14 +2,15 @@ import { Cardinal3DSProvider } from "src/provider/Cardinal3DSProvider.ts";
 import { Kushki } from "class/Kushki.ts";
 import { IKushki } from "Kushki";
 import { SecureOtpResponse } from "types/secure_otp_response";
-import { CONTAINER } from "infrastructure/Container.ts";
-import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import {
   CardinalValidationCodeEnum,
   ICardinalValidation
 } from "infrastructure/CardinalValidationEnum.ts";
+import { KushkiGateway } from "gateway/KushkiGateway.ts";
+
+jest.mock("gateway/KushkiGateway.ts");
 
 describe("Cardinal3DSProvider - Test", () => {
   let cardinalProvider: Cardinal3DSProvider;
@@ -23,12 +24,6 @@ describe("Cardinal3DSProvider - Test", () => {
     });
 
   const mockCardinal = (complete: any = undefined, on: jest.Mock = onMock) => {
-    jest.mock("libs/cardinal/Prod", () => ({
-      default: jest.fn()
-    }));
-    jest.mock("libs/cardinal/Staging", () => ({
-      default: jest.fn()
-    }));
     window.Cardinal = {};
     window.Cardinal.off = jest.fn();
     window.Cardinal.setup = setUpMock;
@@ -39,17 +34,17 @@ describe("Cardinal3DSProvider - Test", () => {
   };
 
   const mockKushkiGateway = (
-    secureValidation: SecureOtpResponse | Promise<SecureOtpResponse> = {
+    secureValidationMock: SecureOtpResponse | Promise<SecureOtpResponse> = {
       code: "3DS000",
       message: "ok"
     }
   ) => {
-    const mockGateway = {
-      requestSecureServiceValidation: () => secureValidation
-    };
-
-    CONTAINER.unbind(IDENTIFIERS.KushkiGateway);
-    CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
+    // @ts-ignore
+    KushkiGateway.mockImplementation(() => ({
+      requestSecureServiceValidation: jest
+        .fn()
+        .mockResolvedValue(secureValidationMock)
+    }));
   };
 
   const initProvider = (inTest?: boolean) => {

@@ -8,8 +8,6 @@ import {
 } from "Kushki/Card";
 import KushkiHostedFields from "libs/zoid/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import { CONTAINER } from "infrastructure/Container.ts";
-import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { FieldTypeEnum } from "types/form_validity";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
@@ -21,6 +19,15 @@ import { SecureOtpResponse } from "types/secure_otp_response";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ErrorCode, ERRORS } from "infrastructure/ErrorEnum.ts";
 import { OTPEnum } from "infrastructure/OTPEnum.ts";
+import { KushkiGateway } from "gateway/KushkiGateway.ts";
+import { SiftScienceProvider } from "provider/SiftScienceProvider.ts";
+import { Cardinal3DSProvider } from "provider/Cardinal3DSProvider.ts";
+import { Sandbox3DSProvider } from "provider/Sandbox3DSProvider.ts";
+
+jest.mock("gateway/KushkiGateway.ts");
+jest.mock("provider/SiftScienceProvider.ts");
+jest.mock("provider/Cardinal3DSProvider.ts");
+jest.mock("provider/Sandbox3DSProvider.ts");
 
 const mockKushkiHostedFieldsHide = jest.fn().mockResolvedValue({});
 
@@ -77,26 +84,21 @@ describe("Card test", () => {
       show: jest.fn().mockResolvedValue({}),
       updateProps: jest.fn()
     }));
-    CONTAINER.restore();
     mockRequestDeferredInfo.mockClear();
   });
 
   const initMocksGateway = (binInfoResponse = {}) => {
-    const mockGateway = {
-      requestBinInfo: () => {
-        return { ...binInfoResponseDefault, ...binInfoResponse };
-      },
+    // @ts-ignore
+    KushkiGateway.mockImplementation(() => ({
+      requestBinInfo: jest
+        .fn()
+        .mockReturnValue({ ...binInfoResponseDefault, ...binInfoResponse }),
       requestDeferredInfo: mockRequestDeferredInfo
-    };
-
-    CONTAINER.unbind(IDENTIFIERS.KushkiGateway);
-    CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
+    }));
   };
 
   beforeEach(async () => {
     await initKushki();
-
-    CONTAINER.snapshot();
 
     initMocksGateway();
 
@@ -305,12 +307,10 @@ describe("Card test", () => {
   });
 
   it("When requestBinInfo throws an error", async () => {
-    const mockGateway = {
+    // @ts-ignore
+    KushkiGateway.mockImplementation(() => ({
       requestBinInfo: new Error("")
-    };
-
-    CONTAINER.unbind(IDENTIFIERS.KushkiGateway);
-    CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
+    }));
 
     try {
       await initCardToken(kushki, options);
@@ -336,7 +336,8 @@ describe("Card test", () => {
         message: "ok"
       }
     ) => {
-      const mockGateway = {
+      // @ts-ignore
+      KushkiGateway.mockImplementation(() => ({
         requestCybersourceJwt: () => ({
           jwt: "1234567890"
         }),
@@ -346,19 +347,12 @@ describe("Card test", () => {
           sandboxEnable: isSandboxEnabled
         }),
         requestSecureServiceValidation: () => secureValidation
-      };
+      }));
 
-      const mockSiftService = {
+      // @ts-ignore
+      SiftScienceProvider.mockImplementation(() => ({
         createSiftScienceSession: () => ({ sessionId: "abc", userId: "123" })
-      };
-
-      CONTAINER.unbind(IDENTIFIERS.KushkiGateway);
-      CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
-
-      CONTAINER.unbind(IDENTIFIERS.SiftScienceService);
-      CONTAINER.bind(IDENTIFIERS.SiftScienceService).toConstantValue(
-        mockSiftService
-      );
+      }));
     };
 
     const mockRequestPaymentToken = (mock: jest.Mock) => {
@@ -671,7 +665,8 @@ describe("Card test", () => {
         validateCardinalMock?: jest.Mock,
         validateSandboxMock?: jest.Mock
       ) => {
-        const mockCardinalProvider = {
+        // @ts-ignore
+        Cardinal3DSProvider.mockImplementation(() => ({
           initCardinal: jest.fn(),
           onSetUpComplete: jest
             .fn()
@@ -679,20 +674,13 @@ describe("Card test", () => {
               callback();
             }),
           validateCardinal3dsToken: validateCardinalMock
-        };
-        const mockSandboxProvider = {
+        }));
+
+        // @ts-ignore
+        Sandbox3DSProvider.mockImplementation(() => ({
           initSandbox: jest.fn(),
           validateSandbox3dsToken: validateSandboxMock
-        };
-
-        CONTAINER.unbind(IDENTIFIERS.Cardinal3DSProvider);
-        CONTAINER.bind(IDENTIFIERS.Cardinal3DSProvider).toConstantValue(
-          mockCardinalProvider
-        );
-        CONTAINER.unbind(IDENTIFIERS.Sandbox3DSProvider);
-        CONTAINER.bind(IDENTIFIERS.Sandbox3DSProvider).toConstantValue(
-          mockSandboxProvider
-        );
+        }));
       };
 
       const mockWindowEventListener3DSFlow = () => {

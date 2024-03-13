@@ -1,7 +1,5 @@
 import { KushkiGateway } from "./KushkiGateway";
 import axios, { AxiosError } from "axios";
-import { CONTAINER } from "infrastructure/Container";
-import { IDENTIFIERS } from "src/constant/Identifiers";
 import { Mock } from "ts-mockery";
 import { IKushki } from "Kushki";
 import { EnvironmentEnum } from "infrastructure/EnvironmentEnum";
@@ -20,9 +18,7 @@ describe("KushkiGateway - Test", () => {
   let mockKushki: IKushki;
 
   beforeEach(async () => {
-    CONTAINER.snapshot();
-
-    kushkiGateway = CONTAINER.get(IDENTIFIERS.KushkiGateway);
+    kushkiGateway = new KushkiGateway();
 
     mockKushki = Mock.of<IKushki>({
       getBaseUrl: () => EnvironmentEnum.uat,
@@ -31,7 +27,6 @@ describe("KushkiGateway - Test", () => {
   });
 
   afterEach(() => {
-    CONTAINER.restore();
     jest.clearAllMocks();
   });
 

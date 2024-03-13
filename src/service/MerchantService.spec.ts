@@ -1,11 +1,12 @@
-import { CONTAINER } from "infrastructure/Container.ts";
-import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { init } from "Kushki";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { CommissionConfigurationResponse } from "types/commission_configuration_response";
 import { MerchantService } from "service/MerchantService.ts";
 import { CommissionConfigurationRequest } from "types/commission_configuration_request";
+import { KushkiGateway } from "gateway/KushkiGateway.ts";
+
+jest.mock("gateway/KushkiGateway.ts");
 
 describe("MerchantService - Test", () => {
   const initKushki = async () => {
@@ -15,12 +16,12 @@ describe("MerchantService - Test", () => {
   const mockKushkiGateway = (
     commissionConfigMock: Promise<CommissionConfigurationResponse>
   ) => {
-    const mockGateway = {
-      requestCommissionConfiguration: () => commissionConfigMock
-    };
-
-    CONTAINER.unbind(IDENTIFIERS.KushkiGateway);
-    CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
+    // @ts-ignore
+    KushkiGateway.mockImplementation(() => ({
+      requestCommissionConfiguration: jest
+        .fn()
+        .mockResolvedValue(commissionConfigMock)
+    }));
   };
 
   describe("requestCommissionConfiguration - Test", () => {
