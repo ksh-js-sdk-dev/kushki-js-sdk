@@ -18,6 +18,6 @@ export interface ISandbox3DSProvider {
   validateSandbox3dsToken(
     kushkiInstance: IKushki,
     cardTokenResponse: CardTokenResponse,
-    deferredValues: DeferredValues
+    deferredValues?: DeferredValues
   ): Promise<TokenResponse>;
 }

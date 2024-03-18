@@ -1,4 +1,4 @@
-import { Currency } from "../../../../types/card_options";
+import { Currency } from "Kushki/Card";
 import { useEffect, useState } from "react";
 import {
   IConfigurationDemoProps,

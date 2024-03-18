@@ -139,6 +139,11 @@
   font-size: 14px !important;
 }
 
+.select-container {
+  width: 300px;
+  margin: 0px !important;
+}
+
 .label-hostedFieldError {
   color: #b60000;
   font-size: 12px;

@@ -4,7 +4,7 @@ import { PathEnum } from "infrastructure/PathEnum.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import axios from "axios";
 import { IKushki } from "Kushki";
-import { DeferredByBinOptionsResponse } from "Kushki/Card";
+import { CardTokenResponse, DeferredByBinOptionsResponse } from "Kushki/Card";
 import { IKushkiGateway } from "repository/IKushkiGateway";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
@@ -14,6 +14,8 @@ import { KushkiError } from "infrastructure/KushkiError.ts";
 import { BankListResponse } from "types/bank_list_response";
 import { CommissionConfigurationRequest } from "types/commission_configuration_request";
 import { CommissionConfigurationResponse } from "types/commission_configuration_response";
+import { SubscriptionUserIdResponse } from "types/subscription_user_id_response";
+import { DeviceTokenRequest } from "types/device_token_request";
 
 export class KushkiGateway implements IKushkiGateway {
   private readonly _publicHeader: string = "Public-Merchant-Id";
@@ -80,11 +82,12 @@ export class KushkiGateway implements IKushkiGateway {
   };
 
   public requestCybersourceJwt = async (
-    kushkiInstance: IKushki
+    kushkiInstance: IKushki,
+    subscriptionId?: string
   ): Promise<CybersourceJwtResponse> => {
     const url: string = `${kushkiInstance.getBaseUrl()}${
       PathEnum.cybersource_jwt
-    }`;
+    }${subscriptionId ? `?subscriptionId=${subscriptionId}` : ""}`;
 
     try {
       const { data } = await axios.get<CybersourceJwtResponse>(url, {
@@ -152,6 +155,48 @@ export class KushkiGateway implements IKushkiGateway {
       return Promise.resolve(data);
     } catch (error: any) {
       return Promise.reject(new KushkiError(ERRORS.E015, error.message));
+    }
+  };
+
+  public requestSubscriptionUserId = async (
+    kushkiInstance: IKushki,
+    subscriptionId: string
+  ): Promise<SubscriptionUserIdResponse> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${
+      PathEnum.subscriptions
+    }${subscriptionId}/user`;
+
+    try {
+      const { data } = await axios.post<SubscriptionUserIdResponse>(
+        url,
+        {},
+        {
+          headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+        }
+      );
+
+      return Promise.resolve(data);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E016, error.message));
+    }
+  };
+
+  public requestDeviceToken = async (
+    kushkiInstance: IKushki,
+    body: DeviceTokenRequest
+  ): Promise<CardTokenResponse> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${
+      PathEnum.device_token
+    }${body.subscriptionId}/tokens`;
+
+    try {
+      const { data } = await axios.post<CardTokenResponse>(url, body, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+      });
+
+      return Promise.resolve(data);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E017, error.message));
     }
   };
 

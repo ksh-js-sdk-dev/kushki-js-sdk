@@ -10,6 +10,9 @@ import {
 } from "types/card_options";
 import { ICard } from "repository/ICard.ts";
 import { FieldTypeEnum } from "types/form_validity";
+import { DeviceTokenRequest } from "types/device_token_request";
+import { CardService } from "service/CardService.ts";
+import { TokenResponse } from "types/token_response";
 
 /**
  * #### Introduction
@@ -554,3 +557,12 @@ export type { DeferredByBinOptionsResponse } from "types/deferred_by_bin_respons
 export type { DeferredInputValues } from "types/deferred_input_values";
 export type { ERRORS } from "infrastructure/ErrorEnum.ts";
 export { InputModelEnum } from "../infrastructure/InputModel.enum.ts";
+
+const requestDeviceToken = (
+  kushkiInstance: IKushki,
+  body: DeviceTokenRequest
+): Promise<TokenResponse> =>
+  CardService.requestDeviceToken(kushkiInstance, body);
+
+export { requestDeviceToken };
+export type { DeviceTokenRequest } from "types/device_token_request";

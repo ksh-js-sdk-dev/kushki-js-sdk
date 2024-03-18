@@ -14,7 +14,7 @@ const CurrencyConfigurationDemo = ({
   setInputCurrency
 }: ICurrencyConfigurationDemoProps) => {
   return (
-    <div className="mui-select divContainer">
+    <div className="mui-select select-container">
       <select
         className={
           inputCurrency
