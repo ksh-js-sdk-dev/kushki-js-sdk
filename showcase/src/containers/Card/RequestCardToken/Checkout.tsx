@@ -139,7 +139,7 @@ export const CheckoutContainer = () => {
 
   return (
     <>
-      <div className={"boxPrincipal"}>
+      <div className={"box-principal"}>
         <ConfigurationDemo
           setAmountOptions={setAmountOptions}
           setCurrencyOptions={setCurrencyOptions}

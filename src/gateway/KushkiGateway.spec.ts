@@ -301,7 +301,7 @@ describe("KushkiGateway - Test", () => {
       userId: "12345"
     };
 
-    it("when called requestSubscriptionUserId return data on success", async () => {
+    it("when requestSubscriptionUserId is success, then return userId", async () => {
       const axiosPostSpy = jest.fn(() => {
         return Promise.resolve({
           data: mockUserId
@@ -316,7 +316,7 @@ describe("KushkiGateway - Test", () => {
       expect(userIdResponse).toEqual(mockUserId);
     });
 
-    it("When requestSubscriptionUserId throws an AxiosError", async () => {
+    it("When requestSubscriptionUserId throws an AxiosError, then return ERROR16", async () => {
       jest.spyOn(axios, "post").mockRejectedValue(new AxiosError(""));
 
       try {
@@ -335,7 +335,7 @@ describe("KushkiGateway - Test", () => {
       token: "12121212"
     };
 
-    it("when called requestDeviceToken return data on success", async () => {
+    it("when requestDeviceToken request is success,, then return token", async () => {
       const axiosPostSpy = jest.fn(() => {
         return Promise.resolve({
           data: mockCardToken
@@ -350,7 +350,7 @@ describe("KushkiGateway - Test", () => {
       expect(cardTokenResponse).toEqual(mockCardToken);
     });
 
-    it("When requestDeviceToken throws an AxiosError", async () => {
+    it("When requestDeviceToken throws an AxiosError, then return ERROR17", async () => {
       jest.spyOn(axios, "post").mockRejectedValue(new AxiosError(""));
 
       try {

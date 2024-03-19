@@ -20,16 +20,38 @@
 <ul class="tsd-signatures">
 <li class="tsd-signature tsd-anchor-link" id="requestDeviceToken"><span class="tsd-kind-call-signature">request<wbr/>Device<wbr/>Token</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">kushkiInstance</span>, <span class="tsd-kind-parameter">body</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Card.TokenResponse.html" class="tsd-signature-type tsd-kind-interface">TokenResponse</a><span class="tsd-signature-symbol">&gt;</span><a href="#requestDeviceToken" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Function to get device token for one-click payment or subscription on-demand</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">kushkiInstance</span>: <a href="../interfaces/Kushki.IKushki.html" class="tsd-signature-type tsd-kind-interface">IKushki</a></h5></li>
+<h5><span class="tsd-kind-parameter">kushkiInstance</span>: <a href="../interfaces/Kushki.IKushki.html" class="tsd-signature-type tsd-kind-interface">IKushki</a></h5>
+<div class="tsd-comment tsd-typography"><p>Object that that was previously initialized with init Kushki method</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li>
 <li>
-<h5><span class="tsd-kind-parameter">body</span>: <a href="../interfaces/Card.DeviceTokenRequest.html" class="tsd-signature-type tsd-kind-interface">DeviceTokenRequest</a></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Card.TokenResponse.html" class="tsd-signature-type tsd-kind-interface">TokenResponse</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h5><span class="tsd-kind-parameter">body</span>: <a href="../interfaces/Card.DeviceTokenRequest.html" class="tsd-signature-type tsd-kind-interface">DeviceTokenRequest</a></h5>
+<div class="tsd-comment tsd-typography"><p>Object with subscriptionId and optional amount or currency</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Card.TokenResponse.html" class="tsd-signature-type tsd-kind-interface">TokenResponse</a><span class="tsd-signature-symbol">&gt;</span></h4><ul>
+<li>Object that contains the device token validated</li>
+</ul>
+
+<div class="tsd-comment tsd-typography">
+<h4>Throws</h4><ul>
+<li>if <code>options.publicCredentialId</code> into <code>kushkiInstance</code> is not valid or the request fails then throw <a href="../variables/Card.ERRORS.html" class="tsd-kind-variable">ERRORS.E003</a></li>
+<li>if the merchant have SiftScience configurations and <code>options.subscriptionId</code> into <code>body</code> is not found or the request fails then throw <a href="../variables/Card.ERRORS.html" class="tsd-kind-variable">ERRORS.E016</a></li>
+<li>if the merchant have 3DS configurations and JWT request fails then throw <a href="../variables/Card.ERRORS.html" class="tsd-kind-variable">ERRORS.E004</a></li>
+<li>if the merchant have 3DS configurations and validation challenge fails then throw <a href="../variables/Card.ERRORS.html" class="tsd-kind-variable">ERRORS.E005</a></li>
+<li>if the merchant have 3DS configurations and request token validation fails then throw <a href="../variables/Card.ERRORS.html" class="tsd-kind-variable">ERRORS.E006</a></li>
+</ul>
+<a id="md:example" class="tsd-anchor"></a><h4><a href="#md:example">Example</a></h4><a id="md:request-device-token" class="tsd-anchor"></a><h5><a href="#md:request-device-token">Request Device Token</a></h5><pre><code class="language-ts"><span class="hl-4">import</span><span class="hl-1"> { </span><span class="hl-0">init</span><span class="hl-1">, </span><span class="hl-0">IKushki</span><span class="hl-1"> } </span><span class="hl-4">from</span><span class="hl-1"> </span><span class="hl-2">&quot;@kushki/js-sdk&quot;</span><span class="hl-1">;</span><br/><span class="hl-4">import</span><span class="hl-1"> { </span><span class="hl-0">requestDeviceToken</span><span class="hl-1">, </span><span class="hl-0">DeviceTokenRequest</span><span class="hl-1">, </span><span class="hl-0">TokenResponse</span><span class="hl-1"> } </span><span class="hl-4">from</span><span class="hl-1"> </span><span class="hl-2">&quot;@kushki/js-sdk/Card&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-8">onRequestDeviceToken</span><span class="hl-1"> = </span><span class="hl-5">async</span><span class="hl-1"> () </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-4">try</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">kushkiInstance</span><span class="hl-1">: </span><span class="hl-3">IKushki</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-8">init</span><span class="hl-1">({</span><br/><span class="hl-1">        </span><span class="hl-0">inTest:</span><span class="hl-1"> </span><span class="hl-5">true</span><span class="hl-1">,</span><br/><span class="hl-1">        </span><span class="hl-0">publicCredentialId:</span><span class="hl-1"> </span><span class="hl-2">&quot;merchantId&quot;</span><br/><span class="hl-1">      });</span><br/><span class="hl-1">      </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">body</span><span class="hl-1">: </span><span class="hl-3">DeviceTokenRequest</span><span class="hl-1">={</span><br/><span class="hl-1">        </span><span class="hl-0">subscriptionId:</span><span class="hl-1"> </span><span class="hl-2">&quot;subscriptionId&quot;</span><br/><span class="hl-1">      }</span><br/><br/><span class="hl-1">      </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">response</span><span class="hl-1">: </span><span class="hl-3">TokenResponse</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-8">requestDeviceToken</span><span class="hl-1">(</span><span class="hl-0">kushkiInstance</span><span class="hl-1">, </span><span class="hl-0">body</span><span class="hl-1">);</span><br/><br/><span class="hl-1">      </span><span class="hl-7">// On Success, can get device token for one-click payment, ex. {&quot;token&quot;:&quot;31674e78f88b41ffaf47998151fb465d&quot;}</span><br/><span class="hl-1">      </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-8">log</span><span class="hl-1">(</span><span class="hl-0">response</span><span class="hl-1">);</span><br/><span class="hl-1">    } </span><span class="hl-4">catch</span><span class="hl-1"> (</span><span class="hl-0">error</span><span class="hl-1">: </span><span class="hl-3">any</span><span class="hl-1">) {</span><br/><span class="hl-1">      </span><span class="hl-7">// On Error, catch response, ex. {code:&quot;E017&quot;, message: &quot;Error en solicitud de Token de subscripción bajo demanda&quot;}</span><br/><span class="hl-1">      </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-8">error</span><span class="hl-1">(</span><span class="hl-0">error</span><span class="hl-1">.</span><span class="hl-0">message</span><span class="hl-1">);</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">  };</span>
+</code><button>Copy</button></pre>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ksh-sdk-js/kushki-js-sdk/blob/a3920c3/src/module/Card.ts#L561">src/module/Card.ts:561</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/ksh-sdk-js/kushki-js-sdk/blob/b588a69/src/module/Card.ts#L603">src/module/Card.ts:603</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -43,7 +65,17 @@
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></form></div>
 <div class="tsd-theme-toggle">
-<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div></div>
+<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-index-accordion tsd-page-navigation"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li>
+<ul>
+<li><a href="#md:example"><span>Example</span></a></li>
+<li>
+<ul>
+<li><a href="#md:request-device-token"><span>Request <wbr/>Device <wbr/>Token</span></a></li></ul></li></ul></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1"></use></svg><span>kushki-js-sdk</span></a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container" data-base="..">

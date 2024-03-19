@@ -61,15 +61,15 @@ export class CardService {
     merchantSettings: MerchantSettingsResponse,
     body: DeviceTokenRequest
   ): Promise<string | undefined> {
-    return getJwtIf3dsEnabled(
+    return getJwtIf3dsEnabled({
+      accountNumber: "",
+      cardinal3DS: this._cardinal3DSProvider,
+      gateway: this._gateway,
+      kushkiInstance: this._kushkiInstance,
       merchantSettings,
-      this._kushkiInstance,
-      this._gateway,
-      this._sandbox3DSProvider,
-      this._cardinal3DSProvider,
-      "",
-      body.subscriptionId
-    );
+      sandbox3DS: this._sandbox3DSProvider,
+      subscriptionId: body.subscriptionId
+    });
   }
 
   private async _getSiftScienceObject(

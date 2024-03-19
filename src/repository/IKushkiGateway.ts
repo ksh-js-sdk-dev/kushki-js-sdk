@@ -76,7 +76,7 @@ export interface IKushkiGateway {
   ): Promise<SubscriptionUserIdResponse>;
 
   /**
-   * Request Device Token for subscription on demand
+   * Request Device Token for one-click payment or subscription on-demand
    */
   requestDeviceToken(
     kushkiInstance: IKushki,

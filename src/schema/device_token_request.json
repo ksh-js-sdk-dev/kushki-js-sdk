@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "DeviceTokenRequest",
   "title": "DeviceTokenRequest",
+  "description": "@public Object to get device token for one-click payment or subscription on-demand",
   "definitions": {
     "currency": {
       "type": "string",
@@ -81,22 +82,24 @@
   },
   "properties": {
     "subscriptionId": {
+      "description": "@typeParam string - SubscriptionId previously created with card subscription charge",
       "type": "string"
     },
     "userId": {
+      "description": "@typeParam string - (Optional) UserId if exist SiftScience implementation",
       "type": ["string", "null"]
     },
     "sessionId": {
+      "description": "@typeParam string - (Optional) SubscriptionId if exist SiftScience implementation",
       "type": ["string", "null"]
     },
     "amount": {
+      "description": "@typeParam string - (Optional) Object with amount values",
       "$ref": "#/definitions/amount"
     },
     "currency": {
+      "description": "@typeParam string - (Optional) Currency code for the payment",
       "$ref": "#/definitions/currency"
-    },
-    "cardHolderName": {
-      "type": "string"
     }
   },
   "required": ["subscriptionId"],

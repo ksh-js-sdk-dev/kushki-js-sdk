@@ -3,8 +3,13 @@ import InputConfigurationDemo from "../../../components/ConfigurationDemo/Compon
 import CardNumberHelper from "../../../components/CardNumberHelper/CardNumberHelper.tsx";
 import { ResponseBox } from "../../../components/ResponseBox/ResponseBox.tsx";
 import { useEffect, useState } from "react";
-import { init } from "Kushki";
-import { requestDeviceToken, DeviceTokenRequest, Currency } from "Kushki/Card";
+import { IKushki, init } from "Kushki";
+import {
+  requestDeviceToken,
+  DeviceTokenRequest,
+  Currency,
+  TokenResponse
+} from "Kushki/Card";
 import CurrencyConfigurationDemo from "../../../components/ConfigurationDemo/Components/CurrencyConfigurationDemo.tsx";
 
 export const RequestDeviceToken = () => {
@@ -14,14 +19,10 @@ export const RequestDeviceToken = () => {
   const [subtotalIva, setSubtotalIva] = useState<string>("");
   const [subtotalIva0, setSubtotalIva0] = useState<string>("");
   const [iva, setIva] = useState<string>("");
-
   const [disableButton, setDisableButton] = useState<boolean>(false);
   const [response, setResponse] = useState<string>("");
 
   const buildRequestBody = (): DeviceTokenRequest => {
-    //subscriptionId: "1675265172597000",//UAT SIFT MXN 9822cc23aaa4447e8c7b437c11d50172
-    //subscriptionId:"1710456537125000",//UAT 3DS USD Sandbox fb1155b79d114e03954be689f3af2ad2
-    //subscriptionId:"1710517723209000",//UAT 3DS MXN 5bdbaec2020f4d118db902f5799cfc24,
     let body: DeviceTokenRequest = {
       subscriptionId
     };
@@ -41,12 +42,12 @@ export const RequestDeviceToken = () => {
     setResponse("");
 
     try {
-      const kushkiInstance = await init({
+      const kushkiInstance: IKushki = await init({
         inTest: true,
         publicCredentialId: merchantId
       });
 
-      const response = await requestDeviceToken(
+      const response: TokenResponse = await requestDeviceToken(
         kushkiInstance,
         buildRequestBody()
       );
@@ -67,7 +68,7 @@ export const RequestDeviceToken = () => {
   return (
     <ContainerDemo>
       <div className={"items-content"}>
-        <h3 className={"titleDemo"}>Request Device Token</h3>
+        <h3 className={"title-demo"}>Request Device Token</h3>
         <InputConfigurationDemo
           disableInputPrev={false}
           setInputOption={setMerchantId}
@@ -88,7 +89,7 @@ export const RequestDeviceToken = () => {
           displayHostedFields={true}
           cardNumberHelper={"1710517723209000"}
         />
-        <div className={"mui--divider-top divContainer"}>
+        <div className={"mui--divider-top div-container"}>
           <div className="mui--text-body1">{"Datos Opcionales:"} </div>
           <CurrencyConfigurationDemo
             disableInputPrev={false}

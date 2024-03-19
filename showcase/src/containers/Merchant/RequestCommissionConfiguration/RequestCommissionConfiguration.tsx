@@ -48,7 +48,7 @@ export const RequestCommissionConfiguration = () => {
   return (
     <ContainerDemo>
       <div className={"items-content"}>
-        <h3 className={"titleDemo"}>Request Commission Configuration</h3>
+        <h3 className={"title-demo"}>Request Commission Configuration</h3>
         <InputConfigurationDemo
           disableInputPrev={false}
           setInputOption={setMerchantId}

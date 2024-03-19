@@ -16,6 +16,10 @@
 <li><a href="../modules/Card.html">Card</a></li>
 <li><a href="Card.DeviceTokenRequest.html">DeviceTokenRequest</a></li></ul>
 <h1>Interface DeviceTokenRequest</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>Object to get device token for one-click payment or subscription on-demand</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></section>
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
@@ -24,7 +28,7 @@
 <h4 class="tsd-before-signature">Indexable</h4>
 <div class="tsd-signature"><span class="tsd-signature-symbol">[</span>k: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div></section><aside class="tsd-sources">
 <ul>
-<li>Defined in types/device_token_request.d.ts:5</li></ul></aside>
+<li>Defined in types/device_token_request.d.ts:8</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -33,7 +37,6 @@
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Properties</h3>
 <div class="tsd-index-list"><a href="Card.DeviceTokenRequest.html#amount" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>amount?</span></a>
-<a href="Card.DeviceTokenRequest.html#cardHolderName" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>card<wbr/>Holder<wbr/>Name?</span></a>
 <a href="Card.DeviceTokenRequest.html#currency" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>currency?</span></a>
 <a href="Card.DeviceTokenRequest.html#sessionId" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>session<wbr/>Id?</span></a>
 <a href="Card.DeviceTokenRequest.html#subscriptionId" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>subscription<wbr/>Id</span></a>
@@ -45,32 +48,39 @@
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>amount</span><a href="#amount" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">amount</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type ">Amount</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in types/device_token_request.d.ts:9</li></ul></aside></section>
-<section class="tsd-panel tsd-member"><a id="cardHolderName" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>card<wbr/>Holder<wbr/>Name</span><a href="#cardHolderName" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">card<wbr/>Holder<wbr/>Name</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
-<ul>
-<li>Defined in types/device_token_request.d.ts:11</li></ul></aside></section>
+<li>Defined in types/device_token_request.d.ts:21</li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="currency" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>currency</span><a href="#currency" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">currency</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type ">Currency</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-kind-property">currency</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;USD&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;COP&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;CLP&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;UF&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;PEN&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;MXN&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;CRC&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;GTQ&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;HNL&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;NIO&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;BRL&quot;</span></div>
+<div class="tsd-comment tsd-typography">
+<h4>Type Param</h4><p>(Optional) Currency code for the payment</p>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in types/device_token_request.d.ts:10</li></ul></aside></section>
+<li>Defined in types/device_token_request.d.ts:25</li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="sessionId" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>session<wbr/>Id</span><a href="#sessionId" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">session<wbr/>Id</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-kind-property">session<wbr/>Id</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography">
+<h4>Type Param</h4><p>(Optional) SubscriptionId if exist SiftScience implementation</p>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in types/device_token_request.d.ts:8</li></ul></aside></section>
+<li>Defined in types/device_token_request.d.ts:20</li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="subscriptionId" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>subscription<wbr/>Id</span><a href="#subscriptionId" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">subscription<wbr/>Id</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-kind-property">subscription<wbr/>Id</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography">
+<h4>Type Param</h4><p>SubscriptionId previously created with card subscription charge</p>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in types/device_token_request.d.ts:6</li></ul></aside></section>
+<li>Defined in types/device_token_request.d.ts:12</li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="userId" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>user<wbr/>Id</span><a href="#userId" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">user<wbr/>Id</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-kind-property">user<wbr/>Id</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography">
+<h4>Type Param</h4><p>(Optional) UserId if exist SiftScience implementation</p>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in types/device_token_request.d.ts:7</li></ul></aside></section></section></div>
+<li>Defined in types/device_token_request.d.ts:16</li></ul></aside></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -90,7 +100,6 @@
 <div class="tsd-accordion-details">
 <ul>
 <li><a href="#amount" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>amount</span></a></li>
-<li><a href="#cardHolderName" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>card<wbr/>Holder<wbr/>Name</span></a></li>
 <li><a href="#currency" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>currency</span></a></li>
 <li><a href="#sessionId" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>session<wbr/>Id</span></a></li>
 <li><a href="#subscriptionId" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>subscription<wbr/>Id</span></a></li>

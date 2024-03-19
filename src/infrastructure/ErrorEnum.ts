@@ -169,6 +169,6 @@ export const ERRORS: KushkiErrors = {
   },
   [ErrorCode.E017]: {
     code: ErrorCode.E017,
-    message: "Error en solicitud de Token de subscription bajo demanda"
+    message: "Error en solicitud de Token de subscripción bajo demanda"
   }
 };

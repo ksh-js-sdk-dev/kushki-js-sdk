@@ -18,8 +18,8 @@ const CurrencyConfigurationDemo = ({
       <select
         className={
           inputCurrency
-            ? "selectExample selectLabelSelected"
-            : "selectExample selectLabelEmpty"
+            ? "select-example select-label-selected"
+            : "select-example select-label-empty"
         }
         disabled={disableInputPrev}
         onChange={(e) => {

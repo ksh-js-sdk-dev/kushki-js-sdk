@@ -558,6 +558,48 @@ export type { DeferredInputValues } from "types/deferred_input_values";
 export type { ERRORS } from "infrastructure/ErrorEnum.ts";
 export { InputModelEnum } from "../infrastructure/InputModel.enum.ts";
 
+/**
+ * Function to get device token for one-click payment or subscription on-demand
+ *
+ * @group Methods
+ * @param kushkiInstance - Object that that was previously initialized with {@link init} Kushki method
+ * @param body - Object with subscriptionId and optional amount or currency
+ * @returns {Promise<TokenResponse>} - Object that contains the device token validated
+ * @throws
+ * - if `options.publicCredentialId` into `kushkiInstance` is not valid or the request fails then throw {@link ERRORS | ERRORS.E003}
+ * - if the merchant have SiftScience configurations and `options.subscriptionId` into `body` is not found or the request fails then throw {@link ERRORS | ERRORS.E016}
+ * - if the merchant have 3DS configurations and JWT request fails then throw {@link ERRORS | ERRORS.E004}
+ * - if the merchant have 3DS configurations and validation challenge fails then throw {@link ERRORS | ERRORS.E005}
+ * - if the merchant have 3DS configurations and request token validation fails then throw {@link ERRORS | ERRORS.E006}
+ *
+ * #### Example
+ * ##### Request Device Token
+ *
+ * ```ts
+ * import { init, IKushki } from "@kushki/js-sdk";
+ * import { requestDeviceToken, DeviceTokenRequest, TokenResponse } from "@kushki/js-sdk/Card";
+ *
+ * const onRequestDeviceToken = async () => {
+ *     try {
+ *       const kushkiInstance: IKushki = await init({
+ *         inTest: true,
+ *         publicCredentialId: "merchantId"
+ *       });
+ *       const body: DeviceTokenRequest={
+ *         subscriptionId: "subscriptionId"
+ *       }
+ *
+ *       const response: TokenResponse = await requestDeviceToken(kushkiInstance, body);
+ *
+ *       // On Success, can get device token for one-click payment, ex. {"token":"31674e78f88b41ffaf47998151fb465d"}
+ *       console.log(response);
+ *     } catch (error: any) {
+ *       // On Error, catch response, ex. {code:"E017", message: "Error en solicitud de Token de subscripción bajo demanda"}
+ *       console.error(error.message);
+ *     }
+ *   };
+ * ```
+ */
 const requestDeviceToken = (
   kushkiInstance: IKushki,
   body: DeviceTokenRequest

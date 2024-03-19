@@ -124,14 +124,14 @@ export class Card implements ICard {
           merchantSettings
         );
 
-      const jwt: string | undefined = await getJwtIf3dsEnabled(
+      const jwt: string | undefined = await getJwtIf3dsEnabled({
+        accountNumber: this.currentBin,
+        cardinal3DS: this._cardinal3DSProvider,
+        gateway: this._gateway,
+        kushkiInstance: this.kushkiInstance,
         merchantSettings,
-        this.kushkiInstance,
-        this._gateway,
-        this._sandbox3DSProvider,
-        this._cardinal3DSProvider,
-        this.currentBin
-      );
+        sandbox3DS: this._sandbox3DSProvider
+      });
 
       if (jwt) {
         return this.buildTokenResponse(
