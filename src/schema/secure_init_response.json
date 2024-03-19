@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SecureInitResponse",
+  "additionalProperties": false,
+  "type": "object",
+  "required": ["jwt"],
+  "properties": {
+    "jwt": {
+      "type": "string"
+    }
+  }
+}

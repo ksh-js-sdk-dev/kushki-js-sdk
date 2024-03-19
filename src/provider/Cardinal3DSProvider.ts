@@ -63,7 +63,7 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
   public async validateCardinal3dsToken(
     kushkiInstance: IKushki,
     cardTokenResponse: CardTokenResponse,
-    deferredValues: DeferredValues
+    deferredValues?: DeferredValues
   ): Promise<TokenResponse> {
     if (tokenNotNeedsAuth(cardTokenResponse)) {
       return Promise.resolve({

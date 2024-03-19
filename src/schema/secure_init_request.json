@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SecureInitRequest",
+  "additionalProperties": false,
+  "type": "object",
+  "required": ["card"],
+  "properties": {
+    "card": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["number"],
+      "properties": {
+        "number": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

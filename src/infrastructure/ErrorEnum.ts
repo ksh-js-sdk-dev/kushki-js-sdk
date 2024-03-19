@@ -20,7 +20,9 @@ export enum ErrorCode {
   E012 = "E012",
   E013 = "E013",
   E014 = "E014",
-  E015 = "E015"
+  E015 = "E015",
+  E016 = "E016",
+  E017 = "E017"
 }
 
 /**
@@ -148,5 +150,13 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E015]: {
     code: ErrorCode.E015,
     message: "Error en solicitud de configuración de comisión"
+  },
+  [ErrorCode.E016]: {
+    code: ErrorCode.E016,
+    message: "Longitud de tarjeta inválida"
+  },
+  [ErrorCode.E017]: {
+    code: ErrorCode.E017,
+    message: "Comercio no tiene activo 3DS"
   }
 };
