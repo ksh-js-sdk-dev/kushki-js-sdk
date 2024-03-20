@@ -3,14 +3,15 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RoutesEnum } from "./shared/enums/Routes.enum.ts";
 import { GetBankList } from "./containers/Transfer/GetBankList/GetBankList.tsx";
 import { RequestCommissionConfiguration } from "./containers/Merchant/RequestCommissionConfiguration/RequestCommissionConfiguration.tsx";
+import { AntiFraud } from "./containers/AntiFraud/Antifraud.tsx";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path={RoutesEnum.INDEX} element={<CheckoutContainer />} />
-        {/*TODO: Aqui cambiar redireccion a los otros demos*/}
-        <Route path={RoutesEnum.VALIDATE_3DS} element={<>{"VALIDATE_3DS"}</>} />
+        {/* TODO: Aqui cambiar redireccion a los otros demos*/}
+        <Route path={RoutesEnum.VALIDATE_3DS} element={<AntiFraud />} />
         <Route path={RoutesEnum.DEVICE_TOKEN} element={<>{"DEVICE_TOKEN"}</>} />
         <Route path={RoutesEnum.BANK_LIST} element={<GetBankList />} />
         <Route
