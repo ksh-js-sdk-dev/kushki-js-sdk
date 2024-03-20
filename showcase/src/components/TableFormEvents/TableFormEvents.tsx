@@ -1,9 +1,9 @@
 import { FieldTypeEnum } from "../../../../types/form_validity";
 import { TableDemoGeneral } from "../Tables/TableDemoGeneral.tsx";
 import { TableDemoField } from "../Tables/TableDemoField.tsx";
-import { Card } from "../../../../src/module/Card.ts";
+import { ICard } from "Kushki/Card";
 export interface ITableFormEventsProps {
-  cardInstance?: Card;
+  cardInstance?: ICard;
 }
 
 const TableFormEvents = ({ cardInstance }: ITableFormEventsProps) => {

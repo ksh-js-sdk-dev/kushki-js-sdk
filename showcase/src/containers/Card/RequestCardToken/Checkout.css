@@ -1,6 +1,6 @@
 /* styles.css */
 
-.boxPrincipal {
+.box-principal {
   box-sizing: border-box;
 }
 
@@ -62,7 +62,7 @@
 }
 
 .input-configuration:focus,
-.selectExample:focus {
+.select-example:focus {
   border: 1px solid #0077ff !important;
   border-radius: 10px;
   outline: none !important;
@@ -78,7 +78,7 @@
   overflow: hidden;
 }
 
-.inputCheck {
+.input-check {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -132,14 +132,19 @@
   color: red !important;
 }
 
-.divContainer {
+.div-container {
   width: 300px;
   margin: 10px 0px 10px 0px !important;
   color: rgba(109, 119, 129, 1) !important;
   font-size: 14px !important;
 }
 
-.label-hostedFieldError {
+.select-container {
+  width: 300px;
+  margin: 0px !important;
+}
+
+.label-hosted-field-error {
   color: #b60000;
   font-size: 12px;
   margin-top: -10px;
@@ -148,28 +153,28 @@
   width: 300px;
 }
 
-.cardNumberHelp {
+.card-number-help {
   width: 300px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.cardNumberHelp-text {
+.card-number-help-text {
   font-size: 10px !important;
   color: rgba(109, 119, 129, 0.8) !important;
   display: flex;
   align-items: center;
 }
 
-.imgCopy {
+.img-copy {
   cursor: pointer;
   padding-left: 4px;
   width: 12px;
   height: 12px;
 }
 
-.selectExample {
+.select-example {
   border: 1px solid rgba(203, 213, 224, 1) !important;
   border-radius: 10px !important;
   background-position: calc(100% - 10px) center !important;
@@ -179,11 +184,11 @@
   height: 40px !important;
 }
 
-.selectLabelEmpty {
+.select-label-empty {
   color: rgba(0, 0, 0, 0.3) !important;
 }
 
-.selectLabelSelected {
+.select-label-selected {
   color: rgba(0, 0, 0, 0.87) !important;
 }
 
@@ -193,7 +198,7 @@
   justify-content: flex-start;
 }
 
-.titleDemo {
+.title-demo {
   color: rgba(2, 51, 101, 1);
   font-size: 23px;
   font-weight: 500;
@@ -233,7 +238,7 @@
   margin-top: 20px;
 }
 
-.mui-textfield {
+.mui-text-field {
   margin: 0px !important;
 }
 

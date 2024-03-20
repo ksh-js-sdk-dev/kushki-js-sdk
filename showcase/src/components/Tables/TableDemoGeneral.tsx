@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Card } from "../../../../src/module/Card.ts";
+import { ICard } from "Kushki/Card";
 import { Fields, FormValidity } from "../../../../types/form_validity";
 
 export interface ITableDemoGeneral {
-  cardInstance: Card;
+  cardInstance: ICard;
 }
 
 export const tableComponentStyles = {

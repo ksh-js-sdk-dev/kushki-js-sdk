@@ -16,4 +16,12 @@ export interface ISiftScienceProvider {
     merchantSettingsResponse: MerchantSettingsResponse,
     userId?: string
   ): SiftScienceObject;
+
+  /**
+   *  check if siftScience is enabled
+   */
+  isSiftScienceEnabled(
+    kushkiInstance: IKushki,
+    merchantSettingsResponse: MerchantSettingsResponse
+  ): boolean;
 }

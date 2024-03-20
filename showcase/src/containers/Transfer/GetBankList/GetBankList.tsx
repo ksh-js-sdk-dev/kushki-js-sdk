@@ -34,7 +34,7 @@ export const GetBankList = () => {
   return (
     <ContainerDemo>
       <div className={"items-content"}>
-        <h3 className={"titleDemo"}>Request Bank list</h3>
+        <h3 className={"title-demo"}>Request Bank list</h3>
         <InputConfigurationDemo
           disableInputPrev={false}
           setInputOption={setMerchantId}
