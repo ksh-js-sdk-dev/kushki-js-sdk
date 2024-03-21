@@ -54,7 +54,7 @@ export const getJwtIf3dsEnabled = async (
       await gateway.requestCybersourceJwt(kushkiInstance);
     const bin = subscriptionId
       ? Buffer.from(jwtResponse.identifier!, "base64").toString("ascii")
-      : accountNumber;
+      : accountNumber; // bin 8
 
     if (merchantSettings.sandboxEnable) sandbox3DS.initSandbox();
     else await cardinal3DS.initCardinal(kushkiInstance, jwtResponse.jwt, bin);

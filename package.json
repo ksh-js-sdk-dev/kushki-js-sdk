@@ -40,6 +40,10 @@
     "./Merchant": {
       "import": "./module/Merchant.js",
       "types": "./module/Merchant.d.ts"
+    },
+    "./AntiFraud": {
+      "import": "./module/AntiFraud.js",
+      "types": "./module/AntiFraud.d.ts"
     }
   },
   "engines": {

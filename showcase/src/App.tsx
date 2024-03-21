@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RoutesEnum } from "./shared/enums/Routes.enum.ts";
 import { GetBankList } from "./containers/Transfer/GetBankList/GetBankList.tsx";
 import { RequestCommissionConfiguration } from "./containers/Merchant/RequestCommissionConfiguration/RequestCommissionConfiguration.tsx";
-import { AntiFraud } from "./containers/AntiFraud/Antifraud.tsx";
+import { AntiFraud } from "./containers/AntiFraud/AntiFraud.tsx";
 
 function App() {
   return (

@@ -1,6 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "SecureInitRequest",
+  "description": "@public Contains the card number",
   "additionalProperties": false,
   "type": "object",
   "required": ["card"],
@@ -11,7 +12,8 @@
       "required": ["number"],
       "properties": {
         "number": {
-          "type": "string"
+          "type": "string",
+          "description": "@typeParam string - Is the card number value for the secure init process"
         }
       }
     }

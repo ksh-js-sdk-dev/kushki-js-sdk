@@ -2,21 +2,19 @@ import { ContainerDemo } from "../../components/ContainerDemo/ContainerDemo.tsx"
 import InputConfigurationDemo from "../../components/ConfigurationDemo/Components/InputConfigurationDemo.tsx";
 import { useState } from "react";
 import CardNumberHelper from "../../components/CardNumberHelper/CardNumberHelper.tsx";
-import { init } from "Kushki";
+import { IKushki, init } from "Kushki";
 import { ResponseBox } from "../../components/ResponseBox/ResponseBox.tsx";
 import "./AntiFraud.css";
-import { SecureInitRequest } from "../../../../types/secure_init_request";
 import {
   requestSecureInit,
-  validate3DS
-} from "../../../../src/module/AntiFraud.ts";
+  requestValidate3DS,
+  SecureInitRequest,
+  SecureInitResponse
+} from "Kushki/AntiFraud";
 import axios from "axios";
-import { SecureInitResponse } from "../../../../types/secure_init_response";
-import { ErrorResponse } from "../../../../types/error_response";
 import { get } from "lodash";
-import { CardTokenResponse } from "../../../../types/card_token_response";
+import { CardTokenResponse, Currency, TokenResponse } from "Kushki/Card";
 import CurrencyConfigurationDemo from "../../components/ConfigurationDemo/Components/CurrencyConfigurationDemo.tsx";
-import { Currency } from "../../../../types/card_options";
 
 export const AntiFraud = () => {
   const [merchantId, setMerchantId] = useState<string>(
@@ -33,9 +31,7 @@ export const AntiFraud = () => {
   const [disableButton, setDisableButton] = useState<boolean>(false);
   const [disableField, setDisableField] = useState<boolean>(true);
   const [response, setResponse] = useState<string>("");
-  const [secureInitJwt, setSecureInitJwt] = useState<
-    SecureInitResponse | ErrorResponse
-  >({
+  const [secureInitJwt, setSecureInitJwt] = useState<SecureInitResponse>({
     jwt: ""
   });
   const [cardTokenResponse, setCardTokenResponse] = useState<CardTokenResponse>(
@@ -53,7 +49,7 @@ export const AntiFraud = () => {
     setResponse("");
 
     try {
-      const kushkiInstance = await init({
+      const kushkiInstance: IKushki = await init({
         inTest: true,
         publicCredentialId: merchantId
       });
@@ -63,7 +59,7 @@ export const AntiFraud = () => {
         }
       };
 
-      const secureInitResponse = await requestSecureInit(
+      const secureInitResponse: SecureInitResponse = await requestSecureInit(
         kushkiInstance,
         secureInitRequest
       );
@@ -137,7 +133,10 @@ export const AntiFraud = () => {
         publicCredentialId: merchantId
       });
 
-      const response = await validate3DS(kushkiInstance, cardTokenResponse);
+      const response: TokenResponse = await requestValidate3DS(
+        kushkiInstance,
+        cardTokenResponse
+      );
 
       if (response.token) isValid = true;
 
@@ -164,14 +163,14 @@ export const AntiFraud = () => {
             valueInput={merchantId}
             label={"Merchant ID"}
           />
+          <CardNumberHelper
+            displayHostedFields={true}
+            cardNumberHelper={"3bf0e1c3d732415ea0ba15cb4f47f23c"}
+          />
           <CurrencyConfigurationDemo
             disableInputPrev={false}
             inputCurrency={inputCurrency}
             setInputCurrency={setInputCurrency}
-          />
-          <CardNumberHelper
-            displayHostedFields={true}
-            cardNumberHelper={"3bf0e1c3d732415ea0ba15cb4f47f23c"}
           />
           <InputConfigurationDemo
             disableInputPrev={false}
@@ -219,7 +218,7 @@ export const AntiFraud = () => {
             className={
               "mui-btn mui-btn--primary mui-btn--small button-border action-button"
             }
-            disabled={disableButton}
+            disabled={disableButton || disableField}
             onClick={onTokenRequest}
           >
             Request Token
@@ -228,7 +227,7 @@ export const AntiFraud = () => {
             className={
               "mui-btn mui-btn--primary mui-btn--small button-border action-button"
             }
-            disabled={disableButton}
+            disabled={disableButton || disableField}
             onClick={on3DSValidation}
           >
             Request 3DS Valdiation

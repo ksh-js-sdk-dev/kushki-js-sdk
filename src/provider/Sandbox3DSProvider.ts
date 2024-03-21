@@ -28,7 +28,7 @@ export class Sandbox3DSProvider implements ISandbox3DSProvider {
   public async validateSandbox3dsToken(
     kushkiInstance: IKushki,
     cardTokenResponse: CardTokenResponse,
-    deferredValues: DeferredValues
+    deferredValues?: DeferredValues
   ): Promise<TokenResponse> {
     if (tokenNotNeedsAuth(cardTokenResponse)) {
       return Promise.resolve({
