@@ -15,15 +15,14 @@ import axios from "axios";
 import { get } from "lodash";
 import { CardTokenResponse, Currency, TokenResponse } from "Kushki/Card";
 import CurrencyConfigurationDemo from "../../components/ConfigurationDemo/Components/CurrencyConfigurationDemo.tsx";
+import { PathEnum } from "../../../../src/infrastructure/PathEnum.ts";
 
 export const AntiFraud = () => {
-  const [merchantId, setMerchantId] = useState<string>(
-    "d6b3e17702e64d85b812c089e24a1ca1"
-  );
+  const [merchantId, setMerchantId] = useState<string>("");
   const [inputCurrency, setInputCurrency] = useState<
     Currency | string | undefined
   >("COP");
-  const [cardNumber, setCardNumber] = useState<string>("4000000000001091");
+  const [cardNumber, setCardNumber] = useState<string>("");
   const [cardHolder, setCardHolder] = useState<string>("");
   const [expirationDate, setExpirationDate] = useState<string>("");
   const [securityCode, setSecurityCode] = useState<string>("");
@@ -44,9 +43,13 @@ export const AntiFraud = () => {
     }
   );
 
-  const onRequestSecureInit = async () => {
+  function initFormFields() {
     setDisableButton(true);
     setResponse("");
+  }
+
+  const onRequestSecureInit = async () => {
+    initFormFields();
 
     try {
       const kushkiInstance: IKushki = await init({
@@ -74,19 +77,20 @@ export const AntiFraud = () => {
     }
   };
 
-  const onTokenRequest = async () => {
-    setDisableButton(true);
-    setResponse("");
+  const onRequestToken = async () => {
+    initFormFields();
     const dateParts = expirationDate.split("/");
 
     const month = dateParts[0];
     const year = dateParts[1];
 
     try {
-      const kushkiInstance = await init({
+      const kushkiInstance: IKushki = await init({
         inTest: true,
         publicCredentialId: merchantId
       });
+
+      console.log(kushkiInstance);
 
       const options = {
         headers: {
@@ -97,7 +101,7 @@ export const AntiFraud = () => {
       };
 
       const { data } = await axios.post(
-        "https://api-uat.kushkipagos.com/card/v1/tokens",
+        `${kushkiInstance.getBaseUrl()}${PathEnum.card_token}`,
         {
           card: {
             cvv: securityCode,
@@ -122,10 +126,9 @@ export const AntiFraud = () => {
     }
   };
 
-  const on3DSValidation = async () => {
-    setDisableButton(true);
-    setResponse("");
-    let isValid: boolean = false;
+  const onHandle3DSValidation = async () => {
+    initFormFields();
+    let threeDSisValid: boolean = false;
 
     try {
       const kushkiInstance = await init({
@@ -138,11 +141,11 @@ export const AntiFraud = () => {
         cardTokenResponse
       );
 
-      if (response.token) isValid = true;
+      if (response.token) threeDSisValid = true;
 
       setResponse(
         JSON.stringify({
-          isValid
+          isValid: threeDSisValid
         })
       );
     } catch (error: any) {
@@ -156,7 +159,7 @@ export const AntiFraud = () => {
     <div>
       <ContainerDemo>
         <div className={"items-content"}>
-          <h3 className={"titleDemo"}>AntiFraud Auth</h3>
+          <h3 className={"title-demo"}>AntiFraud Auth</h3>
           <InputConfigurationDemo
             disableInputPrev={false}
             setInputOption={setMerchantId}
@@ -176,13 +179,13 @@ export const AntiFraud = () => {
             disableInputPrev={false}
             setInputOption={setCardNumber}
             valueInput={cardNumber}
-            label={"Numero de tarjeta"}
+            label={"Número de tarjeta"}
           />
           <InputConfigurationDemo
             disableInputPrev={disableField}
             setInputOption={setCardHolder}
             valueInput={cardHolder}
-            label={"Nombre de tarjetahabiente"}
+            label={"Nombre de Tarjetahabiente"}
           />
           <InputConfigurationDemo
             disableInputPrev={disableField}
@@ -219,7 +222,7 @@ export const AntiFraud = () => {
               "mui-btn mui-btn--primary mui-btn--small button-border action-button"
             }
             disabled={disableButton || disableField}
-            onClick={onTokenRequest}
+            onClick={onRequestToken}
           >
             Request Token
           </button>
@@ -228,9 +231,9 @@ export const AntiFraud = () => {
               "mui-btn mui-btn--primary mui-btn--small button-border action-button"
             }
             disabled={disableButton || disableField}
-            onClick={on3DSValidation}
+            onClick={onHandle3DSValidation}
           >
-            Request 3DS Valdiation
+            Request 3DS Validation
           </button>
         </div>
         {response && <ResponseBox response={response} />}

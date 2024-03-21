@@ -15,10 +15,6 @@ import { get } from "lodash";
 import { ThreeDSEnum } from "infrastructure/ThreeDSEnum.ts";
 
 export class AntiFraudService {
-  private static readonly _paymentSetupCompleteEvent: string =
-    "payments.setupComplete";
-  private static readonly _sandboxEnable: boolean = false;
-
   public static async requestSecureInit(
     kushkiInstance: IKushki,
     secureInitRequest: SecureInitRequest
@@ -49,7 +45,7 @@ export class AntiFraudService {
 
     if (this._isSandboxEnabled(merchantSettings)) return jwt;
 
-    this._request3DSToken(() => {
+    await cardianl3DSProvider.onSetUpComplete(() => {
       return jwt;
     });
 
@@ -68,15 +64,8 @@ export class AntiFraudService {
       throw new KushkiError(ERRORS.E012);
 
     if (
-      get(cardTokenResponse, "security.authRequired") &&
-      this._validateParameters(cardTokenResponse)
-    )
-      throw new KushkiError(ERRORS.E012);
-
-    if (
-      this._sandboxEnable ||
       get(cardTokenResponse, "security.paReq", ThreeDSEnum.SANDBOX) ===
-        ThreeDSEnum.SANDBOX
+      ThreeDSEnum.SANDBOX
     )
       return cardinalSandboxProvider.validateSandbox3dsToken(
         kushkiInstance,
@@ -89,15 +78,6 @@ export class AntiFraudService {
     );
   }
 
-  private static _validateParameters(cardTokenResponse: CardTokenResponse) {
-    return (
-      get(cardTokenResponse, "security.acsURL") === undefined ||
-      get(cardTokenResponse, "security.paReq") === undefined ||
-      get(cardTokenResponse, "security.authenticationTransactionId") ===
-        undefined
-    );
-  }
-
   private static _checkSecureInitCardLength(request: SecureInitRequest): void {
     if (request.card.number.length < 6 || request.card.number.length > 19)
       throw new KushkiError(ERRORS.E016, ERRORS.E016.message);
@@ -105,12 +85,6 @@ export class AntiFraudService {
 
   private static _isSandboxEnabled(merchantSettings: MerchantSettingsResponse) {
     return !!merchantSettings.sandboxEnable;
-  }
-
-  private static _request3DSToken(callback: () => void) {
-    window.Cardinal.on(AntiFraudService._paymentSetupCompleteEvent, () => {
-      callback();
-    });
   }
   private static _getBinFromCreditCardNumber(value: string): string {
     const cardValue: string = value.replace(/\D/g, "");

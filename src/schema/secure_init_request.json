@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "SecureInitRequest",
-  "description": "@public Contains the card number",
+  "description": "@public Contains the secure init request",
   "additionalProperties": false,
   "type": "object",
   "required": ["card"],

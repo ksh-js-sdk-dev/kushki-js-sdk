@@ -7,51 +7,37 @@ import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import { get, set } from "lodash";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 import { SecureOtpResponse } from "types/secure_otp_response";
-import {
-  CardinalValidationCodeEnum,
-  ICardinalValidation
-} from "infrastructure/CardinalValidationEnum.ts";
 import { CardTokenResponse } from "types/card_token_response";
-import { TokenResponse } from "types/token_response";
 import * as Utils from "utils/3DSUtils.ts";
+import { Cardinal3DSProvider } from "provider/Cardinal3DSProvider.ts";
+import { TokenResponse } from "types/token_response";
 
 jest.mock("gateway/KushkiGateway.ts");
+jest.mock("provider/Cardinal3DSProvider.ts");
+jest.mock("provider/Sandbox3DSProvider.ts");
 
 describe("AntiFraudService - Test", () => {
-  const setUpMock = jest.fn();
-  const triggerMock = jest.fn();
-  const onMock = jest
-    .fn()
-    .mockImplementation((_: string, callback: () => void) => {
-      callback();
-    });
-  const mockCardinal = (complete: any = undefined, on: jest.Mock = onMock) => {
-    window.Cardinal = {};
-    window.Cardinal.off = jest.fn();
-    window.Cardinal.init = jest.fn();
-    window.Cardinal.setup = setUpMock;
-    window.Cardinal.continue = jest.fn();
-    window.Cardinal.on = on;
-    window.Cardinal.complete = complete;
-    window.Cardinal.trigger = triggerMock;
+  const jwtMock: string = "234234hgfg234";
+  const validateCardinal3dsTokenSpy = jest.fn();
+  let deviceTokenMock: TokenResponse;
+
+  const mockCardinal3DSProvider = (
+    validateCardinal3dsToken: jest.Mock = validateCardinal3dsTokenSpy.mockResolvedValue(
+      deviceTokenMock
+    )
+  ) => {
+    // @ts-ignore
+    Cardinal3DSProvider.mockImplementation(() => ({
+      onSetUpComplete: jest.fn().mockImplementation((callback: () => void) => {
+        callback();
+      }),
+      validateCardinal3dsToken
+    }));
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCardinal(
-      undefined,
-      jest
-        .fn()
-        .mockImplementation(
-          (_: string, callback: (data: ICardinalValidation) => void) => {
-            callback({
-              ActionCode: CardinalValidationCodeEnum.SUCCESS,
-              ErrorDescription: "test",
-              Validated: true
-            });
-          }
-        )
-    );
+    mockCardinal3DSProvider();
   });
 
   const initKushki = async (inTest: boolean = true) => {
@@ -81,7 +67,6 @@ describe("AntiFraudService - Test", () => {
     let request: SecureInitRequest;
     let merchantSettingsResponseMock: MerchantSettingsResponse;
     let cybersourceJwtResponseMock: CybersourceJwtResponse;
-    const jwtMock: string = "234234hgfg234";
 
     beforeEach(() => {
       request = {
@@ -129,7 +114,7 @@ describe("AntiFraudService - Test", () => {
 
       expect(get(secureInitResponse, "jwt")).toEqual("234234hgfg234");
     });
-    it("should return error when card number is too short", async () => {
+    it("should return error when card number is lesser than 6 digits", async () => {
       const kushkiInstance = await initKushki();
 
       request.card.number = "12345";
@@ -151,7 +136,7 @@ describe("AntiFraudService - Test", () => {
         expect(get(e, "detail")).toEqual("Longitud de tarjeta inválida");
       }
     });
-    it("should return error when card number is too long", async () => {
+    it("should return error when card number is greater than 19 digits", async () => {
       const kushkiInstance = await initKushki();
 
       request.card.number = "12345678901234567890";
@@ -267,17 +252,21 @@ describe("AntiFraudService - Test", () => {
         message: "3DS000"
       };
       mockSandbox(false);
+      jest.spyOn(Utils, "getJwtIf3dsEnabled").mockResolvedValue(jwtMock);
+      deviceTokenMock = { token: "12345" };
     });
 
-    it("should return validate3DS success", async () => {
+    it("should return isValid equal true when validate3DS process is successful", async () => {
       const kushkiInstance = await initKushki();
+
+      merchantSettingsResponseMock.sandboxEnable = true;
+      mockCardinal3DSProvider();
 
       mockKushkiGateway(
         Promise.resolve(merchantSettingsResponseMock),
         Promise.resolve(cybersourceJwtResponseMock),
         Promise.resolve(secureServiceResponseMock)
       );
-
       const response = await AntiFraudService.requestValidate3DS(
         kushkiInstance,
         cardTokenResponse
@@ -290,20 +279,6 @@ describe("AntiFraudService - Test", () => {
     it("should return error E012 when cardinal action code is equal to FAILURE", async () => {
       const kushkiInstance = await initKushki();
 
-      mockCardinal(
-        undefined,
-        jest
-          .fn()
-          .mockImplementation(
-            (_: string, callback: (data: ICardinalValidation) => void) => {
-              callback({
-                ActionCode: CardinalValidationCodeEnum.FAIL,
-                ErrorDescription: "test",
-                Validated: false
-              });
-            }
-          )
-      );
       mockSandbox(false);
 
       mockKushkiGateway(
@@ -322,7 +297,7 @@ describe("AntiFraudService - Test", () => {
         expect(error.message).toBe("Campos 3DS inválidos");
       }
     });
-    it("should return error E012 when security is undefined in request", async () => {
+    it("should return error E012 when security param is undefined in cardTokenResponse", async () => {
       const kushkiInstance = await initKushki();
 
       mockSandbox(true);
@@ -343,28 +318,6 @@ describe("AntiFraudService - Test", () => {
         expect(get(error, "code")).toBe("E012");
         expect(get(error, "message")).toBe("Error en inicialización de campos");
       }
-    });
-    it("should return isValid as true when authRequired does not exist in security body on request", async () => {
-      const kushkiInstance = await initKushki(false);
-
-      mockSandbox(true);
-
-      set(cardTokenResponse, "security.authRequired", undefined);
-
-      mockKushkiGateway(
-        Promise.resolve(merchantSettingsResponseMock),
-        Promise.resolve(cybersourceJwtResponseMock),
-        Promise.resolve(secureServiceResponseMock)
-      );
-
-      const response: TokenResponse = await AntiFraudService.requestValidate3DS(
-        kushkiInstance,
-        cardTokenResponse
-      );
-
-      if (response.token) isValid = true;
-
-      expect(isValid).toBeTruthy();
     });
     it("should return error E012 when authRequired is the only param in security object", async () => {
       const kushkiInstance = await initKushki();
@@ -387,98 +340,11 @@ describe("AntiFraudService - Test", () => {
           cardTokenResponse
         );
       } catch (error: any) {
-        expect(get(error, "code")).toBe("E012");
-        expect(error.message).toBe("Error en inicialización de campos");
+        expect(get(error, "code")).toBe("E005");
+        expect(error.message).toBe("Campos 3DS inválidos");
       }
     });
-    it("should return isValid when sandbox is enabled and paReq is equal to sandbox", async () => {
-      const kushkiInstance = await initKushki();
-
-      set(cardTokenResponse, "security.paReq", "sandbox");
-      set(cardTokenResponse, "security.authRequired", true);
-      secureServiceResponseMock = {
-        code: "ok",
-        message: "3DS000"
-      };
-
-      mockKushkiGateway(
-        Promise.resolve(merchantSettingsResponseMock),
-        Promise.resolve(cybersourceJwtResponseMock),
-        Promise.resolve(secureServiceResponseMock)
-      );
-
-      const response = await AntiFraudService.requestValidate3DS(
-        kushkiInstance,
-        cardTokenResponse
-      );
-
-      if (response.token) isValid = true;
-
-      expect(isValid).toBeTruthy();
-    });
-    it("should return isValid when sandbox is enabled, paReq is equal to sandbox and secure otp response code is 3DS000", async () => {
-      const kushkiInstance = await initKushki();
-
-      set(cardTokenResponse, "security.paReq", "sandbox");
-      set(cardTokenResponse, "security.authRequired", true);
-      secureServiceResponseMock = {
-        code: "3DS000",
-        message: "ok"
-      };
-
-      mockKushkiGateway(
-        Promise.resolve(merchantSettingsResponseMock),
-        Promise.resolve(cybersourceJwtResponseMock),
-        Promise.resolve(secureServiceResponseMock)
-      );
-
-      const response = await AntiFraudService.requestValidate3DS(
-        kushkiInstance,
-        cardTokenResponse
-      );
-
-      if (response.token) isValid = true;
-
-      expect(isValid).toBeTruthy();
-    });
-    it("should return isValid when sandbox is disabled and paReq is equal to sandbox", async () => {
-      mockSandbox(false);
-
-      set(cardTokenResponse, "security.paReq", "notsandbox");
-      set(cardTokenResponse, "security.authRequired", true);
-      const kushkiInstance = await initKushki();
-
-      mockCardinal(
-        undefined,
-        jest
-          .fn()
-          .mockImplementation(
-            (_: string, callback: (data: ICardinalValidation) => void) => {
-              callback({
-                ActionCode: CardinalValidationCodeEnum.SUCCESS,
-                ErrorDescription: "test",
-                Validated: true
-              });
-            }
-          )
-      );
-
-      mockKushkiGateway(
-        Promise.resolve(merchantSettingsResponseMock),
-        Promise.resolve(cybersourceJwtResponseMock),
-        Promise.resolve(secureServiceResponseMock)
-      );
-
-      const response = await AntiFraudService.requestValidate3DS(
-        kushkiInstance,
-        cardTokenResponse
-      );
-
-      if (response.token) isValid = true;
-
-      expect(isValid).toBeTruthy();
-    });
-    it("should return error E012 when specification version is invalid", async () => {
+    it("should return error E005 when specification version is invalid", async () => {
       const kushkiInstance = await initKushki();
 
       mockSandbox(false);

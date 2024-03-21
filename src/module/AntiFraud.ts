@@ -7,15 +7,16 @@ import { CardTokenResponse } from "types/card_token_response";
 
 /**
  * #### Introduction
- * Function to request a secure initialization of Cardinal 3DS or Cardinal 3DS Sandbox depending on the merchant settings.
+ * Function to request a secure initialization of Cardinal 3DS or Sandbox 3DS depending on the merchant settings..
  * @group Methods
  * @param {IKushki} kushkiInstance - The Kushki instance that was previously initialized.
- * @param {SecureInitRequest} secureInitRequest - You must define this object in order to request the initialization of Cardinal 3DS.
+ * @param {SecureInitRequest} secureInitRequest - You must define this object in order to request the initialization of 3DS.
  *
  * @returns {Promise<SecureInitResponse>} - Returns a Promise that resolves to either a SecureInitResponse or an ErrorResponse.
  *
  * @throws
  *  - if the param: `secureInitRequest` does not have the needed card length (cardNumber < 6 or cardNumber > 19)  {@link ERRORS | ERRORS.E016}
+ *  - if the request fails to obtain the jwt  {@link ERRORS | ERRORS.E004}
  *
  * @example
  * ```ts
