@@ -1,4 +1,4 @@
-import { Currency } from "../../../../types/card_options";
+import { Currency } from "Kushki/Card";
 import { useEffect, useState } from "react";
 import {
   IConfigurationDemoProps,
@@ -122,7 +122,7 @@ const ConfigurationDemo = ({
   return (
     <>
       <div className={"content-title"}>
-        <h1 className={"titleDemo"}>Kushki JS SDK - Demo</h1>
+        <h1 className={"title-demo"}>Kushki JS SDK - Demo</h1>
       </div>
       <div className="mui--text-body2 mui-text-custom">
         <a
@@ -189,10 +189,10 @@ const ConfigurationDemo = ({
           label={"Monto"}
           mask={"9999999"}
         />
-        <div className="mui-checkbox divContainer">
+        <div className="mui-checkbox div-container">
           <label className="label-container">
             <input
-              className={"inputCheck"}
+              className={"input-check"}
               type="checkbox"
               value=""
               disabled={disableButtons}

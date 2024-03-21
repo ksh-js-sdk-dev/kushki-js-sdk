@@ -5,15 +5,17 @@ import {
   tokenNotNeedsAuth
 } from "utils/3DSUtils.ts";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
+import { IKushki } from "repository/IKushki.ts";
+import { Kushki } from "class/Kushki.ts";
+import { KushkiGateway } from "gateway/KushkiGateway.ts";
 import { Cardinal3DSProvider } from "provider/Cardinal3DSProvider.ts";
 import { Sandbox3DSProvider } from "provider/Sandbox3DSProvider.ts";
-import { KushkiGateway } from "gateway/KushkiGateway.ts";
-import { Kushki } from "class/Kushki.ts";
-import { IKushki } from "repository/IKushki.ts";
+import { Buffer } from "buffer";
 
 jest.mock("gateway/KushkiGateway.ts");
 jest.mock("provider/Cardinal3DSProvider.ts");
 jest.mock("provider/Sandbox3DSProvider.ts");
+
 describe("3DSUtils - test", () => {
   describe("tokenNotNeedsAuth - method", () => {
     it("should return true when token not have security props", () => {
@@ -123,6 +125,7 @@ describe("3DSUtils - test", () => {
       expect(response).toBeFalsy();
     });
   });
+
   describe("getJwtIf3dsEnabled - method", () => {
     const kushkiInstance: IKushki = new Kushki({ publicCredentialId: "1212" });
     const jwtMock = "872b32b23";
@@ -177,19 +180,19 @@ describe("3DSUtils - test", () => {
       mockCardinalProvider();
     });
 
-    it("should return jwt for merchant with cardinal 3DS with bin for card", async () => {
-      const binMock = "1234";
+    it("should return jwt and init Cardinal with bin card, when merchant have cardinal 3DS", async () => {
+      const binMock = "42424242";
 
       merchantSettingsMock.active_3dsecure = true;
 
-      const jwtResponse = await getJwtIf3dsEnabled(
-        merchantSettingsMock,
-        kushkiInstance,
-        kushkiGatewayMock,
-        sandboxProviderMock,
-        cardinalProviderMock,
-        binMock
-      );
+      const jwtResponse = await getJwtIf3dsEnabled({
+        accountNumber: binMock,
+        cardinal3DS: cardinalProviderMock,
+        gateway: kushkiGatewayMock,
+        kushkiInstance: kushkiInstance,
+        merchantSettings: merchantSettingsMock,
+        sandbox3DS: sandboxProviderMock
+      });
 
       expect(jwtResponse).toEqual(jwtMock);
       expect(requestCybersourceJwtSpy).toBeCalledTimes(1);
@@ -202,20 +205,20 @@ describe("3DSUtils - test", () => {
       );
     });
 
-    it("should return jwt for merchant with cardinal 3DS with generated bin for card subscription", async () => {
+    it("should return jwt and init Cardinal with generated bin for subscription, when merchant have cardinal 3DS", async () => {
       const subscriptionIdMock = "1234";
 
       merchantSettingsMock.active_3dsecure = true;
 
-      const jwtResponse = await getJwtIf3dsEnabled(
-        merchantSettingsMock,
-        kushkiInstance,
-        kushkiGatewayMock,
-        sandboxProviderMock,
-        cardinalProviderMock,
-        "",
-        subscriptionIdMock
-      );
+      const jwtResponse = await getJwtIf3dsEnabled({
+        accountNumber: "",
+        cardinal3DS: cardinalProviderMock,
+        gateway: kushkiGatewayMock,
+        kushkiInstance: kushkiInstance,
+        merchantSettings: merchantSettingsMock,
+        sandbox3DS: sandboxProviderMock,
+        subscriptionId: subscriptionIdMock
+      });
 
       expect(jwtResponse).toEqual(jwtMock);
       expect(requestCybersourceJwtSpy).toBeCalledTimes(1);
@@ -228,18 +231,18 @@ describe("3DSUtils - test", () => {
       );
     });
 
-    it("should return jwt for merchant with sandbox 3DS", async () => {
+    it("should return jwt and init sandbox 3DS, when merchant have sandbox 3DS", async () => {
       merchantSettingsMock.active_3dsecure = true;
       merchantSettingsMock.sandboxEnable = true;
 
-      const jwtResponse = await getJwtIf3dsEnabled(
-        merchantSettingsMock,
-        kushkiInstance,
-        kushkiGatewayMock,
-        sandboxProviderMock,
-        cardinalProviderMock,
-        ""
-      );
+      const jwtResponse = await getJwtIf3dsEnabled({
+        accountNumber: "",
+        cardinal3DS: cardinalProviderMock,
+        gateway: kushkiGatewayMock,
+        kushkiInstance: kushkiInstance,
+        merchantSettings: merchantSettingsMock,
+        sandbox3DS: sandboxProviderMock
+      });
 
       expect(jwtResponse).toEqual(jwtMock);
       expect(requestCybersourceJwtSpy).toBeCalledTimes(1);
@@ -247,15 +250,15 @@ describe("3DSUtils - test", () => {
       expect(initCardinalSpy).toBeCalledTimes(0);
     });
 
-    it("should return undefined for merchant without 3DS", async () => {
-      const jwtResponse = await getJwtIf3dsEnabled(
-        merchantSettingsMock,
-        kushkiInstance,
-        kushkiGatewayMock,
-        sandboxProviderMock,
-        cardinalProviderMock,
-        "1234"
-      );
+    it("should return undefined , when merchant not have 3DS", async () => {
+      const jwtResponse = await getJwtIf3dsEnabled({
+        accountNumber: "1234",
+        cardinal3DS: cardinalProviderMock,
+        gateway: kushkiGatewayMock,
+        kushkiInstance: kushkiInstance,
+        merchantSettings: merchantSettingsMock,
+        sandbox3DS: sandboxProviderMock
+      });
 
       expect(jwtResponse).toBeUndefined();
       expect(requestCybersourceJwtSpy).toBeCalledTimes(0);

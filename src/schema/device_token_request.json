@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "DeviceTokenRequest",
+  "title": "DeviceTokenRequest",
+  "description": "@public Object to get device token for one-click payment or subscription on-demand",
+  "definitions": {
+    "currency": {
+      "type": "string",
+      "enum": [
+        "USD",
+        "COP",
+        "CLP",
+        "UF",
+        "PEN",
+        "MXN",
+        "CRC",
+        "GTQ",
+        "HNL",
+        "NIO",
+        "BRL"
+      ]
+    },
+    "amount": {
+      "properties": {
+        "currency": {
+          "$ref": "#/definitions/currency"
+        },
+        "subtotalIva": {
+          "type": "number",
+          "minimum": 0
+        },
+        "subtotalIva0": {
+          "type": "number",
+          "minimum": 0
+        },
+        "iva": {
+          "type": "number",
+          "minimum": 0
+        },
+        "ice": {
+          "type": "number",
+          "minimum": 0
+        },
+        "extraTaxes": {
+          "additionalProperties": false,
+          "properties": {
+            "agenciaDeViaje": {
+              "type": "number",
+              "minimum": 0
+            },
+            "iac": {
+              "type": "number",
+              "minimum": 0
+            },
+            "propina": {
+              "type": "number",
+              "minimum": 0
+            },
+            "tasaAeroportuaria": {
+              "type": "number",
+              "minimum": 0
+            },
+            "state_tax": {
+              "type": "number",
+              "minimum": 0
+            },
+            "municipal_tax": {
+              "type": "number",
+              "minimum": 0
+            },
+            "reduced_state_tax": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "type": "object"
+        }
+      },
+      "required": ["subtotalIva", "subtotalIva0", "iva"],
+      "type": "object"
+    }
+  },
+  "properties": {
+    "subscriptionId": {
+      "description": "@typeParam string - SubscriptionId previously created with card subscription charge",
+      "type": "string"
+    },
+    "userId": {
+      "description": "@typeParam string - (Optional) UserId if exist SiftScience implementation",
+      "type": ["string", "null"]
+    },
+    "sessionId": {
+      "description": "@typeParam string - (Optional) SubscriptionId if exist SiftScience implementation",
+      "type": ["string", "null"]
+    },
+    "amount": {
+      "description": "@typeParam string - (Optional) Object with amount values",
+      "$ref": "#/definitions/amount"
+    },
+    "currency": {
+      "description": "@typeParam string - (Optional) Currency code for the payment",
+      "$ref": "#/definitions/currency"
+    }
+  },
+  "required": ["subscriptionId"],
+  "type": "object"
+}

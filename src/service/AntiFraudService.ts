@@ -32,14 +32,14 @@ export class AntiFraudService {
     const merchantSettings: MerchantSettingsResponse =
       await gateway.requestMerchantSettings(kushkiInstance);
 
-    const jwtResponse = await getJwtIf3dsEnabled(
-      merchantSettings,
-      kushkiInstance,
+    const jwtResponse = await getJwtIf3dsEnabled({
+      accountNumber: cardBin,
+      cardinal3DS: cardianl3DSProvider,
       gateway,
-      sandbox3DSProvider,
-      cardianl3DSProvider,
-      cardBin
-    );
+      kushkiInstance,
+      merchantSettings,
+      sandbox3DS: sandbox3DSProvider
+    });
 
     const jwt: SecureInitResponse = { jwt: jwtResponse! };
 
@@ -80,7 +80,7 @@ export class AntiFraudService {
 
   private static _checkSecureInitCardLength(request: SecureInitRequest): void {
     if (request.card.number.length < 6 || request.card.number.length > 19)
-      throw new KushkiError(ERRORS.E016, ERRORS.E016.message);
+      throw new KushkiError(ERRORS.E018, ERRORS.E018.message);
   }
 
   private static _isSandboxEnabled(merchantSettings: MerchantSettingsResponse) {

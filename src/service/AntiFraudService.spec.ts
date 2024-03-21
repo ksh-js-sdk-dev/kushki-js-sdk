@@ -132,7 +132,7 @@ describe("AntiFraudService - Test", () => {
 
         expect(secureInitResponse).toBeNaN();
       } catch (e) {
-        expect(get(e, "code")).toEqual("E016");
+        expect(get(e, "code")).toEqual("E018");
         expect(get(e, "detail")).toEqual("Longitud de tarjeta inválida");
       }
     });
@@ -154,7 +154,7 @@ describe("AntiFraudService - Test", () => {
 
         expect(secureInitResponse).toBeNaN();
       } catch (e: any) {
-        expect(get(e, "code")).toEqual("E016");
+        expect(get(e, "code")).toEqual("E018");
         expect(get(e, "detail")).toEqual("Longitud de tarjeta inválida");
       }
     });

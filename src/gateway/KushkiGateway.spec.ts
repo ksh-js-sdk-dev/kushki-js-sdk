@@ -10,6 +10,9 @@ import { SecureOtpRequest } from "types/secure_otp_request";
 import { BankListResponse } from "types/bank_list_response";
 import { CommissionConfigurationResponse } from "types/commission_configuration_response";
 import { CommissionConfigurationRequest } from "types/commission_configuration_request";
+import { SubscriptionUserIdResponse } from "types/subscription_user_id_response";
+import { DeviceTokenRequest } from "types/device_token_request";
+import { CardTokenResponse } from "types/card_token_response";
 
 jest.mock("axios");
 
@@ -146,6 +149,25 @@ describe("KushkiGateway - Test", () => {
       expect(jwtResponse).toEqual(mockCybersourceJwt);
     });
 
+    it("when called requestCybersourceJwt with subscriptionId must call axios with queryParam", async () => {
+      const axiosGetSpy = jest.fn(() => {
+        return Promise.resolve({
+          data: mockCybersourceJwt
+        });
+      });
+
+      const getSpy = jest.spyOn(axios, "get").mockImplementation(axiosGetSpy);
+
+      const jwtResponse: CybersourceJwtResponse =
+        await kushkiGateway.requestCybersourceJwt(mockKushki, "12344");
+
+      expect(jwtResponse).toEqual(mockCybersourceJwt);
+      expect(getSpy).toHaveBeenCalledWith(
+        expect.stringContaining("?subscriptionId=12344"),
+        expect.anything()
+      );
+    });
+
     it("When requestCybersourceJwt throws an AxiosError", async () => {
       jest.spyOn(axios, "get").mockRejectedValue(new AxiosError(""));
 
@@ -270,6 +292,71 @@ describe("KushkiGateway - Test", () => {
         await kushkiGateway.requestCommissionConfiguration(mockKushki, request);
       } catch (error: any) {
         expect(error.code).toEqual("E015");
+      }
+    });
+  });
+
+  describe("requestSubscriptionUserId - Test", () => {
+    const mockUserId: SubscriptionUserIdResponse = {
+      userId: "12345"
+    };
+
+    it("when requestSubscriptionUserId is success, then return userId", async () => {
+      const axiosPostSpy = jest.fn(() => {
+        return Promise.resolve({
+          data: mockUserId
+        });
+      });
+
+      jest.spyOn(axios, "post").mockImplementation(axiosPostSpy);
+
+      const userIdResponse: SubscriptionUserIdResponse =
+        await kushkiGateway.requestSubscriptionUserId(mockKushki, "0000");
+
+      expect(userIdResponse).toEqual(mockUserId);
+    });
+
+    it("When requestSubscriptionUserId throws an AxiosError, then return ERROR16", async () => {
+      jest.spyOn(axios, "post").mockRejectedValue(new AxiosError(""));
+
+      try {
+        await kushkiGateway.requestSubscriptionUserId(mockKushki, "0000");
+      } catch (error: any) {
+        expect(error.code).toEqual("E016");
+      }
+    });
+  });
+
+  describe("requestDeviceToken - Test", () => {
+    const request: DeviceTokenRequest = {
+      subscriptionId: "1111"
+    };
+    const mockCardToken: CardTokenResponse = {
+      token: "12121212"
+    };
+
+    it("when requestDeviceToken request is success,, then return token", async () => {
+      const axiosPostSpy = jest.fn(() => {
+        return Promise.resolve({
+          data: mockCardToken
+        });
+      });
+
+      jest.spyOn(axios, "post").mockImplementation(axiosPostSpy);
+
+      const cardTokenResponse: CardTokenResponse =
+        await kushkiGateway.requestDeviceToken(mockKushki, request);
+
+      expect(cardTokenResponse).toEqual(mockCardToken);
+    });
+
+    it("When requestDeviceToken throws an AxiosError, then return ERROR17", async () => {
+      jest.spyOn(axios, "post").mockRejectedValue(new AxiosError(""));
+
+      try {
+        await kushkiGateway.requestDeviceToken(mockKushki, request);
+      } catch (error: any) {
+        expect(error.code).toEqual("E017");
       }
     });
   });

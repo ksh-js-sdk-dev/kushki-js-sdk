@@ -22,7 +22,6 @@ import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
 import { CREDIT_CARD_ESPECIFICATIONS } from "src/constant/CreditCardEspecifications.ts";
 import { BinInfoResponse } from "types/bin_info_response";
 import { DeferredValues } from "types/card_fields_values";
-import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import {
   FieldTypeEnum,
   FieldValidity,
@@ -47,6 +46,7 @@ import { RollbarGateway } from "gateway/RollbarGateway.ts";
 import { SiftScienceProvider } from "src/provider/SiftScienceProvider.ts";
 import { Cardinal3DSProvider } from "src/provider/Cardinal3DSProvider.ts";
 import { Sandbox3DSProvider } from "src/provider/Sandbox3DSProvider.ts";
+import { getJwtIf3dsEnabled } from "utils/3DSUtils.ts";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
@@ -124,9 +124,14 @@ export class Card implements ICard {
           merchantSettings
         );
 
-      const jwt: string | undefined = await this.getJwtIf3dsEnabled(
-        merchantSettings
-      );
+      const jwt: string | undefined = await getJwtIf3dsEnabled({
+        accountNumber: this.currentBin,
+        cardinal3DS: this._cardinal3DSProvider,
+        gateway: this._gateway,
+        kushkiInstance: this.kushkiInstance,
+        merchantSettings,
+        sandbox3DS: this._sandbox3DSProvider
+      });
 
       if (jwt) {
         return this.buildTokenResponse(
@@ -380,28 +385,6 @@ export class Card implements ICard {
         }
       });
     });
-  }
-
-  private async getJwtIf3dsEnabled(
-    merchantSettings: MerchantSettingsResponse
-  ): Promise<string | undefined> {
-    if (merchantSettings.active_3dsecure) {
-      const jwtResponse: CybersourceJwtResponse =
-        await this._gateway.requestCybersourceJwt(this.kushkiInstance);
-
-      if (merchantSettings.sandboxEnable)
-        this._sandbox3DSProvider.initSandbox();
-      else
-        await this._cardinal3DSProvider.initCardinal(
-          this.kushkiInstance,
-          jwtResponse.jwt,
-          this.currentBin
-        );
-
-      return jwtResponse.jwt;
-    } else {
-      return undefined;
-    }
   }
 
   private async requestTokenGateway(

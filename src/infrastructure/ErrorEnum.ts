@@ -21,7 +21,9 @@ export enum ErrorCode {
   E013 = "E013",
   E014 = "E014",
   E015 = "E015",
-  E016 = "E016"
+  E016 = "E016",
+  E017 = "E017",
+  E018 = "E018"
 }
 
 /**
@@ -91,6 +93,14 @@ export enum ErrorCode {
  *   },
  *   E016: {
  *     code: "E016",
+ *     message: "Error en solicitud de UserId para subscripción"
+ *   },
+ *   E017: {
+ *     code: "E017",
+ *     message: "Error en solicitud de Token de subscription bajo demanda"
+ *   },
+ *   E018: {
+ *     code: "E018",
  *     message: "Longitud de tarjeta inválida"
  *   }
  * }
@@ -160,6 +170,14 @@ export const ERRORS: KushkiErrors = {
   },
   [ErrorCode.E016]: {
     code: ErrorCode.E016,
+    message: "Error en solicitud de UserId para subscripción"
+  },
+  [ErrorCode.E017]: {
+    code: ErrorCode.E017,
+    message: "Error en solicitud de Token de subscripción bajo demanda"
+  },
+  [ErrorCode.E018]: {
+    code: ErrorCode.E018,
     message: "Longitud de tarjeta inválida"
   }
 };

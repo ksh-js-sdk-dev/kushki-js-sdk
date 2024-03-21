@@ -35,7 +35,7 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
   public async initCardinal(
     kushkiInstance: IKushki,
     jwt: string,
-    cardBin: string
+    accountNumber: string
   ) {
     return new Promise<void>((resolve) => {
       this._loadCardinalScript(kushkiInstance.isInTest(), async () => {
@@ -44,7 +44,7 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
           order: {
             Consumer: {
               Account: {
-                AccountNumber: cardBin
+                AccountNumber: accountNumber
               }
             }
           }

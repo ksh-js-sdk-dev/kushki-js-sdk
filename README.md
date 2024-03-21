@@ -14,6 +14,8 @@ We make it easier!
   - [Events](#events)
   - [OTP Validation](#otp-validation)
   - [Tokenization](#tokenization)
+- [Recurring Card Payment (Subscriptions)](#recurring-card-payment)
+  - [Get Device Token](#get-device-token)
 - [Transfer Transactions](#transfer-transactions)
   - [Request Bank List](#request-bank-list)
 - [Merchant Methods](#merchant-methods)
@@ -373,6 +375,40 @@ try {
   console.error("Catch error on request card Token", error.code, error.message);
 }
 ```
+#  Recurring Card Payment (Subscriptions)<a name="recurring-card-payment"></a>
+## Get Device Token <a name="get-device-token"></a>
+After use [payment card token](#get-a-payment-card-token) to create a subscription. Kushki securely store a customer’s card details, and then allow them to make one-click Payment or also called on-demand subscription, to speed up the checkout process.
+
+Storing card details, a subscription identifier will be created for the card. Then, with that identifier and Kushki instance that was previously initialized with [`init`](#library-setup) method, you will be able to get a Device Token.
+
+This method automatically validates all merchant rules like 3DS or Sift Science. More details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.requestDeviceToken.html)
+### Example
+
+```ts
+import { init, IKushki } from "@kushki/js-sdk";
+import { requestDeviceToken, DeviceTokenRequest, TokenResponse } from "@kushki/js-sdk/Card";
+
+const onRequestDeviceToken = async () => {
+    try {
+      const kushkiInstance: IKushki = await init({
+        inTest: true,
+        publicCredentialId: "merchantId"
+      });
+      const body: DeviceTokenRequest={
+        subscriptionId: "subscriptionId"
+      }
+
+      const response: TokenResponse = await requestDeviceToken(kushkiInstance, body);
+      
+      // On Success, can get device token for one-click payment, ex. {"token":"31674e78f88b41ffaf47998151fb465d"}
+      console.log(response);
+    } catch (error: any) {
+      // On Error, catch response, ex. {code:"E017", message: "Error en solicitud de Token de subscripción bajo demanda"}
+      console.error(error.message);
+    }
+  };
+```
+
 #  Transfer Transactions <a name="transfer-transactions"></a>
 ## Request Bank List <a name="request-bank-list"></a>
 To get Bank List for Transfer transactions, you should call [`requestBankList`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Transfer.requestBankList.html) method with Kushki instance that was previously initialized with [`init`](#library-setup) method

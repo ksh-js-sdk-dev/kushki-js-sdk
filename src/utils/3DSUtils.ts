@@ -1,11 +1,22 @@
 import { CardTokenResponse } from "types/card_token_response";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
+import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import { IKushki } from "repository/IKushki.ts";
-import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
 import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
-import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
+import { IKushkiGateway } from "repository/IKushkiGateway.ts";
+import { Buffer } from "buffer";
+
+export interface GetJwtIf3dsEnabledProps {
+  merchantSettings: MerchantSettingsResponse;
+  kushkiInstance: IKushki;
+  gateway: IKushkiGateway;
+  sandbox3DS: ISandbox3DSProvider;
+  cardinal3DS: ICardinal3DSProvider;
+  accountNumber: string;
+  subscriptionId?: string;
+}
 
 export const tokenNotNeedsAuth = (token: CardTokenResponse): boolean => {
   return !!(token.security && !token.security.authRequired) || !token.security;
@@ -41,23 +52,25 @@ export const is3dsValid = (secureOtpResponse: SecureOtpResponse): boolean => {
 };
 
 export const getJwtIf3dsEnabled = async (
-  merchantSettings: MerchantSettingsResponse,
-  kushkiInstance: IKushki,
-  gateway: IKushkiGateway,
-  sandbox3DS: ISandbox3DSProvider,
-  cardinal3DS: ICardinal3DSProvider,
-  accountNumber: string,
-  subscriptionId?: string
+  props: GetJwtIf3dsEnabledProps
 ): Promise<string | undefined> => {
-  if (merchantSettings.active_3dsecure) {
+  if (props.merchantSettings.active_3dsecure) {
     const jwtResponse: CybersourceJwtResponse =
-      await gateway.requestCybersourceJwt(kushkiInstance);
-    const bin = subscriptionId
+      await props.gateway.requestCybersourceJwt(
+        props.kushkiInstance,
+        props.subscriptionId
+      );
+    const bin = props.subscriptionId
       ? Buffer.from(jwtResponse.identifier!, "base64").toString("ascii")
-      : accountNumber; // bin 8
+      : props.accountNumber;
 
-    if (merchantSettings.sandboxEnable) sandbox3DS.initSandbox();
-    else await cardinal3DS.initCardinal(kushkiInstance, jwtResponse.jwt, bin);
+    if (props.merchantSettings.sandboxEnable) props.sandbox3DS.initSandbox();
+    else
+      await props.cardinal3DS.initCardinal(
+        props.kushkiInstance,
+        jwtResponse.jwt,
+        bin
+      );
 
     return jwtResponse.jwt;
   } else {

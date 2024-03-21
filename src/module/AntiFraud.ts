@@ -15,7 +15,7 @@ import { CardTokenResponse } from "types/card_token_response";
  * @returns {Promise<SecureInitResponse>} - Returns a Promise that resolves to either a SecureInitResponse or an ErrorResponse.
  *
  * @throws
- *  - if the param: `secureInitRequest` does not have the needed card length (cardNumber < 6 or cardNumber > 19)  {@link ERRORS | ERRORS.E016}
+ *  - if the param: `secureInitRequest` does not have the needed card length (cardNumber < 6 or cardNumber > 19)  {@link ERRORS | ERRORS.E018}
  *  - if the request fails to obtain the jwt  {@link ERRORS | ERRORS.E004}
  *
  * @example

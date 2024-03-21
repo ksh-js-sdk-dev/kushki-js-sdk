@@ -17,7 +17,7 @@ const InputConfigurationDemo = ({
 }: IInputConfigurationDemoProps) => {
   return (
     <>
-      <div className="mui-textfield mui-textfield--float-label divContainer">
+      <div className="mui-textfield mui-textfield--float-label div-container">
         <InputMask
           mask={mask ?? "*".repeat(100)}
           maskChar={null}

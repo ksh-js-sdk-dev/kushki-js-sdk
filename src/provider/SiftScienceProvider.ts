@@ -39,6 +39,16 @@ export class SiftScienceProvider implements ISiftScienceProvider {
     };
   }
 
+  public isSiftScienceEnabled(
+    kushkiInstance: IKushki,
+    merchantSettingsResponse: MerchantSettingsResponse
+  ): boolean {
+    return !this._validateMerchantSettings(
+      kushkiInstance.getEnvironmentSift(),
+      merchantSettingsResponse
+    );
+  }
+
   private _validateMerchantSettings(
     siftEnvironment: string,
     merchantSettings: MerchantSettingsResponse

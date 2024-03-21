@@ -8,6 +8,7 @@ import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { SiftScienceEnum } from "infrastructure/SiftScienceEnum.ts";
 import { SiftScienceProvider } from "src/provider/SiftScienceProvider.ts";
+import { Kushki } from "class/Kushki.ts";
 
 describe("SiftScience Gateway - ", () => {
   let siftScienceService: ISiftScienceProvider;
@@ -47,7 +48,7 @@ describe("SiftScience Gateway - ", () => {
   });
 
   it("test createSiftScienceSession request with environment prod - success", async () => {
-    const data = await siftScienceService.createSiftScienceSession(
+    const data = siftScienceService.createSiftScienceSession(
       processor,
       clientIdentification,
       mockKushki,
@@ -74,5 +75,43 @@ describe("SiftScience Gateway - ", () => {
 
     expect(data).toHaveProperty("userId", undefined);
     expect(data).toHaveProperty("sessionId", undefined);
+  });
+
+  describe("isSiftScienceEnabled - method", () => {
+    const kushkiInstance = new Kushki({
+      inTest: true,
+      publicCredentialId: "1234"
+    });
+    let merchantSettingsMock: MerchantSettingsResponse;
+
+    beforeEach(() => {
+      merchantSettingsMock = {
+        country: "Ecuador",
+        merchant_name: "Test",
+        processor_name: "test",
+        prodBaconKey: null,
+        sandboxBaconKey: null
+      };
+    });
+
+    it("should return true when merchant have siftScience enabled", () => {
+      merchantSettingsMock.sandboxBaconKey = "87978798";
+
+      const isEnabled = siftScienceService.isSiftScienceEnabled(
+        kushkiInstance,
+        merchantSettingsMock
+      );
+
+      expect(isEnabled).toBeTruthy();
+    });
+
+    it("should return false when merchant not have siftScience enabled", () => {
+      const isEnabled = siftScienceService.isSiftScienceEnabled(
+        kushkiInstance,
+        merchantSettingsMock
+      );
+
+      expect(isEnabled).toBeFalsy();
+    });
   });
 });
