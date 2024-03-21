@@ -11,10 +11,12 @@ import { CardTokenResponse } from "types/card_token_response";
 import { TokenResponse } from "types/token_response";
 import { getJwtIf3dsEnabled } from "utils/3DSUtils.ts";
 import { Sandbox3DSProvider } from "provider/Sandbox3DSProvider.ts";
-import { get } from "lodash";
+import { get, isNil } from "lodash";
 import { ThreeDSEnum } from "infrastructure/ThreeDSEnum.ts";
 
 export class AntiFraudService {
+  private static MIN_CARD_NUMBER_LENGTH = 6;
+  private static MAX_CARD_NUMBER_LENGTH = 19;
   public static async requestSecureInit(
     kushkiInstance: IKushki,
     secureInitRequest: SecureInitRequest
@@ -60,8 +62,7 @@ export class AntiFraudService {
     const cardinalSandboxProvider: Sandbox3DSProvider =
       new Sandbox3DSProvider();
 
-    if (cardTokenResponse.security === undefined)
-      throw new KushkiError(ERRORS.E012);
+    if (isNil(cardTokenResponse.security)) throw new KushkiError(ERRORS.E012);
 
     if (
       get(cardTokenResponse, "security.paReq", ThreeDSEnum.SANDBOX) ===
@@ -79,13 +80,17 @@ export class AntiFraudService {
   }
 
   private static _checkSecureInitCardLength(request: SecureInitRequest): void {
-    if (request.card.number.length < 6 || request.card.number.length > 19)
+    if (
+      request.card.number.length < this.MIN_CARD_NUMBER_LENGTH ||
+      request.card.number.length > this.MAX_CARD_NUMBER_LENGTH
+    )
       throw new KushkiError(ERRORS.E018, ERRORS.E018.message);
   }
 
   private static _isSandboxEnabled(merchantSettings: MerchantSettingsResponse) {
     return !!merchantSettings.sandboxEnable;
   }
+
   private static _getBinFromCreditCardNumber(value: string): string {
     const cardValue: string = value.replace(/\D/g, "");
 

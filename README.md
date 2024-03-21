@@ -474,8 +474,8 @@ const onRequestCommissionConfiguration = async () => {
 ```
 #  AntiFraud Methods <a name="antifraud-methods"></a>
 ## Request Secure Init <a name="request-secure-init"></a>
-Before using [payment card token](#get-a-payment-card-token) to create a token. Kushki securely communicates with Cardinal 3DS to validate the card number in the checkout process.
-
+Before using [payment card token](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/docs/functions/Card.initCardToken.html) to create a token. Kushki securely communicates with Cardinal 3DS to validate the card number in the checkout process.
+This method is useful when is done by API.
 This method will return a jwt identifier that will be created for the card and some information might be stored in the browser session. More details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/docs/functions/Antifraud.requestSecureInit.html)
 ### Example
 
@@ -508,7 +508,8 @@ const onRequestSecureInit = async () => {
 ```
 
 ## Request Validate 3DS <a name="request-validate-3ds"></a>
-After using [payment card token](#get-a-payment-card-token) to create a token. Kushki securely communicates with Cardinal 3DS to validate the transaction in the checkout process.
+Before using the validate 3DS method you need to create a init secure jwt with [requestSecureInit](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/docs/functions/Antifraud.requestSecureInit.html) method. 
+And after using [payment card token](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/docs/functions/Card.initCardToken.html) to create a token. Kushki securely communicates with Cardinal 3DS to validate the transaction in the checkout process.
 
 This method will return a token response body when the validation is successful. More details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/docs/functions/Antifraud.requestValidate3DS.htmll)
 ### Example

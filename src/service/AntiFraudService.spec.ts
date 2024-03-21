@@ -276,7 +276,7 @@ describe("AntiFraudService - Test", () => {
 
       expect(isValid).toBeTruthy();
     });
-    it("should return error E012 when cardinal action code is equal to FAILURE", async () => {
+    it("should return error E005 when cardinal action code is equal to FAILURE", async () => {
       const kushkiInstance = await initKushki();
 
       mockSandbox(false);
