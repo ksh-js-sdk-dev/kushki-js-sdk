@@ -5,7 +5,8 @@ module.exports = {
     kushki: "./dist/module/Kushki.js",
     card: "./dist/module/Card.js",
     transfer: "./dist/module/Transfer.js",
-    merchant: "./dist/module/Merchant.js"
+    merchant: "./dist/module/Merchant.js",
+    antifraud: "./dist/module/AntiFraud.js"
   },
   mode: "production",
   output: {

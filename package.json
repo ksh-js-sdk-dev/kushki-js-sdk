@@ -40,6 +40,10 @@
     "./Merchant": {
       "import": "./module/Merchant.js",
       "types": "./module/Merchant.d.ts"
+    },
+    "./AntiFraud": {
+      "import": "./module/AntiFraud.js",
+      "types": "./module/AntiFraud.d.ts"
     }
   },
   "engines": {
@@ -65,6 +69,7 @@
     "@types/axios": "^0.14.0",
     "@types/inversify": "^2.0.33",
     "@types/jest": "^29.5.4",
+    "@types/lodash": "^4.17.0",
     "@types/node": "^20.5.1",
     "@types/sinon": "^10.0.16",
     "@types/uuid": "^9.0.3",

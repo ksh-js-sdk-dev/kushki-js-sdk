@@ -4,6 +4,7 @@ npx typedoc --options ./config/docs/typedoc-build.json --json ./docs-json/Kushki
 npx typedoc --options ./config/docs/typedoc-build.json --json ./docs-json/Card.json --name Card --entryPoints src/module/Card.ts
 npx typedoc --options ./config/docs/typedoc-build.json --json ./docs-json/Transfer.json --name Transfer --entryPoints src/module/Transfer.ts
 npx typedoc --options ./config/docs/typedoc-build.json --json ./docs-json/Merchant.json --name Merchant --entryPoints src/module/Merchant.ts
+npx typedoc --options ./config/docs/typedoc-build.json --json ./docs-json/AntiFraud.json --name Antifraud --entryPoints src/module/AntiFraud.ts
 
 echo '** CREATE HTML DOCS **'
 
