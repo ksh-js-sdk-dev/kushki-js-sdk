@@ -16,6 +16,7 @@ import { CommissionConfigurationRequest } from "types/commission_configuration_r
 import { CommissionConfigurationResponse } from "types/commission_configuration_response";
 import { SubscriptionUserIdResponse } from "types/subscription_user_id_response";
 import { DeviceTokenRequest } from "types/device_token_request";
+import { KInfo } from "service/KushkiInfoService.ts";
 
 export class KushkiGateway implements IKushkiGateway {
   private readonly _publicHeader: string = "Public-Merchant-Id";
@@ -191,7 +192,7 @@ export class KushkiGateway implements IKushkiGateway {
 
     try {
       const { data } = await axios.post<CardTokenResponse>(url, body, {
-        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId(), true)
       });
 
       return Promise.resolve(data);
@@ -200,9 +201,14 @@ export class KushkiGateway implements IKushkiGateway {
     }
   };
 
-  private _buildHeader(mid: string): object {
-    return {
+  private _buildHeader(mid: string, includeKushkiInfo?: boolean): object {
+    const headers = {
       [this._publicHeader]: mid
     };
+
+    if (includeKushkiInfo)
+      headers[KInfo.KUSHKI_INFO_HEADER] = KInfo.buildKushkiInfo();
+
+    return headers;
   }
 }

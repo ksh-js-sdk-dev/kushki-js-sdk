@@ -13,6 +13,7 @@ import { CommissionConfigurationRequest } from "types/commission_configuration_r
 import { SubscriptionUserIdResponse } from "types/subscription_user_id_response";
 import { DeviceTokenRequest } from "types/device_token_request";
 import { CardTokenResponse } from "types/card_token_response";
+import { KInfo } from "service/KushkiInfoService.ts";
 
 jest.mock("axios");
 
@@ -335,7 +336,7 @@ describe("KushkiGateway - Test", () => {
       token: "12121212"
     };
 
-    it("when requestDeviceToken request is success,, then return token", async () => {
+    it("when requestDeviceToken request is success, must call request with Kushki Info head, then return token", async () => {
       const axiosPostSpy = jest.fn(() => {
         return Promise.resolve({
           data: mockCardToken
@@ -348,6 +349,15 @@ describe("KushkiGateway - Test", () => {
         await kushkiGateway.requestDeviceToken(mockKushki, request);
 
       expect(cardTokenResponse).toEqual(mockCardToken);
+      expect(axiosPostSpy).toBeCalledWith(
+        expect.anything(),
+        expect.anything(),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            [KInfo.KUSHKI_INFO_HEADER]: KInfo.buildKushkiInfo()
+          })
+        })
+      );
     });
 
     it("When requestDeviceToken throws an AxiosError, then return ERROR17", async () => {
