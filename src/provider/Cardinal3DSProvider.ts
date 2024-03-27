@@ -11,11 +11,8 @@ import {
 } from "utils/3DSUtils.ts";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
-import { CONTAINER } from "infrastructure/Container.ts";
 import { KushkiGateway } from "gateway/KushkiGateway.ts";
-import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
-import { injectable } from "inversify";
 import {
   CardinalValidationCodeEnum,
   ICardinalValidation
@@ -29,17 +26,16 @@ declare global {
   }
 }
 
-@injectable()
 export class Cardinal3DSProvider implements ICardinal3DSProvider {
   private readonly _gateway: IKushkiGateway;
   constructor() {
-    this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
+    this._gateway = new KushkiGateway();
   }
 
   public async initCardinal(
     kushkiInstance: IKushki,
     jwt: string,
-    cardBin: string
+    accountNumber: string
   ) {
     return new Promise<void>((resolve) => {
       this._loadCardinalScript(kushkiInstance.isInTest(), async () => {
@@ -48,7 +44,7 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
           order: {
             Consumer: {
               Account: {
-                AccountNumber: cardBin
+                AccountNumber: accountNumber
               }
             }
           }
@@ -67,7 +63,7 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
   public async validateCardinal3dsToken(
     kushkiInstance: IKushki,
     cardTokenResponse: CardTokenResponse,
-    deferredValues: DeferredValues
+    deferredValues?: DeferredValues
   ): Promise<TokenResponse> {
     if (tokenNotNeedsAuth(cardTokenResponse)) {
       return Promise.resolve({

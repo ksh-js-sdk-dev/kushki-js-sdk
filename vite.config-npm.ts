@@ -15,6 +15,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: {
+        AntiFraud: "src/module/AntiFraud.ts",
         Card: "src/module/Card.ts",
         Transfer: "src/module/Transfer.ts",
         Merchant: "src/module/Merchant.ts",

@@ -14,10 +14,15 @@ We make it easier!
   - [Events](#events)
   - [OTP Validation](#otp-validation)
   - [Tokenization](#tokenization)
+- [Recurring Card Payment (Subscriptions)](#recurring-card-payment)
+  - [Get Device Token](#get-device-token)
 - [Transfer Transactions](#transfer-transactions)
   - [Request Bank List](#request-bank-list)
 - [Merchant Methods](#merchant-methods)
   - [Request Commission Configuration](#request-commission-configuration)
+- [AntiFraud Methods](#antifraud-methods)
+  - [Request Secure Init](#request-secure-init)
+  - [Request validate 3DS](#request-validate-3ds)
 
 # Install <a name="install"></a>
 
@@ -370,6 +375,40 @@ try {
   console.error("Catch error on request card Token", error.code, error.message);
 }
 ```
+#  Recurring Card Payment (Subscriptions)<a name="recurring-card-payment"></a>
+## Get Device Token <a name="get-device-token"></a>
+After use [payment card token](#get-a-payment-card-token) to create a subscription. Kushki securely store a customer’s card details, and then allow them to make one-click Payment or also called on-demand subscription, to speed up the checkout process.
+
+Storing card details, a subscription identifier will be created for the card. Then, with that identifier and Kushki instance that was previously initialized with [`init`](#library-setup) method, you will be able to get a Device Token.
+
+This method automatically validates all merchant rules like 3DS or Sift Science. More details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.requestDeviceToken.html)
+### Example
+
+```ts
+import { init, IKushki } from "@kushki/js-sdk";
+import { requestDeviceToken, DeviceTokenRequest, TokenResponse } from "@kushki/js-sdk/Card";
+
+const onRequestDeviceToken = async () => {
+    try {
+      const kushkiInstance: IKushki = await init({
+        inTest: true,
+        publicCredentialId: "merchantId"
+      });
+      const body: DeviceTokenRequest={
+        subscriptionId: "subscriptionId"
+      }
+
+      const response: TokenResponse = await requestDeviceToken(kushkiInstance, body);
+      
+      // On Success, can get device token for one-click payment, ex. {"token":"31674e78f88b41ffaf47998151fb465d"}
+      console.log(response);
+    } catch (error: any) {
+      // On Error, catch response, ex. {code:"E017", message: "Error en solicitud de Token de subscripción bajo demanda"}
+      console.error(error.message);
+    }
+  };
+```
+
 #  Transfer Transactions <a name="transfer-transactions"></a>
 ## Request Bank List <a name="request-bank-list"></a>
 To get Bank List for Transfer transactions, you should call [`requestBankList`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Transfer.requestBankList.html) method with Kushki instance that was previously initialized with [`init`](#library-setup) method
@@ -432,4 +471,78 @@ const onRequestCommissionConfiguration = async () => {
       console.error(error.message);
     }
   };
+```
+#  AntiFraud Methods <a name="antifraud-methods"></a>
+## Request Secure Init <a name="request-secure-init"></a>
+Before using [payment card token](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html) to create a token. Kushki securely communicates with Cardinal 3DS to validate the card number in the checkout process.
+This method is useful when is done by API.
+This method will return a jwt identifier that will be created for the card and some information might be stored in the browser session. More details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Antifraud.requestSecureInit.html)
+### Example
+
+```ts
+import { init, IKushki } from "@kushki/js-sdk";
+import { requestSecureInit, SecureInitRequest, SecureInitResponse } from "@kushki/js-sdk/Card";
+
+const onRequestSecureInit = async () => {
+  try {
+    const kushkiInstance: IKushki = await init({
+      inTest: true,
+      publicCredentialId: merchantId
+    });
+    const secureInitRequest: SecureInitRequest = {
+      card: {
+        number: cardNumber
+      }
+    };
+
+    const secureInitResponse: SecureInitResponse = await requestSecureInit(
+            kushkiInstance,
+            secureInitRequest
+    );
+    console.log(secureInitResponse);
+
+  } catch (error: any) {
+    console.log(error)
+  } 
+};
+```
+
+## Request Validate 3DS <a name="request-validate-3ds"></a>
+Before using the validate 3DS method you need to create a init secure jwt with [requestSecureInit](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Antifraud.requestSecureInit.html) method. 
+And after using [payment card token](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html) to create a token. Kushki securely communicates with Cardinal 3DS to validate the transaction in the checkout process.
+
+This method will return a token response body when the validation is successful. More details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Antifraud.requestValidate3DS.htmll)
+### Example
+
+```ts
+import { init, IKushki } from "@kushki/js-sdk";
+import { CardTokenResponse, requestValidate3DS, TokenResponse } from "@kushki/js-sdk/Card";
+
+const on3DSValidation = async () => {
+  try {
+    const kushkiInstance = await init({
+      inTest: true,
+      publicCredentialId: merchantId
+    });
+
+    const cardTokenResponse: CardTokenResponse = {
+      secureId: "secure_id",
+      secureService: "secure_service",
+      security: {
+        acsURL: "https://kushki.com",
+        authenticationTransactionId: "transaction_id",
+        authRequired: true,
+        paReq: "jwt",
+        specificationVersion: "2.0.1"
+      },
+      token: "token"
+    };
+
+    const response: TokenResponse = await requestValidate3DS(kushkiInstance, cardTokenResponse);
+
+    console.log(response);
+  } catch (error: any) {
+    console.log(error)
+  }
+};
 ```

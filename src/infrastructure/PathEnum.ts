@@ -10,5 +10,7 @@ export enum PathEnum {
   cybersource_jwt = "card/v1/authToken",
   secure_validation = "rules/v1/secureValidation",
   bank_list = "transfer/v1/bankList",
-  commission_configuration = "commission/v1/configuration"
+  commission_configuration = "commission/v1/configuration",
+  subscriptions = "v1/subscriptions/",
+  device_token = "subscriptions/v1/card/"
 }

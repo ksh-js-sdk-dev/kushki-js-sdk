@@ -13,7 +13,7 @@
     "noEmit": true,
     "esModuleInterop": true,
     "strict": true,
-    "types": ["inversify", "reflect-metadata", "jest", "node"],
+    "types": ["jest", "node"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "noUnusedLocals": true,
@@ -21,6 +21,7 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "Kushki": ["src/module/Kushki.ts"],
+      "Kushki/AntiFraud": ["src/module/AntiFraud.ts"],
       "Kushki/Card": ["src/module/Card.ts"],
       "Kushki/Transfer": ["src/module/Transfer.ts"],
       "Kushki/Merchant": ["src/module/Merchant.ts"],
@@ -34,7 +35,8 @@
       "utils/*": ["src/utils/*"],
       "libs/*": ["src/libs/*"],
       "src/*": ["src/*"],
-      "class/*": ["src/class/*"]
+      "class/*": ["src/class/*"],
+      "provider/*": ["src/provider/*"]
     }
   },
   "exclude": ["node_modules", "showcase"],

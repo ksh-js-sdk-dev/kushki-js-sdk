@@ -1,6 +1,6 @@
 {
   "name": "@kushki/js-sdk",
-  "version": "1.0.1-tik-4139-patch.1",
+  "version": "1.1.0-14523.4",
   "scripts": {
     "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
     "bootstrap:codesandbox": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev --mode codesandbox",
@@ -40,6 +40,10 @@
     "./Merchant": {
       "import": "./module/Merchant.js",
       "types": "./module/Merchant.d.ts"
+    },
+    "./AntiFraud": {
+      "import": "./module/AntiFraud.js",
+      "types": "./module/AntiFraud.d.ts"
     }
   },
   "engines": {
@@ -53,8 +57,6 @@
     "axios": "^1.5.0",
     "buffer": "6.0.3",
     "genversion": "^3.1.1",
-    "inversify": "^6.0.1",
-    "reflect-metadata": "^0.1.13",
     "rollbar": "^2.26.2",
     "uuid": "^9.0.0"
   },
@@ -67,6 +69,7 @@
     "@types/axios": "^0.14.0",
     "@types/inversify": "^2.0.33",
     "@types/jest": "^29.5.4",
+    "@types/lodash": "^4.17.0",
     "@types/node": "^20.5.1",
     "@types/sinon": "^10.0.16",
     "@types/uuid": "^9.0.3",

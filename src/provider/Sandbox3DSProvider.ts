@@ -11,18 +11,14 @@ import {
 } from "utils/3DSUtils.ts";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
-import { CONTAINER } from "infrastructure/Container.ts";
 import { KushkiGateway } from "gateway/KushkiGateway.ts";
-import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
 import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
-import { injectable } from "inversify";
 
-@injectable()
 export class Sandbox3DSProvider implements ISandbox3DSProvider {
   private readonly _gateway: IKushkiGateway;
   constructor() {
-    this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
+    this._gateway = new KushkiGateway();
   }
 
   public initSandbox() {
@@ -32,7 +28,7 @@ export class Sandbox3DSProvider implements ISandbox3DSProvider {
   public async validateSandbox3dsToken(
     kushkiInstance: IKushki,
     cardTokenResponse: CardTokenResponse,
-    deferredValues: DeferredValues
+    deferredValues?: DeferredValues
   ): Promise<TokenResponse> {
     if (tokenNotNeedsAuth(cardTokenResponse)) {
       return Promise.resolve({
