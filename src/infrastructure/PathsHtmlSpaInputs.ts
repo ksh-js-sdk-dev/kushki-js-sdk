@@ -6,5 +6,6 @@ export const PathsHtmlSpaInputs: Record<InputModelEnum, string> = {
   [InputModelEnum.DEFERRED]: "Deferred",
   [InputModelEnum.EXPIRATION_DATE]: "ExpirationDate",
   [InputModelEnum.CVV]: "Cvv",
-  [InputModelEnum.OTP]: "Otp"
+  [InputModelEnum.OTP]: "Otp",
+  [InputModelEnum.SUBSCRIPTIONS_CVV]: "SubscriptionsCvv"
 };
