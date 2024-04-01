@@ -1,5 +1,4 @@
 import { KushkiGateway } from "gateway/KushkiGateway.ts";
-import { CONTAINER } from "infrastructure/Container.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
@@ -17,15 +16,12 @@ import {
   Fields,
   TokenResponse
 } from "module/Card.ts";
-import "reflect-metadata";
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { ICard } from "repository/ICard.ts";
 import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
 import { CREDIT_CARD_ESPECIFICATIONS } from "src/constant/CreditCardEspecifications.ts";
-import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { BinInfoResponse } from "types/bin_info_response";
 import { DeferredValues } from "types/card_fields_values";
-import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import {
   FieldTypeEnum,
   FieldValidity,
@@ -46,6 +42,11 @@ import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
 import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
 import { KInfo } from "service/KushkiInfoService.ts";
 import { IRollbarGateway } from "repository/IRollbarGateway.ts";
+import { RollbarGateway } from "gateway/RollbarGateway.ts";
+import { SiftScienceProvider } from "src/provider/SiftScienceProvider.ts";
+import { Cardinal3DSProvider } from "src/provider/Cardinal3DSProvider.ts";
+import { Sandbox3DSProvider } from "src/provider/Sandbox3DSProvider.ts";
+import { getJwtIf3dsEnabled } from "utils/3DSUtils.ts";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
@@ -73,18 +74,12 @@ export class Card implements ICard {
     this.inputValues = {};
     this.currentBin = "";
     this.currentBinHasDeferredOptions = false;
-    this._gateway = CONTAINER.get<KushkiGateway>(IDENTIFIERS.KushkiGateway);
-    this._siftScienceService = CONTAINER.get<ISiftScienceProvider>(
-      IDENTIFIERS.SiftScienceService
-    );
-    this._cardinal3DSProvider = CONTAINER.get<ICardinal3DSProvider>(
-      IDENTIFIERS.Cardinal3DSProvider
-    );
-    this._sandbox3DSProvider = CONTAINER.get<ISandbox3DSProvider>(
-      IDENTIFIERS.Sandbox3DSProvider
-    );
+    this._gateway = new KushkiGateway();
+    this._siftScienceService = new SiftScienceProvider();
+    this._cardinal3DSProvider = new Cardinal3DSProvider();
+    this._sandbox3DSProvider = new Sandbox3DSProvider();
 
-    this.rollbar = CONTAINER.get<IRollbarGateway>(IDENTIFIERS.RollbarGateway);
+    this.rollbar = new RollbarGateway();
     this.rollbar.init(kushkiInstance.getOptions());
   }
 
@@ -129,9 +124,14 @@ export class Card implements ICard {
           merchantSettings
         );
 
-      const jwt: string | undefined = await this.getJwtIf3dsEnabled(
-        merchantSettings
-      );
+      const jwt: string | undefined = await getJwtIf3dsEnabled({
+        accountNumber: this.currentBin,
+        cardinal3DS: this._cardinal3DSProvider,
+        gateway: this._gateway,
+        kushkiInstance: this.kushkiInstance,
+        merchantSettings,
+        sandbox3DS: this._sandbox3DSProvider
+      });
 
       if (jwt) {
         return this.buildTokenResponse(
@@ -385,28 +385,6 @@ export class Card implements ICard {
         }
       });
     });
-  }
-
-  private async getJwtIf3dsEnabled(
-    merchantSettings: MerchantSettingsResponse
-  ): Promise<string | undefined> {
-    if (merchantSettings.active_3dsecure) {
-      const jwtResponse: CybersourceJwtResponse =
-        await this._gateway.requestCybersourceJwt(this.kushkiInstance);
-
-      if (merchantSettings.sandboxEnable)
-        this._sandbox3DSProvider.initSandbox();
-      else
-        await this._cardinal3DSProvider.initCardinal(
-          this.kushkiInstance,
-          jwtResponse.jwt,
-          this.currentBin
-        );
-
-      return jwtResponse.jwt;
-    } else {
-      return undefined;
-    }
   }
 
   private async requestTokenGateway(

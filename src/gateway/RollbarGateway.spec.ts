@@ -1,5 +1,3 @@
-import { CONTAINER } from "infrastructure/Container.ts";
-import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { RollbarGateway } from "gateway/RollbarGateway.ts";
 import { KushkiOptions } from "types/kushki_options";
 
@@ -7,12 +5,7 @@ describe("RollbarGateway - Test", () => {
   let rollbarGtw: RollbarGateway;
 
   beforeEach(() => {
-    CONTAINER.snapshot();
-    rollbarGtw = CONTAINER.get(IDENTIFIERS.RollbarGateway);
-  });
-
-  afterEach(() => {
-    CONTAINER.restore();
+    rollbarGtw = new RollbarGateway();
   });
 
   function initRollbar() {

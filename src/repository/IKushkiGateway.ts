@@ -1,6 +1,6 @@
 import { BinInfoResponse } from "types/bin_info_response";
 import { IKushki } from "Kushki";
-import { DeferredByBinOptionsResponse } from "Kushki/Card";
+import { CardTokenResponse, DeferredByBinOptionsResponse } from "Kushki/Card";
 import { BinBody } from "types/bin_body";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
@@ -9,6 +9,8 @@ import { SecureOtpResponse } from "types/secure_otp_response";
 import { BankListResponse } from "types/bank_list_response";
 import { CommissionConfigurationRequest } from "types/commission_configuration_request";
 import { CommissionConfigurationResponse } from "types/commission_configuration_response";
+import { SubscriptionUserIdResponse } from "types/subscription_user_id_response";
+import { DeviceTokenRequest } from "types/device_token_request";
 
 export interface IKushkiGateway {
   /**
@@ -40,7 +42,8 @@ export interface IKushkiGateway {
    * Request Cybersource JWT
    */
   requestCybersourceJwt(
-    kushkiInstance: IKushki
+    kushkiInstance: IKushki,
+    subscriptionId?: string
   ): Promise<CybersourceJwtResponse>;
 
   /**
@@ -63,4 +66,20 @@ export interface IKushkiGateway {
     kushkiInstance: IKushki,
     body: CommissionConfigurationRequest
   ): Promise<CommissionConfigurationResponse>;
+
+  /**
+   * Request Commission Configuration
+   */
+  requestSubscriptionUserId(
+    kushkiInstance: IKushki,
+    subscriptionId: string
+  ): Promise<SubscriptionUserIdResponse>;
+
+  /**
+   * Request Device Token for one-click payment or subscription on-demand
+   */
+  requestDeviceToken(
+    kushkiInstance: IKushki,
+    body: DeviceTokenRequest
+  ): Promise<CardTokenResponse>;
 }

@@ -14,12 +14,12 @@ const CurrencyConfigurationDemo = ({
   setInputCurrency
 }: ICurrencyConfigurationDemoProps) => {
   return (
-    <div className="mui-select divContainer">
+    <div className="mui-select select-container">
       <select
         className={
           inputCurrency
-            ? "selectExample selectLabelSelected"
-            : "selectExample selectLabelEmpty"
+            ? "select-example select-label-selected"
+            : "select-example select-label-empty"
         }
         disabled={disableInputPrev}
         onChange={(e) => {

@@ -1,12 +1,13 @@
 import { Kushki } from "class/Kushki.ts";
 import { IKushki } from "Kushki";
 import { SecureOtpResponse } from "types/secure_otp_response";
-import { CONTAINER } from "infrastructure/Container.ts";
-import { IDENTIFIERS } from "src/constant/Identifiers.ts";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { Sandbox3DSProvider } from "src/provider/Sandbox3DSProvider.ts";
 import { KushkiCardinalSandbox } from "@kushki/cardinal-sandbox-js";
+import { KushkiGateway } from "gateway/KushkiGateway.ts";
+
+jest.mock("gateway/KushkiGateway.ts");
 
 describe("Sandbox3DSProvider - Test", () => {
   let sandboxProvider: Sandbox3DSProvider;
@@ -26,17 +27,17 @@ describe("Sandbox3DSProvider - Test", () => {
   };
 
   const mockKushkiGateway = (
-    secureValidation: SecureOtpResponse | Promise<SecureOtpResponse> = {
+    secureValidationMock: SecureOtpResponse | Promise<SecureOtpResponse> = {
       code: "3DS000",
       message: "ok"
     }
   ) => {
-    const mockGateway = {
-      requestSecureServiceValidation: () => secureValidation
-    };
-
-    CONTAINER.unbind(IDENTIFIERS.KushkiGateway);
-    CONTAINER.bind(IDENTIFIERS.KushkiGateway).toConstantValue(mockGateway);
+    // @ts-ignore
+    KushkiGateway.mockImplementation(() => ({
+      requestSecureServiceValidation: jest
+        .fn()
+        .mockResolvedValue(secureValidationMock)
+    }));
   };
 
   const initProvider = (inTest?: boolean) => {

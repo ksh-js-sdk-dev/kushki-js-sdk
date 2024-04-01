@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Card } from "../../../../src/module/Card.ts";
-import { Fields } from "../../../../types/form_validity";
+import { FieldTypeEnum, FieldValidity, FormValidity, ICard } from "Kushki/Card";
 
 export interface ITableDemoField {
-  fieldType: string;
-  cardInstance: Card;
+  fieldType: FieldTypeEnum;
+  cardInstance: ICard;
 }
 
 export const tableComponentStyles = {
@@ -32,7 +31,9 @@ const TableDemoField = ({ fieldType, cardInstance }: ITableDemoField) => {
   const [submitField, setSubmitField] = useState<string>("");
   const [blurField, setBlurField] = useState<string>("");
 
-  const buildValidatedField = (fieldsValidity: Fields) => {
+  const buildValidatedField = (
+    fieldsValidity: FormValidity | FieldValidity
+  ) => {
     return JSON.stringify(fieldsValidity, null, 4);
   };
 
@@ -53,10 +54,10 @@ const TableDemoField = ({ fieldType, cardInstance }: ITableDemoField) => {
   }, fieldType);
 
   return (
-    <table border="1" style={tableComponentStyles.table}>
+    <table border={1} style={tableComponentStyles.table}>
       <thead>
         <tr>
-          <th colSpan="2" style={tableComponentStyles.head}>
+          <th colSpan={2} style={tableComponentStyles.head}>
             {fieldType}
           </th>
         </tr>

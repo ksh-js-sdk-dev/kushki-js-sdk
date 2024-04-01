@@ -65,7 +65,7 @@ const HostedFields = ({
         <>
           <div id="cardHolderName_id"></div>
           {validError(fieldsValidityDemo, "cardholderName") && (
-            <div className={"label-hostedFieldError"}>
+            <div className={"label-hosted-field-error"}>
               {customMessageValidity(
                 "cardholderName",
                 fieldsValidityDemo.cardholderName.errorType! as ErrorTypeEnum
@@ -74,7 +74,7 @@ const HostedFields = ({
           )}
           <div id="cardNumber_id"></div>
           {validError(fieldsValidityDemo, "cardNumber") && (
-            <div className={"label-hostedFieldError"}>
+            <div className={"label-hosted-field-error"}>
               {customMessageValidity(
                 "cardNumber",
                 fieldsValidityDemo.cardNumber.errorType! as ErrorTypeEnum
@@ -87,7 +87,7 @@ const HostedFields = ({
           />
           <div id="expirationDate_id"></div>
           {validError(fieldsValidityDemo, "expirationDate") && (
-            <div className={"label-hostedFieldError"}>
+            <div className={"label-hosted-field-error"}>
               {customMessageValidity(
                 "expirationDate",
                 fieldsValidityDemo.expirationDate.errorType! as ErrorTypeEnum
@@ -96,7 +96,7 @@ const HostedFields = ({
           )}
           <div id="cvv_id"></div>
           {validError(fieldsValidityDemo, "cvv") && (
-            <div className={"label-hostedFieldError"}>
+            <div className={"label-hosted-field-error"}>
               {customMessageValidity(
                 "cvv",
                 fieldsValidityDemo.cvv.errorType! as ErrorTypeEnum
@@ -105,7 +105,7 @@ const HostedFields = ({
           )}
           <div id="deferred_id"></div>
           {validError(fieldsValidityDemo, "deferred") && (
-            <div className={"label-hostedFieldError"}>
+            <div className={"label-hosted-field-error"}>
               {customMessageValidity(
                 "deferred",
                 fieldsValidityDemo.deferred!.errorType! as ErrorTypeEnum
@@ -115,7 +115,7 @@ const HostedFields = ({
         </>
       )}
       <div id="otp_id"></div>
-      <div className={"label-hostedFieldError"}>
+      <div className={"label-hosted-field-error"}>
         {errorOTP.length > 0 && <div>El código OTP es incorrecto</div>}
       </div>
     </div>
