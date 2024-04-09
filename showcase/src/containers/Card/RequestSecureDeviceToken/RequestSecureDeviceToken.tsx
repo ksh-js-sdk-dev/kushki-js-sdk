@@ -4,103 +4,95 @@ import CardNumberHelper from "../../../components/CardNumberHelper/CardNumberHel
 import { ResponseBox } from "../../../components/ResponseBox/ResponseBox.tsx";
 import { useEffect, useState } from "react";
 import { IKushki, init } from "Kushki";
-import { initSecureDeviceToken } from "Kushki/CardSubscriptions";
-import { ICardSubscriptions } from "../../../../../src/repository/ICardSubscriptions.ts";
+import {
+  ICardSubscriptions,
+  initSecureDeviceToken,
+  SecureDeviceTokenOptions,
+  TokenResponse
+} from "Kushki/CardSubscriptions";
 import { hostedFieldsStyles } from "../RequestCardToken/Checkout.constants.ts";
+import {
+  fieldsErrorEmpty,
+  fieldsErrorInvalid
+} from "../../../shared/enums/ErrorLabels.enum.ts";
+import { InputModelEnum } from "Kushki/Card";
 
 export const RequestSecureDeviceToken = () => {
   const [merchantId, setMerchantId] = useState<string>("");
   const [subscriptionId, setSubscriptionId] = useState<string>("");
-  const [disableButton, setDisableButton] = useState<boolean>(false);
+  const [disableInitButton, setDisableInitButton] = useState<boolean>(false);
+  const [disableRequestButton, setDisableRequestButton] =
+    useState<boolean>(true);
+  const [inputError, setInputError] = useState<string>("");
   const [response, setResponse] = useState<string>("");
-
   const [cardService, setCardService] = useState<ICardSubscriptions>();
+
   const onInitSecureDeviceToken = async () => {
-    setDisableButton(true);
+    setDisableInitButton(true);
     setResponse("");
 
+    const kushkiInstance: IKushki = await init({
+      inTest: true,
+      publicCredentialId: merchantId
+    });
+    const options: SecureDeviceTokenOptions = {
+      body: { subscriptionId },
+      fields: {
+        cvv: {
+          selector: "cvv_id",
+          label: "CVV",
+          placeholder: "CVV"
+        }
+      },
+      styles: hostedFieldsStyles
+    };
     try {
-      const kushkiInstance: IKushki = await init({
-        inTest: true,
-        publicCredentialId: merchantId
-      });
-
-      setCardService(
-        await initSecureDeviceToken(kushkiInstance, {
-          body: { subscriptionId },
-          fields: {
-            cvv: {
-              selector: "cvv_id"
-            }
-          },
-          styles: hostedFieldsStyles
-        })
-      );
-      setResponse("iniciado");
+      setCardService(await initSecureDeviceToken(kushkiInstance, options));
     } catch (error: any) {
       setResponse(error.message);
     } finally {
-      setDisableButton(false);
+      setDisableInitButton(false);
     }
   };
 
   const onRequestSecureDeviceToken = async () => {
-    setDisableButton(true);
     setResponse("");
+    setDisableRequestButton(true);
 
-    console.log(cardService?.getFormValidity());
+    if (cardService)
+      try {
+        const token: TokenResponse = await cardService.requestDeviceToken();
 
-    try {
-      const token = await cardService!.requestDeviceToken();
-
-      console.log(token);
-      setResponse(token.token);
-    } catch (error: any) {
-      setResponse(error.message);
-    } finally {
-      setDisableButton(false);
-    }
-  };
-
-  const onResetCvv = async () => {
-    try {
-      if (cardService) await cardService.reset();
-    } catch (error: any) {
-      console.log(error);
-    }
-  };
-
-  const onFocusCvv = async () => {
-    try {
-      if (cardService) await cardService.focus();
-    } catch (error: any) {
-      console.log(error);
-    }
+        setResponse(token.token);
+      } catch (error: any) {
+        setResponse(error.message);
+      } finally {
+        setDisableRequestButton(false);
+        setDisableInitButton(false);
+      }
   };
 
   useEffect(() => {
     if (cardService) {
-      cardService.onFieldFocus((fieldEvent) => {
-        console.log("focus", fieldEvent);
-      });
-
-      cardService.onFieldBlur((fieldEvent) => {
-        console.log("blur", fieldEvent);
-      });
-
-      cardService.onFieldSubmit((fieldEvent) => {
-        console.log("submit", fieldEvent);
-      });
-
       cardService.onFieldValidity((fieldEvent) => {
-        console.log("validity", fieldEvent);
-      });
+        if (fieldEvent.isValid) {
+          setDisableRequestButton(false);
+          setInputError("");
+        } else {
+          setDisableRequestButton(true);
+          setInputError(
+            fieldEvent.errorType === "empty"
+              ? fieldsErrorEmpty[InputModelEnum.CVV]
+              : fieldsErrorInvalid[InputModelEnum.CVV]
+          );
+        }
+      }, "cvv");
     }
   }, [cardService]);
 
   useEffect(() => {
-    if (merchantId && subscriptionId) setDisableButton(false);
-    else setDisableButton(true);
+    if (merchantId && subscriptionId) setDisableInitButton(false);
+    else setDisableInitButton(true);
   }, [merchantId, subscriptionId]);
 
   return (
@@ -131,43 +123,32 @@ export const RequestSecureDeviceToken = () => {
           className={
             "mui-btn mui-btn--primary mui-btn--small button-border action-button"
           }
-          disabled={disableButton}
+          disabled={disableInitButton}
           onClick={onInitSecureDeviceToken}
         >
-          initSecureDeviceToken
-        </button>
-        <button
-          className={
-            "mui-btn mui-btn--primary mui-btn--small button-border action-button"
-          }
-          disabled={disableButton}
-          onClick={onResetCvv}
-        >
-          reset
-        </button>
-        <button
-          className={
-            "mui-btn mui-btn--primary mui-btn--small button-border action-button"
-          }
-          disabled={disableButton}
-          onClick={onFocusCvv}
-        >
-          focus
+          Init SecureDeviceToken
         </button>
       </div>
-      <div id="cvv_id"></div>
-      {response && (
-        <>
-          <ResponseBox response={response} />
+      <div className={"box-hosted-fields"}>
+        <div id="cvv_id" />
+        {inputError && (
+          <div className={"label-hosted-field-error"}>{inputError}</div>
+        )}
+        {cardService && (
           <button
             className={
               "mui-btn mui-btn--primary mui-btn--small button-border action-button"
             }
-            disabled={disableButton}
+            disabled={disableRequestButton}
             onClick={onRequestSecureDeviceToken}
           >
-            RequestDeviceToken
+            Request DeviceToken
           </button>
+        )}
+      </div>
+      {response && (
+        <>
+          <ResponseBox response={response} />
         </>
       )}
     </ContainerDemo>

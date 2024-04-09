@@ -22,7 +22,7 @@ export class CardService {
   private readonly _cardinal3DSProvider: ICardinal3DSProvider;
   private readonly _sandbox3DSProvider: ISandbox3DSProvider;
   private _isSandboxEnabled: boolean;
-  private _isActive_3dsecure: boolean;
+  private _isActive3dsecure: boolean;
 
   constructor(kushkiInstance: IKushki) {
     this._kushkiInstance = kushkiInstance;
@@ -31,7 +31,7 @@ export class CardService {
     this._cardinal3DSProvider = new Cardinal3DSProvider();
     this._sandbox3DSProvider = new Sandbox3DSProvider();
     this._isSandboxEnabled = false;
-    this._isActive_3dsecure = false;
+    this._isActive3dsecure = false;
   }
   public static async requestDeviceToken(
     kushkiInstance: IKushki,
@@ -77,7 +77,7 @@ export class CardService {
 
   private _isNecessaryValidation(token: CardTokenResponse): boolean {
     return <boolean>(
-      (this._isActive_3dsecure &&
+      (this._isActive3dsecure &&
         token.secureService &&
         token.secureService === SECURE_3DS_FIELD)
     );
@@ -88,7 +88,7 @@ export class CardService {
       await this._gateway.requestMerchantSettings(this._kushkiInstance);
 
     if (merchantSettings.sandboxEnable) this._isSandboxEnabled = true;
-    if (merchantSettings.active_3dsecure) this._isActive_3dsecure = true;
+    if (merchantSettings.active_3dsecure) this._isActive3dsecure = true;
 
     return merchantSettings;
   }

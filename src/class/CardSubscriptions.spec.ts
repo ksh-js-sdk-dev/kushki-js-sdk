@@ -1,7 +1,7 @@
 import { Kushki } from "class/Kushki.ts";
 import { CardSubscriptions } from "class/CardSubscriptions.ts";
 import { SecureDeviceTokenOptions } from "types/secure_device_token_request";
-import KushkiHostedFields from "libs/zoid/HostedField.ts";
+import * as HostedFields from "libs/zoid/HostedField.ts";
 
 import * as HostedFieldUtils from "utils/HostedFieldsUtils.ts";
 import { FieldEventsEnum } from "infrastructure/FieldEventsEnum.ts";
@@ -9,11 +9,12 @@ import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { CardService } from "service/CardService.ts";
 import { TokenResponse } from "types/token_response";
 
-jest.mock("libs/zoid/HostedField.ts", () =>
-  jest.fn().mockImplementation(() => ({
+jest.mock("libs/zoid/HostedField.ts", () => ({
+  DestroyKushkiHostedFields: jest.fn(),
+  KushkiHostedFields: jest.fn().mockImplementation(() => ({
     requestSecureDeviceToken: jest.fn()
   }))
-);
+}));
 jest.mock("service/CardService.ts");
 
 describe("CardSubscriptions - class - tests", () => {
@@ -77,7 +78,7 @@ describe("CardSubscriptions - class - tests", () => {
   });
 
   describe("initSecureDeviceToken - method", () => {
-    it("should call container utils methods abd create cardSubscription object when call initSecureDeviceToken", async () => {
+    it("should call container utils methods and create cardSubscription object when call initSecureDeviceToken", async () => {
       const cardSubscription = await CardSubscriptions.initSecureDeviceToken(
         kushkiInstance,
         options
@@ -96,7 +97,7 @@ describe("CardSubscriptions - class - tests", () => {
     });
 
     it("should call dispatchEvent with focus event when act handleOnFocus of field", async () => {
-      KushkiHostedFields.mock.calls[0][0].handleOnFocus("cvv");
+      HostedFields.KushkiHostedFields.mock.calls[0][0].handleOnFocus("cvv");
 
       expect(dispatchEventSpy).toBeCalledWith(
         expect.anything(),
@@ -106,7 +107,7 @@ describe("CardSubscriptions - class - tests", () => {
     });
 
     it("should call dispatchEvent with blur event when act handleOnBlur of field", async () => {
-      KushkiHostedFields.mock.calls[0][0].handleOnBlur("cvv");
+      HostedFields.KushkiHostedFields.mock.calls[0][0].handleOnBlur("cvv");
 
       expect(dispatchEventSpy).toBeCalledWith(
         expect.anything(),
@@ -116,7 +117,7 @@ describe("CardSubscriptions - class - tests", () => {
     });
 
     it("should call dispatchEvent with submit event when act handleOnSubmit of field", async () => {
-      KushkiHostedFields.mock.calls[0][0].handleOnSubmit("cvv");
+      HostedFields.KushkiHostedFields.mock.calls[0][0].handleOnSubmit("cvv");
 
       expect(dispatchEventSpy).toBeCalledWith(
         expect.anything(),
@@ -126,7 +127,7 @@ describe("CardSubscriptions - class - tests", () => {
     });
 
     it("should call dispatchEvent with validity event and call  updateValidity when act handleOnValidity of field", async () => {
-      KushkiHostedFields.mock.calls[0][0].handleOnValidity("cvv", {
+      HostedFields.KushkiHostedFields.mock.calls[0][0].handleOnValidity("cvv", {
         isValid: true
       });
 

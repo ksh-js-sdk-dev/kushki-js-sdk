@@ -103,6 +103,10 @@ export enum ErrorCode {
  *   E018: {
  *     code: "E018",
  *     message: "Longitud de tarjeta inválida"
+ *   },
+ *   E019: {
+ *     code: "E019",
+ *     message: "Comercio no tiene activo 3DS"
  *   }
  * }
  * ```

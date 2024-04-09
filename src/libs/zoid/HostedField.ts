@@ -62,4 +62,6 @@ const KushkiHostedFields = zoid.create({
   }
 });
 
-export default KushkiHostedFields;
+const DestroyKushkiHostedFields =()=> zoid.destroyAll();
+
+export { KushkiHostedFields, DestroyKushkiHostedFields };

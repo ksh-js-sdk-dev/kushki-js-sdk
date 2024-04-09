@@ -10,3 +10,6 @@ const initSecureDeviceToken = (
   CardSubscriptions.initSecureDeviceToken(kushkiInstance, optionFields);
 
 export { initSecureDeviceToken };
+
+export type { ICardSubscriptions, SecureDeviceTokenOptions };
+export type { TokenResponse } from "types/token_response";

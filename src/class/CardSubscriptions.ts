@@ -3,7 +3,10 @@ import { Field, Styles } from "types/card_options";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { FieldOptions } from "src/interfaces/FieldOptions.ts";
 import { buildCssStyle } from "utils/BuildCssStyle.ts";
-import KushkiHostedFields from "libs/zoid/HostedField.ts";
+import {
+  DestroyKushkiHostedFields,
+  KushkiHostedFields
+} from "libs/zoid/HostedField.ts";
 import { CardFieldValues } from "types/card_fields_values";
 import {
   addEventListener,
@@ -160,6 +163,7 @@ export class CardSubscriptions implements ICardSubscriptions {
   }
 
   private initCvvField(cvvField: Field, styles?: Styles) {
+    DestroyKushkiHostedFields();
     const options: FieldOptions = this.buildCvvOptions(cvvField, styles);
     const hostedField = KushkiHostedFields(options);
 
