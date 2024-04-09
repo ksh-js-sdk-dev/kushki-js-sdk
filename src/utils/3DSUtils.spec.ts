@@ -160,7 +160,12 @@ describe("3DSUtils - test", () => {
     const mockCardinalProvider = () => {
       // @ts-ignore
       Cardinal3DSProvider.mockReturnValue({
-        initCardinal: initCardinalSpy
+        initCardinal: initCardinalSpy,
+        onSetUpComplete: jest
+          .fn()
+          .mockImplementation((callback: () => void) => {
+            callback();
+          })
       });
       cardinalProviderMock = new Cardinal3DSProvider();
     };

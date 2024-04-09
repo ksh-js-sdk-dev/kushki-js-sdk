@@ -114,6 +114,7 @@ describe("AntiFraudService - Test", () => {
 
       expect(get(secureInitResponse, "jwt")).toEqual("234234hgfg234");
     });
+
     it("should return error when card number is lesser than 6 digits", async () => {
       const kushkiInstance = await initKushki();
 
@@ -136,6 +137,7 @@ describe("AntiFraudService - Test", () => {
         expect(get(e, "detail")).toEqual("Longitud de tarjeta inválida");
       }
     });
+
     it("should return error when card number is greater than 19 digits", async () => {
       const kushkiInstance = await initKushki();
 
@@ -158,7 +160,8 @@ describe("AntiFraudService - Test", () => {
         expect(get(e, "detail")).toEqual("Longitud de tarjeta inválida");
       }
     });
-    it("should return undefined when active3ds is not active", async () => {
+
+    it("should return E019 when merchant not have active3ds", async () => {
       const kushkiInstance = await initKushki();
 
       merchantSettingsResponseMock.active_3dsecure = false;
@@ -168,13 +171,14 @@ describe("AntiFraudService - Test", () => {
         Promise.resolve(cybersourceJwtResponseMock)
       );
 
-      const secureInitResponse = await AntiFraudService.requestSecureInit(
-        kushkiInstance,
-        request
-      );
-
-      expect(get(secureInitResponse, "jwt")).toBeUndefined();
+      try {
+        await AntiFraudService.requestSecureInit(kushkiInstance, request);
+      } catch (error: any) {
+        expect(get(error, "code")).toBe("E019");
+        expect(error.message).toBe("Comercio no tiene activo 3DS");
+      }
     });
+
     it("should return jwt when sandbox is not active", async () => {
       const kushkiInstance = await initKushki();
 
@@ -276,6 +280,7 @@ describe("AntiFraudService - Test", () => {
 
       expect(isValid).toBeTruthy();
     });
+
     it("should return error E005 when cardinal action code is equal to FAILURE", async () => {
       const kushkiInstance = await initKushki();
 
@@ -297,6 +302,7 @@ describe("AntiFraudService - Test", () => {
         expect(error.message).toBe("Campos 3DS inválidos");
       }
     });
+
     it("should return error E012 when security param is undefined in cardTokenResponse", async () => {
       const kushkiInstance = await initKushki();
 
@@ -319,6 +325,7 @@ describe("AntiFraudService - Test", () => {
         expect(get(error, "message")).toBe("Error en inicialización de campos");
       }
     });
+
     it("should return error E012 when authRequired is the only param in security object", async () => {
       const kushkiInstance = await initKushki();
 
@@ -344,6 +351,7 @@ describe("AntiFraudService - Test", () => {
         expect(error.message).toBe("Campos 3DS inválidos");
       }
     });
+
     it("should return error E005 when specification version is invalid", async () => {
       const kushkiInstance = await initKushki();
 
@@ -357,6 +365,7 @@ describe("AntiFraudService - Test", () => {
         Promise.resolve(cybersourceJwtResponseMock),
         Promise.resolve(secureServiceResponseMock)
       );
+
       try {
         await AntiFraudService.requestValidate3DS(
           kushkiInstance,

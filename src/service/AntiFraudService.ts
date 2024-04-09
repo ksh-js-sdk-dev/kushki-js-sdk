@@ -34,6 +34,8 @@ export class AntiFraudService {
     const merchantSettings: MerchantSettingsResponse =
       await gateway.requestMerchantSettings(kushkiInstance);
 
+    this._check3DSSecureEnabled(merchantSettings);
+
     const jwtResponse = await getJwtIf3dsEnabled({
       accountNumber: cardBin,
       cardinal3DS: cardianl3DSProvider,
@@ -43,15 +45,7 @@ export class AntiFraudService {
       sandbox3DS: sandbox3DSProvider
     });
 
-    const jwt: SecureInitResponse = { jwt: jwtResponse! };
-
-    if (this._isSandboxEnabled(merchantSettings)) return jwt;
-
-    await cardianl3DSProvider.onSetUpComplete(() => {
-      return jwt;
-    });
-
-    return jwt;
+    return { jwt: jwtResponse! };
   }
 
   public static async requestValidate3DS(
@@ -87,8 +81,11 @@ export class AntiFraudService {
       throw new KushkiError(ERRORS.E018, ERRORS.E018.message);
   }
 
-  private static _isSandboxEnabled(merchantSettings: MerchantSettingsResponse) {
-    return !!merchantSettings.sandboxEnable;
+  private static _check3DSSecureEnabled(
+    merchantSettings: MerchantSettingsResponse
+  ): void {
+    if (!merchantSettings.active_3dsecure)
+      throw new KushkiError(ERRORS.E019, ERRORS.E019.message);
   }
 
   private static _getBinFromCreditCardNumber(value: string): string {

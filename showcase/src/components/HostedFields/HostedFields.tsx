@@ -68,7 +68,7 @@ const HostedFields = ({
             <div className={"label-hosted-field-error"}>
               {customMessageValidity(
                 "cardholderName",
-                fieldsValidityDemo.cardholderName.errorType! as ErrorTypeEnum
+                fieldsValidityDemo.cardholderName!.errorType! as ErrorTypeEnum
               )}
             </div>
           )}
@@ -77,7 +77,7 @@ const HostedFields = ({
             <div className={"label-hosted-field-error"}>
               {customMessageValidity(
                 "cardNumber",
-                fieldsValidityDemo.cardNumber.errorType! as ErrorTypeEnum
+                fieldsValidityDemo.cardNumber!.errorType! as ErrorTypeEnum
               )}
             </div>
           )}
@@ -90,7 +90,7 @@ const HostedFields = ({
             <div className={"label-hosted-field-error"}>
               {customMessageValidity(
                 "expirationDate",
-                fieldsValidityDemo.expirationDate.errorType! as ErrorTypeEnum
+                fieldsValidityDemo.expirationDate!.errorType! as ErrorTypeEnum
               )}
             </div>
           )}
@@ -99,7 +99,7 @@ const HostedFields = ({
             <div className={"label-hosted-field-error"}>
               {customMessageValidity(
                 "cvv",
-                fieldsValidityDemo.cvv.errorType! as ErrorTypeEnum
+                fieldsValidityDemo.cvv!.errorType! as ErrorTypeEnum
               )}
             </div>
           )}

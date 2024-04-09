@@ -8,9 +8,10 @@ import { DeferredValues } from "types/card_fields_values";
 import { IKushki } from "Kushki";
 import { KUSHKI_HOSTED_FIELD_TAG } from "src/constant/HostedFieldTags.ts";
 import { FieldOptions } from "src/interfaces/FieldOptions.ts";
-import { FieldTypeEnum } from "types/form_validity";
 import { HostedFieldUrlEnum } from "infrastructure/HostedFieldUrlEnum.ts";
 import { PathsHtmlSpaInputs } from "infrastructure/PathsHtmlSpaInputs.ts";
+import { DeviceTokenRequest } from "types/device_token_request";
+import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 
 const KushkiHostedFields = zoid.create({
   dimensions: {
@@ -36,17 +37,28 @@ const KushkiHostedFields = zoid.create({
             siftScienceSession,
             deferredValues
           )
+        ),
+      requestSecureDeviceToken: (
+        kushkiInstance: IKushki,
+        body: DeviceTokenRequest,
+        requestPath: string,
+        customHeaders: object
+      ): Promise<CardTokenResponse> =>
+        getExports().then((exports: any) =>
+          exports.requestSecureDeviceToken(
+            kushkiInstance,
+            body,
+            requestPath,
+            customHeaders
+          )
         )
     };
   },
   tag: KUSHKI_HOSTED_FIELD_TAG,
   url: (options: { props: FieldOptions }) => {
-    const fieldType: FieldTypeEnum = options.props.fieldType;
+    const fieldType: InputModelEnum = options.props.fieldType;
 
-    return (
-
-      `${HostedFieldUrlEnum.LOCAL_SPA_URL}/${PathsHtmlSpaInputs[fieldType]}.html`
-    );
+    return `${HostedFieldUrlEnum.LOCAL_SPA_URL}/${PathsHtmlSpaInputs[fieldType]}.html`;
   }
 });
 

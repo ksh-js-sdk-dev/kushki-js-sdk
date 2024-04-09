@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "SecureDeviceTokenOptions",
+  "title": "SecureDeviceTokenOptions",
+  "properties": {
+    "body": {
+      "$ref": "../../src/schema/device_token_request.json"
+    },
+    "preventAutofill": {
+      "type": "boolean"
+    },
+    "styles": {
+      "$ref": "../../src/schema/card_options.json#/definitions/styles"
+    },
+    "fields": {
+      "title": "",
+      "additionalProperties": false,
+      "properties": {
+        "cvv": {
+          "$ref": "../../src/schema/card_options.json#/definitions/field"
+        }
+      },
+      "required": ["cvv"]
+    }
+  },
+  "required": ["subscriptionId", "fields", "body"],
+  "type": "object"
+}
