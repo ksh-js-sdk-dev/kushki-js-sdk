@@ -332,7 +332,7 @@ describe("CardService - Test", () => {
 
     it("should return token with sandbox validation when merchant have 3DS with sandbox", async () => {
       // @ts-ignore
-      cardService._isActive_3dsecure = true;
+      cardService._isActive3dsecure = true;
       // @ts-ignore
       cardService._isSandboxEnabled = true;
 
@@ -351,7 +351,7 @@ describe("CardService - Test", () => {
 
     it("should return token with cardinal validation when merchant have 3DS with cardinal", async () => {
       // @ts-ignore
-      cardService._isActive_3dsecure = true;
+      cardService._isActive3dsecure = true;
       // @ts-ignore
       cardService._isSandboxEnabled = false;
 

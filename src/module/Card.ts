@@ -13,6 +13,9 @@ import { FieldTypeEnum } from "types/form_validity";
 import { DeviceTokenRequest } from "types/device_token_request";
 import { CardService } from "service/CardService.ts";
 import { TokenResponse } from "types/token_response";
+import { CardSubscriptions } from "class/CardSubscriptions.ts";
+import { SecureDeviceTokenOptions } from "types/secure_device_token_request";
+import { ICardSubscriptions } from "repository/ICardSubscriptions.ts";
 
 /**
  * #### Introduction
@@ -608,3 +611,13 @@ const requestDeviceToken = (
 
 export { requestDeviceToken };
 export type { DeviceTokenRequest } from "types/device_token_request";
+
+const initSecureDeviceToken = (
+  kushkiInstance: IKushki,
+  optionFields: SecureDeviceTokenOptions
+): Promise<ICardSubscriptions> =>
+  CardSubscriptions.initSecureDeviceToken(kushkiInstance, optionFields);
+
+export { initSecureDeviceToken };
+
+export type { ICardSubscriptions, SecureDeviceTokenOptions };

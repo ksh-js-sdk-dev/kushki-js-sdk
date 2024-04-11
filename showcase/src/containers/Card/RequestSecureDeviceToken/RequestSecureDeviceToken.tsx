@@ -9,7 +9,7 @@ import {
   initSecureDeviceToken,
   SecureDeviceTokenOptions,
   TokenResponse
-} from "Kushki/CardSubscriptions";
+} from "Kushki/Card";
 import { hostedFieldsStyles } from "../RequestCardToken/Checkout.constants.ts";
 import {
   fieldsErrorEmpty,

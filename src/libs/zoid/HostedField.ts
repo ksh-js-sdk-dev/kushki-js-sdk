@@ -45,12 +45,12 @@ const KushkiHostedFields = zoid.create({
         customHeaders: object
       ): Promise<CardTokenResponse> =>
         getExports().then((exports: any) =>
-          exports.requestSecureDeviceToken(
+          exports.requestSecureDeviceToken({
             kushkiInstance,
             body,
             requestPath,
             customHeaders
-          )
+          })
         )
     };
   },
@@ -62,6 +62,6 @@ const KushkiHostedFields = zoid.create({
   }
 });
 
-const DestroyKushkiHostedFields =()=> zoid.destroyAll();
+const DestroyKushkiHostedFields = () => zoid.destroyAll();
 
 export { KushkiHostedFields, DestroyKushkiHostedFields };
