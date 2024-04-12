@@ -6,7 +6,7 @@ import {
   initCardToken,
   TokenResponse
 } from "Kushki/Card";
-import KushkiHostedFields from "libs/zoid/HostedField.ts";
+import { KushkiHostedFields } from "libs/zoid/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { FieldTypeEnum } from "types/form_validity";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
@@ -28,19 +28,7 @@ jest.mock("gateway/KushkiGateway.ts");
 jest.mock("provider/SiftScienceProvider.ts");
 jest.mock("provider/Cardinal3DSProvider.ts");
 jest.mock("provider/Sandbox3DSProvider.ts");
-
-const mockKushkiHostedFieldsHide = jest.fn().mockResolvedValue({});
-
-jest.mock("../libs/zoid/HostedField.ts", () =>
-  jest.fn().mockImplementation(() => ({
-    hide: mockKushkiHostedFieldsHide,
-    render: jest.fn(),
-    requestPaymentToken: jest.fn(),
-    resize: jest.fn().mockResolvedValue({}),
-    show: jest.fn().mockResolvedValue({}),
-    updateProps: jest.fn()
-  }))
-);
+jest.mock("libs/zoid/HostedField.ts");
 
 const merchantSettingsResponseDefault: MerchantSettingsResponse = {
   country: "",

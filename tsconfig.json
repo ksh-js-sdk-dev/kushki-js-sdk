@@ -25,6 +25,7 @@
       "Kushki/Card": ["src/module/Card.ts"],
       "Kushki/Transfer": ["src/module/Transfer.ts"],
       "Kushki/Merchant": ["src/module/Merchant.ts"],
+      "Kushki/CardSubscriptions": ["src/module/CardSubscriptions.ts"],
       "module/*": ["src/module/*"],
       "gateway/*": ["src/gateway/*"],
       "infrastructure/*": ["src/infrastructure/*"],

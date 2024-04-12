@@ -25,8 +25,12 @@
       "Kushki/Transfer": ["../src/module/Transfer.ts"],
       "Kushki/Merchant": ["../src/module/Merchant.ts"],
       "Kushki/AntiFraud": ["../src/module/AntiFraud.ts"],
+      "Kushki/CardSubscriptions": ["../src/module/CardSubscriptions.ts"]
     }
   },
   "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }, { "path": "../tsconfig.json" }]
+  "references": [
+    { "path": "./tsconfig.node.json" },
+    { "path": "../tsconfig.json" }
+  ]
 }

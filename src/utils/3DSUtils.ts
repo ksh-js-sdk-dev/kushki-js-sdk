@@ -8,6 +8,8 @@ import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { Buffer } from "buffer";
 
+export const SECURE_3DS_FIELD = "3dsecure";
+
 export interface GetJwtIf3dsEnabledProps {
   merchantSettings: MerchantSettingsResponse;
   kushkiInstance: IKushki;
@@ -64,15 +66,23 @@ export const getJwtIf3dsEnabled = async (
       ? Buffer.from(jwtResponse.identifier!, "base64").toString("ascii")
       : props.accountNumber;
 
-    if (props.merchantSettings.sandboxEnable) props.sandbox3DS.initSandbox();
-    else
+    if (props.merchantSettings.sandboxEnable) {
+      props.sandbox3DS.initSandbox();
+
+      return jwtResponse.jwt;
+    } else {
       await props.cardinal3DS.initCardinal(
         props.kushkiInstance,
         jwtResponse.jwt,
         bin
       );
 
-    return jwtResponse.jwt;
+      return new Promise<string>((resolve) => {
+        props.cardinal3DS.onSetUpComplete(async () => {
+          resolve(jwtResponse.jwt);
+        });
+      });
+    }
   } else {
     return undefined;
   }

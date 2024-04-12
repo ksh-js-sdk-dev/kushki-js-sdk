@@ -6,7 +6,7 @@ import { KushkiGateway } from "gateway/KushkiGateway.ts";
 import { SiftScienceObject } from "types/sift_science_object";
 import { SiftScienceProvider } from "provider/SiftScienceProvider.ts";
 import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
-import { getJwtIf3dsEnabled } from "utils/3DSUtils.ts";
+import { getJwtIf3dsEnabled, SECURE_3DS_FIELD } from "utils/3DSUtils.ts";
 import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
 import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
 import { Cardinal3DSProvider } from "provider/Cardinal3DSProvider.ts";
@@ -21,13 +21,17 @@ export class CardService {
   private readonly _siftScience: ISiftScienceProvider;
   private readonly _cardinal3DSProvider: ICardinal3DSProvider;
   private readonly _sandbox3DSProvider: ISandbox3DSProvider;
+  private _isSandboxEnabled: boolean;
+  private _isActive3dsecure: boolean;
 
-  private constructor(kushkiInstance: IKushki) {
+  constructor(kushkiInstance: IKushki) {
     this._kushkiInstance = kushkiInstance;
     this._gateway = new KushkiGateway();
     this._siftScience = new SiftScienceProvider();
     this._cardinal3DSProvider = new Cardinal3DSProvider();
     this._sandbox3DSProvider = new Sandbox3DSProvider();
+    this._isSandboxEnabled = false;
+    this._isActive3dsecure = false;
   }
   public static async requestDeviceToken(
     kushkiInstance: IKushki,
@@ -35,29 +39,61 @@ export class CardService {
   ): Promise<TokenResponse> {
     const service: CardService = new CardService(kushkiInstance);
 
+    const request: DeviceTokenRequest =
+      await service.createDeviceTokenRequestBody(body);
+
+    return service._requestDeviceToken(request);
+  }
+
+  public async createDeviceTokenRequestBody(
+    body: DeviceTokenRequest
+  ): Promise<DeviceTokenRequest> {
     const merchantSettings: MerchantSettingsResponse =
-      await service._getMerchantSettings();
+      await this._getMerchantSettings();
     const siftScienceObject: SiftScienceObject =
-      await service._getSiftScienceObject(body, merchantSettings);
-    const jwt: string | undefined = await service._getJwtIf3dsEnabled(
+      await this._getSiftScienceObject(body, merchantSettings);
+    const jwt: string | undefined = await this._getJwtIf3dsEnabled(
       merchantSettings,
       body
     );
-    const request: DeviceTokenRequest = service._buildRequestObject(
+
+    return this._buildRequestObject(
       body,
       siftScienceObject,
       merchantSettings,
       jwt
     );
-
-    return service._requestDeviceToken(merchantSettings, request);
   }
 
-  private _getMerchantSettings(): Promise<MerchantSettingsResponse> {
-    return this._gateway.requestMerchantSettings(this._kushkiInstance);
+  public async validateToken(token: CardTokenResponse): Promise<TokenResponse> {
+    if (this._isNecessaryValidation(token))
+      if (this._isSandboxEnabled) return this._validateSandboxToken(token);
+      else return this._validateCardinalToken(token);
+    else
+      return {
+        token: token.token
+      };
   }
 
-  private _getJwtIf3dsEnabled(
+  private _isNecessaryValidation(token: CardTokenResponse): boolean {
+    return <boolean>(
+      (this._isActive3dsecure &&
+        token.secureService &&
+        token.secureService === SECURE_3DS_FIELD)
+    );
+  }
+
+  private async _getMerchantSettings(): Promise<MerchantSettingsResponse> {
+    const merchantSettings: MerchantSettingsResponse =
+      await this._gateway.requestMerchantSettings(this._kushkiInstance);
+
+    if (merchantSettings.sandboxEnable) this._isSandboxEnabled = true;
+    if (merchantSettings.active_3dsecure) this._isActive3dsecure = true;
+
+    return merchantSettings;
+  }
+
+  private async _getJwtIf3dsEnabled(
     merchantSettings: MerchantSettingsResponse,
     body: DeviceTokenRequest
   ): Promise<string | undefined> {
@@ -130,11 +166,10 @@ export class CardService {
   }
 
   private _requestDeviceToken(
-    merchantSettings: MerchantSettingsResponse,
     body: DeviceTokenRequest
   ): Promise<TokenResponse> {
     if (body.jwt)
-      if (merchantSettings.sandboxEnable) return this._getSandboxToken(body);
+      if (this._isSandboxEnabled) return this._getSandboxToken(body);
       else return this._getCardinalToken(body);
 
     return this._gateway.requestDeviceToken(this._kushkiInstance, body);
@@ -143,21 +178,12 @@ export class CardService {
   private async _getCardinalToken(
     body: DeviceTokenRequest
   ): Promise<TokenResponse> {
-    return new Promise<CardTokenResponse>((resolve, reject) => {
-      this._cardinal3DSProvider.onSetUpComplete(async () => {
-        try {
-          const token: TokenResponse =
-            await this._cardinal3DSProvider.validateCardinal3dsToken(
-              this._kushkiInstance,
-              await this._gateway.requestDeviceToken(this._kushkiInstance, body)
-            );
+    const token: CardTokenResponse = await this._gateway.requestDeviceToken(
+      this._kushkiInstance,
+      body
+    );
 
-          resolve(token);
-        } catch (error) {
-          reject(error);
-        }
-      });
-    });
+    return this._validateCardinalToken(token);
   }
 
   private async _getSandboxToken(
@@ -168,6 +194,21 @@ export class CardService {
       body
     );
 
+    return this._validateSandboxToken(token);
+  }
+
+  private async _validateCardinalToken(
+    token: CardTokenResponse
+  ): Promise<TokenResponse> {
+    return this._cardinal3DSProvider.validateCardinal3dsToken(
+      this._kushkiInstance,
+      token
+    );
+  }
+
+  private async _validateSandboxToken(
+    token: CardTokenResponse
+  ): Promise<TokenResponse> {
     return this._sandbox3DSProvider.validateSandbox3dsToken(
       this._kushkiInstance,
       token

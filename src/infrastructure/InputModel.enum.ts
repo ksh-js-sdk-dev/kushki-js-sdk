@@ -4,5 +4,6 @@ export enum InputModelEnum {
   CVV = "cvv",
   DEFERRED = "deferred",
   EXPIRATION_DATE = "expirationDate",
-  OTP = "otp"
+  OTP = "otp",
+  SUBSCRIPTIONS_CVV = "subscriptionsCvv"
 }

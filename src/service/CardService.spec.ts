@@ -10,6 +10,7 @@ import { Sandbox3DSProvider } from "provider/Sandbox3DSProvider.ts";
 import { Cardinal3DSProvider } from "provider/Cardinal3DSProvider.ts";
 
 import * as Utils from "utils/3DSUtils.ts";
+import { CardTokenResponse } from "types/card_token_response";
 
 jest.mock("gateway/KushkiGateway.ts");
 jest.mock("provider/SiftScienceProvider.ts");
@@ -302,6 +303,69 @@ describe("CardService - Test", () => {
         expect(validateCardinal3dsTokenSpy).toBeCalledTimes(1);
         expect(error).toEqual("cardinal 3DS validation error");
       }
+    });
+  });
+
+  describe("validateToken - method", () => {
+    const kushkiInstance = new Kushki({
+      inTest: false,
+      publicCredentialId: "123456"
+    });
+
+    let cardService: CardService;
+
+    beforeEach(() => {
+      cardService = new CardService(kushkiInstance);
+    });
+
+    it("should return token when token not needs authorization", async () => {
+      const tokenMock: CardTokenResponse = {
+        token: "567890"
+      };
+
+      const tokenResponse: TokenResponse = await cardService.validateToken(
+        tokenMock
+      );
+
+      expect(tokenResponse).toEqual(tokenMock);
+    });
+
+    it("should return token with sandbox validation when merchant have 3DS with sandbox", async () => {
+      // @ts-ignore
+      cardService._isActive3dsecure = true;
+      // @ts-ignore
+      cardService._isSandboxEnabled = true;
+
+      const tokenMock: CardTokenResponse = {
+        ...deviceTokenMock,
+        secureService: "3dsecure"
+      };
+      const tokenResponse: TokenResponse = await cardService.validateToken(
+        tokenMock
+      );
+
+      expect(tokenResponse).toEqual(deviceTokenMock);
+      expect(validateSandbox3dsTokenSpy).toBeCalledTimes(1);
+      expect(validateCardinal3dsTokenSpy).toBeCalledTimes(0);
+    });
+
+    it("should return token with cardinal validation when merchant have 3DS with cardinal", async () => {
+      // @ts-ignore
+      cardService._isActive3dsecure = true;
+      // @ts-ignore
+      cardService._isSandboxEnabled = false;
+
+      const tokenMock: CardTokenResponse = {
+        ...deviceTokenMock,
+        secureService: "3dsecure"
+      };
+      const tokenResponse: TokenResponse = await cardService.validateToken(
+        tokenMock
+      );
+
+      expect(tokenResponse).toEqual(deviceTokenMock);
+      expect(validateSandbox3dsTokenSpy).toBeCalledTimes(0);
+      expect(validateCardinal3dsTokenSpy).toBeCalledTimes(1);
     });
   });
 });
