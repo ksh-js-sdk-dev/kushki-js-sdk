@@ -30,6 +30,7 @@ export const RequestSecureDeviceToken = () => {
   const onInitSecureDeviceToken = async () => {
     setDisableInitButton(true);
     setResponse("");
+    setInputError("");
 
     const kushkiInstance: IKushki = await init({
       inTest: true,
@@ -130,6 +131,11 @@ export const RequestSecureDeviceToken = () => {
         </button>
       </div>
       <div className={"box-hosted-fields"}>
+        {cardService && (
+          <div className="mui--text-subhead mui-text-custom">
+            Completar el campo
+          </div>
+        )}
         <div id="cvv_id" />
         {inputError && (
           <div className={"label-hosted-field-error"}>{inputError}</div>
@@ -146,11 +152,7 @@ export const RequestSecureDeviceToken = () => {
           </button>
         )}
       </div>
-      {response && (
-        <>
-          <ResponseBox response={response} />
-        </>
-      )}
+      {response && <ResponseBox response={response} />}
     </ContainerDemo>
   );
 };
