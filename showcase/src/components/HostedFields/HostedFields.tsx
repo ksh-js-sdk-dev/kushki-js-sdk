@@ -14,16 +14,18 @@ export interface IHostedFieldsProps {
   showOTP: boolean;
   fieldsValidityDemo: Fields;
   errorOTP: string;
-  displayHostedFields: boolean;
-  buttonActive: IDefaultInformation;
+  listButtonsActive: IDefaultInformation;
+  disablePaymentButton: boolean;
+  getToken: () => void;
 }
 
 const HostedFields = ({
   showOTP,
   fieldsValidityDemo,
-  displayHostedFields,
   errorOTP,
-  buttonActive
+  listButtonsActive,
+  disablePaymentButton,
+  getToken
 }: IHostedFieldsProps) => {
   const [cardHelper, setCardHelper] = useState<string>("4195614311940576");
   const customMessageValidity = (field: string, errorType: ErrorTypeEnum) => {
@@ -48,21 +50,19 @@ const HostedFields = ({
   };
 
   useEffect(() => {
-    if (buttonActive.threeDomainSecure) setCardHelper("4000000000002503");
-    if (buttonActive.otp) setCardHelper("4195612455557800");
-    if (buttonActive.approved) setCardHelper("4195612455557800");
-    if (buttonActive.declined) setCardHelper("4574441215190335");
-  }, [buttonActive]);
+    if (listButtonsActive.threeDomainSecure) setCardHelper("4000000000002503");
+    if (listButtonsActive.otp) setCardHelper("4195612455557800");
+    if (listButtonsActive.approved) setCardHelper("4195612455557800");
+    if (listButtonsActive.declined) setCardHelper("4574441215190335");
+  }, [listButtonsActive]);
 
   return (
     <div className={"box-hosted-fields"}>
-      {displayHostedFields && (
-        <div className="mui--text-subhead mui-text-custom">
-          Completar el formulario
-        </div>
-      )}
       {!showOTP && (
         <>
+          <div className="mui--text-subhead mui-text-custom">
+            Completar el formulario
+          </div>
           <div id="cardHolderName_id"></div>
           {validError(fieldsValidityDemo, "cardholderName") && (
             <div className={"label-hosted-field-error"}>
@@ -82,7 +82,7 @@ const HostedFields = ({
             </div>
           )}
           <CardNumberHelper
-            displayHostedFields={displayHostedFields}
+            displayHostedFields={true}
             cardNumberHelper={cardHelper}
           />
           <div id="expirationDate_id"></div>
@@ -112,6 +112,16 @@ const HostedFields = ({
               )}
             </div>
           )}
+          <button
+            className={
+              "mui-btn mui-btn--primary mui-btn--small button-border button-pay"
+            }
+            data-testid="tokenRequestBtn"
+            onClick={getToken}
+            disabled={disablePaymentButton}
+          >
+            Pagar
+          </button>
         </>
       )}
       <div id="otp_id"></div>

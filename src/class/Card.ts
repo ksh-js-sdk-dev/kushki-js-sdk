@@ -56,7 +56,8 @@ import {
   renderFields,
   resetField,
   showContainers,
-  updateValidity
+  updateValidity,
+  validateInitParams
 } from "utils/HostedFieldsUtils.ts";
 import { FieldEventsEnum } from "infrastructure/FieldEventsEnum.ts";
 
@@ -100,7 +101,7 @@ export class Card implements ICard {
     options: CardOptions
   ): Promise<Card> {
     try {
-      this.validParamsInitCardToken(kushkiInstance, options);
+      validateInitParams(kushkiInstance, options);
 
       const payment: Card = new Card(kushkiInstance, options);
 
@@ -836,13 +837,4 @@ export class Card implements ICard {
 
     dispatchEvent(eventOtpValidity);
   };
-
-  private static validParamsInitCardToken(
-    kushkiInstance: IKushki,
-    options: CardOptions
-  ): void {
-    if (!options || !kushkiInstance) {
-      throw new KushkiError(ERRORS.E012);
-    }
-  }
 }

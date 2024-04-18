@@ -18,7 +18,8 @@ import {
   renderFields,
   resetField,
   showContainers,
-  updateValidity
+  updateValidity,
+  validateInitParams
 } from "utils/HostedFieldsUtils.ts";
 import { ICardSubscriptions } from "repository/ICardSubscriptions.ts";
 import { TokenResponse } from "types/token_response";
@@ -35,6 +36,7 @@ import {
 import { FieldEventsEnum } from "infrastructure/FieldEventsEnum.ts";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import { UtilsProvider } from "provider/UtilsProvider.ts";
 
 export class CardSubscriptions implements ICardSubscriptions {
   private readonly kushkiInstance: IKushki;
@@ -58,6 +60,8 @@ export class CardSubscriptions implements ICardSubscriptions {
     kushkiInstance: IKushki,
     options: SecureDeviceTokenOptions
   ): Promise<CardSubscriptions> {
+    validateInitParams(kushkiInstance, options);
+
     const payment: CardSubscriptions = new CardSubscriptions(
       kushkiInstance,
       options
@@ -73,26 +77,30 @@ export class CardSubscriptions implements ICardSubscriptions {
   }
 
   public async requestDeviceToken(): Promise<TokenResponse> {
-    const { isFormValid } = buildFieldsValidity(this.inputValues);
+    try {
+      const { isFormValid } = buildFieldsValidity(this.inputValues);
 
-    if (!isFormValid) {
-      throw new KushkiError(ERRORS.E007);
+      if (!isFormValid) {
+        throw new KushkiError(ERRORS.E007);
+      }
+
+      const cardService = new CardService(this.kushkiInstance);
+
+      const requestTokenBody: DeviceTokenRequest =
+        await cardService.createDeviceTokenRequestBody(this.options.body);
+
+      const tokenResponse: CardTokenResponse =
+        await this.inputValues.cvv!.hostedField!.requestSecureDeviceToken(
+          this.kushkiInstance,
+          requestTokenBody,
+          `${PathEnum.device_token}${requestTokenBody.subscriptionId}/tokens`,
+          buildCustomHeaders()
+        );
+
+      return cardService.validateToken(tokenResponse);
+    } catch (error) {
+      return await UtilsProvider.validErrors(error, ERRORS.E002);
     }
-
-    const cardService = new CardService(this.kushkiInstance);
-
-    const requestTokenBody: DeviceTokenRequest =
-      await cardService.createDeviceTokenRequestBody(this.options.body);
-
-    const tokenResponse: CardTokenResponse =
-      await this.inputValues.cvv!.hostedField!.requestSecureDeviceToken(
-        this.kushkiInstance,
-        requestTokenBody,
-        `${PathEnum.device_token}${requestTokenBody.subscriptionId}/tokens`,
-        buildCustomHeaders()
-      );
-
-    return cardService.validateToken(tokenResponse);
   }
 
   public onFieldFocus(

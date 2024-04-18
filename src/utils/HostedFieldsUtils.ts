@@ -11,6 +11,9 @@ import {
 import { FieldEventsEnum } from "infrastructure/FieldEventsEnum.ts";
 import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
+import { IKushki } from "repository/IKushki.ts";
+import { CardOptions } from "types/card_options";
+import { SecureDeviceTokenOptions } from "types/secure_device_token_request";
 
 const _getContainers = (inputValues: CardFieldValues) => {
   return Object.values<FieldInstance>(inputValues).map(
@@ -187,3 +190,12 @@ export const renderFields = async (
 export const buildCustomHeaders = () => ({
   [KInfo.KUSHKI_INFO_HEADER]: KInfo.buildKushkiInfo()
 });
+
+export const validateInitParams = (
+  kushkiInstance: IKushki,
+  options: CardOptions | SecureDeviceTokenOptions
+) => {
+  if (!options || !kushkiInstance) {
+    throw new KushkiError(ERRORS.E012);
+  }
+};

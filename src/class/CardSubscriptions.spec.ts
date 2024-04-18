@@ -271,5 +271,17 @@ describe("CardSubscriptions - class - tests", () => {
 
       expect(tokenResponse).toEqual(tokenMock);
     });
+
+    it("should return ERR002 when requestSecureDeviceToken fails", async () => {
+      mockFormValidity(true);
+      // @ts-ignore
+      cardSubscription.inputValues.cvv.hostedField.requestSecureDeviceToken =
+        jest.fn().mockRejectedValue("error");
+      try {
+        await cardSubscription.requestDeviceToken();
+      } catch (error: any) {
+        expect(error.code).toEqual("E002");
+      }
+    });
   });
 });
