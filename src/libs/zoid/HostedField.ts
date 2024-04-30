@@ -1,10 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as zoid from "@krakenjs/zoid/dist/zoid.frameworks";
-import { CardOptions } from "types/card_options";
 import { CardTokenResponse } from "types/card_token_response";
-import { SiftScienceObject } from "types/sift_science_object";
-import { DeferredValues } from "types/card_fields_values";
 import { IKushki } from "Kushki";
 import { KUSHKI_HOSTED_FIELD_TAG } from "src/constant/HostedFieldTags.ts";
 import { FieldOptions } from "src/interfaces/FieldOptions.ts";
@@ -22,34 +19,32 @@ const KushkiHostedFields = zoid.create({
     return {
       requestPaymentToken: (
         kushkiInstance: IKushki,
-        options: CardOptions,
+        body: object,
         requestPath: string,
-        jwt?: string,
-        siftScienceSession?: SiftScienceObject,
-        deferredValues?: DeferredValues
+        cardTokenHeaders: object,
+        isFullResponse: boolean
       ): Promise<CardTokenResponse> =>
-        getExports().then((exports: any) =>
-          exports.requestPaymentToken(
+        getExports().then((exports: any) => {
+          return exports.requestPaymentToken({
+            body,
+            cardTokenHeaders,
+            isFullResponse,
             kushkiInstance,
-            options,
-            requestPath,
-            jwt,
-            siftScienceSession,
-            deferredValues
-          )
-        ),
+            requestPath
+          });
+        }),
       requestSecureDeviceToken: (
         kushkiInstance: IKushki,
         body: DeviceTokenRequest,
         requestPath: string,
-        customHeaders: object
+        cardTokenHeaders: object
       ): Promise<CardTokenResponse> =>
         getExports().then((exports: any) =>
           exports.requestSecureDeviceToken({
-            kushkiInstance,
             body,
-            requestPath,
-            customHeaders
+            cardTokenHeaders,
+            kushkiInstance,
+            requestPath
           })
         )
     };

@@ -29,6 +29,9 @@
           "type": "number"
         }
       }
+    },
+    "cardInfo": {
+      "$ref": "../../src/schema/card_token_response.json#/definitions/CardInfo"
     }
   },
   "required": ["token"]

@@ -3,6 +3,27 @@
   "title": "CardTokenResponse",
   "type": "object",
   "additionalProperties": false,
+  "definitions": {
+    "CardInfo": {
+      "type": "object",
+      "properties": {
+        "expirationDate": {
+          "type": "string"
+        },
+        "bin": {
+          "type": "string"
+        },
+        "lastFourDigits": {
+          "type": "string"
+        },
+        "brand": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": ["expirationDate", "bin", "lastFourDigits", "brand"]
+    }
+  },
   "properties": {
     "token": {
       "type": "string",
@@ -33,6 +54,9 @@
           "type": "string"
         }
       }
+    },
+    "cardInfo": {
+      "$ref": "#/definitions/CardInfo"
     }
   },
   "required": ["token"]
