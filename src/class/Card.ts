@@ -2,7 +2,6 @@ import { KushkiGateway } from "gateway/KushkiGateway.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import { isEmpty, isNil } from "lodash";
 import { FieldOptions } from "src/interfaces/FieldOptions.ts";
 import { IKushki } from "Kushki";
 import {
@@ -738,14 +737,15 @@ export class Card implements ICard {
     const inputOTPValidation: CardTokenResponse | undefined =
       await this.validInputOTP(tokenResponse);
 
-    if (!isNil(inputOTPValidation)) return inputOTPValidation;
+    if (inputOTPValidation !== undefined && inputOTPValidation !== null)
+      return inputOTPValidation;
   }
 
   private async validInputOTP(
     token: CardTokenResponse
   ): Promise<CardTokenResponse | undefined> {
     const hasOTP: boolean =
-      token.secureService === OTPEnum.secureService && !isEmpty(token.secureId);
+      token.secureService === OTPEnum.secureService && token.secureId !== "";
 
     if (hasOTP) {
       this.showOtpAndHideInputs();
