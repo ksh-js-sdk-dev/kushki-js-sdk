@@ -8,6 +8,7 @@ import {
 } from "Kushki/Card";
 import { KushkiHostedFields } from "libs/zoid/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
+import { CREDIT_TYPE } from "src/constant/CreditCardEspecifications.ts";
 import { FieldTypeEnum } from "types/form_validity";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
@@ -47,7 +48,7 @@ describe("Card test", () => {
       months: ["1"],
       monthsOfGrace: ["1"],
       name: "",
-      type: "all"
+      type: CREDIT_TYPE.ALL
     }
   ]);
   const binInfoResponseDefault: BinInfoResponse = {
@@ -148,7 +149,7 @@ describe("Card test", () => {
     const cardInstance = await Card.initCardToken(kushki, options);
 
     const deferredValue = {
-      creditType: "all",
+      creditType: CREDIT_TYPE.ALL,
       graceMonths: 0,
       isDeferred: true,
       months: 0
@@ -356,7 +357,7 @@ describe("Card test", () => {
 
     beforeEach(() => {
       deferredValueDefault = {
-        creditType: "all",
+        creditType: CREDIT_TYPE.ALL,
         graceMonths: 0,
         isDeferred: true,
         months: 1
@@ -583,7 +584,7 @@ describe("Card test", () => {
       const cardInstance = await Card.initCardToken(kushki, options);
 
       const deferredValue = {
-        creditType: "all",
+        creditType: CREDIT_TYPE.ALL,
         graceMonths: 0,
         isDeferred: true,
         months: 1

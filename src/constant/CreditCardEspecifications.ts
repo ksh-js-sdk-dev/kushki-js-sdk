@@ -9,3 +9,7 @@ export const CREDIT_CARD_ESPECIFICATIONS: CreditCardEspecificationsType = {
   cardFinalBinPlaceSift: 6,
   cardInitialBinPlace: 0
 };
+
+export const CREDIT_TYPE = {
+  ALL: "all"
+};
