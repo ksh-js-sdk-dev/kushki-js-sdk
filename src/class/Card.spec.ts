@@ -8,6 +8,7 @@ import {
 } from "Kushki/Card";
 import { KushkiHostedFields } from "libs/zoid/HostedField.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
+import { CREDIT_TYPE } from "src/constant/CreditCardEspecifications.ts";
 import { FieldTypeEnum } from "types/form_validity";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CountryEnum } from "infrastructure/CountryEnum.ts";
@@ -47,7 +48,7 @@ describe("Card test", () => {
       months: ["1"],
       monthsOfGrace: ["1"],
       name: "",
-      type: "all"
+      type: CREDIT_TYPE.ALL
     }
   ]);
   const binInfoResponseDefault: BinInfoResponse = {
@@ -148,7 +149,7 @@ describe("Card test", () => {
     const cardInstance = await Card.initCardToken(kushki, options);
 
     const deferredValue = {
-      creditType: "all",
+      creditType: CREDIT_TYPE.ALL,
       graceMonths: 0,
       isDeferred: true,
       months: 0
@@ -356,7 +357,7 @@ describe("Card test", () => {
 
     beforeEach(() => {
       deferredValueDefault = {
-        creditType: "all",
+        creditType: CREDIT_TYPE.ALL,
         graceMonths: 0,
         isDeferred: true,
         months: 1
@@ -519,6 +520,27 @@ describe("Card test", () => {
       expect(response.token).toEqual(tokenMock);
     });
 
+    it("it should execute Payment token request and return deferred values when have deferred type", async () => {
+      mockDeferredField();
+
+      const cardInstance = await Card.initCardToken(kushki, options);
+
+      mockValidityInputs();
+
+      KushkiHostedFields.mock.calls[4][0].handleOnDeferredChange({
+        ...deferredValueDefault,
+        creditType: "03"
+      });
+
+      const response = await cardInstance.requestToken();
+
+      expect(cardInstance["inputValues"].deferred!.value).toEqual({
+        ...deferredValueDefault,
+        creditType: "03"
+      });
+      expect(response.token).toEqual(tokenMock);
+    });
+
     it("it shouldn't execute Card token request but deferred values are required", async () => {
       mockDeferredField();
 
@@ -562,7 +584,7 @@ describe("Card test", () => {
       const cardInstance = await Card.initCardToken(kushki, options);
 
       const deferredValue = {
-        creditType: "all",
+        creditType: CREDIT_TYPE.ALL,
         graceMonths: 0,
         isDeferred: true,
         months: 1
@@ -637,6 +659,33 @@ describe("Card test", () => {
       const response = await cardInstance.requestToken();
 
       expect(response.token).toEqual(tokenMock);
+    });
+
+    it("it should execute Subscription token request and return token with cardInfo when fullResponse is true", async () => {
+      const cardInfoMock = {
+        bin: "42424242",
+        brand: "visa",
+        expirationDate: "12/34",
+        lastFourDigits: "4242"
+      };
+
+      options.isSubscription = true;
+      options.fullResponse = true;
+      delete options.amount;
+      mockRequestPaymentToken(
+        jest
+          .fn()
+          .mockResolvedValue({ cardInfo: cardInfoMock, token: tokenMock })
+      );
+
+      const cardInstance = await initCardToken(kushki, options);
+
+      mockValidityInputs();
+
+      const response = await cardInstance.requestToken();
+
+      expect(response.token).toEqual(tokenMock);
+      expect(response.cardInfo).toEqual(cardInfoMock);
     });
 
     describe("3DS Tokens Validation", () => {

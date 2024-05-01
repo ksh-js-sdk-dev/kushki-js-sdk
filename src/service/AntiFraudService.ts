@@ -11,7 +11,6 @@ import { CardTokenResponse } from "types/card_token_response";
 import { TokenResponse } from "types/token_response";
 import { getJwtIf3dsEnabled } from "utils/3DSUtils.ts";
 import { Sandbox3DSProvider } from "provider/Sandbox3DSProvider.ts";
-import { get, isNil } from "lodash";
 import { ThreeDSEnum } from "infrastructure/ThreeDSEnum.ts";
 
 export class AntiFraudService {
@@ -56,12 +55,13 @@ export class AntiFraudService {
     const cardinalSandboxProvider: Sandbox3DSProvider =
       new Sandbox3DSProvider();
 
-    if (isNil(cardTokenResponse.security)) throw new KushkiError(ERRORS.E012);
-
     if (
-      get(cardTokenResponse, "security.paReq", ThreeDSEnum.SANDBOX) ===
-      ThreeDSEnum.SANDBOX
+      cardTokenResponse.security === null ||
+      cardTokenResponse.security === undefined
     )
+      throw new KushkiError(ERRORS.E012);
+
+    if (cardTokenResponse.security.paReq === ThreeDSEnum.SANDBOX)
       return cardinalSandboxProvider.validateSandbox3dsToken(
         kushkiInstance,
         cardTokenResponse

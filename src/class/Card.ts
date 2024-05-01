@@ -20,7 +20,10 @@ import {
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { ICard } from "repository/ICard.ts";
 import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
-import { CREDIT_CARD_ESPECIFICATIONS } from "src/constant/CreditCardEspecifications.ts";
+import {
+  CREDIT_CARD_ESPECIFICATIONS,
+  CREDIT_TYPE
+} from "src/constant/CreditCardEspecifications.ts";
 import { BinInfoResponse } from "types/bin_info_response";
 import { DeferredValues } from "types/card_fields_values";
 import {
@@ -75,6 +78,7 @@ export class Card implements ICard {
   private readonly otpInputOTP: string = "onInputOTP";
   private readonly deferredDefaultWidth: number = 300;
   private firstHostedFieldType: string = "";
+  private currentBrand: string = "";
   private rollbar: IRollbarGateway;
 
   private constructor(kushkiInstance: IKushki, options: CardOptions) {
@@ -145,29 +149,27 @@ export class Card implements ICard {
         merchantSettings,
         sandbox3DS: this._sandbox3DSProvider
       });
+      const deferredValues: DeferredValues = this.getDeferredValues();
+
+      let cardTokenResponse: CardTokenResponse;
 
       if (jwt) {
-        return this.buildTokenResponse(
-          await this.request3DSToken(jwt, merchantSettings, siftScienceSession)
+        cardTokenResponse = await this.request3DSToken(
+          jwt,
+          merchantSettings,
+          siftScienceSession
         );
       } else {
-        const cardTokenResponse: CardTokenResponse =
-          await this.requestTokenGateway(
-            merchantSettings,
-            jwt,
-            siftScienceSession
-          );
-        const deferredValues: DeferredValues = this.getDeferredValues();
-
-        await this.validationOTPFLow(cardTokenResponse, deferredValues);
-
-        return Promise.resolve(
-          this.buildTokenResponse({
-            deferred: deferredValues,
-            token: cardTokenResponse.token
-          })
+        cardTokenResponse = await this.requestTokenGateway(
+          merchantSettings,
+          jwt,
+          siftScienceSession
         );
+
+        await this.validationOTPFLow(cardTokenResponse);
       }
+
+      return this.buildTokenResponse(cardTokenResponse, deferredValues);
     } catch (error) {
       return await UtilsProvider.validErrors(error, ERRORS.E002);
     }
@@ -269,29 +271,29 @@ export class Card implements ICard {
   }
 
   private buildTokenResponse = (
-    tokenResponseRaw: TokenResponse
+    tokenResponseRaw: CardTokenResponse,
+    deferredValues: DeferredValues
   ): TokenResponse => {
     const tokenResponseCreated: TokenResponse = {
       token: tokenResponseRaw.token
     };
 
-    /* istanbul ignore next */
-    if (
-      !tokenResponseRaw.deferred ||
-      tokenResponseRaw.deferred.creditType === ""
-    )
-      return tokenResponseCreated;
+    if (deferredValues.isDeferred) {
+      if (deferredValues.creditType === CREDIT_TYPE.ALL)
+        tokenResponseCreated.deferred = {
+          months: deferredValues.months
+        };
+      else
+        tokenResponseCreated.deferred = {
+          creditType: deferredValues.creditType,
+          graceMonths: deferredValues.graceMonths,
+          months: deferredValues.months
+        };
+    }
 
-    if (tokenResponseRaw.deferred.creditType === "all") {
-      tokenResponseCreated.deferred = {
-        months: tokenResponseRaw.deferred.months
-      };
-    } else {
-      tokenResponseCreated.deferred = {
-        creditType: tokenResponseRaw.deferred.creditType,
-        graceMonths: tokenResponseRaw.deferred.graceMonths,
-        months: tokenResponseRaw.deferred.months
-      };
+    if (this.options.fullResponse && tokenResponseRaw.cardInfo) {
+      tokenResponseCreated.cardInfo = tokenResponseRaw.cardInfo;
+      tokenResponseCreated.cardInfo.brand = this.currentBrand;
     }
 
     return tokenResponseCreated;
@@ -301,25 +303,17 @@ export class Card implements ICard {
     jwt: string,
     merchantSettings: MerchantSettingsResponse,
     siftScienceSession?: SiftScienceObject
-  ): Promise<TokenResponse> {
-    const deferredValues: DeferredValues = this.getDeferredValues();
-
+  ): Promise<CardTokenResponse> {
     if (merchantSettings.sandboxEnable) {
-      return this.getSandboxToken(
-        jwt,
-        merchantSettings,
-        deferredValues,
-        siftScienceSession
-      );
+      return this.getSandboxToken(jwt, merchantSettings, siftScienceSession);
     } else {
       const tokenResponse = await this.getCardinalToken(
         jwt,
         merchantSettings,
-        deferredValues,
         siftScienceSession
       );
 
-      await this.validationOTPFLow(tokenResponse, deferredValues);
+      await this.validationOTPFLow(tokenResponse);
 
       return tokenResponse;
     }
@@ -328,30 +322,27 @@ export class Card implements ICard {
   private async getSandboxToken(
     jwt: string,
     merchantSettings: MerchantSettingsResponse,
-    deferredValues: DeferredValues,
     siftScienceSession?: SiftScienceObject
-  ) {
-    const token = await this.requestTokenGateway(
+  ): Promise<CardTokenResponse> {
+    const token: CardTokenResponse = await this.requestTokenGateway(
       merchantSettings,
       jwt,
       siftScienceSession
     );
 
-    await this.validationOTPFLow(token, deferredValues);
+    await this.validationOTPFLow(token);
 
     return this._sandbox3DSProvider.validateSandbox3dsToken(
       this.kushkiInstance,
-      token,
-      deferredValues
+      token
     );
   }
 
   private async getCardinalToken(
     jwt: string,
     merchantSettings: MerchantSettingsResponse,
-    deferredValues: DeferredValues,
     siftScienceSession?: SiftScienceObject
-  ): Promise<TokenResponse> {
+  ): Promise<CardTokenResponse> {
     const tokenResponse: CardTokenResponse = await this.requestTokenGateway(
       merchantSettings,
       jwt,
@@ -360,8 +351,7 @@ export class Card implements ICard {
 
     return this._cardinal3DSProvider.validateCardinal3dsToken(
       this.kushkiInstance,
-      tokenResponse,
-      deferredValues
+      tokenResponse
     );
   }
 
@@ -377,17 +367,20 @@ export class Card implements ICard {
         ? PathEnum.card_subscription_token
         : PathEnum.card_token;
       const headers = buildCustomHeaders();
+      const body = {
+        ...this.options,
+        deferredValues,
+        jwt,
+        siftScienceSession
+      };
 
       const token = await this.inputValues[
         this.firstHostedFieldType
       ].hostedField.requestPaymentToken(
         this.kushkiInstance,
-        this.options,
+        body,
         requestPath,
-        headers,
-        jwt,
-        siftScienceSession,
-        deferredValues
+        headers
       );
 
       return Promise.resolve(token);
@@ -484,6 +477,8 @@ export class Card implements ICard {
   private setDefaultValues(options: CardOptions): CardOptions {
     return {
       ...options,
+      fullResponse:
+        Boolean(options.isSubscription) && Boolean(options.fullResponse),
       isSubscription: Boolean(options.isSubscription)
     };
   }
@@ -546,6 +541,7 @@ export class Card implements ICard {
         this.inputValues.cardNumber?.hostedField?.updateProps({
           brandIcon: brand
         });
+        this.currentBrand = brand;
 
         if (cardType !== "credit")
           await this.inputValues.deferred?.hostedField?.hide();
@@ -599,7 +595,10 @@ export class Card implements ICard {
       });
     }
 
-    if (deferredValues.isDeferred && deferredValues.creditType === "all") {
+    if (
+      deferredValues.isDeferred &&
+      deferredValues.creditType === CREDIT_TYPE.ALL
+    ) {
       this.inputValues.deferred?.hostedField?.resize({
         height: 110,
         width: this.deferredDefaultWidth
@@ -734,42 +733,28 @@ export class Card implements ICard {
     });
   }
 
-  private async validationOTPFLow(
-    tokenResponse: CardTokenResponse,
-    deferredValues: DeferredValues
-  ) {
-    const inputOTPValidation: TokenResponse | undefined =
-      await this.validInputOTP(
-        tokenResponse.token,
-        deferredValues,
-        tokenResponse.secureService,
-        tokenResponse.secureId
-      );
+  private async validationOTPFLow(tokenResponse: CardTokenResponse) {
+    const inputOTPValidation: CardTokenResponse | undefined =
+      await this.validInputOTP(tokenResponse);
 
-    if (inputOTPValidation !== undefined)
-      return this.buildTokenResponse(inputOTPValidation);
+    if (inputOTPValidation !== undefined && inputOTPValidation !== null)
+      return inputOTPValidation;
   }
 
   private async validInputOTP(
-    token: string,
-    deferredValues: DeferredValues,
-    secureService?: string,
-    secureId?: string
-  ): Promise<TokenResponse | undefined> {
+    token: CardTokenResponse
+  ): Promise<CardTokenResponse | undefined> {
     const hasOTP: boolean =
-      secureService === OTPEnum.secureService && secureId !== "";
+      token.secureService === OTPEnum.secureService && token.secureId !== "";
 
     if (hasOTP) {
       this.showOtpAndHideInputs();
-      const otpInputSuccess: boolean = await this.getOtpInput(secureId!);
+      const otpInputSuccess: boolean = await this.getOtpInput(token.secureId!);
 
       if (otpInputSuccess) {
         this.dispatchEventOTPValidation(OTPEventEnum.SUCCESS);
 
-        return Promise.resolve({
-          deferred: deferredValues,
-          token: token
-        });
+        return token;
       }
     }
 
