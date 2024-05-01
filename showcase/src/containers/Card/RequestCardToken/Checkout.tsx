@@ -52,7 +52,8 @@ export const CheckoutContainer = () => {
   const buildFieldsOptions = (
     amountValue: number,
     currencyValue: string,
-    isSubscription: boolean
+    isSubscription: boolean,
+    isFullResponse: boolean
   ): CardOptions => {
     return {
       ...optionsDefault,
@@ -61,6 +62,7 @@ export const CheckoutContainer = () => {
         subtotalIva0: amountValue
       },
       currency: currencyValue as Currency,
+      fullResponse: isFullResponse,
       isSubscription: isSubscription
     };
   };
@@ -69,7 +71,8 @@ export const CheckoutContainer = () => {
     publicMerchantIdDemo: string,
     amountValue: number,
     currencyValue: string,
-    isSubscription: boolean
+    isSubscription: boolean,
+    isFullResponse: boolean
   ): Promise<void> => {
     setDisplayHostedFields(true);
 
@@ -81,7 +84,8 @@ export const CheckoutContainer = () => {
       const options: CardOptions = buildFieldsOptions(
         amountValue,
         currencyValue,
-        isSubscription
+        isSubscription,
+        isFullResponse
       );
 
       setCardInstance(await initCardToken(kushkiInstance, options));

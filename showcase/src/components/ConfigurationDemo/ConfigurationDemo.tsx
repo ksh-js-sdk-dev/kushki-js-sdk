@@ -21,12 +21,15 @@ const ConfigurationDemo = ({
   const [inputAmount, setInputAmount] = useState<string>("");
   const [inputIsSubscription, setInputIsSubscription] =
     useState<boolean>(false);
+  const [inputIsFullResponse, setInputIsFullResponse] =
+    useState<boolean>(false);
 
   const resetInformation = (): void => {
     setInputMerchantId("");
     setInputAmount("");
     setInputCurrency("");
     setInputIsSubscription(false);
+    setInputIsFullResponse(false);
   };
 
   const setInputsAndOptionsHostedField = (
@@ -90,7 +93,8 @@ const ConfigurationDemo = ({
       inputMerchantId,
       +inputAmount,
       inputCurrency!,
-      inputIsSubscription
+      inputIsSubscription,
+      inputIsFullResponse
     );
     setIsActiveConfigBtn(false);
   };
@@ -191,14 +195,27 @@ const ConfigurationDemo = ({
             <input
               className={"input-check"}
               type="checkbox"
-              value=""
-              defaultChecked={inputIsSubscription}
-              onClick={() => setInputIsSubscription(!inputIsSubscription)}
+              checked={inputIsSubscription}
+              onChange={() => setInputIsSubscription(!inputIsSubscription)}
             />
             <span className="checkmark"></span>
             Crear suscripción
           </label>
         </div>
+        {inputIsSubscription && (
+          <div className="mui-checkbox div-container">
+            <label className="label-container">
+              <input
+                className={"input-check"}
+                type="checkbox"
+                checked={inputIsFullResponse}
+                onChange={() => setInputIsFullResponse(!inputIsFullResponse)}
+              />
+              <span className="checkmark"></span>
+              Full Response
+            </label>
+          </div>
+        )}
         <button
           className={"mui-btn mui-btn--primary mui-btn--small button-border"}
           data-testid="tokenRequestBtn"

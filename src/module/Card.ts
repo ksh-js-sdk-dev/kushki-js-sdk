@@ -100,7 +100,7 @@ import { ICardSubscriptions } from "repository/ICardSubscriptions.ts";
  * }
  * ```
  *
- * ##### Card Token to subscriptions, prevent autofill and custom fields
+ * ##### Card Token to subscriptions, full response, prevent autofill and custom fields
  *
  * ###### Definition containers in html
  * ```html
@@ -119,6 +119,7 @@ import { ICardSubscriptions } from "repository/ICardSubscriptions.ts";
  *
  * ###### Init card token instance
  * - To enable subscription transactions the `isSubscription` flag must be true
+ * - To enable fullResponse the `fullResponse` flag must be true, ony for subscriptions
  * - To enable prevent autofill in fields the `preventAutofill` flag must be true
  *
  * ```ts
@@ -168,6 +169,7 @@ import { ICardSubscriptions } from "repository/ICardSubscriptions.ts";
  *      }
  *   },
  *   isSubscription: true, //To Enable subscriptions this flag must be true
+ *   fullResponse: true, //To obtain card info from `TokenResponse` when `isSubscription: true`
  *   preventAutofill: true, //To Enable prevent autofill in fields this flag must be true
  * }
  *
@@ -553,7 +555,8 @@ export type { CardFieldValues, FieldInstance } from "types/card_fields_values";
 export type { CardTokenResponse } from "types/card_token_response";
 export type {
   TokenResponse,
-  DeferredValuesResponse
+  DeferredValuesResponse,
+  CardInfo
 } from "types/token_response";
 export type { Fields, FieldValidity, FormValidity } from "types/form_validity";
 export type { DeferredByBinOptionsResponse } from "types/deferred_by_bin_response";

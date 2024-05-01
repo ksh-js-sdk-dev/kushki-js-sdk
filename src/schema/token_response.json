@@ -4,6 +4,33 @@
   "description": "@public Contains the card token, and the deferred value if it exists",
   "type": "object",
   "additionalProperties": false,
+  "definitions": {
+    "CardInfo": {
+      "description": "@public Contains the public card data that was collected in the form with the hosted fields",
+      "title": "CardInfo",
+      "type": "object",
+      "properties": {
+        "expirationDate": {
+          "description": "@typeParam  string - Expiration Date of the Card",
+          "type": "string"
+        },
+        "bin": {
+          "description": "@typeParam  string - Current bin the Card number",
+          "type": "string"
+        },
+        "lastFourDigits": {
+          "description": "@typeParam  string - Last four digits of the Card number",
+          "type": "string"
+        },
+        "brand": {
+          "description": "@typeParam  string - Brand obtained from the Card number",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": ["expirationDate", "bin", "lastFourDigits", "brand"]
+    }
+  },
   "properties": {
     "token": {
       "description": "@typeParam string - Is the card token value for the payment process",
@@ -31,7 +58,7 @@
       }
     },
     "cardInfo": {
-      "$ref": "../../src/schema/card_token_response.json#/definitions/CardInfo"
+      "$ref": "../../src/schema/card_token_response.json#/properties/cardInfo"
     }
   },
   "required": ["token"]
