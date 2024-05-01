@@ -20,7 +20,10 @@ import {
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { ICard } from "repository/ICard.ts";
 import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
-import { CREDIT_CARD_ESPECIFICATIONS } from "src/constant/CreditCardEspecifications.ts";
+import {
+  CREDIT_CARD_ESPECIFICATIONS,
+  CREDIT_TYPE
+} from "src/constant/CreditCardEspecifications.ts";
 import { BinInfoResponse } from "types/bin_info_response";
 import { DeferredValues } from "types/card_fields_values";
 import {
@@ -276,7 +279,7 @@ export class Card implements ICard {
     };
 
     if (deferredValues.isDeferred) {
-      if (deferredValues.creditType === "all")
+      if (deferredValues.creditType === CREDIT_TYPE.ALL)
         tokenResponseCreated.deferred = {
           months: deferredValues.months
         };
@@ -592,7 +595,10 @@ export class Card implements ICard {
       });
     }
 
-    if (deferredValues.isDeferred && deferredValues.creditType === "all") {
+    if (
+      deferredValues.isDeferred &&
+      deferredValues.creditType === CREDIT_TYPE.ALL
+    ) {
       this.inputValues.deferred?.hostedField?.resize({
         height: 110,
         width: this.deferredDefaultWidth
@@ -731,7 +737,8 @@ export class Card implements ICard {
     const inputOTPValidation: CardTokenResponse | undefined =
       await this.validInputOTP(tokenResponse);
 
-    if (inputOTPValidation !== undefined) return inputOTPValidation;
+    if (inputOTPValidation !== undefined && inputOTPValidation !== null)
+      return inputOTPValidation;
   }
 
   private async validInputOTP(
