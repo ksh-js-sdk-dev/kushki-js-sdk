@@ -6,10 +6,13 @@ export interface IConfigurationDemoProps {
     publicMerchantIdDemo: string,
     amountValue: number,
     currencyValue: string,
-    isSubscription: boolean
+    isSubscription: boolean,
+    isFullResponse: boolean
   ) => Promise<void>;
   listButtonsActive: IDefaultInformation;
-  setListButtonsActive: React.Dispatch<React.SetStateAction<IDefaultInformation>>;
+  setListButtonsActive: React.Dispatch<
+    React.SetStateAction<IDefaultInformation>
+  >;
 }
 
 export interface IDefaultInformation {

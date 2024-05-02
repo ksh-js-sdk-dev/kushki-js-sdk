@@ -25,8 +25,23 @@ const ResultsPayment = ({ token, errorMessage }: IResultsPaymentProps) => {
     return deferredMessage;
   };
 
+  const buildCardInfoMessage = (token: TokenResponse): string => {
+    if (token.cardInfo)
+      return `\nCard Info:
+      expirationDate: ${token.cardInfo.expirationDate}
+      bin: ${token.cardInfo.bin}
+      lastFourDigits: ${token.cardInfo.lastFourDigits}
+      brand: ${token.cardInfo.brand}`;
+
+    return "";
+  };
+
   useEffect(() => {
-    if (token) setMessage((token.token += buildDeferredMessage(token)));
+    if (token) {
+      setMessage(
+        token.token + buildDeferredMessage(token) + buildCardInfoMessage(token)
+      );
+    }
   }, [token]);
 
   return (
