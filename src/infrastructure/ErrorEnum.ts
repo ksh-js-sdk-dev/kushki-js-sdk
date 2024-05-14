@@ -24,7 +24,8 @@ export enum ErrorCode {
   E016 = "E016",
   E017 = "E017",
   E018 = "E018",
-  E019 = "E019"
+  E019 = "E019",
+  E020 = "E020"
 }
 
 /**
@@ -107,6 +108,10 @@ export enum ErrorCode {
  *   E019: {
  *     code: "E019",
  *     message: "Comercio no tiene activo 3DS"
+ *   },
+ *   E020: {
+ *     code: "E020",
+ *     message: "Error, configuración de campos requeridos no encontrada"
  *   }
  * }
  * ```
@@ -188,5 +193,9 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E019]: {
     code: ErrorCode.E019,
     message: "Comercio no tiene activo 3DS"
+  },
+  [ErrorCode.E020]: {
+    code: ErrorCode.E020,
+    message: "Error, configuración de campos requeridos no encontrada"
   }
 };

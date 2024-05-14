@@ -1,8 +1,17 @@
 import { KushkiGateway } from "gateway/KushkiGateway.ts";
+import { RollbarGateway } from "gateway/RollbarGateway.ts";
+import { CountryEnum } from "infrastructure/CountryEnum.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
+import {
+  FieldEventsEnum,
+  FieldsMethodTypesEnum
+} from "infrastructure/FieldEventsEnum.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import { FieldOptions } from "src/interfaces/FieldOptions.ts";
+import { KushkiError, KushkiErrorAttr } from "infrastructure/KushkiError.ts";
+import { OTPEnum } from "infrastructure/OTPEnum.ts";
+import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
+import { PathEnum } from "infrastructure/PathEnum.ts";
 import { IKushki } from "Kushki";
 import {
   DestroyKushkiHostedFields,
@@ -17,15 +26,24 @@ import {
   Field,
   TokenResponse
 } from "module/Card.ts";
-import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { ICard } from "repository/ICard.ts";
+import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
+import { IKushkiGateway } from "repository/IKushkiGateway.ts";
+import { IRollbarGateway } from "repository/IRollbarGateway.ts";
+import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
 import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
 import {
   CREDIT_CARD_ESPECIFICATIONS,
   CREDIT_TYPE
 } from "src/constant/CreditCardEspecifications.ts";
+import { FieldOptions } from "src/interfaces/FieldOptions.ts";
+import { Cardinal3DSProvider } from "src/provider/Cardinal3DSProvider.ts";
+import { Sandbox3DSProvider } from "src/provider/Sandbox3DSProvider.ts";
+import { SiftScienceProvider } from "src/provider/SiftScienceProvider.ts";
+import { UtilsProvider } from "src/provider/UtilsProvider.ts";
 import { BinInfoResponse } from "types/bin_info_response";
 import { DeferredValues } from "types/card_fields_values";
+import { Styles } from "types/card_options";
 import {
   FieldTypeEnum,
   FieldValidity,
@@ -34,35 +52,22 @@ import {
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { SecureOtpResponse } from "types/secure_otp_response";
 import { SiftScienceObject } from "types/sift_science_object";
-import { CountryEnum } from "infrastructure/CountryEnum.ts";
-import { KushkiError, KushkiErrorAttr } from "infrastructure/KushkiError.ts";
-import { OTPEnum } from "infrastructure/OTPEnum.ts";
-import { OTPEventEnum } from "infrastructure/OTPEventEnum.ts";
-import { Styles } from "types/card_options";
-import { buildCssStyle } from "utils/BuildCssStyle.ts";
-import { UtilsProvider } from "src/provider/UtilsProvider.ts";
-import { PathEnum } from "infrastructure/PathEnum.ts";
-import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
-import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
-import { IRollbarGateway } from "repository/IRollbarGateway.ts";
-import { RollbarGateway } from "gateway/RollbarGateway.ts";
-import { SiftScienceProvider } from "src/provider/SiftScienceProvider.ts";
-import { Cardinal3DSProvider } from "src/provider/Cardinal3DSProvider.ts";
-import { Sandbox3DSProvider } from "src/provider/Sandbox3DSProvider.ts";
 import { getJwtIf3dsEnabled } from "utils/3DSUtils.ts";
+import { buildCssStyle } from "utils/BuildCssStyle.ts";
 import {
   addEventListener,
   buildCustomHeaders,
   dispatchCustomEvent,
   focusField,
+  getInitialFieldValidation,
   hideContainers,
+  isRequiredFlagInCvv,
   renderFields,
   resetField,
   showContainers,
   updateValidity,
   validateInitParams
 } from "utils/HostedFieldsUtils.ts";
-import { FieldEventsEnum } from "infrastructure/FieldEventsEnum.ts";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
@@ -105,7 +110,11 @@ export class Card implements ICard {
     options: CardOptions
   ): Promise<Card> {
     try {
-      validateInitParams(kushkiInstance, options);
+      validateInitParams(
+        kushkiInstance,
+        options,
+        FieldsMethodTypesEnum.CARD_TOKEN
+      );
 
       const payment: Card = new Card(kushkiInstance, options);
 
@@ -637,6 +646,12 @@ export class Card implements ICard {
         this.onChangeDeferred(values);
     }
 
+    if (fieldType === InputModelEnum.CVV) {
+      if (isRequiredFlagInCvv(field, this.options.isSubscription))
+        options.isRequired = field.isRequired;
+      else options.isRequired = true;
+    }
+
     return options;
   }
 
@@ -666,13 +681,18 @@ export class Card implements ICard {
         hostedField,
         selector: field.selector,
         validity: {
-          isValid: false
+          isValid: getInitialFieldValidation(
+            options,
+            this.options.isSubscription
+          )
         }
       };
     }
+
     if (this.inputValues.deferred) {
       this.inputValues.deferred.validity = { isValid: true };
     }
+
     if (this.inputValues.otp) {
       this.inputValues.otp.validity = { isValid: true };
     }
