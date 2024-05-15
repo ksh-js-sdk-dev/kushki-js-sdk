@@ -23,7 +23,8 @@ export enum ErrorCode {
   E015 = "E015",
   E016 = "E016",
   E017 = "E017",
-  E018 = "E018"
+  E018 = "E018",
+  E019 = "E019"
 }
 
 /**
@@ -102,6 +103,10 @@ export enum ErrorCode {
  *   E018: {
  *     code: "E018",
  *     message: "Longitud de tarjeta inválida"
+ *   },
+ *   E019: {
+ *     code: "E019",
+ *     message: "Comercio no tiene activo 3DS"
  *   }
  * }
  * ```
@@ -179,5 +184,9 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E018]: {
     code: ErrorCode.E018,
     message: "Longitud de tarjeta inválida"
+  },
+  [ErrorCode.E019]: {
+    code: ErrorCode.E019,
+    message: "Comercio no tiene activo 3DS"
   }
 };

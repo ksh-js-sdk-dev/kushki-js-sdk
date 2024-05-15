@@ -1,7 +1,5 @@
 import { IKushki } from "Kushki";
-import { TokenResponse } from "types/token_response";
 import { CardTokenResponse } from "types/card_token_response";
-import { DeferredValues } from "types/card_fields_values";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import {
@@ -27,22 +25,15 @@ export class Sandbox3DSProvider implements ISandbox3DSProvider {
 
   public async validateSandbox3dsToken(
     kushkiInstance: IKushki,
-    cardTokenResponse: CardTokenResponse,
-    deferredValues?: DeferredValues
-  ): Promise<TokenResponse> {
+    cardTokenResponse: CardTokenResponse
+  ): Promise<CardTokenResponse> {
     if (tokenNotNeedsAuth(cardTokenResponse)) {
-      return Promise.resolve({
-        deferred: deferredValues,
-        token: cardTokenResponse.token
-      });
+      return cardTokenResponse;
     }
     if (tokenHasAllSecurityProperties(cardTokenResponse, true)) {
       await this._launch3DSSandboxValidation(kushkiInstance, cardTokenResponse);
 
-      return Promise.resolve({
-        deferred: deferredValues,
-        token: cardTokenResponse.token
-      });
+      return cardTokenResponse;
     }
 
     return Promise.reject(new KushkiError(ERRORS.E005));

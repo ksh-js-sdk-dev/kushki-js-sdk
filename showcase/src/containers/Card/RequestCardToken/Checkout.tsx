@@ -1,4 +1,4 @@
-import { IKushki, init, KushkiError } from "Kushki";
+import { IKushki, init } from "Kushki";
 import {
   CardOptions,
   Currency,
@@ -8,7 +8,6 @@ import {
   ICard,
   initCardToken,
   TokenResponse,
-  DeferredValuesResponse,
   InputModelEnum
 } from "Kushki/Card";
 import { useEffect, useState } from "react";
@@ -19,81 +18,93 @@ import ResultsPayment from "../../../components/ConfigurationDemo/Components/Res
 import HostedFields from "../../../components/HostedFields/HostedFields.tsx";
 import { IDefaultInformation } from "../../../components/ConfigurationDemo/ConfigurationDemo.interface.ts";
 import { optionsDefault } from "./Checkout.constants.ts";
+import { ContainerDemo } from "../../../components/ContainerDemo/ContainerDemo.tsx";
+
+const initialFieldsValidity: Fields = {
+  cardholderName: { isValid: false },
+  cardNumber: { isValid: false },
+  cvv: { isValid: false },
+  deferred: { isValid: false },
+  expirationDate: { isValid: false }
+};
 
 export const CheckoutContainer = () => {
-  const [token, setToken] = useState<string>("");
-  const [deferredValues, setDeferredValues] = useState<
-    DeferredValuesResponse | undefined
-  >({});
-  const [cardInstance, setCardinstance] = useState<ICard>();
-  const [fieldsValidityDemo, setFieldsValidityDemo] = useState<Fields>({
-    cardholderName: { isValid: false },
-    cardNumber: { isValid: false },
-    cvv: { isValid: false },
-    deferred: { isValid: false },
-    expirationDate: { isValid: false }
-  });
+  const [token, setToken] = useState<TokenResponse>();
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [cardInstance, setCardInstance] = useState<ICard>();
+  const [fieldsValidityDemo, setFieldsValidityDemo] = useState<Fields>(
+    initialFieldsValidity
+  );
   const [showOTP, setShowOTP] = useState<boolean>(false);
   const [errorOTP, setErrorOTP] = useState<string>("");
-  const [currencyOptions, setCurrencyOptions] = useState<Currency | undefined>(
-    undefined
-  );
-  const [amountOptions, setAmountOptions] = useState<number>(0);
-  const [isSubscriptionOption, setIsSubscriptionOption] =
-    useState<boolean>(false);
-  const [publicMerchantIdDemo, setPublicMerchantIdDemo] = useState<string>("");
   const [displayHostedFields, setDisplayHostedFields] =
     useState<boolean>(false);
-  const [buttonActive, setButtonActive] = useState<IDefaultInformation>({
-    approved: false,
-    declined: false,
-    otp: false,
-    threeDomainSecure: false
-  });
+  const [listButtonsActive, setListButtonsActive] =
+    useState<IDefaultInformation>({
+      approved: false,
+      declined: false,
+      otp: false,
+      threeDomainSecure: false
+    });
   const [disablePaymentButton, setDisablePaymentButton] =
     useState<boolean>(false);
 
-  const [errorHostedFields, setErrorHostedFields] = useState<boolean>(true);
-
-  const options: CardOptions = {
-    ...optionsDefault,
-    amount: {
-      ...optionsDefault.amount!,
-      subtotalIva0: amountOptions
-    },
-    currency: currencyOptions!,
-    isSubscription: isSubscriptionOption
+  const buildFieldsOptions = (
+    amountValue: number,
+    currencyValue: string,
+    isSubscription: boolean,
+    isFullResponse: boolean
+  ): CardOptions => {
+    return {
+      ...optionsDefault,
+      amount: {
+        ...optionsDefault.amount!,
+        subtotalIva0: amountValue
+      },
+      currency: currencyValue as Currency,
+      fullResponse: isFullResponse,
+      isSubscription: isSubscription
+    };
   };
 
-  const initKushkiInstance = async (): Promise<void> => {
+  const initKushkiInstance = async (
+    publicMerchantIdDemo: string,
+    amountValue: number,
+    currencyValue: string,
+    isSubscription: boolean,
+    isFullResponse: boolean
+  ): Promise<void> => {
+    setDisplayHostedFields(true);
+
     try {
       const kushkiInstance: IKushki = await init({
         inTest: true,
         publicCredentialId: publicMerchantIdDemo
       });
+      const options: CardOptions = buildFieldsOptions(
+        amountValue,
+        currencyValue,
+        isSubscription,
+        isFullResponse
+      );
 
-      if (kushkiInstance) {
-        setCardinstance(await initCardToken(kushkiInstance, options));
-      }
-      // TODO validate remove ts lint warnings
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-    } catch (e: KushkiError) {
-      console.log(e.message);
+      setCardInstance(await initCardToken(kushkiInstance, options));
+    } catch (e: any) {
+      setErrorMessage(e.message);
     }
   };
 
   const getToken = async () => {
     if (cardInstance) {
       try {
+        setToken(undefined);
+        setErrorMessage("");
         setDisablePaymentButton(true);
-        setToken("");
         const token: TokenResponse = await cardInstance.requestToken();
 
-        setToken(token.token);
-        setDeferredValues(token.deferred);
+        setToken(token);
       } catch (error: any) {
-        setToken(error.message);
+        setErrorMessage(error.message);
       } finally {
         setDisablePaymentButton(false);
       }
@@ -101,10 +112,17 @@ export const CheckoutContainer = () => {
   };
 
   useEffect(() => {
+    setDisplayHostedFields(false);
+    setFieldsValidityDemo(initialFieldsValidity);
+    setToken(undefined);
+    setErrorMessage("");
+  }, [listButtonsActive]);
+
+  useEffect(() => {
     if (cardInstance) {
-      setDisplayHostedFields(true);
       cardInstance.onFieldValidity((event: FormValidity | FieldValidity) => {
-        if ("fields" in event) setFieldsValidityDemo(event.fields);
+        if ("fields" in event && typeof event.triggeredBy !== 'undefined')
+          setFieldsValidityDemo(event.fields);
       });
 
       cardInstance.onOTPValidation(
@@ -116,6 +134,7 @@ export const CheckoutContainer = () => {
         },
         () => {
           setErrorOTP("");
+          setShowOTP(false);
         }
       );
     }
@@ -128,49 +147,28 @@ export const CheckoutContainer = () => {
         (fieldName) => !fieldsValidityDemo[fieldName as keyof Fields]?.isValid
       );
 
-    if (errorForm) {
-      setErrorHostedFields(true);
-
-      return;
-    }
-
-    setErrorHostedFields(false);
+    if (errorForm) setDisablePaymentButton(true);
+    else setDisablePaymentButton(false);
   }, [fieldsValidityDemo]);
 
   return (
-    <>
-      <div className={"box-principal"}>
-        <ConfigurationDemo
-          setAmountOptions={setAmountOptions}
-          setCurrencyOptions={setCurrencyOptions}
-          setPublicMerchantIdDemo={setPublicMerchantIdDemo}
-          setIsSubscriptionOption={setIsSubscriptionOption}
-          isSubscriptionOption={isSubscriptionOption}
-          initKushkiInstance={initKushkiInstance}
-          buttonActive={buttonActive}
-          setButtonActive={setButtonActive}
-        />
-      </div>
-      <HostedFields
-        showOTP={showOTP}
-        fieldsValidityDemo={fieldsValidityDemo}
-        errorOTP={errorOTP}
-        displayHostedFields={displayHostedFields}
-        buttonActive={buttonActive}
+    <ContainerDemo>
+      <ConfigurationDemo
+        initKushkiInstance={initKushkiInstance}
+        listButtonsActive={listButtonsActive}
+        setListButtonsActive={setListButtonsActive}
       />
-
       {displayHostedFields && (
-        <>
-          <ResultsPayment
-            disablePaymentButton={disablePaymentButton}
-            errorHostedFields={errorHostedFields}
-            deferredValues={deferredValues}
-            token={token}
-            getToken={getToken}
-          />
-          {/* <TableFormEvents cardInstance={cardInstance} />*/}
-        </>
+        <HostedFields
+          showOTP={showOTP}
+          errorOTP={errorOTP}
+          fieldsValidityDemo={fieldsValidityDemo}
+          listButtonsActive={listButtonsActive}
+          disablePaymentButton={disablePaymentButton}
+          getToken={getToken}
+        />
       )}
-    </>
+      <ResultsPayment token={token} errorMessage={errorMessage} />
+    </ContainerDemo>
   );
 };

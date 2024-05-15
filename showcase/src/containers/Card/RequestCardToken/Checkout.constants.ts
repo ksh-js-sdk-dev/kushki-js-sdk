@@ -1,5 +1,4 @@
-import { CardOptions } from "Kushki/Card";
-import { Styles } from "../../../../../types/card_options";
+import { CardOptions, Styles } from "Kushki/Card";
 
 export const hostedFieldsStyles: Styles = {
   container: {

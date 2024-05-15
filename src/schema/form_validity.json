@@ -55,8 +55,7 @@
         "expirationDate": {
           "$ref": "#/definitions/fieldValidity"
         }
-      },
-      "required": ["cardholderName", "cardNumber", "cvv", "expirationDate"]
+      }
     }
   },
   "required": ["fields", "isFormValid"],

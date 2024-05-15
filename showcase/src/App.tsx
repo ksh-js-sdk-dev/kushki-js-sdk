@@ -5,6 +5,7 @@ import { GetBankList } from "./containers/Transfer/GetBankList/GetBankList.tsx";
 import { RequestCommissionConfiguration } from "./containers/Merchant/RequestCommissionConfiguration/RequestCommissionConfiguration.tsx";
 import { AntiFraud } from "./containers/AntiFraud/AntiFraud.tsx";
 import { RequestDeviceToken } from "./containers/Card/RequestDeviceToken/RequestDeviceToken.tsx";
+import { RequestSecureDeviceToken } from "./containers/Card/RequestSecureDeviceToken/RequestSecureDeviceToken.tsx";
 
 function App() {
   return (
@@ -16,6 +17,10 @@ function App() {
         <Route
           path={RoutesEnum.DEVICE_TOKEN}
           element={<RequestDeviceToken />}
+        />
+        <Route
+          path={RoutesEnum.SECURE_DEVICE_TOKEN}
+          element={<RequestSecureDeviceToken />}
         />
         <Route path={RoutesEnum.BANK_LIST} element={<GetBankList />} />
         <Route

@@ -4,7 +4,7 @@ import { compilerOptions } from "./tsconfig.json";
 
 const config: Config = {
   coverageDirectory: "./coverage",
-  coveragePathIgnorePatterns: ["showcase/*","src/module/*"],
+  coveragePathIgnorePatterns: ["showcase/*", "src/module/*", "src/libs/*"],
   coverageThreshold: {
     global: {
       branches: 100,

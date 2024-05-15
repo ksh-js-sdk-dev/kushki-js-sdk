@@ -8,12 +8,17 @@ We make it easier!
 
 - [Instalation](#install)
 - [Library setup](#library-setup)
-- [Get a payment card token](#get-a-payment-card-token)
+- [Get a secure payment card token](#get-a-payment-card-token)
   - [Form initialization](#form-initialization)
   - [Styling](#styling)
   - [Events](#events)
   - [OTP Validation](#otp-validation)
   - [Tokenization](#tokenization)
+- [Get a Secure Recurring Payment Card Token](#get-a-recurring-card-token)
+  - [Form initialization](#device-token-form-initialization)
+  - [Styling](#secure-device-token-styling)
+  - [Events](#secure-device-token-events)
+  - [Get Secure Device Token](#get-secure-device-token)
 - [Recurring Card Payment (Subscriptions)](#recurring-card-payment)
   - [Get Device Token](#get-device-token)
 - [Transfer Transactions](#transfer-transactions)
@@ -72,7 +77,7 @@ const buildKushkiInstance = async () => {
 }
 ```
 
-# Get a payment card token <a name="get-a-payment-card-token"></a>
+# Get a secure payment card token <a name="get-a-payment-card-token"></a>
 
 ## &#xa0;&#xa0;&bull; Form initialization  <a name="form-initialization"></a>
 The following steps describes how you can init a card token instance
@@ -133,6 +138,8 @@ const buildCardInstance = async () => {
   }
 }
 ```
+If in `CardOptions` send the flag `isSubscription = true`, the library automatically get subscription token.
+If send the flag `fullResponse = true` the response will contain [CardInfo](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.CardInfo.html) object, only for subscriptions.
 [More Examples](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html#md:examples)
 
 ### &#xa0;&#xa0;&bull; Styling <a name="styling"></a>
@@ -375,6 +382,112 @@ try {
   console.error("Catch error on request card Token", error.code, error.message);
 }
 ```
+# Get a Secure Recurring Payment Card Token <a name="get-a-recurring-card-token"></a>
+To use this method needs a `subscriptionId` that was previously created using [recurring charge API](https://api-docs.kushkipagos.com/docs/online-payments/one-click-and-scheduled-payments/operations/create-a-subscription-v-1-card) 
+with Token obtained on  [requestToken](#tokenization) with flag `isSubscription = true`
+
+This method provide one secure hosted field for `cvv` to collect that data and send it in device token request
+## &#xa0;&#xa0;&bull; Form initialization  <a name="device-token-form-initialization"></a>
+The first step is define the container for the `cvv` hosted field
+```html
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <form>
+        <div id="cvv_id"/>
+    </form>
+</body>
+</html>
+```
+Then you must define a [SecureDeviceTokenOptions](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.SecureDeviceTokenOptions.html) and call the method [initSecureDeviceToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initSecureDeviceToken.html), 
+this will render the hosted field in your side and the user will be able to enter the cvv value to later finish the tokenization, more examples [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initSecureDeviceToken.html)
+```ts
+import { IKushki, init, KushkiError } from "@kushki/js-sdk";
+import {
+  SecureDeviceTokenOptions,
+  ICardSubscriptions,
+  initSecureDeviceToken
+} from "@kushki/js-sdk/Card";
+
+const options : SecureDeviceTokenOptions = {
+  body: {
+    subscriptionId: "subscriptionId",
+  },
+  fields: {
+    cvv: {
+      selector: "cvv_id"
+    }
+  }
+}
+
+const initCardSubscription = async () => {
+  try {
+    //  kushkiInstance must be previusly initialized 
+    const cardSubscription:  ICardSubscriptions  = await initSecureDeviceToken(kushkiInstance, options)
+  } catch (e: any) {
+    console.error(e.message);
+  }
+}
+```
+## &#xa0;&#xa0;&bull; Styling <a name="secure-device-token-styling"></a>
+Consider the same methodology used on [Card Token Styles](#styling). The unique difference is that these styles will exclusively target the CVV field, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initSecureDeviceToken.html#md:definition-custom-styles)
+
+## &#xa0;&#xa0;&bull; Events <a name="secure-device-token-events"></a>
+When implements `onFocus`, `onBlur`, `onSubmit` or `onFieldValidity` methods from `ICardSubscriptions` instance
+can use the same implementations of [Card Token Events](#events) from `ICard`, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICardSubscriptions.html#reset). 
+
+All the events only triggered by `cvv` field, and FormValidity only return validation for cvv parameter like:
+```json
+{
+    "fields": {
+        "cvv": {
+            "isValid": true
+        }
+    },
+    "isFormValid": true, 
+    "triggeredBy": "cvv"
+}
+```
+### Set focus a hosted field
+This method asynchronously focus the cvv input, otherwise it will throw an exception, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICardSubscriptions.html#focus)
+```ts
+try {
+  await cardSubscription.focus();
+  // On Success, directly focus cvv field.
+} catch (error: any) {
+  // On Error, catch response, ex. {code:"E010", message: "Error al realizar focus en el campo"}
+  console.error("Catch error on focus field", error.code, error.message);
+}
+```
+### Set Reset a hosted field
+This method asynchronously reset cvv field to empty value, otherwise it will throw an exception, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICardSubscriptions.html#reset)
+```ts
+try {
+  await cardSubscription.reset();
+  // On Success, can reset cvv field.
+} catch (error: any) {
+  // On Error, catch response, ex. {code:"E009", message: "Error al limpiar el campo"}
+  console.error("Catch error on reset field", error.code, error.message);
+}
+```
+## &#xa0;&#xa0;&bull; Get Secure Device Token <a name="get-secure-device-token"></a>
+To get a secure device token, you should call the [`requestDeviceToken`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICardSubscriptions.html#requestDeviceToken) method on your card subscription instance that was previously initialized, this method also validates if the cvv field is valid, otherwise it will throw an exception
+
+This method returns a [`TokenResponse`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.TokenResponse.html) object that you will send to you backend and proceed with the charge of one-click payment or subscription on demand
+### Basic Example
+If the subscription was created with merchant and card that needs 3DS validation or SiftScience service, this method launch and return token with all the required validations
+```ts
+try {
+  const tokenResponse: TokenResponse = await cardSubscription.requestDeviceToken();
+  // On Success, can get card token response, ex. {token: "a2b74b7e3cf24e368a20380f16844d16"}
+  console.log("This is a card subscription Token", tokenResponse.token)
+} catch (error: any) {
+  // On Error, catch response, ex. {code:"E002", message: "Error en solicitud de token"}
+  // On Error, catch response, ex. {code:"E007", message: "Error en la validación del formulario"}
+  console.error("Catch error on request card subscription Token", error.code, error.message);
+}
+```
+
 #  Recurring Card Payment (Subscriptions)<a name="recurring-card-payment"></a>
 ## Get Device Token <a name="get-device-token"></a>
 After use [payment card token](#get-a-payment-card-token) to create a subscription. Kushki securely store a customer’s card details, and then allow them to make one-click Payment or also called on-demand subscription, to speed up the checkout process.

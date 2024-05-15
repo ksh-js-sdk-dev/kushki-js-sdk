@@ -13,6 +13,9 @@ import { FieldTypeEnum } from "types/form_validity";
 import { DeviceTokenRequest } from "types/device_token_request";
 import { CardService } from "service/CardService.ts";
 import { TokenResponse } from "types/token_response";
+import { CardSubscriptions } from "class/CardSubscriptions.ts";
+import { SecureDeviceTokenOptions } from "types/secure_device_token_request";
+import { ICardSubscriptions } from "repository/ICardSubscriptions.ts";
 
 /**
  * #### Introduction
@@ -97,7 +100,7 @@ import { TokenResponse } from "types/token_response";
  * }
  * ```
  *
- * ##### Card Token to subscriptions, prevent autofill and custom fields
+ * ##### Card Token to subscriptions, full response, prevent autofill and custom fields
  *
  * ###### Definition containers in html
  * ```html
@@ -116,6 +119,7 @@ import { TokenResponse } from "types/token_response";
  *
  * ###### Init card token instance
  * - To enable subscription transactions the `isSubscription` flag must be true
+ * - To enable fullResponse the `fullResponse` flag must be true, ony for subscriptions
  * - To enable prevent autofill in fields the `preventAutofill` flag must be true
  *
  * ```ts
@@ -165,6 +169,7 @@ import { TokenResponse } from "types/token_response";
  *      }
  *   },
  *   isSubscription: true, //To Enable subscriptions this flag must be true
+ *   fullResponse: true, //To obtain card info from `TokenResponse` when `isSubscription: true`
  *   preventAutofill: true, //To Enable prevent autofill in fields this flag must be true
  * }
  *
@@ -550,7 +555,8 @@ export type { CardFieldValues, FieldInstance } from "types/card_fields_values";
 export type { CardTokenResponse } from "types/card_token_response";
 export type {
   TokenResponse,
-  DeferredValuesResponse
+  DeferredValuesResponse,
+  CardInfo
 } from "types/token_response";
 export type { Fields, FieldValidity, FormValidity } from "types/form_validity";
 export type { DeferredByBinOptionsResponse } from "types/deferred_by_bin_response";
@@ -608,3 +614,209 @@ const requestDeviceToken = (
 
 export { requestDeviceToken };
 export type { DeviceTokenRequest } from "types/device_token_request";
+
+/**
+ * ### Introduction
+ * Function to render cvv hosted field and init an instance of {@link ICardSubscriptions}
+ * @group Methods
+ * @param kushkiInstance - Object that implemented IKushki
+ * @param options - You must define setup of cvv field
+ * - Define body - {@link DeviceTokenRequest} with subscriptionID [basic example](#md:basic-setup-to-secure-device-token)
+ * - if you want to  {@link SecureDeviceTokenOptions.preventAutofill | prevent autofill}  fields (default value is false), [example](#md:card-subscription-body-prevent-autofill-and-custom-field-example)
+ * - Set Custom {@link Field | Fields} only for cvv, [example](#md:card-subscription-body-prevent-autofill-and-custom-field-example)
+ * - Set custom {@link Styles | Styles} only for cvv, [example](#md:definition-custom-styles)
+ * @returns Promise<ICardSubscriptions> - instance of ICardSubscriptions
+ * @throws
+ * - if params: `options` or `kushkiInstance` are null or undefined then throw {@link ERRORS | ERRORS.E012}
+ * - if the param `options.fields` any field has non-existent selector then throw {@link ERRORS | ERRORS.E013}
+ *
+ * ### Examples
+ * #### Basic setup to Secure Device Token
+ *
+ * ##### Define the container for the cvv field
+ * ```html
+ * <!DOCTYPE html>
+ * <html lang="en">
+ * <body>
+ *     <section>
+ *         <div id="cvv_id"></div>
+ *     </section>
+ * </body>
+ * </html>
+ * ```
+ *
+ * ##### Init subscription card instance
+ *  - To enable subscription on demand or one click payment, you need to define an subscriptionId and fields. In background this method render the hosted field
+ * ```ts
+ * import { IKushki, init, KushkiError } from "@kushki/js-sdk";
+ * import {
+ *   SecureDeviceTokenOptions,
+ *   ICardSubscriptions,
+ *   initSecureDeviceToken
+ * } from "@kushki/js-sdk/Card";
+ *
+ * const kushkiOptions : KushkiOptions = {
+ *   publicCredentialId: 'public-merchant-id',
+ *   inTest: true
+ * };
+ *
+ * const options : SecureDeviceTokenOptions = {
+ *   body: {
+ *     subscriptionId: "subscriptionId",
+ *   },
+ *   fields: {
+ *       cvv: {
+ *          selector: "cvv_id"
+ *       }
+ *   }
+ * }
+ *
+ * const initCardSubscription = async () => {
+ *  try {
+ *      const kushkiInstance : Ikushki =  await init(kushkiOptions);
+ *      const cardSubscription :  ICardSubscriptions  = await initSecureDeviceToken(kushkiInstance, options)
+ *  } catch (e: any) {
+ *       console.error(e.message);
+ *  }
+ * }
+ * ```
+ *
+ * #### Card Subscription body, prevent autofill and custom field Example
+ *
+ * ##### Definition container in html
+ * ```html
+ * <!DOCTYPE html>
+ * <html lang="en">
+ * <body>
+ *     <section>
+ *         <div id="cvv_id"></div>
+ *     </section>
+ * </body>
+ * </html>
+ * ```
+ *
+ * ##### Init subscription card instance
+ * - Can send aditional parameters in body param with properties from {@link DeviceTokenRequest}
+ * - To enable prevent autofill in fields the `preventAutofill` flag must be true
+ *
+ * ```ts
+ * import { IKushki, init, KushkiError } from "@kushki/js-sdk";
+ * import {
+ *   SecureDeviceTokenOptions,
+ *   ICardSubscriptions,
+ *   initSecureDeviceToken
+ * } from "@kushki/js-sdk/Card";
+ *
+ * const kushkiOptions : KushkiOptions = {
+ *   publicCredentialId: 'public-merchant-id',
+ *   inTest: true
+ * };
+ *
+ * const options : SecureDeviceTokenOptions = {
+ *   body: {
+ *     subscriptionId: "subscriptionId",
+ *     userId: "userId", //when use preloaded SiftScience service
+ *     sessionId: "sessionId" //when use preloaded SiftScience service
+ *   },
+ *   fields: {
+ *       cvv: {
+ *          inputType: "password",
+ *          label: "CVV",
+ *          placeholder: "CVV",
+ *          selector: "cvv_id"
+ *       },
+ *   },
+ *   preventAutofill: true, //To Enable prevent autofill in fields this flag must be true
+ * }
+ *
+ * const initCardSubscription = async () => {
+ *  try {
+ *      const kushkiInstance : Ikushki =  await init(kushkiOptions);
+ *       const cardInstance:  ICardSubscriptions  = await initSecureDeviceToken(kushkiInstance, options)
+ *  } catch (e: any) {
+ *       console.error(e.message);
+ *  }
+ * }
+ * ```
+ *
+ * #### Definition Custom Styles
+ * Consider the application of the same [definition custom styles](Card.initCardToken.html#md:definition-custom-styles) for card token, the difference is that the styles would be applied only into the cvv field.
+ * ##### Definition container in html
+ * ```html
+ * <!DOCTYPE html>
+ * <html lang="en">
+ * <body>
+ *     <section>
+ *         <div id="cvv_id"></div>
+ *     </section>
+ * </body>
+ * </html>
+ * ```
+ * ##### Init subscription card instance
+ * - Can use custom styles only for cvv field
+ *
+ * ```ts
+ * import { IKushki, init, KushkiError } from "@kushki/js-sdk";
+ * import {
+ *   SecureDeviceTokenOptions,
+ *   ICardSubscriptions,
+ *   initSecureDeviceToken,
+ *   Styles
+ * } from "@kushki/js-sdk/Card";
+ *
+ * const kushkiOptions : KushkiOptions = {
+ *   publicCredentialId: 'public-merchant-id',
+ *   inTest: true
+ * };
+ *
+ * const hostedFieldsStyles: Styles = {
+ *         container: {
+ *             display: "flex",
+ *         },
+ *         input: {
+ *             fontSize: "12px",
+ *             border: "1px solid #ccc",
+ *             borderRadius: "10px",
+ *             height: "30px",
+ *             width: "300px",
+ *         },
+ *         focus: {
+ *             border: "1px solid #0077ff",
+ *             outline: "none",
+ *         },
+ *         invalid: {
+ *             border: "1px solid #ff0000",
+ *         }
+ *     };
+ *
+ * const options : SecureDeviceTokenOptions = {
+ *   body: {
+ *     subscriptionId: "subscriptionId",
+ *   },
+ *   fields: {
+ *       cvv: {
+ *          selector: "cvv_id"
+ *       },
+ *   },
+ *   styles: hostedFieldsStyles //custom styles
+ * };
+ *
+ * const initCardSubscription = async () => {
+ *  try {
+ *      const kushkiInstance : Ikushki =  await init(kushkiOptions);
+ *       const cardInstance:  ICardSubscriptions  = await initSecureDeviceToken(kushkiInstance, options)
+ *  } catch (e: any) {
+ *       console.error(e.message);
+ *  }
+ * }
+ * ```
+ */
+const initSecureDeviceToken = (
+  kushkiInstance: IKushki,
+  options: SecureDeviceTokenOptions
+): Promise<ICardSubscriptions> =>
+  CardSubscriptions.initSecureDeviceToken(kushkiInstance, options);
+
+export { initSecureDeviceToken };
+
+export type { ICardSubscriptions, SecureDeviceTokenOptions };
