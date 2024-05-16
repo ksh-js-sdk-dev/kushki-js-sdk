@@ -155,7 +155,7 @@ fields: {
     expirationDate: {...}
   }
 ```
-if not needs render cvv field, can delete the cvv configuration and finally the cvv input will not render in the page [More Examples](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html#md:examples)
+if not needs render cvv field, can delete the cvv configuration and finally the cvv input will not render in the page [More Examples](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html#md:card-subscription-token-with-optional-cvv-field)
 
 ### &#xa0;&#xa0;&bull; Styling <a name="styling"></a>
 If you want to give custom styles to hosted files, the interface [Styles](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.Styles.html) is exposed, so you have two ways:
