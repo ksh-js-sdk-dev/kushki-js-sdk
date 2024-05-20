@@ -11,3 +11,5 @@ docs-json/
 yarn-error.log
 .DS_Store
 .env
+docs
+index.html
