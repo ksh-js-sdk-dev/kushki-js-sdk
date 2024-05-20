@@ -1,5 +1,6 @@
 import React from "react";
 import { OptionDefaultData } from "../../shared/enums/OptionDefaultData.ts";
+import { OptionsCvv } from "../../shared/enums/OptionsCvv.ts";
 
 export interface IConfigurationDemoProps {
   initKushkiInstance: (
@@ -7,7 +8,8 @@ export interface IConfigurationDemoProps {
     amountValue: number,
     currencyValue: string,
     isSubscription: boolean,
-    isFullResponse: boolean
+    isFullResponse: boolean,
+    cvvOption: OptionsCvv
   ) => Promise<void>;
   listButtonsActive: IDefaultInformation;
   setListButtonsActive: React.Dispatch<

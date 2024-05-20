@@ -142,6 +142,21 @@ If in `CardOptions` send the flag `isSubscription = true`, the library automatic
 If send the flag `fullResponse = true` the response will contain [CardInfo](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.CardInfo.html) object, only for subscriptions.
 [More Examples](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html#md:examples)
 
+In subscriptions the cvv field can be required, optional or omitted. 
+If is necessary specify that the cvv field is required or not, the `isRequired` flag must be added in the cvv configuration like this:
+``` typescript
+fields: {
+    cardholderName: {...},
+    cardNumber: {...},
+    cvv: {
+      selector: "cvv_id",
+      isRequired: false
+    },
+    expirationDate: {...}
+  }
+```
+if not needs render cvv field, can delete the cvv configuration and finally the cvv input will not render in the page [More Examples](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html#md:card-subscription-token-with-optional-cvv-field)
+
 ### &#xa0;&#xa0;&bull; Styling <a name="styling"></a>
 If you want to give custom styles to hosted files, the interface [Styles](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.Styles.html) is exposed, so you have two ways:
  - Css Classes.- The interface [CssProperties](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/types/Card.CssProperties.html) allows to receive a string, so you can configure a CSS class of your site

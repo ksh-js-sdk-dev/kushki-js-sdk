@@ -7,8 +7,8 @@ import {
   FormValidity,
   ICard,
   initCardToken,
-  TokenResponse,
-  InputModelEnum
+  InputModelEnum,
+  TokenResponse
 } from "Kushki/Card";
 import { useEffect, useState } from "react";
 import "../../../../assets/css/checkout.css";
@@ -17,6 +17,7 @@ import ConfigurationDemo from "../../../components/ConfigurationDemo/Configurati
 import ResultsPayment from "../../../components/ConfigurationDemo/Components/ResultsPayment.tsx";
 import HostedFields from "../../../components/HostedFields/HostedFields.tsx";
 import { IDefaultInformation } from "../../../components/ConfigurationDemo/ConfigurationDemo.interface.ts";
+import { OptionsCvv } from "../../../shared/enums/OptionsCvv.ts";
 import { optionsDefault } from "./Checkout.constants.ts";
 import { ContainerDemo } from "../../../components/ContainerDemo/ContainerDemo.tsx";
 
@@ -49,22 +50,47 @@ export const CheckoutContainer = () => {
   const [disablePaymentButton, setDisablePaymentButton] =
     useState<boolean>(false);
 
+  const changeCvvOptions = (
+    options: CardOptions,
+    cvvOption: OptionsCvv
+  ): CardOptions => {
+    switch (cvvOption) {
+      case OptionsCvv.OMIT:
+        delete options.fields.cvv;
+        break;
+      case OptionsCvv.OPTIONAL:
+        options.fields.cvv!.isRequired = false;
+        break;
+      case OptionsCvv.REQUIRED:
+        options.fields.cvv!.isRequired = true;
+        break;
+    }
+
+    return options;
+  };
+
   const buildFieldsOptions = (
     amountValue: number,
     currencyValue: string,
     isSubscription: boolean,
-    isFullResponse: boolean
+    isFullResponse: boolean,
+    cvvOption: OptionsCvv
   ): CardOptions => {
-    return {
-      ...optionsDefault,
+    const defaultOptionsCopy: CardOptions = JSON.parse(
+      JSON.stringify(optionsDefault)
+    );
+    const cardOptions: CardOptions = {
+      ...defaultOptionsCopy,
       amount: {
-        ...optionsDefault.amount!,
+        ...defaultOptionsCopy.amount!,
         subtotalIva0: amountValue
       },
       currency: currencyValue as Currency,
       fullResponse: isFullResponse,
       isSubscription: isSubscription
     };
+
+    return changeCvvOptions(cardOptions, cvvOption);
   };
 
   const initKushkiInstance = async (
@@ -72,7 +98,8 @@ export const CheckoutContainer = () => {
     amountValue: number,
     currencyValue: string,
     isSubscription: boolean,
-    isFullResponse: boolean
+    isFullResponse: boolean,
+    cvvOption: OptionsCvv
   ): Promise<void> => {
     setDisplayHostedFields(true);
 
@@ -85,7 +112,8 @@ export const CheckoutContainer = () => {
         amountValue,
         currencyValue,
         isSubscription,
-        isFullResponse
+        isFullResponse,
+        cvvOption
       );
 
       setCardInstance(await initCardToken(kushkiInstance, options));
@@ -121,7 +149,7 @@ export const CheckoutContainer = () => {
   useEffect(() => {
     if (cardInstance) {
       cardInstance.onFieldValidity((event: FormValidity | FieldValidity) => {
-        if ("fields" in event && typeof event.triggeredBy !== 'undefined')
+        if ("fields" in event && typeof event.triggeredBy !== "undefined")
           setFieldsValidityDemo(event.fields);
       });
 
