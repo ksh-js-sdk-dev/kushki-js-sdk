@@ -10,35 +10,33 @@ import InputConfigurationDemo from "./Components/InputConfigurationDemo.tsx";
 import CurrencyConfigurationDemo from "./Components/CurrencyConfigurationDemo.tsx";
 
 const ConfigurationDemo = ({
-  setPublicMerchantIdDemo,
-  setCurrencyOptions,
-  setAmountOptions,
-  setIsSubscriptionOption,
-  isSubscriptionOption,
   initKushkiInstance,
-  buttonActive,
-  setButtonActive
+  listButtonsActive,
+  setListButtonsActive
 }: IConfigurationDemoProps) => {
-  const [activeConfigurationBtn, setActiveConfigurationBtn] =
-    useState<boolean>(false);
+  const [isActiveConfigBtn, setIsActiveConfigBtn] = useState<boolean>(false);
   const [disableInputPrev, setDisableInputPrev] = useState<boolean>(false);
   const [inputMerchantId, setInputMerchantId] = useState<string>("");
   const [inputCurrency, setInputCurrency] = useState<Currency | string>();
   const [inputAmount, setInputAmount] = useState<string>("");
-  const [disableButtons, setDisabledButtons] = useState<boolean>(false);
+  const [inputIsSubscription, setInputIsSubscription] =
+    useState<boolean>(false);
+  const [inputIsFullResponse, setInputIsFullResponse] =
+    useState<boolean>(false);
+
   const resetInformation = (): void => {
     setInputMerchantId("");
     setInputAmount("");
     setInputCurrency("");
+    setInputIsSubscription(false);
+    setInputIsFullResponse(false);
   };
+
   const setInputsAndOptionsHostedField = (
     publicMerchantId: string,
     currency: string,
     amount: number
   ) => {
-    setPublicMerchantIdDemo(publicMerchantId);
-    setCurrencyOptions(currency as Currency);
-    setAmountOptions(amount);
     setInputMerchantId(publicMerchantId);
     setInputAmount(amount.toString());
     setInputCurrency(currency as Currency);
@@ -79,7 +77,7 @@ const ConfigurationDemo = ({
     optionDefaultData[option]();
   };
   const setDefaultOptions = (option: keyof IDefaultInformation) => {
-    setButtonActive((prevState) => ({
+    setListButtonsActive((prevState) => ({
       approved: false,
       declined: false,
       otp: false,
@@ -90,33 +88,40 @@ const ConfigurationDemo = ({
     buildDefaultInformation(option as OptionDefaultData);
   };
 
+  const callInitHostedFields = async () => {
+    await initKushkiInstance(
+      inputMerchantId,
+      +inputAmount,
+      inputCurrency!,
+      inputIsSubscription,
+      inputIsFullResponse
+    );
+    setIsActiveConfigBtn(false);
+  };
+
   useEffect(() => {
     const statusOptionButtons: boolean =
-      buttonActive.otp ||
-      buttonActive.declined ||
-      buttonActive.approved ||
-      buttonActive.threeDomainSecure;
+      listButtonsActive.otp ||
+      listButtonsActive.declined ||
+      listButtonsActive.approved ||
+      listButtonsActive.threeDomainSecure;
 
-    setActiveConfigurationBtn(statusOptionButtons);
+    setIsActiveConfigBtn(statusOptionButtons);
 
-    if (!statusOptionButtons) {
+    if (statusOptionButtons) setDisableInputPrev(true);
+    else {
       resetInformation();
       setDisableInputPrev(false);
     }
-    if (statusOptionButtons) setDisableInputPrev(true);
-  }, [buttonActive]);
+  }, [listButtonsActive]);
 
   useEffect(() => {
     if (
       inputMerchantId.length != 0 &&
       inputCurrency?.length != 0 &&
       inputAmount.length != 0
-    ) {
-      setPublicMerchantIdDemo(inputMerchantId);
-      setAmountOptions(Number(inputAmount));
-      setCurrencyOptions(inputCurrency as Currency);
-      setActiveConfigurationBtn(true);
-    }
+    )
+      setIsActiveConfigBtn(true);
   }, [inputMerchantId, inputCurrency, inputAmount]);
 
   return (
@@ -139,32 +144,28 @@ const ConfigurationDemo = ({
       </div>
       <div className={"box-buttons"}>
         <ButtonsDefaultInfo
-          buttonActive={buttonActive}
+          buttonActive={listButtonsActive}
           setDefaultOptions={setDefaultOptions}
           label={"3DS"}
           option={OptionDefaultData.THREE_DOMAIN_SECURE}
-          disableButtons={disableButtons}
         />
         <ButtonsDefaultInfo
-          buttonActive={buttonActive}
+          buttonActive={listButtonsActive}
           setDefaultOptions={setDefaultOptions}
           label={"OTP"}
           option={OptionDefaultData.OTP}
-          disableButtons={disableButtons}
         />
         <ButtonsDefaultInfo
-          buttonActive={buttonActive}
+          buttonActive={listButtonsActive}
           setDefaultOptions={setDefaultOptions}
           label={"Trx. aprobada"}
           option={OptionDefaultData.TRX_APPROVED}
-          disableButtons={disableButtons}
         />
         <ButtonsDefaultInfo
-          buttonActive={buttonActive}
+          buttonActive={listButtonsActive}
           setDefaultOptions={setDefaultOptions}
           label={"Trx. declinada"}
           option={OptionDefaultData.TRX_DECLINED}
-          disableButtons={disableButtons}
         />
       </div>
       <div className="mui--text-subhead mui-text-custom">
@@ -194,24 +195,32 @@ const ConfigurationDemo = ({
             <input
               className={"input-check"}
               type="checkbox"
-              value=""
-              disabled={disableButtons}
-              defaultChecked={isSubscriptionOption}
-              onClick={() => setIsSubscriptionOption(!isSubscriptionOption)}
+              checked={inputIsSubscription}
+              onChange={() => setInputIsSubscription(!inputIsSubscription)}
             />
             <span className="checkmark"></span>
             Crear suscripción
           </label>
         </div>
+        {inputIsSubscription && (
+          <div className="mui-checkbox div-container">
+            <label className="label-container">
+              <input
+                className={"input-check"}
+                type="checkbox"
+                checked={inputIsFullResponse}
+                onChange={() => setInputIsFullResponse(!inputIsFullResponse)}
+              />
+              <span className="checkmark"></span>
+              Full Response
+            </label>
+          </div>
+        )}
         <button
           className={"mui-btn mui-btn--primary mui-btn--small button-border"}
           data-testid="tokenRequestBtn"
-          disabled={!activeConfigurationBtn}
-          onClick={() => {
-            initKushkiInstance();
-            setActiveConfigurationBtn(false);
-            setDisabledButtons(true);
-          }}
+          disabled={!isActiveConfigBtn}
+          onClick={callInitHostedFields}
         >
           Configurar
         </button>

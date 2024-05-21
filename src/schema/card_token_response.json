@@ -33,6 +33,9 @@
           "type": "string"
         }
       }
+    },
+    "cardInfo": {
+      "$ref": "../../src/schema/token_response.json#/definitions/CardInfo"
     }
   },
   "required": ["token"]

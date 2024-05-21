@@ -363,6 +363,9 @@
         }
       },
       "required": ["cardHolderName", "cardNumber", "expirationDate", "cvv"]
+    },
+    "fullResponse": {
+      "type": "boolean"
     }
   },
   "required": ["publicCredentialId", "currency", "fields"],

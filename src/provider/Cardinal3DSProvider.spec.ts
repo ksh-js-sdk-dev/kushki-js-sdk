@@ -131,8 +131,7 @@ describe("Cardinal3DSProvider - Test", () => {
     it("should return token with all security props validated", async () => {
       const tokenResponse = await cardinalProvider.validateCardinal3dsToken(
         kushkiInstanceMock,
-        tokenMock,
-        {}
+        tokenMock
       );
 
       expect(tokenResponse.token).toEqual(tokenMock.token);
@@ -141,8 +140,7 @@ describe("Cardinal3DSProvider - Test", () => {
     it("should return token if not needs validation", async () => {
       const tokenResponse = await cardinalProvider.validateCardinal3dsToken(
         kushkiInstanceMock,
-        { token: "1234" },
-        {}
+        { token: "1234" }
       );
 
       expect(tokenResponse.token).toEqual("1234");
@@ -150,16 +148,12 @@ describe("Cardinal3DSProvider - Test", () => {
 
     it("should throw error when token not have complete security props", async () => {
       try {
-        await cardinalProvider.validateCardinal3dsToken(
-          kushkiInstanceMock,
-          {
-            security: {
-              authRequired: true
-            },
-            token: "1234"
+        await cardinalProvider.validateCardinal3dsToken(kushkiInstanceMock, {
+          security: {
+            authRequired: true
           },
-          {}
-        );
+          token: "1234"
+        });
       } catch (error: any) {
         expect(error.code).toEqual("E005");
       }
@@ -172,8 +166,7 @@ describe("Cardinal3DSProvider - Test", () => {
       try {
         await cardinalProvider.validateCardinal3dsToken(
           kushkiInstanceMock,
-          tokenMock,
-          {}
+          tokenMock
         );
       } catch (error: any) {
         expect(error.code).toEqual("E006");
@@ -190,8 +183,7 @@ describe("Cardinal3DSProvider - Test", () => {
       try {
         await cardinalProvider.validateCardinal3dsToken(
           kushkiInstanceMock,
-          tokenMock,
-          {}
+          tokenMock
         );
       } catch (error: any) {
         expect(error.code).toEqual("E006");
@@ -218,8 +210,7 @@ describe("Cardinal3DSProvider - Test", () => {
       try {
         await cardinalProvider.validateCardinal3dsToken(
           kushkiInstanceMock,
-          tokenMock,
-          {}
+          tokenMock
         );
       } catch (error: any) {
         expect(error.code).toEqual("E005");
@@ -246,8 +237,7 @@ describe("Cardinal3DSProvider - Test", () => {
       try {
         await cardinalProvider.validateCardinal3dsToken(
           kushkiInstanceMock,
-          tokenMock,
-          {}
+          tokenMock
         );
       } catch (error: any) {
         expect(error.code).toEqual("E005");

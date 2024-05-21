@@ -4,7 +4,10 @@ import { ErrorTypeEnum } from "infrastructure/ErrorTypeEnum.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 import { FieldOptions } from "src/interfaces/FieldOptions.ts";
 import { IKushki } from "Kushki";
-import KushkiHostedFields from "libs/zoid/HostedField.ts";
+import {
+  DestroyKushkiHostedFields,
+  KushkiHostedFields
+} from "libs/zoid/HostedField.ts";
 import {
   CardFieldValues,
   CardOptions,
@@ -12,14 +15,15 @@ import {
   DeferredByBinOptionsResponse,
   DeferredInputValues,
   Field,
-  FieldInstance,
-  Fields,
   TokenResponse
 } from "module/Card.ts";
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { ICard } from "repository/ICard.ts";
 import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
-import { CREDIT_CARD_ESPECIFICATIONS } from "src/constant/CreditCardEspecifications.ts";
+import {
+  CREDIT_CARD_ESPECIFICATIONS,
+  CREDIT_TYPE
+} from "src/constant/CreditCardEspecifications.ts";
 import { BinInfoResponse } from "types/bin_info_response";
 import { DeferredValues } from "types/card_fields_values";
 import {
@@ -40,13 +44,25 @@ import { UtilsProvider } from "src/provider/UtilsProvider.ts";
 import { PathEnum } from "infrastructure/PathEnum.ts";
 import { ICardinal3DSProvider } from "repository/ICardinal3DSProvider.ts";
 import { ISandbox3DSProvider } from "repository/ISandbox3DSProvider.ts";
-import { KInfo } from "service/KushkiInfoService.ts";
 import { IRollbarGateway } from "repository/IRollbarGateway.ts";
 import { RollbarGateway } from "gateway/RollbarGateway.ts";
 import { SiftScienceProvider } from "src/provider/SiftScienceProvider.ts";
 import { Cardinal3DSProvider } from "src/provider/Cardinal3DSProvider.ts";
 import { Sandbox3DSProvider } from "src/provider/Sandbox3DSProvider.ts";
 import { getJwtIf3dsEnabled } from "utils/3DSUtils.ts";
+import {
+  addEventListener,
+  buildCustomHeaders,
+  dispatchCustomEvent,
+  focusField,
+  hideContainers,
+  renderFields,
+  resetField,
+  showContainers,
+  updateValidity,
+  validateInitParams
+} from "utils/HostedFieldsUtils.ts";
+import { FieldEventsEnum } from "infrastructure/FieldEventsEnum.ts";
 
 export class Card implements ICard {
   private readonly options: CardOptions;
@@ -58,14 +74,11 @@ export class Card implements ICard {
   private readonly _siftScienceService: ISiftScienceProvider;
   private readonly _cardinal3DSProvider: ICardinal3DSProvider;
   private readonly _sandbox3DSProvider: ISandbox3DSProvider;
-  private readonly listenerFieldValidity: string = "fieldValidity";
-  private readonly listenerFieldFocus: string = "fieldFocus";
-  private readonly listenerFieldBlur: string = "fieldBlur";
-  private readonly listenerFieldSubmit: string = "fieldSubmit";
   private readonly otpValidation: string = "otpValidation";
   private readonly otpInputOTP: string = "onInputOTP";
   private readonly deferredDefaultWidth: number = 300;
   private firstHostedFieldType: string = "";
+  private currentBrand: string = "";
   private rollbar: IRollbarGateway;
 
   private constructor(kushkiInstance: IKushki, options: CardOptions) {
@@ -83,18 +96,22 @@ export class Card implements ICard {
     this.rollbar.init(kushkiInstance.getOptions());
   }
 
+  public getInputs(): CardFieldValues {
+    return this.inputValues;
+  }
+
   public static async initCardToken(
     kushkiInstance: IKushki,
     options: CardOptions
   ): Promise<Card> {
     try {
-      this.validParamsInitCardToken(kushkiInstance, options);
+      validateInitParams(kushkiInstance, options);
 
       const payment: Card = new Card(kushkiInstance, options);
 
       await payment.initFields(options.fields, options.styles);
 
-      payment.showContainers();
+      showContainers(payment.getInputs());
 
       await payment.hideDeferredOptions();
       await payment.hideOTPInput();
@@ -132,29 +149,27 @@ export class Card implements ICard {
         merchantSettings,
         sandbox3DS: this._sandbox3DSProvider
       });
+      const deferredValues: DeferredValues = this.getDeferredValues();
+
+      let cardTokenResponse: CardTokenResponse;
 
       if (jwt) {
-        return this.buildTokenResponse(
-          await this.request3DSToken(jwt, merchantSettings, siftScienceSession)
+        cardTokenResponse = await this.request3DSToken(
+          jwt,
+          merchantSettings,
+          siftScienceSession
         );
       } else {
-        const cardTokenResponse: CardTokenResponse =
-          await this.requestTokenGateway(
-            merchantSettings,
-            jwt,
-            siftScienceSession
-          );
-        const deferredValues: DeferredValues = this.getDeferredValues();
-
-        await this.validationOTPFLow(cardTokenResponse, deferredValues);
-
-        return Promise.resolve(
-          this.buildTokenResponse({
-            deferred: deferredValues,
-            token: cardTokenResponse.token
-          })
+        cardTokenResponse = await this.requestTokenGateway(
+          merchantSettings,
+          jwt,
+          siftScienceSession
         );
+
+        await this.validationOTPFLow(cardTokenResponse);
       }
+
+      return this.buildTokenResponse(cardTokenResponse, deferredValues);
     } catch (error) {
       return await UtilsProvider.validErrors(error, ERRORS.E002);
     }
@@ -164,61 +179,36 @@ export class Card implements ICard {
     event: (fieldEvent: FormValidity | FieldValidity) => void,
     fieldType?: FieldTypeEnum
   ): void {
-    this.addEventListener(this.listenerFieldValidity, event, fieldType);
+    addEventListener(FieldEventsEnum.VALIDITY, event, fieldType);
   }
 
   public reset(fieldType: FieldTypeEnum): Promise<void> {
-    if (Object.values(InputModelEnum).includes(fieldType as InputModelEnum)) {
-      this.inputValues[fieldType]?.hostedField?.updateProps({
-        brandIcon: "",
-        reset: true
-      });
-
-      this.inputValues[fieldType]?.hostedField?.updateProps({
-        reset: false
-      });
-
-      return Promise.resolve();
-    } else {
-      return Promise.reject(new KushkiError(ERRORS.E009));
-    }
+    return resetField(this.inputValues, fieldType);
   }
 
   public focus(fieldType: FieldTypeEnum): Promise<void> {
-    if (Object.values(InputModelEnum).includes(fieldType as InputModelEnum)) {
-      this.inputValues[fieldType]?.hostedField?.updateProps({
-        isFocusActive: true
-      });
-
-      this.inputValues[fieldType]?.hostedField?.updateProps({
-        isFocusActive: false
-      });
-
-      return Promise.resolve();
-    } else {
-      return Promise.reject(new KushkiError(ERRORS.E010));
-    }
+    return focusField(this.inputValues, fieldType);
   }
 
   public onFieldFocus(
     event: (fieldEvent: FormValidity | FieldValidity) => void,
     fieldType?: FieldTypeEnum
   ): void {
-    this.addEventListener(this.listenerFieldFocus, event, fieldType);
+    addEventListener(FieldEventsEnum.FOCUS, event, fieldType);
   }
 
   public onFieldBlur(
     event: (fieldEvent: FormValidity | FieldValidity) => void,
     fieldType?: FieldTypeEnum
   ): void {
-    this.addEventListener(this.listenerFieldBlur, event, fieldType);
+    addEventListener(FieldEventsEnum.BLUR, event, fieldType);
   }
 
   public onFieldSubmit(
     event: (fieldEvent: FormValidity | FieldValidity) => void,
     fieldType?: FieldTypeEnum
   ): void {
-    this.addEventListener(this.listenerFieldSubmit, event, fieldType);
+    addEventListener(FieldEventsEnum.SUBMIT, event, fieldType);
   }
 
   public onOTPValidation(
@@ -272,38 +262,38 @@ export class Card implements ICard {
         formValid = this.validateDeferredValues();
     }
 
-    const eventFormValidity: CustomEvent<FormValidity> =
-      this.buildEventFormValidity(this.inputValues, undefined);
-
-    dispatchEvent(eventFormValidity);
-
-    return this.buildFieldsValidity(this.inputValues, undefined, formValid);
+    return dispatchCustomEvent(
+      this.inputValues,
+      FieldEventsEnum.VALIDITY,
+      undefined,
+      formValid
+    );
   }
 
   private buildTokenResponse = (
-    tokenResponseRaw: TokenResponse
+    tokenResponseRaw: CardTokenResponse,
+    deferredValues: DeferredValues
   ): TokenResponse => {
     const tokenResponseCreated: TokenResponse = {
       token: tokenResponseRaw.token
     };
 
-    /* istanbul ignore next */
-    if (
-      !tokenResponseRaw.deferred ||
-      tokenResponseRaw.deferred.creditType === ""
-    )
-      return tokenResponseCreated;
+    if (deferredValues.isDeferred) {
+      if (deferredValues.creditType === CREDIT_TYPE.ALL)
+        tokenResponseCreated.deferred = {
+          months: deferredValues.months
+        };
+      else
+        tokenResponseCreated.deferred = {
+          creditType: deferredValues.creditType,
+          graceMonths: deferredValues.graceMonths,
+          months: deferredValues.months
+        };
+    }
 
-    if (tokenResponseRaw.deferred.creditType === "all") {
-      tokenResponseCreated.deferred = {
-        months: tokenResponseRaw.deferred.months
-      };
-    } else {
-      tokenResponseCreated.deferred = {
-        creditType: tokenResponseRaw.deferred.creditType,
-        graceMonths: tokenResponseRaw.deferred.graceMonths,
-        months: tokenResponseRaw.deferred.months
-      };
+    if (this.options.fullResponse && tokenResponseRaw.cardInfo) {
+      tokenResponseCreated.cardInfo = tokenResponseRaw.cardInfo;
+      tokenResponseCreated.cardInfo.brand = this.currentBrand;
     }
 
     return tokenResponseCreated;
@@ -313,25 +303,17 @@ export class Card implements ICard {
     jwt: string,
     merchantSettings: MerchantSettingsResponse,
     siftScienceSession?: SiftScienceObject
-  ): Promise<TokenResponse> {
-    const deferredValues: DeferredValues = this.getDeferredValues();
-
+  ): Promise<CardTokenResponse> {
     if (merchantSettings.sandboxEnable) {
-      return this.getSandboxToken(
-        jwt,
-        merchantSettings,
-        deferredValues,
-        siftScienceSession
-      );
+      return this.getSandboxToken(jwt, merchantSettings, siftScienceSession);
     } else {
       const tokenResponse = await this.getCardinalToken(
         jwt,
         merchantSettings,
-        deferredValues,
         siftScienceSession
       );
 
-      await this.validationOTPFLow(tokenResponse, deferredValues);
+      await this.validationOTPFLow(tokenResponse);
 
       return tokenResponse;
     }
@@ -340,51 +322,37 @@ export class Card implements ICard {
   private async getSandboxToken(
     jwt: string,
     merchantSettings: MerchantSettingsResponse,
-    deferredValues: DeferredValues,
     siftScienceSession?: SiftScienceObject
-  ) {
-    const token = await this.requestTokenGateway(
+  ): Promise<CardTokenResponse> {
+    const token: CardTokenResponse = await this.requestTokenGateway(
       merchantSettings,
       jwt,
       siftScienceSession
     );
 
-    await this.validationOTPFLow(token, deferredValues);
+    await this.validationOTPFLow(token);
 
     return this._sandbox3DSProvider.validateSandbox3dsToken(
       this.kushkiInstance,
-      token,
-      deferredValues
+      token
     );
   }
 
   private async getCardinalToken(
     jwt: string,
     merchantSettings: MerchantSettingsResponse,
-    deferredValues: DeferredValues,
     siftScienceSession?: SiftScienceObject
-  ) {
-    return new Promise<CardTokenResponse>((resolve, reject) => {
-      this._cardinal3DSProvider.onSetUpComplete(async () => {
-        try {
-          const token =
-            await this._cardinal3DSProvider.validateCardinal3dsToken(
-              this.kushkiInstance,
-              await this.requestTokenGateway(
-                merchantSettings,
-                jwt,
-                siftScienceSession
-              ),
-              deferredValues
-            );
+  ): Promise<CardTokenResponse> {
+    const tokenResponse: CardTokenResponse = await this.requestTokenGateway(
+      merchantSettings,
+      jwt,
+      siftScienceSession
+    );
 
-          resolve(token);
-        } catch (error) {
-          this.rollbar.error(error);
-          reject(error);
-        }
-      });
-    });
+    return this._cardinal3DSProvider.validateCardinal3dsToken(
+      this.kushkiInstance,
+      tokenResponse
+    );
   }
 
   private async requestTokenGateway(
@@ -398,30 +366,27 @@ export class Card implements ICard {
       const requestPath: string = this.options.isSubscription
         ? PathEnum.card_subscription_token
         : PathEnum.card_token;
-      const headers = this.buildCustomHeaders();
+      const headers = buildCustomHeaders();
+      const body = {
+        ...this.options,
+        deferredValues,
+        jwt,
+        siftScienceSession
+      };
 
       const token = await this.inputValues[
         this.firstHostedFieldType
       ].hostedField.requestPaymentToken(
         this.kushkiInstance,
-        this.options,
+        body,
         requestPath,
-        headers,
-        jwt,
-        siftScienceSession,
-        deferredValues
+        headers
       );
 
       return Promise.resolve(token);
     } catch (error) {
       return Promise.reject(error);
     }
-  }
-
-  private buildCustomHeaders() {
-    return {
-      [KInfo.KUSHKI_INFO_HEADER]: KInfo.buildKushkiInfo()
-    };
   }
 
   private getDeferredValues = (
@@ -512,6 +477,8 @@ export class Card implements ICard {
   private setDefaultValues(options: CardOptions): CardOptions {
     return {
       ...options,
+      fullResponse:
+        Boolean(options.isSubscription) && Boolean(options.fullResponse),
       isSubscription: Boolean(options.isSubscription)
     };
   }
@@ -541,77 +508,13 @@ export class Card implements ICard {
     }
   }
 
-  private createCustomEvent(listener: string, fieldType: string) {
-    const event: CustomEvent<FormValidity> = new CustomEvent<FormValidity>(
-      listener,
-      {
-        detail: this.buildFieldsValidity(
-          this.inputValues,
-          fieldType as FieldTypeEnum
-        )
-      }
-    );
-
-    dispatchEvent(event);
-
-    const eventField: CustomEvent<FormValidity> = new CustomEvent<FormValidity>(
-      `${listener}${fieldType}`,
-      {
-        detail: this.buildFieldsValidity(
-          this.inputValues,
-          fieldType as FieldTypeEnum
-        )
-      }
-    );
-
-    dispatchEvent(eventField);
-  }
-
-  private handleOnFocus(fieldType: string) {
-    this.createCustomEvent(this.listenerFieldFocus, fieldType);
-  }
-
-  private handleOnSubmit(fieldType: string) {
-    this.createCustomEvent(this.listenerFieldSubmit, fieldType);
-  }
-
-  private handleOnBlur(fieldType: string) {
-    this.createCustomEvent(this.listenerFieldBlur, fieldType);
-  }
-
   private handleOnValidity(
     field: InputModelEnum,
     fieldValidity: FieldValidity
   ): void {
-    this.inputValues = {
-      ...this.inputValues,
-      [field]: {
-        ...this.inputValues[field],
-        validity: {
-          errorType: fieldValidity.errorType,
-          isValid: fieldValidity.isValid
-        }
-      }
-    };
+    this.inputValues = updateValidity(this.inputValues, field, fieldValidity);
 
-    const event: CustomEvent<FormValidity> = this.buildEventFormValidity(
-      this.inputValues,
-      field
-    );
-
-    dispatchEvent(event);
-
-    const eventField: CustomEvent<FormValidity> = new CustomEvent<FormValidity>(
-      `${this.listenerFieldValidity}${field}`,
-      {
-        detail: this.buildFieldsValidity(
-          this.inputValues,
-          field as FieldTypeEnum
-        )
-      }
-    );
-
-    dispatchEvent(eventField);
+    dispatchCustomEvent(this.inputValues, FieldEventsEnum.VALIDITY, field);
   }
 
   private async handleOnBinChange(bin: string) {
@@ -638,6 +541,7 @@ export class Card implements ICard {
         this.inputValues.cardNumber?.hostedField?.updateProps({
           brandIcon: brand
         });
+        this.currentBrand = brand;
 
         if (cardType !== "credit")
           await this.inputValues.deferred?.hostedField?.hide();
@@ -691,7 +595,10 @@ export class Card implements ICard {
       });
     }
 
-    if (deferredValues.isDeferred && deferredValues.creditType === "all") {
+    if (
+      deferredValues.isDeferred &&
+      deferredValues.creditType === CREDIT_TYPE.ALL
+    ) {
       this.inputValues.deferred?.hostedField?.resize({
         height: 110,
         width: this.deferredDefaultWidth
@@ -713,10 +620,13 @@ export class Card implements ICard {
       ...field,
       fieldType,
       handleOnBinChange: (bin: string) => this.handleOnBinChange(bin),
-      handleOnBlur: (field: string) => this.handleOnBlur(field),
-      handleOnFocus: (field: string) => this.handleOnFocus(field),
+      handleOnBlur: (field: string) =>
+        dispatchCustomEvent(this.inputValues, FieldEventsEnum.BLUR, field),
+      handleOnFocus: (field: string) =>
+        dispatchCustomEvent(this.inputValues, FieldEventsEnum.FOCUS, field),
       handleOnOtpChange: (code: string) => this.handleOnChangeOTP(code),
-      handleOnSubmit: (field: string) => this.handleOnSubmit(field),
+      handleOnSubmit: (field: string) =>
+        dispatchCustomEvent(this.inputValues, FieldEventsEnum.SUBMIT, field),
       handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
         this.handleOnValidity(field, fieldValidity),
       styles: buildCssStyle(styles || {})
@@ -734,6 +644,8 @@ export class Card implements ICard {
     optionsFields: { [k: string]: Field },
     styles?: Styles
   ): Promise<void[]> {
+    DestroyKushkiHostedFields();
+
     for (const fieldKey in optionsFields) {
       const field = optionsFields[fieldKey];
       const options = this.buildFieldOptions(
@@ -765,93 +677,10 @@ export class Card implements ICard {
       this.inputValues.otp.validity = { isValid: true };
     }
 
-    this.hideContainers();
+    hideContainers(this.inputValues);
 
-    return this.renderFields();
+    return renderFields(this.inputValues);
   }
-
-  private hideContainers() {
-    this.getContainers().forEach((htmlElement) => {
-      if (!htmlElement) throw new KushkiError(ERRORS.E013);
-
-      htmlElement!.style.cssText += "display:none";
-    });
-  }
-
-  private showContainers() {
-    this.getContainers().forEach((htmlElement) => {
-      /* istanbul ignore next */
-      if (!htmlElement) throw new KushkiError(ERRORS.E013);
-
-      htmlElement!.removeAttribute("style");
-    });
-  }
-
-  private getContainers() {
-    return Object.values<FieldInstance>(this.inputValues).map((fieldInstance) =>
-      document.getElementById(`${fieldInstance.selector}`)
-    );
-  }
-
-  private renderFields = async (): Promise<void[]> => {
-    return Promise.all(
-      Object.values<FieldInstance>(this.inputValues).map(
-        (field) =>
-          field!.hostedField?.render(`#${field!.selector}`) as Promise<void>
-      )
-    );
-  };
-
-  private buildFieldsValidity = (
-    inputValues: CardFieldValues,
-    field?: FieldTypeEnum,
-    isFormValid?: boolean
-  ): FormValidity => {
-    const defaultValidity: FieldValidity = {
-      errorType: ErrorTypeEnum.EMPTY,
-      isValid: false
-    };
-    const fieldsValidity: Fields = {
-      cardholderName: defaultValidity,
-      cardNumber: defaultValidity,
-      cvv: defaultValidity,
-      deferred: defaultValidity,
-      expirationDate: defaultValidity
-    };
-    let formValid: boolean = true;
-
-    for (const inputName in inputValues) {
-      if (
-        Object.values(InputModelEnum).includes(inputName as InputModelEnum) &&
-        inputName !== InputModelEnum.OTP &&
-        inputValues[inputName].validity
-      ) {
-        fieldsValidity[inputName as keyof Fields] = {
-          errorType: inputValues[inputName].validity.errorType,
-          isValid: inputValues[inputName].validity.isValid
-        };
-      }
-      const validityProps: FieldValidity = this.inputValues[inputName].validity;
-      const isInputInValid: boolean = !validityProps.isValid;
-
-      if (isInputInValid) formValid = false;
-    }
-
-    return {
-      fields: fieldsValidity,
-      isFormValid: isFormValid ?? formValid,
-      triggeredBy: field
-    };
-  };
-
-  private buildEventFormValidity = (
-    inputValues: CardFieldValues,
-    field?: FieldTypeEnum
-  ): CustomEvent<FormValidity> => {
-    return new CustomEvent<FormValidity>(this.listenerFieldValidity, {
-      detail: this.buildFieldsValidity(inputValues, field)
-    });
-  };
 
   private getBinFromCreditCardNumberSift(value: string): string {
     return value.slice(
@@ -904,42 +733,28 @@ export class Card implements ICard {
     });
   }
 
-  private async validationOTPFLow(
-    tokenResponse: CardTokenResponse,
-    deferredValues: DeferredValues
-  ) {
-    const inputOTPValidation: TokenResponse | undefined =
-      await this.validInputOTP(
-        tokenResponse.token,
-        deferredValues,
-        tokenResponse.secureService,
-        tokenResponse.secureId
-      );
+  private async validationOTPFLow(tokenResponse: CardTokenResponse) {
+    const inputOTPValidation: CardTokenResponse | undefined =
+      await this.validInputOTP(tokenResponse);
 
-    if (inputOTPValidation !== undefined)
-      return this.buildTokenResponse(inputOTPValidation);
+    if (inputOTPValidation !== undefined && inputOTPValidation !== null)
+      return inputOTPValidation;
   }
 
   private async validInputOTP(
-    token: string,
-    deferredValues: DeferredValues,
-    secureService?: string,
-    secureId?: string
-  ): Promise<TokenResponse | undefined> {
+    token: CardTokenResponse
+  ): Promise<CardTokenResponse | undefined> {
     const hasOTP: boolean =
-      secureService === OTPEnum.secureService && secureId !== "";
+      token.secureService === OTPEnum.secureService && token.secureId !== "";
 
     if (hasOTP) {
       this.showOtpAndHideInputs();
-      const otpInputSuccess: boolean = await this.getOtpInput(secureId!);
+      const otpInputSuccess: boolean = await this.getOtpInput(token.secureId!);
 
       if (otpInputSuccess) {
         this.dispatchEventOTPValidation(OTPEventEnum.SUCCESS);
 
-        return Promise.resolve({
-          deferred: deferredValues,
-          token: token
-        });
+        return token;
       }
     }
 
@@ -1007,32 +822,4 @@ export class Card implements ICard {
 
     dispatchEvent(eventOtpValidity);
   };
-
-  /* istanbul ignore next*/
-  private addEventListener(
-    listener: string,
-    event: (fieldEvent: FormValidity | FieldValidity) => void,
-    fieldType?: FieldTypeEnum
-  ): void {
-    if (fieldType) {
-      window.addEventListener(`${listener}${fieldType}`, ((
-        e: CustomEvent<FormValidity>
-      ) => {
-        event(e.detail!.fields![fieldType as keyof Fields] || e.detail!);
-      }) as EventListener);
-    } else {
-      window.addEventListener(listener, ((e: CustomEvent<FormValidity>) => {
-        event(e.detail!);
-      }) as EventListener);
-    }
-  }
-
-  private static validParamsInitCardToken(
-    kushkiInstance: IKushki,
-    options: CardOptions
-  ): void {
-    if (!options || !kushkiInstance) {
-      throw new KushkiError(ERRORS.E012);
-    }
-  }
 }

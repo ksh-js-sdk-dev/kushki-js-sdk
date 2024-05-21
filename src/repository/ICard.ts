@@ -54,6 +54,18 @@ export interface ICard {
    *      // On Error, catch response
    *      console.error("Catch error on request card Token", error.code, error.message);
    *  }
+   *
+   *  @example
+   * // If flags `isSubscription: true` and `fullResponse: true` in options of `initCardToken`, the `TokenResponse` will contain `CardInfo` object
+   * try {
+   *    const tokenResponse: TokenResponse = await cardInstance.requestToken();
+   *    // On Success, response contains CardInfo ex. {token: "a2b74b7e3cf24e368a20380f16844d16", cardInfo: {expirationDate: "12/34", bin: "41956124", lastFourDigits: "7800", brand: "visa"}}
+   *    if(tokenResponse.cardInfo)
+   *      console.log("This is a CardInfo", tokenResponse.cardInfo)
+   *  } catch (error: any) {
+   *      // On Error, catch response
+   *      console.error("Catch error on request card Token", error.code, error.message);
+   *  }
    */
   requestToken(): Promise<TokenResponse>;
 
