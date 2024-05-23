@@ -1,5 +1,7 @@
 import { Currency } from "Kushki/Card";
 import { useEffect, useState } from "react";
+import { OptionsCvv } from "../../shared/enums/OptionsCvv.ts";
+import CvvOptionsDemo from "./Components/CvvOptionsDemo.tsx";
 import {
   IConfigurationDemoProps,
   IDefaultInformation
@@ -23,6 +25,9 @@ const ConfigurationDemo = ({
     useState<boolean>(false);
   const [inputIsFullResponse, setInputIsFullResponse] =
     useState<boolean>(false);
+  const [inputCvvOption, setInputCvvOption] = useState<OptionsCvv>(
+    OptionsCvv.REQUIRED
+  );
 
   const resetInformation = (): void => {
     setInputMerchantId("");
@@ -94,7 +99,8 @@ const ConfigurationDemo = ({
       +inputAmount,
       inputCurrency!,
       inputIsSubscription,
-      inputIsFullResponse
+      inputIsFullResponse,
+      inputCvvOption
     );
     setIsActiveConfigBtn(false);
   };
@@ -203,18 +209,24 @@ const ConfigurationDemo = ({
           </label>
         </div>
         {inputIsSubscription && (
-          <div className="mui-checkbox div-container">
-            <label className="label-container">
-              <input
-                className={"input-check"}
-                type="checkbox"
-                checked={inputIsFullResponse}
-                onChange={() => setInputIsFullResponse(!inputIsFullResponse)}
-              />
-              <span className="checkmark"></span>
-              Full Response
-            </label>
-          </div>
+          <>
+            <div className="mui-checkbox div-container">
+              <label className="label-container">
+                <input
+                  className={"input-check"}
+                  type="checkbox"
+                  checked={inputIsFullResponse}
+                  onChange={() => setInputIsFullResponse(!inputIsFullResponse)}
+                />
+                <span className="checkmark"></span>
+                Full Response
+              </label>
+            </div>
+            <CvvOptionsDemo
+              inputOption={inputCvvOption}
+              setInputOption={setInputCvvOption}
+            />
+          </>
         )}
         <button
           className={"mui-btn mui-btn--primary mui-btn--small button-border"}

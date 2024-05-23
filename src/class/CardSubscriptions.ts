@@ -1,13 +1,32 @@
-import { IKushki } from "repository/IKushki.ts";
-import { Field, Styles } from "types/card_options";
+import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import {
+  FieldEventsEnum,
+  FieldsMethodTypesEnum
+} from "infrastructure/FieldEventsEnum.ts";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
-import { FieldOptions } from "src/interfaces/FieldOptions.ts";
-import { buildCssStyle } from "utils/BuildCssStyle.ts";
+import { KushkiError } from "infrastructure/KushkiError.ts";
+import { PathEnum } from "infrastructure/PathEnum.ts";
 import {
   DestroyKushkiHostedFields,
   KushkiHostedFields
 } from "libs/zoid/HostedField.ts";
+import { UtilsProvider } from "provider/UtilsProvider.ts";
+import { ICardSubscriptions } from "repository/ICardSubscriptions.ts";
+import { IKushki } from "repository/IKushki.ts";
+import { CardService } from "service/CardService.ts";
+import { FieldOptions } from "src/interfaces/FieldOptions.ts";
 import { CardFieldValues } from "types/card_fields_values";
+import { Field, Styles } from "types/card_options";
+import { CardTokenResponse } from "types/card_token_response";
+import { DeviceTokenRequest } from "types/device_token_request";
+import {
+  FieldTypeEnum,
+  FieldValidity,
+  FormValidity
+} from "types/form_validity";
+import { SecureDeviceTokenOptions } from "types/secure_device_token_request";
+import { TokenResponse } from "types/token_response";
+import { buildCssStyle } from "utils/BuildCssStyle.ts";
 import {
   addEventListener,
   buildCustomHeaders,
@@ -21,22 +40,6 @@ import {
   updateValidity,
   validateInitParams
 } from "utils/HostedFieldsUtils.ts";
-import { ICardSubscriptions } from "repository/ICardSubscriptions.ts";
-import { TokenResponse } from "types/token_response";
-import { SecureDeviceTokenOptions } from "types/secure_device_token_request";
-import { CardService } from "service/CardService.ts";
-import { PathEnum } from "infrastructure/PathEnum.ts";
-import { DeviceTokenRequest } from "types/device_token_request";
-import { CardTokenResponse } from "types/card_token_response";
-import {
-  FieldTypeEnum,
-  FieldValidity,
-  FormValidity
-} from "types/form_validity";
-import { FieldEventsEnum } from "infrastructure/FieldEventsEnum.ts";
-import { KushkiError } from "infrastructure/KushkiError.ts";
-import { ERRORS } from "infrastructure/ErrorEnum.ts";
-import { UtilsProvider } from "provider/UtilsProvider.ts";
 
 export class CardSubscriptions implements ICardSubscriptions {
   private readonly kushkiInstance: IKushki;
@@ -60,7 +63,11 @@ export class CardSubscriptions implements ICardSubscriptions {
     kushkiInstance: IKushki,
     options: SecureDeviceTokenOptions
   ): Promise<CardSubscriptions> {
-    validateInitParams(kushkiInstance, options);
+    validateInitParams(
+      kushkiInstance,
+      options,
+      FieldsMethodTypesEnum.DEVICE_TOKEN
+    );
 
     const payment: CardSubscriptions = new CardSubscriptions(
       kushkiInstance,

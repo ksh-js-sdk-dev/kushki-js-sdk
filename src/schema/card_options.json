@@ -165,6 +165,9 @@
         },
         "deferredInputs": {
           "$ref": "#/definitions/deferredInputs"
+        },
+        "isRequired": {
+          "type": "boolean"
         }
       },
       "required": ["selector"]
@@ -362,7 +365,7 @@
           "$ref": "#/definitions/field"
         }
       },
-      "required": ["cardHolderName", "cardNumber", "expirationDate", "cvv"]
+      "required": ["cardholderName", "cardNumber", "expirationDate"]
     },
     "fullResponse": {
       "type": "boolean"

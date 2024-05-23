@@ -1,19 +1,29 @@
+import { Kushki } from "class/Kushki.ts";
+import {
+  FieldEventsEnum,
+  FieldsMethodTypesEnum
+} from "infrastructure/FieldEventsEnum.ts";
+import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
+import { KInfo } from "service/KushkiInfoService.ts";
+import { FieldOptions } from "src/interfaces/FieldOptions.ts";
+import { CardFieldValues } from "types/card_fields_values";
+import { CardOptions, Field } from "types/card_options";
+import { FieldValidity, FormValidity } from "types/form_validity";
+import { SecureDeviceTokenOptions } from "types/secure_device_token_request";
 import {
   addEventListener,
   buildCustomHeaders,
   buildFieldsValidity,
   dispatchCustomEvent,
   focusField,
+  getInitialFieldValidation,
   hideContainers,
+  isRequiredFlagInCvv,
   resetField,
   showContainers,
-  updateValidity
+  updateValidity,
+  validateInitParams
 } from "utils/HostedFieldsUtils.ts";
-import { KInfo } from "service/KushkiInfoService.ts";
-import { CardFieldValues } from "types/card_fields_values";
-import { FieldEventsEnum } from "infrastructure/FieldEventsEnum.ts";
-import { FieldValidity, FormValidity } from "types/form_validity";
-import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
 
 describe("HostedFields utils - test", () => {
   describe("buildCustomHeaders - method", () => {
@@ -291,6 +301,177 @@ describe("HostedFields utils - test", () => {
 
       expect(newValue.cardNumber?.validity.isValid).toEqual(false);
       expect(newValue.cardNumber?.validity.errorType).toEqual("empty");
+    });
+  });
+
+  describe("validateInitParams - method", () => {
+    const kushkiInstance = new Kushki({ publicCredentialId: "00000" });
+    let cardOptionsMock: CardOptions;
+    let deviceOptionsMock: SecureDeviceTokenOptions;
+
+    beforeEach(() => {
+      cardOptionsMock = {
+        currency: "USD",
+        fields: {
+          cardholderName: {
+            selector: "cardholderName_id"
+          },
+          cardNumber: {
+            selector: "cardNumber_id"
+          },
+          cvv: {
+            selector: "cvv_id"
+          },
+          expirationDate: {
+            selector: "expirationDate_id"
+          }
+        }
+      };
+      deviceOptionsMock = {
+        body: { subscriptionId: "4545454" },
+        fields: {
+          cvv: {
+            selector: "cvv_id"
+          }
+        }
+      };
+    });
+
+    it("should throws E012 when options is undefined ", () => {
+      try {
+        validateInitParams(
+          kushkiInstance,
+          // @ts-ignore
+          undefined,
+          FieldsMethodTypesEnum.DEVICE_TOKEN
+        );
+      } catch (error: any) {
+        expect(error.code).toEqual("E012");
+      }
+    });
+
+    it("should throws E012 when kushkiInstance is undefined ", () => {
+      try {
+        validateInitParams(
+          // @ts-ignore
+          undefined,
+          cardOptionsMock,
+          FieldsMethodTypesEnum.DEVICE_TOKEN
+        );
+      } catch (error: any) {
+        expect(error.code).toEqual("E012");
+      }
+    });
+
+    it("should throws E020 when required field not exist for SecureDeviceOptions", () => {
+      // @ts-ignore
+      deviceOptionsMock.fields = {};
+
+      try {
+        validateInitParams(
+          kushkiInstance,
+          deviceOptionsMock,
+          FieldsMethodTypesEnum.DEVICE_TOKEN
+        );
+      } catch (error: any) {
+        expect(error.code).toEqual("E020");
+      }
+    });
+
+    it("should throws E020 when required field not exist for cardOptions", () => {
+      // @ts-ignore
+      cardOptionsMock.fields = {};
+
+      try {
+        validateInitParams(
+          kushkiInstance,
+          cardOptionsMock,
+          FieldsMethodTypesEnum.CARD_TOKEN
+        );
+      } catch (error: any) {
+        expect(error.code).toEqual("E020");
+      }
+    });
+
+    it("should throws E020 when cardOptions is not subscription and not contains cvv field", () => {
+      // @ts-ignore
+      cardOptionsMock.fields.cvv = {};
+
+      try {
+        validateInitParams(
+          kushkiInstance,
+          cardOptionsMock,
+          FieldsMethodTypesEnum.CARD_TOKEN
+        );
+      } catch (error: any) {
+        expect(error.code).toEqual("E020");
+      }
+    });
+  });
+
+  describe("isRequiredFlagInCvv - method", () => {
+    it("should return false when isRequired not exist in options", () => {
+      const fieldMock: Field = {
+        selector: "id"
+      };
+      const response = isRequiredFlagInCvv(fieldMock, false);
+
+      expect(response).toBeFalsy();
+    });
+
+    it("should return true when isRequired exist in options and isSubscription is true", () => {
+      const fieldMock: Field = {
+        isRequired: true,
+        selector: "id"
+      };
+      const response = isRequiredFlagInCvv(fieldMock, true);
+
+      expect(response).toBeTruthy();
+    });
+  });
+
+  describe("getInitialFieldValidation - method", () => {
+    it("should return false when fieldKey is not CVV", () => {
+      const optionsMock: FieldOptions = {
+        fieldType: InputModelEnum.CARD_NUMBER
+      };
+
+      const response = getInitialFieldValidation(optionsMock, false);
+
+      expect(response).toBeFalsy();
+    });
+
+    it("should return true when fieldKey is CVV, field is required and isSubscription is true", () => {
+      const optionsMock: FieldOptions = {
+        fieldType: InputModelEnum.CVV,
+        isRequired: true
+      };
+
+      const response = getInitialFieldValidation(optionsMock, true);
+
+      expect(response).toBeFalsy();
+    });
+
+    it("should return true when fieldKey is CVV and field is required", () => {
+      const optionsMock: FieldOptions = {
+        fieldType: InputModelEnum.CVV,
+        isRequired: true
+      };
+
+      const response = getInitialFieldValidation(optionsMock, true);
+
+      expect(response).toBeFalsy();
+    });
+
+    it("should return false when fieldKey is CVV, field is not required and isSubscription is true", () => {
+      const optionsMock: FieldOptions = {
+        fieldType: InputModelEnum.CVV,
+        isRequired: false
+      };
+
+      const response = getInitialFieldValidation(optionsMock, true);
+
+      expect(response).toBeTruthy();
     });
   });
 });

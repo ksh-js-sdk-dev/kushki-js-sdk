@@ -21,6 +21,7 @@ export interface FieldOptions {
   preventAutofill?: boolean;
   label?: string;
   styles?: Styles;
+  isRequired?: boolean;
   handleOnBlur?: (fieldType: string) => void;
   handleOnFocus?: (fieldType: string) => void;
   handleOnSubmit?: (fieldType: string) => void;
