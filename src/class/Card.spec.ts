@@ -114,6 +114,24 @@ describe("Card test", () => {
     KushkiHostedFields.mockClear();
   });
 
+  it("should render cvv field with isRequired false when is subscription and isRequired flag exist", async () => {
+    options.fields.cvv!.isRequired = false;
+    options.isSubscription = true;
+
+    await initCardToken(kushki, options);
+
+    expect(KushkiHostedFields.mock.calls[2][0].isRequired).toBeFalsy();
+  });
+
+  it("should render cvv field with isRequired true when is not subscription and isRequired flag exist", async () => {
+    options.fields.cvv!.isRequired = false;
+    options.isSubscription = false;
+
+    await initCardToken(kushki, options);
+
+    expect(KushkiHostedFields.mock.calls[2][0].isRequired).toBeTruthy();
+  });
+
   it("it should return base URL of uat when Card has property inTest equal to true", async () => {
     await initCardToken(kushki, options);
 

@@ -4,3 +4,8 @@ export enum FieldEventsEnum {
   SUBMIT = "fieldSubmit",
   VALIDITY = "fieldValidity"
 }
+
+export enum FieldsMethodTypesEnum {
+  CARD_TOKEN = "card-token",
+  DEVICE_TOKEN = "device-token"
+}

@@ -33,6 +33,7 @@ import { ICardSubscriptions } from "repository/ICardSubscriptions.ts";
  * @throws
  *  - if params: `options` or `kushkiInstance` are null or undefined then throw {@link ERRORS | ERRORS.E012}
  *  - if the param `options.fields` any field has non-existent selector then throw {@link ERRORS | ERRORS.E013}
+ *  - if into the param `options.fields` not exist the required fields for card or subscription token, then throw {@link ERRORS | ERRORS.E020}
  *
  * #### Examples
  * ##### Basic setup to Card Token
@@ -183,6 +184,59 @@ import { ICardSubscriptions } from "repository/ICardSubscriptions.ts";
  * }
  * ```
  *
+ * ##### Card Subscription Token with optional cvv field
+ *
+ * ###### Configurations for optional cvv field
+ * - The optional cvv is only for subscriptions
+ * - To specify if the cvv hosted field is required or not, add the isRequired flag into cvv configuration
+ * - If the cvv field is not required, when call requestToken method, the validation omit the cvv if it is empty
+ *
+ * ```ts
+ * const options : CardOptions = {
+ *   currency: "USD",
+ *   fields: {
+ *       cardholderName: {
+ *          selector: "cardholderName_id"
+ *       },
+ *       cardNumber: {
+ *          selector: "cardNumber_id"
+ *       },
+ *       cvv: {
+ *          selector: "cvv_id",
+ *          isRequired: false // Define the field is required or not, default value is true
+ *       },
+ *      expirationDate: {
+ *          selector: "expirationDate_id"
+ *      }
+ *   },
+ *   isSubscription: true, //Only for subscriptions the cvv can be optional
+ * }
+ * ```
+ *
+ * ##### Card Subscription Token with cvv field omitted
+ *
+ * ###### Configurations for omitted cvv field
+ * - The omitted cvv is only for subscriptions
+ * - To omit the cvv hosted field delete the cvv configuration
+ * - If the cvv configuration not exist, the cvv will no render in the page
+ *
+ * ```ts
+ * const options : CardOptions = {
+ *   currency: "USD",
+ *   fields: { //Fields without cvv configurations
+ *       cardholderName: {
+ *          selector: "cardholderName_id"
+ *       },
+ *       cardNumber: {
+ *          selector: "cardNumber_id"
+ *       },
+ *      expirationDate: {
+ *          selector: "expirationDate_id"
+ *      }
+ *   },
+ *   isSubscription: true, //Only for subscriptions the cvv can be omitted
+ * }
+ * ```
  * #####  Enable field OTP and set custom styles
  *
  * ###### Definition containers in html
