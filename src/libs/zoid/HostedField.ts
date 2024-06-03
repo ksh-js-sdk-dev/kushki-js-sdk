@@ -53,7 +53,9 @@ const KushkiHostedFields = zoid.create({
   url: (options: { props: FieldOptions }) => {
     const fieldType: InputModelEnum = options.props.fieldType;
 
-    return `${HostedFieldUrlEnum.LOCAL_SPA_URL}/${PathsHtmlSpaInputs[fieldType]}.html`;
+    return `${
+      options.props.isInTest ? HostedFieldUrlEnum.uat : HostedFieldUrlEnum.prod
+    }/${PathsHtmlSpaInputs[fieldType]}.html`;
   }
 });
 

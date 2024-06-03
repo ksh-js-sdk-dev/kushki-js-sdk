@@ -1,5 +1,6 @@
 import { IKushki } from "repository/IKushki.ts";
 import { DeviceTokenRequest } from "types/device_token_request";
+import { BrandByMerchantResponse } from "types/brand_by_merchant_response";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { KushkiGateway } from "gateway/KushkiGateway.ts";
@@ -43,6 +44,14 @@ export class CardService {
       await service.createDeviceTokenRequestBody(body);
 
     return service._requestDeviceToken(request);
+  }
+
+  public static requestBrandsByMerchant(
+    kushkiInstance: IKushki
+  ): Promise<BrandByMerchantResponse[]> {
+    const gateway: IKushkiGateway = new KushkiGateway();
+
+    return gateway.requestBrandLogos(kushkiInstance);
   }
 
   public async createDeviceTokenRequestBody(

@@ -1,3 +1,4 @@
+import { RequestBrandsByMerchant } from "./containers/Card/RequestBrandsByMerchant/RequestBrandsByMerchant.tsx";
 import { CheckoutContainer } from "./containers/Card/RequestCardToken/Checkout.tsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RoutesEnum } from "./shared/enums/Routes.enum.ts";
@@ -35,7 +36,7 @@ function App() {
           path={RoutesEnum.CARD_ANIMATION}
           element={<>{"CARD_ANIMATION"}</>}
         />
-        <Route path={RoutesEnum.BRANDS} element={<>{"BRANDS"}</>} />
+        <Route path={RoutesEnum.BRANDS} element={<RequestBrandsByMerchant />} />
       </Routes>
     </BrowserRouter>
   );

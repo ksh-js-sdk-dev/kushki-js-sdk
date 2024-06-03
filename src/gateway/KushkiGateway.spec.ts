@@ -1,3 +1,4 @@
+import { BrandByMerchantResponse } from "types/brand_by_merchant_response";
 import { KushkiGateway } from "./KushkiGateway";
 import axios, { AxiosError } from "axios";
 import { Mock } from "ts-mockery";
@@ -367,6 +368,40 @@ describe("KushkiGateway - Test", () => {
         await kushkiGateway.requestDeviceToken(mockKushki, request);
       } catch (error: any) {
         expect(error.code).toEqual("E017");
+      }
+    });
+  });
+
+  describe("requestBrandLogos - Test", () => {
+    const mockBrandList: BrandByMerchantResponse[] = [
+      {
+        brand: "visa",
+        url: "http://visa.logo"
+      }
+    ];
+
+    it("should return brand list when call requestBrandLogos success", async () => {
+      const axiosGetSpy = jest.fn(() => {
+        return Promise.resolve({
+          data: mockBrandList
+        });
+      });
+
+      jest.spyOn(axios, "get").mockImplementation(axiosGetSpy);
+
+      const brandListResponse: BrandByMerchantResponse[] =
+        await kushkiGateway.requestBrandLogos(mockKushki);
+
+      expect(brandListResponse).toEqual(mockBrandList);
+    });
+
+    it("should throws an AxiosError when call requestBrandLogos error", async () => {
+      jest.spyOn(axios, "get").mockRejectedValue(new AxiosError(""));
+
+      try {
+        await kushkiGateway.requestBrandLogos(mockKushki);
+      } catch (error: any) {
+        expect(error.code).toEqual("E021");
       }
     });
   });

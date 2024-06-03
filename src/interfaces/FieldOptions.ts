@@ -8,6 +8,7 @@ export type OnPropsCallback = (
 ) => void;
 
 export interface FieldOptions {
+  isInTest: boolean;
   inputType?: InputTypeEnum;
   fieldType: InputModelEnum;
   onProps?: OnPropsCallback;
