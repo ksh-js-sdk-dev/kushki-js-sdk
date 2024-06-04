@@ -1,6 +1,6 @@
 {
   "name": "@kushki/js-sdk",
-  "version": "1.3.0-14554-alpha.1",
+  "version": "1.4.0-14337.1",
   "scripts": {
     "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
     "bootstrap:codesandbox": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev --mode codesandbox",
