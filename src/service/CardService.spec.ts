@@ -1,8 +1,11 @@
+import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import { KushkiError } from "infrastructure/KushkiError.ts";
 import { IKushki } from "repository/IKushki.ts";
 import { Kushki } from "class/Kushki.ts";
 import { DeviceTokenRequest } from "types/device_token_request";
 import { CardService } from "service/CardService.ts";
 import { KushkiGateway } from "gateway/KushkiGateway.ts";
+import { BrandByMerchantResponse } from "types/brand_by_merchant_response";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { TokenResponse } from "types/token_response";
 import { SiftScienceProvider } from "provider/SiftScienceProvider.ts";
@@ -26,6 +29,7 @@ describe("CardService - Test", () => {
   let bodyMock: DeviceTokenRequest;
   let merchantSettingsMock: MerchantSettingsResponse;
   let deviceTokenMock: TokenResponse;
+  let brandListMock: BrandByMerchantResponse[];
 
   let requestMerchantSettingsSpy = jest.fn();
   let requestDeviceTokenSpy = jest.fn();
@@ -36,6 +40,7 @@ describe("CardService - Test", () => {
 
   let validateSandbox3dsTokenSpy = jest.fn();
   let validateCardinal3dsTokenSpy = jest.fn();
+  let requestBrandsByMerchantSpy = jest.fn();
 
   const mockKushkiGateway = (
     requestMerchantSettings: jest.Mock = requestMerchantSettingsSpy.mockResolvedValue(
@@ -46,10 +51,14 @@ describe("CardService - Test", () => {
     ),
     requestSubscriptionUserId: jest.Mock = requestSubscriptionUserSpy.mockResolvedValue(
       { userId: "1234" }
+    ),
+    requestBrandLogos: jest.Mock = requestBrandsByMerchantSpy.mockResolvedValue(
+      brandListMock
     )
   ) => {
     // @ts-ignore
     KushkiGateway.mockImplementation(() => ({
+      requestBrandLogos,
       requestDeviceToken,
       requestMerchantSettings,
       requestSubscriptionUserId
@@ -111,6 +120,12 @@ describe("CardService - Test", () => {
       sandboxBaconKey: null
     };
     deviceTokenMock = { token: "12345" };
+    brandListMock = [
+      {
+        brand: "visa",
+        url: "http://visa.logo"
+      }
+    ];
 
     mockKushkiGateway();
     mockSiftScienceProvider();
@@ -366,6 +381,35 @@ describe("CardService - Test", () => {
       expect(tokenResponse).toEqual(deviceTokenMock);
       expect(validateSandbox3dsTokenSpy).toBeCalledTimes(0);
       expect(validateCardinal3dsTokenSpy).toBeCalledTimes(1);
+    });
+  });
+
+  describe("requestBrandsByMerchant - method", () => {
+    it("should return brandList when call requestBrandsByMerchant success", async () => {
+      const response: BrandByMerchantResponse[] =
+        await CardService.requestBrandsByMerchant(kushkiInstance);
+
+      expect(response).toEqual(brandListMock);
+      expect(requestBrandsByMerchantSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("should throws error when call requestBrandsByMerchant error", async () => {
+      requestBrandsByMerchantSpy = jest
+        .fn()
+        .mockRejectedValue(new KushkiError(ERRORS.E021));
+
+      mockKushkiGateway(
+        undefined,
+        undefined,
+        undefined,
+        requestBrandsByMerchantSpy
+      );
+
+      try {
+        await CardService.requestBrandsByMerchant(kushkiInstance);
+      } catch (error: any) {
+        expect(error.code).toEqual("E021");
+      }
     });
   });
 });

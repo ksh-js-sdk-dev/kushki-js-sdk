@@ -28,6 +28,8 @@ We make it easier!
 - [AntiFraud Methods](#antifraud-methods)
   - [Request Secure Init](#request-secure-init)
   - [Request validate 3DS](#request-validate-3ds)
+- [Other Card Methods](#other-card-methods)
+  - [Request Brands by Merchant](#request-brands-by-merchant)
 
 # Install <a name="install"></a>
 
@@ -673,4 +675,34 @@ const on3DSValidation = async () => {
     console.log(error)
   }
 };
+```
+
+#  Other Card Methods <a name="other-card-methods"></a>
+## Request Brands by Merchant <a name="request-brands-by-merchant"></a>
+To get the brand list associated with a specific merchant, you should call [`requestBrandsByMerchant`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.requestBrandsByMerchant.html) method with Kushki instance that was previously initialized with [`init`](#library-setup) method
+
+This method is useful when you want to inform the client about the types of credit card brands enabled for their payment, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.requestBrandsByMerchant.html)
+### Example
+
+```ts
+import { init } from "@kushki/js-sdk";
+import { requestBrandsByMerchant } from "@kushki/js-sdk/Card";
+
+const onRequestBrandsByMerchant = async () => {
+    try {
+      const kushkiInstance = await init({
+        inTest: true,
+        publicCredentialId: "merchantId"
+      });
+
+      const response = await requestBrandsByMerchant(kushkiInstance);
+
+      // On Success, can get brand list,
+      // ex. [{"brand":"visa","url":"https://.../visa.svg"},{"brand":"masterCard","url":"https://.../masterCard.svg"}
+      console.log(response);
+    } catch (error: any) {
+      // On Error, catch response, ex. {code:"E021", message: "Error en solicitud de marcas de tarjetas del comercio"}
+      console.error(error.message);
+    }
+  };
 ```

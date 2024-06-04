@@ -8,5 +8,6 @@
   color: white;
   padding: 10px;
   border-radius: 10px;
-  overflow-wrap: break-word;
+  overflow: auto;
+  white-space: pre-wrap;
 }

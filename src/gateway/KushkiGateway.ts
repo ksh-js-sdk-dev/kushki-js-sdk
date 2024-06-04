@@ -6,6 +6,7 @@ import axios from "axios";
 import { IKushki } from "Kushki";
 import { CardTokenResponse, DeferredByBinOptionsResponse } from "Kushki/Card";
 import { IKushkiGateway } from "repository/IKushkiGateway";
+import { BrandByMerchantResponse } from "types/brand_by_merchant_response";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import { SecureOtpRequest } from "types/secure_otp_request";
@@ -198,6 +199,24 @@ export class KushkiGateway implements IKushkiGateway {
       return Promise.resolve(data);
     } catch (error: any) {
       return Promise.reject(new KushkiError(ERRORS.E017, error.message));
+    }
+  };
+
+  public requestBrandLogos = async (
+    kushkiInstance: IKushki
+  ): Promise<BrandByMerchantResponse[]> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${
+      PathEnum.brands_logos_by_merchant
+    }`;
+
+    try {
+      const { data } = await axios.get<BrandByMerchantResponse[]>(url, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+      });
+
+      return Promise.resolve(data);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E021, error.message));
     }
   };
 

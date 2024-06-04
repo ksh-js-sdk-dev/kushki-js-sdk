@@ -25,7 +25,8 @@ export enum ErrorCode {
   E017 = "E017",
   E018 = "E018",
   E019 = "E019",
-  E020 = "E020"
+  E020 = "E020",
+  E021 = "E021"
 }
 
 /**
@@ -112,6 +113,10 @@ export enum ErrorCode {
  *   E020: {
  *     code: "E020",
  *     message: "Error, configuración de campos requeridos no encontrada"
+ *   },
+ *   E021: {
+ *     code: "E021",
+ *     message: "Error en solicitud de marcas de tarjetas del comercio"
  *   }
  * }
  * ```
@@ -197,5 +202,9 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E020]: {
     code: ErrorCode.E020,
     message: "Error, configuración de campos requeridos no encontrada"
+  },
+  [ErrorCode.E021]: {
+    code: ErrorCode.E021,
+    message: "Error en solicitud de marcas de tarjetas del comercio"
   }
 };
