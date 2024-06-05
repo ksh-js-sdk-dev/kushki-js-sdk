@@ -433,7 +433,8 @@ describe("HostedFields utils - test", () => {
   describe("getInitialFieldValidation - method", () => {
     it("should return false when fieldKey is not CVV", () => {
       const optionsMock: FieldOptions = {
-        fieldType: InputModelEnum.CARD_NUMBER
+        fieldType: InputModelEnum.CARD_NUMBER,
+        isInTest: true
       };
 
       const response = getInitialFieldValidation(optionsMock, false);
@@ -444,6 +445,7 @@ describe("HostedFields utils - test", () => {
     it("should return true when fieldKey is CVV, field is required and isSubscription is true", () => {
       const optionsMock: FieldOptions = {
         fieldType: InputModelEnum.CVV,
+        isInTest: true,
         isRequired: true
       };
 
@@ -455,6 +457,7 @@ describe("HostedFields utils - test", () => {
     it("should return true when fieldKey is CVV and field is required", () => {
       const optionsMock: FieldOptions = {
         fieldType: InputModelEnum.CVV,
+        isInTest: true,
         isRequired: true
       };
 
@@ -466,6 +469,7 @@ describe("HostedFields utils - test", () => {
     it("should return false when fieldKey is CVV, field is not required and isSubscription is true", () => {
       const optionsMock: FieldOptions = {
         fieldType: InputModelEnum.CVV,
+        isInTest: true,
         isRequired: false
       };
 
