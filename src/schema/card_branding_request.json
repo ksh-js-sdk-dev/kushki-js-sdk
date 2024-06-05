@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "CardBrandingRequest",
+  "additionalItems": false,
+  "type": "object",
+  "oneOf": [
+    {
+      "title": "VisaBrandingRequest",
+      "additionalProperties": false,
+      "description": "Visa animation properties",
+      "properties": {
+        "brand": {
+          "enum": ["visa"]
+        },
+        "color": {
+          "type": "string",
+          "enum": ["white", "blue", "blur", "transparent"],
+          "description": "(\"white\" | \"blue\" | \"blur\" | \"transparent\") [default = \"white\"] The background of animation."
+        },
+        "constrained": {
+          "type": "boolean",
+          "description": "(boolean) [default= false] The container visualization."
+        },
+        "sound": {
+          "type": "boolean",
+          "description": "(boolean) [default = false] The activation of the sound."
+        },
+        "checkmark": {
+          "type": "string",
+          "enum": ["none", "checkmark", "checkmarkWithText"],
+          "description": "(\"none\" | \"checkmark\" | \"checkmarkWithText\") [default = \"none\"] The visualization of checkmark."
+        },
+        "checkmarkTextOption": {
+          "type": "string",
+          "enum": ["approved", "success", "complete"],
+          "description": "(\"approved\" | \"success\" | \"complete\") [default = \"approved\"] The text to appear if checkmarkWithText is enabled."
+        },
+        "languageCode": {
+          "type": "string",
+          "enum": ["es", "en", "pt_br"],
+          "description": "(\"es\" | \"en\" | \"pt_br\") [default = \"es\"] The language of the checkmark text."
+        }
+      },
+      "required": ["brand"]
+    },
+    {
+      "title": "MasterCardBrandAnimation",
+      "additionalProperties": false,
+      "properties": {
+        "brand": {
+          "enum": ["mastercard"]
+        },
+        "type": {
+          "enum": ["default", "animation-only", "sound-only"]
+        },
+        "background": {
+          "enum": ["white", "black"]
+        },
+        "sonicCue": {
+          "enum": ["checkout", "securedby"]
+        }
+      },
+      "required": ["brand"]
+    }
+  ]
+}
