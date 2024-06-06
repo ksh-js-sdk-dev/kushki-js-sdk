@@ -44,6 +44,10 @@
     "./AntiFraud": {
       "import": "./module/AntiFraud.js",
       "types": "./module/AntiFraud.d.ts"
+    },
+    "./CardAnimation": {
+      "import": "./module/CardAnimation.js",
+      "types": "./module/CardAnimation.d.ts"
     }
   },
   "engines": {

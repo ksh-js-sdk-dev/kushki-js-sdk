@@ -1,13 +1,14 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "@public Contains the display and behavior properties of animations",
   "title": "CardBrandingRequest",
   "additionalItems": false,
   "type": "object",
   "oneOf": [
     {
+      "description": "@public Visa animation properties",
       "title": "VisaBrandingRequest",
       "additionalProperties": false,
-      "description": "Visa animation properties",
       "properties": {
         "brand": {
           "enum": ["visa"]
@@ -15,49 +16,53 @@
         "color": {
           "type": "string",
           "enum": ["white", "blue", "blur", "transparent"],
-          "description": "(\"white\" | \"blue\" | \"blur\" | \"transparent\") [default = \"white\"] The background of animation."
+          "description": "@typeParam  string - [default = white] The background of animation"
         },
         "constrained": {
           "type": "boolean",
-          "description": "(boolean) [default= false] The container visualization."
+          "description": "@typeParam  boolean - [default= false] The container visualization"
         },
         "sound": {
           "type": "boolean",
-          "description": "(boolean) [default = false] The activation of the sound."
+          "description": "@typeParam  boolean -  [default = false] The activation of the sound"
         },
         "checkmark": {
           "type": "string",
           "enum": ["none", "checkmark", "checkmarkWithText"],
-          "description": "(\"none\" | \"checkmark\" | \"checkmarkWithText\") [default = \"none\"] The visualization of checkmark."
+          "description": "(@typeParam  string [default = none] The visualization of checkmark"
         },
         "checkmarkTextOption": {
           "type": "string",
           "enum": ["approved", "success", "complete"],
-          "description": "(\"approved\" | \"success\" | \"complete\") [default = \"approved\"] The text to appear if checkmarkWithText is enabled."
+          "description": "@typeParam  string - [default = approved] The text to appear if checkmarkWithText is enabled"
         },
         "languageCode": {
           "type": "string",
           "enum": ["es", "en", "pt_br"],
-          "description": "(\"es\" | \"en\" | \"pt_br\") [default = \"es\"] The language of the checkmark text."
+          "description": "@typeParam  string - [default = es] The language of the checkmark text"
         }
       },
       "required": ["brand"]
     },
     {
-      "title": "MasterCardBrandAnimation",
+      "description": "@public MasterCard animation properties",
+      "title": "MasterCardBrandingRequest",
       "additionalProperties": false,
       "properties": {
         "brand": {
           "enum": ["mastercard"]
         },
         "type": {
-          "enum": ["default", "animation-only", "sound-only"]
+          "enum": ["default", "animation-only", "sound-only"],
+          "description": "@typeParam  string - [default = default] Defines type of component"
         },
         "background": {
-          "enum": ["white", "black"]
+          "enum": ["white", "black"],
+          "description": "@typeParam  string - [default = black] The animation background color"
         },
         "sonicCue": {
-          "enum": ["checkout", "securedby"]
+          "enum": ["checkout", "securedby"],
+          "description": "@typeParam  string - [default = checkout] Specifies different sound and animations"
         }
       },
       "required": ["brand"]

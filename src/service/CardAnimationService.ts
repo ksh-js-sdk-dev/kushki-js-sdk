@@ -5,7 +5,7 @@ import { MasterCardAnimationProvider } from "provider/MasterCardAnimationProvide
 import { VisaAnimationProvider } from "provider/VisaAnimationProvider.ts";
 import {
   CardBrandingRequest,
-  MasterCardBrandAnimation,
+  MasterCardBrandingRequest,
   VisaBrandingRequest
 } from "types/card_branding_request";
 
@@ -21,7 +21,7 @@ export class CardAnimationService {
       return visaProvider.initAnimation();
     } else if (opts.brand === CardBrandsEnum.MASTERCARD) {
       const mcProvider = new MasterCardAnimationProvider(
-        opts as MasterCardBrandAnimation
+        opts as MasterCardBrandingRequest
       );
 
       return mcProvider.initAnimation();
