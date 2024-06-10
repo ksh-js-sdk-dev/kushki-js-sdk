@@ -56,7 +56,7 @@ describe("Cardinal3DSProvider - Test", () => {
     cardinalProvider = new Cardinal3DSProvider();
   };
 
-  const execulteLoadScript = () => {
+  const executeLoadScript = () => {
     const script = document.getElementById("cardinal_sc_id");
 
     if (script && script.onload) {
@@ -75,7 +75,7 @@ describe("Cardinal3DSProvider - Test", () => {
   describe("initCardinal - method", () => {
     it("should call setupCardinal for prod Lib", () => {
       cardinalProvider.initCardinal(kushkiInstanceMock, "JWT", "4242 4242");
-      execulteLoadScript();
+      executeLoadScript();
 
       expect(setUpMock).toBeCalledTimes(1);
     });
@@ -85,7 +85,7 @@ describe("Cardinal3DSProvider - Test", () => {
 
       cardinalProvider.initCardinal(kushkiInstanceMock, "JWT", "4242 4242");
 
-      execulteLoadScript();
+      executeLoadScript();
 
       expect(setUpMock).toBeCalledTimes(1);
     });

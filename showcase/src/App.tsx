@@ -1,4 +1,5 @@
 import { RequestInitAntiFraud } from "./containers/AntiFraud/InitAntiFarud/RequestInitAntiFraud.tsx";
+import { RequestBrandingAnimation } from "./containers/Card/RequestBrandingAnimation/RequestBrandingAnimation.tsx";
 import { RequestBrandsByMerchant } from "./containers/Card/RequestBrandsByMerchant/RequestBrandsByMerchant.tsx";
 import { CheckoutContainer } from "./containers/Card/RequestCardToken/Checkout.tsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -35,7 +36,7 @@ function App() {
         />
         <Route
           path={RoutesEnum.CARD_ANIMATION}
-          element={<>{"CARD_ANIMATION"}</>}
+          element={<RequestBrandingAnimation />}
         />
         <Route path={RoutesEnum.BRANDS} element={<RequestBrandsByMerchant />} />
       </Routes>

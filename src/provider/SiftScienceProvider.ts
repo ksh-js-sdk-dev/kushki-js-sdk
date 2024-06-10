@@ -51,7 +51,7 @@ export class SiftScienceProvider implements ISiftScienceProvider {
         userId: newUserId
       };
     } catch (error) {
-      return Promise.reject(new KushkiError(ERRORS.E022));
+      return Promise.reject(new KushkiError(ERRORS.E023));
     }
   }
 
@@ -61,7 +61,7 @@ export class SiftScienceProvider implements ISiftScienceProvider {
   ): Promise<SiftScienceObject> {
     try {
       if (this.isSiftScienceDisabled(merchantSettingsResponse))
-        throw new KushkiError(ERRORS.E022);
+        throw new KushkiError(ERRORS.E023);
 
       await this._initSiftScience();
 
@@ -75,7 +75,7 @@ export class SiftScienceProvider implements ISiftScienceProvider {
         userId: newUserId
       };
     } catch (error) {
-      return Promise.reject(new KushkiError(ERRORS.E022));
+      return Promise.reject(new KushkiError(ERRORS.E023));
     }
   }
 

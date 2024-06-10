@@ -94,7 +94,7 @@ describe("SiftScience Gateway - ", () => {
 
       executeErrorScript();
 
-      await expect(data).rejects.toHaveProperty("code", "E022");
+      await expect(data).rejects.toHaveProperty("code", "E023");
     });
   });
 
@@ -113,7 +113,7 @@ describe("SiftScience Gateway - ", () => {
       await expect(data).resolves.toHaveProperty("sessionId");
     });
 
-    it("should throws error when merchant have sift disabled", async () => {
+    it("should throw an error when merchant have sift disabled", async () => {
       const merchantSettings = {
         ...merchantSettingsResponse,
         prodBaconKey: "",
@@ -127,10 +127,10 @@ describe("SiftScience Gateway - ", () => {
 
       executeLoadScript();
 
-      await expect(data).rejects.toHaveProperty("code", "E022");
+      await expect(data).rejects.toHaveProperty("code", "E023");
     });
 
-    it("should throw error when load script fails", async () => {
+    it("should throw an error when load script fails", async () => {
       const data = siftScienceService.createSiftScienceAntiFraudSession(
         userIdMock,
         merchantSettingsResponse
@@ -138,7 +138,7 @@ describe("SiftScience Gateway - ", () => {
 
       executeErrorScript();
 
-      await expect(data).rejects.toHaveProperty("code", "E022");
+      await expect(data).rejects.toHaveProperty("code", "E023");
     });
   });
 

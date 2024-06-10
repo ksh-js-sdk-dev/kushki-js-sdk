@@ -25,7 +25,8 @@
       "Kushki/Transfer": ["../src/module/Transfer.ts"],
       "Kushki/Merchant": ["../src/module/Merchant.ts"],
       "Kushki/AntiFraud": ["../src/module/AntiFraud.ts"],
-      "Kushki/CardSubscriptions": ["../src/module/CardSubscriptions.ts"]
+      "Kushki/CardSubscriptions": ["../src/module/CardSubscriptions.ts"],
+      "Kushki/CardAnimation": ["../src/module/CardAnimation.ts"]
     }
   },
   "include": ["src"],

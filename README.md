@@ -31,6 +31,7 @@ We make it easier!
   - [Request Init Anti Fraud](#request-init-anti-fraud)
 - [Other Card Methods](#other-card-methods)
   - [Request Brands by Merchant](#request-brands-by-merchant)
+  - [Request Card Branding Animation](#request-card-branding-animation)
 
 # Install <a name="install"></a>
 
@@ -705,7 +706,7 @@ const onRequestInitAntiFraud = async () => {
       // ex. {"sessionId":"9a64960c-a1de-4878-b975-9ab1ea30e853","userId":"eda2b0b0c5f3426483a678c82cc8a5ef"}
       console.log(response);
     } catch (error: any) {
-      // On Error, catch response, ex. {code:"E022", message: "Error al configurar sesión de Sift"}
+      // On Error, catch response, ex. {code:"E023", message: "Error al configurar sesión de Sift"}
       console.error(error.message);
     }
   };
@@ -736,6 +737,44 @@ const onRequestBrandsByMerchant = async () => {
       console.log(response);
     } catch (error: any) {
       // On Error, catch response, ex. {code:"E021", message: "Error en solicitud de marcas de tarjetas del comercio"}
+      console.error(error.message);
+    }
+  };
+```
+## Request Card Branding Animation <a name="request-card-branding-animation"></a>
+The Card Branding animation gives users meaningful confirmation of their payment.
+
+Apply this animation only when the user has selected a Visa or MasterCard to make payment, and play it
+after the user has submitted their payment credentials or when a transaction is complete.
+
+The first step is define the container for the animation (`visa-sensory-branding` or `mastercard-sensory-branding`)
+```html
+<!DOCTYPE html>
+<html lang="en">
+<body>
+  <!-- For mastercard change or add other div with id = "mastercard-sensory-branding" -->
+  <div id="visa-sensory-branding"/>
+</body>
+</html>
+```
+To render the animation needs call [`requestInitCardBrandingAnimation`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/CardAnimation.requestInitCardBrandingAnimation.html)  method from the `@kushki/js-sdk/CardAnimation` module, 
+more examples [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/CardAnimation.requestInitCardBrandingAnimation.html#md:examplesl)
+```ts
+import { 
+  requestInitCardBrandingAnimation, 
+  CardBrandingRequest 
+} from "@kushki/js-sdk/CardAnimation";
+
+const onRequestInitCardBrandingAnimation = async () => {
+    try {
+      const opts: CardBrandingRequest = {
+        brand: "visa" //Can change to mastercard and add properties according the brand type
+      };
+
+      await requestInitCardBrandingAnimation(opts);
+      // On Success, the animation displayed into the container defined in the html
+    } catch (error: any) {
+      // On Error, catch response, ex. {code:"E022", message: "Error al generar animación"}
       console.error(error.message);
     }
   };

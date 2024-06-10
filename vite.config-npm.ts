@@ -6,9 +6,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   plugins: [
     dts({
-      include: ["src"],
+      copyDtsFiles: true,
       exclude: ["src/**/*.spec.ts"],
-      copyDtsFiles: true
+      include: ["src"]
     }),
     tsconfigPaths()
   ],
@@ -17,9 +17,10 @@ export default defineConfig({
       entry: {
         AntiFraud: "src/module/AntiFraud.ts",
         Card: "src/module/Card.ts",
-        Transfer: "src/module/Transfer.ts",
+        CardAnimation: "src/module/CardAnimation.ts",
+        Kushki: "src/module/Kushki.ts",
         Merchant: "src/module/Merchant.ts",
-        Kushki: "src/module/Kushki.ts"
+        Transfer: "src/module/Transfer.ts"
       },
       formats: ["cjs"]
     },

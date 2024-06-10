@@ -1,5 +1,6 @@
 import { SiftScienceProvider } from "provider/SiftScienceProvider.ts";
 import { IKushki } from "repository/IKushki.ts";
+import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
 import { SecureInitRequest } from "types/secure_init_request";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
@@ -80,7 +81,7 @@ export class AntiFraudService {
     userId: string
   ): Promise<SiftScienceObject> {
     const gateway: KushkiGateway = new KushkiGateway();
-    const siftProvider: SiftScienceProvider = new SiftScienceProvider(
+    const siftProvider: ISiftScienceProvider = new SiftScienceProvider(
       kushkiInstance
     );
     const merchantSettings: MerchantSettingsResponse =

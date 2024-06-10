@@ -113,7 +113,7 @@ export type { ERRORS } from "infrastructure/ErrorEnum.ts";
  *
  * @throws
  *  - if the merchant credential is empty or the request fails then throw {@link ERRORS | ERRORS.E003}
- *  - if the init process fails then throw {@link ERRORS | ERRORS.E022}
+ *  - if the init process fails then throw {@link ERRORS | ERRORS.E023}
  *
  * @example
  * ```ts
@@ -137,7 +137,7 @@ export type { ERRORS } from "infrastructure/ErrorEnum.ts";
  *       // ex. {"sessionId":"9a64960c-a1de-4878-b975-9ab1ea30e853","userId":"eda2b0b0c5f3426483a678c82cc8a5ef"}
  *       console.log(response);
  *     } catch (error: any) {
- *       // On Error, catch response, ex. {code:"E022", message: "Error al configurar sesión de Sift"}
+ *       // On Error, catch response, ex. {code:"E023", message: "Error al configurar sesión de Sift"}
  *       console.error(error.message);
  *     }
  *   };

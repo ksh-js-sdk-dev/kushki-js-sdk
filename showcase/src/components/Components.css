@@ -1,0 +1,50 @@
+.options-dynamic {
+  border: 1px solid rgba(203, 213, 224, 1) !important;
+  border-radius: 10px !important;
+  padding: 0px 11px 0px 8px !important;
+  margin: 5px !important;
+  background-position: calc(100% - 10px) center !important;
+}
+
+.options-dynamic-label {
+  font-size: 14px !important;
+  overflow: hidden;
+  padding-left: 8px !important;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.demo-button-xs {
+  border-radius: 8px;
+  margin: 5px;
+  text-transform: none;
+}
+
+.radio-dynamic {
+  text-align: center;
+  margin: 0;
+}
+
+.select-dynamic {
+  margin: 0;
+}
+
+.radio-container {
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.check-dynamic {
+  margin-left: 5px;
+}
+
+.check-dynamic-label {
+  padding-left: 28px !important;
+}
+.animation-container {
+  width: auto;
+  height: 150px;
+}
