@@ -28,6 +28,7 @@ We make it easier!
 - [AntiFraud Methods](#antifraud-methods)
   - [Request Secure Init](#request-secure-init)
   - [Request validate 3DS](#request-validate-3ds)
+  - [Request Init Anti Fraud](#request-init-anti-fraud)
 - [Other Card Methods](#other-card-methods)
   - [Request Brands by Merchant](#request-brands-by-merchant)
 
@@ -675,6 +676,39 @@ const on3DSValidation = async () => {
     console.log(error)
   }
 };
+```
+## Request Init Anti Fraud Init <a name="request-init-anti-fraud"></a>
+Before collecting payment data and if you need to initialize the Sift Science service independently, you can use the method [`requestInitAntiFraud`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Antifraud.requestInitAntiFraud.html)
+with Kushki instance that was previously initialized with [`init`](#library-setup) method and `userId` , which is a session identifier value that can be user's ID, username, email address or empty.
+
+To use this method, it is necessary that your merchant has the Sift Science service active and has its credentials correctly configured according to the environment that will be used. More details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Antifraud.requestInitAntiFraud.html)
+
+### Example
+```ts
+import { init } from "@kushki/js-sdk";
+import { requestInitAntiFraud, SiftScienceObject } from "Kushki/AntiFraud";
+
+const onRequestInitAntiFraud = async () => {
+    try {
+      const kushkiInstance = await init({
+        inTest: true,
+        publicCredentialId: "merchantId"
+      });
+      const userId= "user-identification"
+
+      const response: SiftScienceObject = await requestInitAntiFraud(
+        kushkiInstance,
+        userId,
+      );
+
+      // On Success, can get Sift Science session object,
+      // ex. {"sessionId":"9a64960c-a1de-4878-b975-9ab1ea30e853","userId":"eda2b0b0c5f3426483a678c82cc8a5ef"}
+      console.log(response);
+    } catch (error: any) {
+      // On Error, catch response, ex. {code:"E022", message: "Error al configurar sesión de Sift"}
+      console.error(error.message);
+    }
+  };
 ```
 
 #  Other Card Methods <a name="other-card-methods"></a>

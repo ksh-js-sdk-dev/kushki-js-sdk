@@ -10,4 +10,5 @@
   border-radius: 10px;
   overflow: auto;
   white-space: pre-wrap;
+  word-wrap: anywhere;
 }

@@ -1,61 +1,125 @@
 /**
  * SiftScience Service file
  */
+import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { IKushki } from "Kushki";
 import { v4 } from "uuid";
 import { SiftScienceObject } from "types/sift_science_object";
+import { KushkiError } from "infrastructure/KushkiError.ts";
 
 /**
  * Implementation
  */
 export class SiftScienceProvider implements ISiftScienceProvider {
-  public createSiftScienceSession(
+  private readonly SIFT_SCRIPT_ID = "sift-script";
+  private readonly SIFT_SCRIPT_URL = "https://cdn.sift.com/s.js";
+  private readonly SIFT_PROPERTY: string = "_sift";
+  private readonly _kushkiInstance: IKushki;
+  private _siftObject: object[];
+
+  constructor(kushkiInstance: IKushki) {
+    this._kushkiInstance = kushkiInstance;
+    this._siftObject = [];
+  }
+
+  public async createSiftScienceSession(
     processor: string,
     clientIdentification: string,
-    kushkiInstance: IKushki,
     merchantSettingsResponse: MerchantSettingsResponse,
     userId?: string
-  ): SiftScienceObject {
-    const siftEnvironment: string = kushkiInstance.getEnvironmentSift();
+  ): Promise<SiftScienceObject> {
+    try {
+      if (this.isSiftScienceDisabled(merchantSettingsResponse))
+        return {
+          sessionId: undefined,
+          userId: undefined
+        };
 
-    if (
-      this._validateMerchantSettings(siftEnvironment, merchantSettingsResponse)
-    )
+      await this._initSiftScience();
+
+      const newUserId: string =
+        userId ||
+        `${this._kushkiInstance.getPublicCredentialId()}${processor}${clientIdentification}`;
+      const sessionId: string = v4();
+
+      this._setSiftProperties(merchantSettingsResponse, newUserId, sessionId);
+
       return {
-        sessionId: undefined,
-        userId: undefined
+        sessionId,
+        userId: newUserId
       };
-
-    const userIdNew: string =
-      userId ||
-      `${kushkiInstance.getPublicCredentialId()}${processor}${clientIdentification}`;
-    const sessionId: string = v4();
-
-    return {
-      sessionId,
-      userId: userIdNew
-    };
+    } catch (error) {
+      return Promise.reject(new KushkiError(ERRORS.E022));
+    }
   }
 
-  public isSiftScienceEnabled(
-    kushkiInstance: IKushki,
+  public async createSiftScienceAntiFraudSession(
+    userId: string,
     merchantSettingsResponse: MerchantSettingsResponse
-  ): boolean {
-    return !this._validateMerchantSettings(
-      kushkiInstance.getEnvironmentSift(),
-      merchantSettingsResponse
-    );
+  ): Promise<SiftScienceObject> {
+    try {
+      if (this.isSiftScienceDisabled(merchantSettingsResponse))
+        throw new KushkiError(ERRORS.E022);
+
+      await this._initSiftScience();
+
+      const newUserId: string = `${userId}${this._kushkiInstance.getPublicCredentialId()}`;
+      const sessionId: string = v4();
+
+      this._setSiftProperties(merchantSettingsResponse, newUserId, sessionId);
+
+      return {
+        sessionId,
+        userId: newUserId
+      };
+    } catch (error) {
+      return Promise.reject(new KushkiError(ERRORS.E022));
+    }
   }
 
-  private _validateMerchantSettings(
-    siftEnvironment: string,
+  public isSiftScienceDisabled(
     merchantSettings: MerchantSettingsResponse
   ): boolean {
+    const siftEnvironment: string = this._kushkiInstance.getEnvironmentSift();
+
     return (
       merchantSettings[siftEnvironment] === "" ||
       merchantSettings[siftEnvironment] === null
     );
+  }
+
+  private _initSiftScience(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const last_script = document.getElementById(this.SIFT_SCRIPT_ID);
+
+      if (last_script) last_script.remove();
+
+      const script = document.createElement("script");
+
+      script.src = this.SIFT_SCRIPT_URL;
+      script.id = this.SIFT_SCRIPT_ID;
+      script.onload = () => resolve();
+      script.onerror = () => reject();
+
+      document.body.appendChild(script);
+    });
+  }
+
+  private _setSiftProperties(
+    merchantSettings: MerchantSettingsResponse,
+    userId: string,
+    sessionId: string
+  ): void {
+    const siftEnvironment: string = this._kushkiInstance.getEnvironmentSift();
+
+    // @ts-ignore
+    this._siftObject = window[this.SIFT_PROPERTY] ?? [];
+
+    this._siftObject.push(["_setAccount", merchantSettings[siftEnvironment]]);
+    this._siftObject.push(["_setUserId", userId]);
+    this._siftObject.push(["_setSessionId", sessionId]);
+    this._siftObject.push(["_trackPageview"]);
   }
 }

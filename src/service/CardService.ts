@@ -28,7 +28,7 @@ export class CardService {
   constructor(kushkiInstance: IKushki) {
     this._kushkiInstance = kushkiInstance;
     this._gateway = new KushkiGateway();
-    this._siftScience = new SiftScienceProvider();
+    this._siftScience = new SiftScienceProvider(kushkiInstance);
     this._cardinal3DSProvider = new Cardinal3DSProvider();
     this._sandbox3DSProvider = new Sandbox3DSProvider();
     this._isSandboxEnabled = false;
@@ -124,15 +124,9 @@ export class CardService {
     if (body.userId && body.sessionId)
       return { sessionId: body.sessionId, userId: body.userId };
 
-    if (
-      this._siftScience.isSiftScienceEnabled(
-        this._kushkiInstance,
-        merchantSettings
-      )
-    )
-      return this._createSubscriptionSiftScienceObject(body, merchantSettings);
+    if (this._siftScience.isSiftScienceDisabled(merchantSettings)) return {};
 
-    return {};
+    return this._createSubscriptionSiftScienceObject(body, merchantSettings);
   }
 
   private async _createSubscriptionSiftScienceObject(
@@ -148,7 +142,6 @@ export class CardService {
     return this._siftScience.createSiftScienceSession(
       body.subscriptionId,
       "",
-      this._kushkiInstance,
       merchantSettings,
       userId.userId
     );
