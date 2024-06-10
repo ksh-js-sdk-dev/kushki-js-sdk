@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "@public Contains the display and behavior properties of animations",
+  "title": "CardBrandingRequest",
+  "additionalItems": false,
+  "type": "object",
+  "oneOf": [
+    {
+      "description": "@public Visa animation properties",
+      "title": "VisaBrandingRequest",
+      "additionalProperties": false,
+      "properties": {
+        "brand": {
+          "enum": ["visa"]
+        },
+        "color": {
+          "type": "string",
+          "enum": ["white", "blue", "blur", "transparent"],
+          "description": "@typeParam  string - [default = white] The background of animation"
+        },
+        "constrained": {
+          "type": "boolean",
+          "description": "@typeParam  boolean - [default= false] The container visualization"
+        },
+        "sound": {
+          "type": "boolean",
+          "description": "@typeParam  boolean -  [default = false] The activation of the sound"
+        },
+        "checkmark": {
+          "type": "string",
+          "enum": ["none", "checkmark", "checkmarkWithText"],
+          "description": "(@typeParam  string [default = none] The visualization of checkmark"
+        },
+        "checkmarkTextOption": {
+          "type": "string",
+          "enum": ["approved", "success", "complete"],
+          "description": "@typeParam  string - [default = approved] The text to appear if checkmarkWithText is enabled"
+        },
+        "languageCode": {
+          "type": "string",
+          "enum": ["es", "en", "pt_br"],
+          "description": "@typeParam  string - [default = es] The language of the checkmark text"
+        }
+      },
+      "required": ["brand"]
+    },
+    {
+      "description": "@public MasterCard animation properties",
+      "title": "MasterCardBrandingRequest",
+      "additionalProperties": false,
+      "properties": {
+        "brand": {
+          "enum": ["mastercard"]
+        },
+        "type": {
+          "enum": ["default", "animation-only", "sound-only"],
+          "description": "@typeParam  string - [default = default] Defines type of component"
+        },
+        "background": {
+          "enum": ["white", "black"],
+          "description": "@typeParam  string - [default = black] The animation background color"
+        },
+        "sonicCue": {
+          "enum": ["checkout", "securedby"],
+          "description": "@typeParam  string - [default = checkout] Specifies different sound and animations"
+        }
+      },
+      "required": ["brand"]
+    }
+  ]
+}
