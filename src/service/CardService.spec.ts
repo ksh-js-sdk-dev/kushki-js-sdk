@@ -35,7 +35,7 @@ describe("CardService - Test", () => {
   let requestDeviceTokenSpy = jest.fn();
   const requestSubscriptionUserSpy = jest.fn();
 
-  let isSiftScienceEnabledSpy = jest.fn();
+  let isSiftScienceDisabledSpy = jest.fn();
   const createSiftScienceSessionSpy = jest.fn();
 
   let validateSandbox3dsTokenSpy = jest.fn();
@@ -66,8 +66,8 @@ describe("CardService - Test", () => {
   };
 
   const mockSiftScienceProvider = (
-    isSiftScienceEnabled: jest.Mock = isSiftScienceEnabledSpy.mockReturnValue(
-      false
+    isSiftScienceDisabled: jest.Mock = isSiftScienceDisabledSpy.mockReturnValue(
+      true
     ),
     createSiftScienceSession: jest.Mock = createSiftScienceSessionSpy.mockReturnValue(
       {
@@ -79,7 +79,7 @@ describe("CardService - Test", () => {
     // @ts-ignore
     SiftScienceProvider.mockImplementation(() => ({
       createSiftScienceSession,
-      isSiftScienceEnabled
+      isSiftScienceDisabled
     }));
   };
 
@@ -199,8 +199,8 @@ describe("CardService - Test", () => {
     });
 
     it("when merchant have sift science enabled, must create sift science session and call device token with session and user id`s", async () => {
-      isSiftScienceEnabledSpy = jest.fn().mockReturnValue(true);
-      mockSiftScienceProvider(isSiftScienceEnabledSpy, undefined);
+      isSiftScienceDisabledSpy = jest.fn().mockReturnValue(false);
+      mockSiftScienceProvider(isSiftScienceDisabledSpy, undefined);
 
       const tokenResponse = await CardService.requestDeviceToken(
         kushkiInstance,
@@ -209,7 +209,7 @@ describe("CardService - Test", () => {
 
       expect(tokenResponse).toEqual(deviceTokenMock);
       expect(requestMerchantSettingsSpy).toBeCalledTimes(1);
-      expect(isSiftScienceEnabledSpy).toBeCalledTimes(1);
+      expect(isSiftScienceDisabledSpy).toBeCalledTimes(1);
       expect(createSiftScienceSessionSpy).toBeCalledTimes(1);
       expect(requestDeviceTokenSpy).toBeCalledTimes(1);
       expect(requestDeviceTokenSpy).toBeCalledWith(

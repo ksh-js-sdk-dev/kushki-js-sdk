@@ -27,7 +27,8 @@ export enum ErrorCode {
   E019 = "E019",
   E020 = "E020",
   E021 = "E021",
-  E022 = "E022"
+  E022 = "E022",
+  E023 = "E023"
 }
 
 /**
@@ -122,6 +123,10 @@ export enum ErrorCode {
  *   E022: {
  *     code: "E022",
  *     message: "Error al generar animación"
+ *   },
+ *   E023: {
+ *     code: "E023",
+ *     message: "Error al configurar sesión de Sift"
  *   }
  * }
  * ```
@@ -215,5 +220,9 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E022]: {
     code: ErrorCode.E022,
     message: "Error al generar animación"
+  },
+  [ErrorCode.E023]: {
+    code: ErrorCode.E023,
+    message: "Error al configurar sesión de Sift"
   }
 };
