@@ -1,4 +1,6 @@
+import { SiftScienceProvider } from "provider/SiftScienceProvider.ts";
 import { IKushki } from "repository/IKushki.ts";
+import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
 import { SecureInitRequest } from "types/secure_init_request";
 import { KushkiError } from "infrastructure/KushkiError.ts";
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
@@ -8,6 +10,7 @@ import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CREDIT_CARD_ESPECIFICATIONS } from "src/constant/CreditCardEspecifications.ts";
 import { Cardinal3DSProvider } from "provider/Cardinal3DSProvider.ts";
 import { CardTokenResponse } from "types/card_token_response";
+import { SiftScienceObject } from "types/sift_science_object";
 import { TokenResponse } from "types/token_response";
 import { getJwtIf3dsEnabled } from "utils/3DSUtils.ts";
 import { Sandbox3DSProvider } from "provider/Sandbox3DSProvider.ts";
@@ -70,6 +73,23 @@ export class AntiFraudService {
     return cardinal3DSProvider.validateCardinal3dsToken(
       kushkiInstance,
       cardTokenResponse
+    );
+  }
+
+  public static async requestInitAntiFraud(
+    kushkiInstance: IKushki,
+    userId: string
+  ): Promise<SiftScienceObject> {
+    const gateway: KushkiGateway = new KushkiGateway();
+    const siftProvider: ISiftScienceProvider = new SiftScienceProvider(
+      kushkiInstance
+    );
+    const merchantSettings: MerchantSettingsResponse =
+      await gateway.requestMerchantSettings(kushkiInstance);
+
+    return siftProvider.createSiftScienceAntiFraudSession(
+      userId,
+      merchantSettings
     );
   }
 

@@ -1,10 +1,10 @@
-import { ContainerDemo } from "../../components/ContainerDemo/ContainerDemo.tsx";
-import InputConfigurationDemo from "../../components/ConfigurationDemo/Components/InputConfigurationDemo.tsx";
+import { ContainerDemo } from "../../../components/ContainerDemo/ContainerDemo.tsx";
+import InputConfigurationDemo from "../../../components/ConfigurationDemo/Components/InputConfigurationDemo.tsx";
 import { useState } from "react";
-import CardNumberHelper from "../../components/CardNumberHelper/CardNumberHelper.tsx";
+import CardNumberHelper from "../../../components/CardNumberHelper/CardNumberHelper.tsx";
 import { IKushki, init } from "Kushki";
-import { ResponseBox } from "../../components/ResponseBox/ResponseBox.tsx";
-import "./AntiFraud.css";
+import { ResponseBox } from "../../../components/ResponseBox/ResponseBox.tsx";
+import "./Validation3DS.css";
 import {
   requestSecureInit,
   requestValidate3DS,
@@ -12,12 +12,11 @@ import {
   SecureInitResponse
 } from "Kushki/AntiFraud";
 import axios from "axios";
-import { get } from "lodash";
 import { CardTokenResponse, Currency, TokenResponse } from "Kushki/Card";
-import CurrencyConfigurationDemo from "../../components/ConfigurationDemo/Components/CurrencyConfigurationDemo.tsx";
-import { PathEnum } from "../../../../src/infrastructure/PathEnum.ts";
+import CurrencyConfigurationDemo from "../../../components/ConfigurationDemo/Components/CurrencyConfigurationDemo.tsx";
+import { PathEnum } from "../../../../../src/infrastructure/PathEnum.ts";
 
-export const AntiFraud = () => {
+export const Validation3DS = () => {
   const [merchantId, setMerchantId] = useState<string>("");
   const [inputCurrency, setInputCurrency] = useState<
     Currency | string | undefined
@@ -111,7 +110,7 @@ export const AntiFraud = () => {
             number: cardNumber
           },
           currency: inputCurrency,
-          jwt: get(secureInitJwt, "jwt"),
+          jwt: secureInitJwt.jwt,
           totalAmount: parseFloat(inputAmount)
         },
         options

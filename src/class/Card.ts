@@ -93,7 +93,7 @@ export class Card implements ICard {
     this.currentBin = "";
     this.currentBinHasDeferredOptions = false;
     this._gateway = new KushkiGateway();
-    this._siftScienceService = new SiftScienceProvider();
+    this._siftScienceService = new SiftScienceProvider(kushkiInstance);
     this._cardinal3DSProvider = new Cardinal3DSProvider();
     this._sandbox3DSProvider = new Sandbox3DSProvider();
 
@@ -143,10 +143,9 @@ export class Card implements ICard {
         await this._gateway.requestMerchantSettings(this.kushkiInstance);
 
       const siftScienceSession: SiftScienceObject =
-        this._siftScienceService.createSiftScienceSession(
+        await this._siftScienceService.createSiftScienceSession(
           this.getBinFromCreditCardNumberSift(this.currentBin),
           this.currentBin.slice(-4),
-          this.kushkiInstance,
           merchantSettings
         );
 
@@ -638,6 +637,7 @@ export class Card implements ICard {
         dispatchCustomEvent(this.inputValues, FieldEventsEnum.SUBMIT, field),
       handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
         this.handleOnValidity(field, fieldValidity),
+      isInTest: this.kushkiInstance.isInTest(),
       styles: buildCssStyle(styles || {})
     };
 

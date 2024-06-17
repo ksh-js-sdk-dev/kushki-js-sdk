@@ -12,6 +12,7 @@ import { ICard } from "repository/ICard.ts";
 import { FieldTypeEnum } from "types/form_validity";
 import { DeviceTokenRequest } from "types/device_token_request";
 import { CardService } from "service/CardService.ts";
+import { BrandByMerchantResponse } from "types/brand_by_merchant_response";
 import { TokenResponse } from "types/token_response";
 import { CardSubscriptions } from "class/CardSubscriptions.ts";
 import { SecureDeviceTokenOptions } from "types/secure_device_token_request";
@@ -874,3 +875,46 @@ const initSecureDeviceToken = (
 export { initSecureDeviceToken };
 
 export type { ICardSubscriptions, SecureDeviceTokenOptions };
+
+/**
+ * Function to get the card brand list associated with a specific merchant
+ *
+ * @group Methods
+ * @param kushkiInstance - Object that that was previously initialized with {@link init} Kushki method
+ * @returns {Promise<BrandByMerchantResponse[]>} - List with all brands associated with the merchant
+ * @throws
+ *  - if `options.publicCredentialId` into `kushkiInstance` is not valid or the request fails then throw {@link ERRORS | ERRORS.E021}
+ *
+ * #### Example
+ * ##### Basic request Brands by merchant
+ *
+ * ```ts
+ * import { init } from "@kushki/js-sdk";
+ * import {BrandByMerchantResponse, requestBrandsByMerchant } from "@kushki/js-sdk/Card";
+ *
+ * const onRequestBrandByMerchant = async () => {
+ *     try {
+ *       const kushkiInstance = await init({
+ *         inTest: true,
+ *         publicCredentialId: "merchantId"
+ *       });
+ *
+ *       const response = await requestBrandsByMerchant(kushkiInstance);
+ *
+ *       // On Success, can get brand list,
+ *       // ex. [{"brand":"visa","url":"https://.../visa.svg"},{"brand":"masterCard","url":"https://.../masterCard.svg"}]
+ *       console.log(response);
+ *     } catch (error: any) {
+ *       // On Error, catch response, ex. {code:"E021", message: "Error en solicitud de marcas de tarjetas del comercio"}
+ *       console.error(error.message);
+ *     }
+ *   };
+ * ```
+ */
+const requestBrandsByMerchant = (
+  kushkiInstance: IKushki
+): Promise<BrandByMerchantResponse[]> =>
+  CardService.requestBrandsByMerchant(kushkiInstance);
+
+export { requestBrandsByMerchant };
+export type { BrandByMerchantResponse } from "types/brand_by_merchant_response";

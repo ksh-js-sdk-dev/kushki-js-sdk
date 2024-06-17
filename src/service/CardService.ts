@@ -1,5 +1,6 @@
 import { IKushki } from "repository/IKushki.ts";
 import { DeviceTokenRequest } from "types/device_token_request";
+import { BrandByMerchantResponse } from "types/brand_by_merchant_response";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { KushkiGateway } from "gateway/KushkiGateway.ts";
@@ -27,7 +28,7 @@ export class CardService {
   constructor(kushkiInstance: IKushki) {
     this._kushkiInstance = kushkiInstance;
     this._gateway = new KushkiGateway();
-    this._siftScience = new SiftScienceProvider();
+    this._siftScience = new SiftScienceProvider(kushkiInstance);
     this._cardinal3DSProvider = new Cardinal3DSProvider();
     this._sandbox3DSProvider = new Sandbox3DSProvider();
     this._isSandboxEnabled = false;
@@ -43,6 +44,14 @@ export class CardService {
       await service.createDeviceTokenRequestBody(body);
 
     return service._requestDeviceToken(request);
+  }
+
+  public static requestBrandsByMerchant(
+    kushkiInstance: IKushki
+  ): Promise<BrandByMerchantResponse[]> {
+    const gateway: IKushkiGateway = new KushkiGateway();
+
+    return gateway.requestBrandLogos(kushkiInstance);
   }
 
   public async createDeviceTokenRequestBody(
@@ -115,15 +124,9 @@ export class CardService {
     if (body.userId && body.sessionId)
       return { sessionId: body.sessionId, userId: body.userId };
 
-    if (
-      this._siftScience.isSiftScienceEnabled(
-        this._kushkiInstance,
-        merchantSettings
-      )
-    )
-      return this._createSubscriptionSiftScienceObject(body, merchantSettings);
+    if (this._siftScience.isSiftScienceDisabled(merchantSettings)) return {};
 
-    return {};
+    return this._createSubscriptionSiftScienceObject(body, merchantSettings);
   }
 
   private async _createSubscriptionSiftScienceObject(
@@ -139,7 +142,6 @@ export class CardService {
     return this._siftScience.createSiftScienceSession(
       body.subscriptionId,
       "",
-      this._kushkiInstance,
       merchantSettings,
       userId.userId
     );

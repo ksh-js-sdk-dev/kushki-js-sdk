@@ -12,5 +12,6 @@ export enum PathEnum {
   bank_list = "transfer/v1/bankList",
   commission_configuration = "commission/v1/configuration",
   subscriptions = "v1/subscriptions/",
-  device_token = "subscriptions/v1/card/"
+  device_token = "subscriptions/v1/card/",
+  brands_logos_by_merchant = "card/v1/merchant/brands-logos"
 }

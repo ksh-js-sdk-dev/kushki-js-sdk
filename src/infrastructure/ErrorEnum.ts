@@ -25,7 +25,10 @@ export enum ErrorCode {
   E017 = "E017",
   E018 = "E018",
   E019 = "E019",
-  E020 = "E020"
+  E020 = "E020",
+  E021 = "E021",
+  E022 = "E022",
+  E023 = "E023"
 }
 
 /**
@@ -112,6 +115,18 @@ export enum ErrorCode {
  *   E020: {
  *     code: "E020",
  *     message: "Error, configuración de campos requeridos no encontrada"
+ *   },
+ *   E021: {
+ *     code: "E021",
+ *     message: "Error en solicitud de marcas de tarjetas del comercio"
+ *   },
+ *   E022: {
+ *     code: "E022",
+ *     message: "Error al generar animación"
+ *   },
+ *   E023: {
+ *     code: "E023",
+ *     message: "Error al configurar sesión de Sift"
  *   }
  * }
  * ```
@@ -197,5 +212,17 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E020]: {
     code: ErrorCode.E020,
     message: "Error, configuración de campos requeridos no encontrada"
+  },
+  [ErrorCode.E021]: {
+    code: ErrorCode.E021,
+    message: "Error en solicitud de marcas de tarjetas del comercio"
+  },
+  [ErrorCode.E022]: {
+    code: ErrorCode.E022,
+    message: "Error al generar animación"
+  },
+  [ErrorCode.E023]: {
+    code: ErrorCode.E023,
+    message: "Error al configurar sesión de Sift"
   }
 };

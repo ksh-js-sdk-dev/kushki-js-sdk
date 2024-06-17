@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://ksh/BrandByMerchantResponse",
+  "title": "BrandByMerchantResponse",
+  "description": "@public The object with the name and logo url of card brand",
+  "additionalProperties": false,
+  "type": "object",
+  "required": ["brand", "url"],
+  "properties": {
+    "brand": {
+      "description": "@typeParam string - Card brand name",
+      "type": "string"
+    },
+    "url": {
+      "description": "@typeParam string - Card logo url",
+      "type": "string"
+    }
+  }
+}
