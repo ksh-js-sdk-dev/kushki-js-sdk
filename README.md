@@ -28,6 +28,10 @@ We make it easier!
 - [AntiFraud Methods](#antifraud-methods)
   - [Request Secure Init](#request-secure-init)
   - [Request validate 3DS](#request-validate-3ds)
+  - [Request Init Anti Fraud](#request-init-anti-fraud)
+- [Other Card Methods](#other-card-methods)
+  - [Request Brands by Merchant](#request-brands-by-merchant)
+  - [Request Card Branding Animation](#request-card-branding-animation)
 
 # Install <a name="install"></a>
 
@@ -673,4 +677,105 @@ const on3DSValidation = async () => {
     console.log(error)
   }
 };
+```
+## Request Init Anti Fraud Init <a name="request-init-anti-fraud"></a>
+Before collecting payment data and if you need to initialize the Sift Science service independently, you can use the method [`requestInitAntiFraud`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Antifraud.requestInitAntiFraud.html)
+with Kushki instance that was previously initialized with [`init`](#library-setup) method and `userId` , which is a session identifier value that can be user's ID, username, email address or empty.
+
+To use this method, it is necessary that your merchant has the Sift Science service active and has its credentials correctly configured according to the environment that will be used. More details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Antifraud.requestInitAntiFraud.html)
+
+### Example
+```ts
+import { init } from "@kushki/js-sdk";
+import { requestInitAntiFraud, SiftScienceObject } from "Kushki/AntiFraud";
+
+const onRequestInitAntiFraud = async () => {
+    try {
+      const kushkiInstance = await init({
+        inTest: true,
+        publicCredentialId: "merchantId"
+      });
+      const userId= "user-identification"
+
+      const response: SiftScienceObject = await requestInitAntiFraud(
+        kushkiInstance,
+        userId,
+      );
+
+      // On Success, can get Sift Science session object,
+      // ex. {"sessionId":"9a64960c-a1de-4878-b975-9ab1ea30e853","userId":"eda2b0b0c5f3426483a678c82cc8a5ef"}
+      console.log(response);
+    } catch (error: any) {
+      // On Error, catch response, ex. {code:"E023", message: "Error al configurar sesión de Sift"}
+      console.error(error.message);
+    }
+  };
+```
+
+#  Other Card Methods <a name="other-card-methods"></a>
+## Request Brands by Merchant <a name="request-brands-by-merchant"></a>
+To get the brand list associated with a specific merchant, you should call [`requestBrandsByMerchant`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.requestBrandsByMerchant.html) method with Kushki instance that was previously initialized with [`init`](#library-setup) method
+
+This method is useful when you want to inform the client about the types of credit card brands enabled for their payment, more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.requestBrandsByMerchant.html)
+### Example
+
+```ts
+import { init } from "@kushki/js-sdk";
+import { requestBrandsByMerchant } from "@kushki/js-sdk/Card";
+
+const onRequestBrandsByMerchant = async () => {
+    try {
+      const kushkiInstance = await init({
+        inTest: true,
+        publicCredentialId: "merchantId"
+      });
+
+      const response = await requestBrandsByMerchant(kushkiInstance);
+
+      // On Success, can get brand list,
+      // ex. [{"brand":"visa","url":"https://.../visa.svg"},{"brand":"masterCard","url":"https://.../masterCard.svg"}
+      console.log(response);
+    } catch (error: any) {
+      // On Error, catch response, ex. {code:"E021", message: "Error en solicitud de marcas de tarjetas del comercio"}
+      console.error(error.message);
+    }
+  };
+```
+## Request Card Branding Animation <a name="request-card-branding-animation"></a>
+The Card Branding animation gives users meaningful confirmation of their payment.
+
+Apply this animation only when the user has selected a Visa or MasterCard to make payment, and play it
+after the user has submitted their payment credentials or when a transaction is complete.
+
+The first step is define the container for the animation (`visa-sensory-branding` or `mastercard-sensory-branding`)
+```html
+<!DOCTYPE html>
+<html lang="en">
+<body>
+  <!-- For mastercard change or add other div with id = "mastercard-sensory-branding" -->
+  <div id="visa-sensory-branding"/>
+</body>
+</html>
+```
+To render the animation needs call [`requestInitCardBrandingAnimation`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/CardAnimation.requestInitCardBrandingAnimation.html)  method from the `@kushki/js-sdk/CardAnimation` module, 
+more examples [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/CardAnimation.requestInitCardBrandingAnimation.html#md:examplesl)
+```ts
+import { 
+  requestInitCardBrandingAnimation, 
+  CardBrandingRequest 
+} from "@kushki/js-sdk/CardAnimation";
+
+const onRequestInitCardBrandingAnimation = async () => {
+    try {
+      const opts: CardBrandingRequest = {
+        brand: "visa" //Can change to mastercard and add properties according the brand type
+      };
+
+      await requestInitCardBrandingAnimation(opts);
+      // On Success, the animation displayed into the container defined in the html
+    } catch (error: any) {
+      // On Error, catch response, ex. {code:"E022", message: "Error al generar animación"}
+      console.error(error.message);
+    }
+  };
 ```

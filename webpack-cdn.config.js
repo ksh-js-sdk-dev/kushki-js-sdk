@@ -2,11 +2,12 @@ const path = require("path");
 
 module.exports = {
   entry: {
-    kushki: "./dist/module/Kushki.js",
+    antifraud: "./dist/module/AntiFraud.js",
     card: "./dist/module/Card.js",
-    transfer: "./dist/module/Transfer.js",
+    cardAnimation: "./dist/module/CardAnimation.js",
+    kushki: "./dist/module/Kushki.js",
     merchant: "./dist/module/Merchant.js",
-    antifraud: "./dist/module/AntiFraud.js"
+    transfer: "./dist/module/Transfer.js"
   },
   mode: "production",
   output: {

@@ -1,11 +1,15 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "SiftScienceObject",
+  "description": "@public Contains the Sift Science session Info",
+  "additionalProperties": false,
   "properties": {
     "userId": {
+      "description": "@typeParam  string - User identification formed with the initial param and merchant data",
       "type": ["string"]
     },
     "sessionId": {
+      "description": "@typeParam  string - Unique session uuid generated",
       "type": ["string"]
     }
   },

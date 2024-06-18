@@ -7,7 +7,8 @@
     "../../docs-json/Kushki.json",
     "../../docs-json/Transfer.json",
     "../../docs-json/Merchant.json",
-    "../../docs-json/AntiFraud.json"
+    "../../docs-json/AntiFraud.json",
+    "../../docs-json/CardAnimation.json"
   ],
   "entryPointStrategy": "merge",
   "excludeInternal": true,

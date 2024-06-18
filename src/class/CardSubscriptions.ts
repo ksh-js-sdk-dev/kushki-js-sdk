@@ -171,6 +171,7 @@ export class CardSubscriptions implements ICardSubscriptions {
         dispatchCustomEvent(this.inputValues, FieldEventsEnum.SUBMIT, field),
       handleOnValidity: (field: InputModelEnum, fieldValidity: FieldValidity) =>
         this.handleOnValidity(field, fieldValidity),
+      isInTest: this.kushkiInstance.isInTest(),
       styles: buildCssStyle(styles || {})
     };
 

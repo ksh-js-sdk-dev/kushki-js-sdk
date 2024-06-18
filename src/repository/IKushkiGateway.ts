@@ -2,6 +2,7 @@ import { BinInfoResponse } from "types/bin_info_response";
 import { IKushki } from "Kushki";
 import { CardTokenResponse, DeferredByBinOptionsResponse } from "Kushki/Card";
 import { BinBody } from "types/bin_body";
+import { BrandByMerchantResponse } from "types/brand_by_merchant_response";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 import { SecureOtpRequest } from "types/secure_otp_request";
@@ -82,4 +83,11 @@ export interface IKushkiGateway {
     kushkiInstance: IKushki,
     body: DeviceTokenRequest
   ): Promise<CardTokenResponse>;
+
+  /**
+   * Request Brand Logos by Merchant
+   */
+  requestBrandLogos(
+    kushkiInstance: IKushki
+  ): Promise<BrandByMerchantResponse[]>;
 }
