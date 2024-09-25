@@ -133,11 +133,7 @@ export class Card implements ICard {
 
   public async requestToken(): Promise<TokenResponse> {
     try {
-      const { isFormValid } = this.getFormValidity();
-
-      if (!isFormValid) {
-        throw new KushkiError(ERRORS.E007);
-      }
+      await this.validateForm();
 
       const merchantSettings: MerchantSettingsResponse =
         await this._gateway.requestMerchantSettings(this.kushkiInstance);
@@ -266,8 +262,12 @@ export class Card implements ICard {
       if (isInputInValid && !isErrorTypeValid)
         validityProps.errorType = ErrorTypeEnum.EMPTY;
 
-      if (inputName === InputModelEnum.DEFERRED)
-        formValid = this.validateDeferredValues();
+      if (
+        inputName === InputModelEnum.DEFERRED &&
+        !this.areValidDeferredValues()
+      ) {
+        formValid = false;
+      }
     }
 
     return dispatchCustomEvent(
@@ -425,7 +425,7 @@ export class Card implements ICard {
     return deferredValuesToRequestToken;
   };
 
-  private validateDeferredValues = (): boolean => {
+  private areValidDeferredValues = (): boolean => {
     let deferredValuesAreValid: boolean = true;
 
     if (
@@ -841,5 +841,18 @@ export class Card implements ICard {
       this.buildEventOtpValidation(eventOTP);
 
     dispatchEvent(eventOtpValidity);
+  };
+
+  private validateForm = async (): Promise<void> => {
+    const isFormValid: boolean = await this.inputValues[
+      this.firstHostedFieldType
+    ].hostedField.requestFormValidity();
+    const validDeferred: boolean = this.inputValues.deferred
+      ? this.areValidDeferredValues()
+      : true;
+
+    if (!isFormValid || !validDeferred) {
+      throw new KushkiError(ERRORS.E007);
+    }
   };
 }
