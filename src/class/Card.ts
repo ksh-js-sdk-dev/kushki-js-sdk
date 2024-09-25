@@ -262,8 +262,11 @@ export class Card implements ICard {
       if (isInputInValid && !isErrorTypeValid)
         validityProps.errorType = ErrorTypeEnum.EMPTY;
 
-      if (inputName === InputModelEnum.DEFERRED) {
-        if (!this.isValidDeferredValues()) formValid = false;
+      if (
+        inputName === InputModelEnum.DEFERRED &&
+        !this.areValidDeferredValues()
+      ) {
+        formValid = false;
       }
     }
 
@@ -422,7 +425,7 @@ export class Card implements ICard {
     return deferredValuesToRequestToken;
   };
 
-  private isValidDeferredValues = (): boolean => {
+  private areValidDeferredValues = (): boolean => {
     let deferredValuesAreValid: boolean = true;
 
     if (
@@ -845,7 +848,7 @@ export class Card implements ICard {
       this.firstHostedFieldType
     ].hostedField.requestFormValidity();
     const validDeferred: boolean = this.inputValues.deferred
-      ? this.isValidDeferredValues()
+      ? this.areValidDeferredValues()
       : true;
 
     if (!isFormValid || !validDeferred) {
