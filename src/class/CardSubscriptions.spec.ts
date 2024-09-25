@@ -245,6 +245,13 @@ describe("CardSubscriptions - class - tests", () => {
       }));
     };
 
+    const mockExportValidityMethod = (isValid: boolean) => {
+      // @ts-ignore
+      cardSubscription.inputValues.cvv.hostedField.requestFormValidity = jest
+        .fn()
+        .mockResolvedValue(isValid);
+    };
+
     beforeEach(async () => {
       mockCardService();
 
@@ -252,10 +259,12 @@ describe("CardSubscriptions - class - tests", () => {
         kushkiInstance,
         options
       );
+
+      mockExportValidityMethod(true);
     });
 
     it("should throw error when form is invalid", async () => {
-      mockFormValidity(false);
+      mockExportValidityMethod(false);
 
       try {
         await cardSubscription.requestDeviceToken();

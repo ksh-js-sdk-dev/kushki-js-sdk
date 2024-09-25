@@ -85,7 +85,8 @@ export class CardSubscriptions implements ICardSubscriptions {
 
   public async requestDeviceToken(): Promise<TokenResponse> {
     try {
-      const { isFormValid } = buildFieldsValidity(this.inputValues);
+      const isFormValid =
+        await this.inputValues.cvv!.hostedField!.requestFormValidity();
 
       if (!isFormValid) {
         throw new KushkiError(ERRORS.E007);
