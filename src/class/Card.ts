@@ -846,7 +846,7 @@ export class Card implements ICard {
   private validateForm = async (): Promise<void> => {
     const isFormValid: boolean = await this.inputValues[
       this.firstHostedFieldType
-    ].hostedField.requestFormValidity();
+    ].hostedField.requestFormValidity(this.options.isSubscription);
     const validDeferred: boolean = this.inputValues.deferred
       ? this.areValidDeferredValues()
       : true;
