@@ -17,8 +17,10 @@ const KushkiHostedFields = zoid.create({
   },
   exports: ({ getExports }: any) => {
     return {
-      requestFormValidity: (): Promise<boolean> =>
-        getExports().then((exports: any) => exports.requestFormValidity()),
+      requestFormValidity: (isSubscription?: boolean): Promise<boolean> =>
+        getExports().then((exports: any) =>
+          exports.requestFormValidity(isSubscription)
+        ),
       requestPaymentToken: (
         kushkiInstance: IKushki,
         body: object,
