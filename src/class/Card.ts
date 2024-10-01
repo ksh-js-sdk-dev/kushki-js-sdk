@@ -626,6 +626,7 @@ export class Card implements ICard {
   ) {
     const options: FieldOptions = {
       ...field,
+      fields: this.options.fields,
       fieldType,
       handleOnBinChange: (bin: string) => this.handleOnBinChange(bin),
       handleOnBlur: (field: string) =>
