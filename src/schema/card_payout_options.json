@@ -1,0 +1,265 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "CardPayoutOptions",
+  "additionalProperties": false,
+  "definitions": {
+    "styles": {
+      "title": "Styles",
+      "additionalProperties": false,
+      "properties": {
+        "input": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "label": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "container": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "focus": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "valid": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "invalid": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "cardholderName": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "cardNumber": {
+          "$ref": "#/definitions/cssProperties"
+        },
+        "isSubscription": {
+          "$ref": "#/definitions/cssProperties"
+        }
+      },
+      "type": "object"
+    },
+    "inputType": {
+      "title": "InputTypeEnum",
+      "type": "string",
+      "enum": ["text", "checkbox"]
+    },
+    "fieldType": {
+      "title": "FieldTypeEnum",
+      "type": "string",
+      "enum": ["cardNumber", "cardholderName", "isSubscription"]
+    },
+    "field": {
+      "title": "Field",
+      "additionalProperties": false,
+      "properties": {
+        "selector": {
+          "type": "string"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "hiddenLabel": {
+          "type": "string"
+        },
+        "maxCardLength": {
+          "type": "number"
+        },
+        "defaultValue": {
+          "type": ["string", "boolean"]
+        },
+        "inputType": {
+          "$ref": "#/definitions/inputType"
+        },
+        "label": {
+          "type": "string"
+        },
+        "isRequired": {
+          "type": "boolean"
+        }
+      },
+      "required": ["selector"]
+    },
+    "cssProperties": {
+      "title": "CssProperties",
+      "description": "@group Types",
+      "oneOf": [
+        {
+          "additionalProperties": true,
+          "type": "object",
+          "properties": {
+            "-moz-appearance": {
+              "type": "string"
+            },
+            "-moz-box-shadow": {
+              "type": "string"
+            },
+            "-moz-osx-font-smoothing": {
+              "type": "string"
+            },
+            "-moz-tap-highlight-color": {
+              "type": "string"
+            },
+            "-moz-transition": {
+              "type": "string"
+            },
+            "-webkit-appearance": {
+              "type": "string"
+            },
+            "-webkit-box-shadow": {
+              "type": "string"
+            },
+            "-webkit-font-smoothing": {
+              "type": "string"
+            },
+            "-webkit-tap-highlight-color": {
+              "type": "string"
+            },
+            "-webkit-transition": {
+              "type": "string"
+            },
+            "appearance": {
+              "type": "string"
+            },
+            "background": {
+              "type": "string"
+            },
+            "border": {
+              "type": "string"
+            },
+            "box-shadow": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            },
+            "direction": {
+              "type": "string"
+            },
+            "font": {
+              "type": "string"
+            },
+            "font-family": {
+              "type": "string"
+            },
+            "font-size": {
+              "type": "string"
+            },
+            "font-size-adjust": {
+              "type": "string"
+            },
+            "font-stretch": {
+              "type": "string"
+            },
+            "font-style": {
+              "type": "string"
+            },
+            "font-variant": {
+              "type": "string"
+            },
+            "font-variant-alternates": {
+              "type": "string"
+            },
+            "font-variant-caps": {
+              "type": "string"
+            },
+            "font-variant-east-asian": {
+              "type": "string"
+            },
+            "font-variant-ligatures": {
+              "type": "string"
+            },
+            "font-variant-numeric": {
+              "type": "string"
+            },
+            "font-weight": {
+              "type": "string"
+            },
+            "letter-spacing": {
+              "type": "string"
+            },
+            "line-height": {
+              "type": "string"
+            },
+            "margin": {
+              "type": "string"
+            },
+            "margin-top": {
+              "type": "string"
+            },
+            "margin-right": {
+              "type": "string"
+            },
+            "margin-bottom": {
+              "type": "string"
+            },
+            "margin-left": {
+              "type": "string"
+            },
+            "opacity": {
+              "type": "string"
+            },
+            "outline": {
+              "type": "string"
+            },
+            "padding": {
+              "type": "string"
+            },
+            "padding-top": {
+              "type": "string"
+            },
+            "padding-right": {
+              "type": "string"
+            },
+            "padding-bottom": {
+              "type": "string"
+            },
+            "padding-left": {
+              "type": "string"
+            },
+            "text-align": {
+              "type": "string"
+            },
+            "text-shadow": {
+              "type": "string"
+            },
+            "transition": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "properties": {
+    "preventAutofill": {
+      "type": "boolean"
+    },
+    "styles": {
+      "$ref": "#/definitions/styles"
+    },
+    "paymentType": {
+      "type": "string",
+      "maxLength": 2
+    },
+    "fields": {
+      "title": "",
+      "additionalProperties": false,
+      "properties": {
+        "cardholderName": {
+          "$ref": "#/definitions/field"
+        },
+        "cardNumber": {
+          "$ref": "#/definitions/field"
+        },
+        "isSubscription": {
+          "$ref": "#/definitions/field"
+        }
+      },
+      "required": ["cardholderName", "cardNumber"]
+    }
+  },
+  "required": ["fields"],
+  "type": "object"
+}

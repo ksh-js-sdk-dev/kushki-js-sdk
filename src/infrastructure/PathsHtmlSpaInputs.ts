@@ -7,5 +7,6 @@ export const PathsHtmlSpaInputs: Record<InputModelEnum, string> = {
   [InputModelEnum.EXPIRATION_DATE]: "ExpirationDate",
   [InputModelEnum.CVV]: "Cvv",
   [InputModelEnum.OTP]: "Otp",
-  [InputModelEnum.SUBSCRIPTIONS_CVV]: "SubscriptionsCvv"
+  [InputModelEnum.SUBSCRIPTIONS_CVV]: "SubscriptionsCvv",
+  [InputModelEnum.IS_SUBSCRIPTION]: "IsSubscription"
 };

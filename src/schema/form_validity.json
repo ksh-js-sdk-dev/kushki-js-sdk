@@ -13,7 +13,12 @@
         "errorType": {
           "type": "string",
           "description": "@group Types",
-          "enum": ["empty", "invalid", "number of months required", "credit type required"]
+          "enum": [
+            "empty",
+            "invalid",
+            "number of months required",
+            "credit type required"
+          ]
         }
       },
       "required": ["isValid"]
@@ -33,7 +38,8 @@
         "cvv",
         "deferred",
         "expirationDate",
-        "otp"
+        "otp",
+        "isSubscription"
       ]
     },
     "fields": {
@@ -53,6 +59,9 @@
           "$ref": "#/definitions/fieldValidity"
         },
         "expirationDate": {
+          "$ref": "#/definitions/fieldValidity"
+        },
+        "isSubscription": {
           "$ref": "#/definitions/fieldValidity"
         }
       }

@@ -11,6 +11,7 @@ import { KInfo } from "service/KushkiInfoService.ts";
 import { FieldOptions } from "src/interfaces/FieldOptions.ts";
 import { CardFieldValues, FieldInstance } from "types/card_fields_values";
 import { CardOptions, Field } from "types/card_options";
+import { CardPayoutOptions } from "types/card_payout_options";
 import {
   Fields,
   FieldTypeEnum,
@@ -30,6 +31,49 @@ const _buildCustomEvent = (validityDetail: FormValidity, eventId: string) => {
   return new CustomEvent<FormValidity>(eventId, {
     detail: validityDetail
   });
+};
+
+const _validateMissingFieldsOptions = (
+  requiredFields: InputModelEnum[],
+  options: CardOptions | SecureDeviceTokenOptions | CardPayoutOptions
+): void => {
+  const missingFields: InputModelEnum[] = requiredFields.filter(
+    (field: InputModelEnum) => !options.fields.hasOwnProperty(field)
+  );
+
+  if (missingFields.length > 0) throw new KushkiError(ERRORS.E020);
+};
+
+const _validateCardTokenOptions = (options: CardOptions): void => {
+  const requiredFields: InputModelEnum[] = [
+    InputModelEnum.CARDHOLDER_NAME,
+    InputModelEnum.CARD_NUMBER,
+    InputModelEnum.EXPIRATION_DATE
+  ];
+
+  if (!options.isSubscription) requiredFields.push(InputModelEnum.CVV);
+
+  _validateMissingFieldsOptions(requiredFields, options);
+};
+
+const _validateDeviceTokenOptions = (
+  options: SecureDeviceTokenOptions
+): void => {
+  const requiredFields: InputModelEnum[] = [InputModelEnum.CVV];
+
+  _validateMissingFieldsOptions(requiredFields, options);
+};
+
+const _validateCardPayoutTokenOptions = (options: CardPayoutOptions): void => {
+  const requiredFields: InputModelEnum[] = [
+    InputModelEnum.CARDHOLDER_NAME,
+    InputModelEnum.CARD_NUMBER
+  ];
+
+  _validateMissingFieldsOptions(requiredFields, options);
+
+  if (options.paymentType && options.paymentType.length > 2)
+    throw new KushkiError(ERRORS.E011);
 };
 
 export const buildFieldsValidity = (
@@ -197,32 +241,27 @@ export const buildCustomHeaders = () => ({
 
 export const validateInitParams = (
   kushkiInstance: IKushki,
-  options: CardOptions | SecureDeviceTokenOptions,
+  options: CardOptions | SecureDeviceTokenOptions | CardPayoutOptions,
   type: FieldsMethodTypesEnum
-) => {
+): void => {
   if (!options || !kushkiInstance) {
     throw new KushkiError(ERRORS.E012);
   }
 
-  if (type === FieldsMethodTypesEnum.CARD_TOKEN) {
-    const requiredFields = [
-      InputModelEnum.CARDHOLDER_NAME,
-      InputModelEnum.CARD_NUMBER,
-      InputModelEnum.EXPIRATION_DATE
-    ];
+  switch (type) {
+    case FieldsMethodTypesEnum.CARD_TOKEN:
+      _validateCardTokenOptions(options as CardOptions);
 
-    if (!options.isSubscription) requiredFields.push(InputModelEnum.CVV);
+      return;
+    case FieldsMethodTypesEnum.DEVICE_TOKEN:
+      _validateDeviceTokenOptions(options as SecureDeviceTokenOptions);
 
-    const missingFields = requiredFields.filter(
-      (field) => !options.fields.hasOwnProperty(field)
-    );
+      return;
 
-    if (missingFields.length > 0) throw new KushkiError(ERRORS.E020);
-  }
+    case FieldsMethodTypesEnum.CARD_PAYOUT_TOKEN:
+      _validateCardPayoutTokenOptions(options as CardPayoutOptions);
 
-  if (type === FieldsMethodTypesEnum.DEVICE_TOKEN) {
-    if (!options.fields.hasOwnProperty(InputModelEnum.CVV))
-      throw new KushkiError(ERRORS.E020);
+      return;
   }
 };
 
@@ -237,9 +276,14 @@ export const getInitialFieldValidation = (
   options: FieldOptions,
   isSubscription?: boolean
 ): boolean => {
-  if (options.fieldType == InputModelEnum.CVV)
-    if (isRequiredFlagInCvv(options, isSubscription) && !options.isRequired)
-      return true;
-
-  return false;
+  switch (options.fieldType) {
+    case InputModelEnum.CVV:
+      return (
+        isRequiredFlagInCvv(options, isSubscription) && !options.isRequired
+      );
+    case InputModelEnum.IS_SUBSCRIPTION:
+      return !options.isRequired;
+    default:
+      return false;
+  }
 };

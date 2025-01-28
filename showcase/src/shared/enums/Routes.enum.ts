@@ -7,5 +7,6 @@ export enum RoutesEnum {
   COMMISSION_CONFIG = "/commission-configuration",
   INIT_ANTI_FRAUD = "/init-anti-fraud",
   CARD_ANIMATION = "/card-branding-animation",
-  BRANDS = "/brands-by-merchant"
+  BRANDS = "/brands-by-merchant",
+  CARD_PAYOUT = "/card-payout-token"
 }
