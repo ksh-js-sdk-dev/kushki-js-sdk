@@ -154,9 +154,6 @@
         "maxCardLength": {
           "type": "number"
         },
-        "defaultValue": {
-          "type": "string"
-        },
         "inputType": {
           "$ref": "#/definitions/inputType"
         },

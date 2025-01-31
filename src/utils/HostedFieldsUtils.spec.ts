@@ -517,5 +517,43 @@ describe("HostedFields utils - test", () => {
 
       expect(response).toBeTruthy();
     });
+
+    it("should return true when field is type IS_SUBSCRIPTION and isRequired with defaultValue true", () => {
+      const optionsMock: FieldOptions = {
+        defaultValue: true,
+        fieldType: InputModelEnum.IS_SUBSCRIPTION,
+        isInTest: true,
+        isRequired: true
+      };
+
+      const response = getInitialFieldValidation(optionsMock, true);
+
+      expect(response).toBeTruthy();
+    });
+
+    it("should return false when field is type IS_SUBSCRIPTION and isRequired with defaultValue false", () => {
+      const optionsMock: FieldOptions = {
+        defaultValue: false,
+        fieldType: InputModelEnum.IS_SUBSCRIPTION,
+        isInTest: true,
+        isRequired: true
+      };
+
+      const response = getInitialFieldValidation(optionsMock, true);
+
+      expect(response).toBeFalsy();
+    });
+
+    it("should return true when field is type IS_SUBSCRIPTION and isRequired is false", () => {
+      const optionsMock: FieldOptions = {
+        fieldType: InputModelEnum.IS_SUBSCRIPTION,
+        isInTest: true,
+        isRequired: false
+      };
+
+      const response = getInitialFieldValidation(optionsMock, true);
+
+      expect(response).toBeTruthy();
+    });
   });
 });

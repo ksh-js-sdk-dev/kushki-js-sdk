@@ -122,7 +122,6 @@ export const RequestCardPayoutToken = () => {
           selector: "cardNumber_id"
         },
         isSubscription: {
-          isRequired: true,
           selector: "isSubscription_id"
         }
       },
@@ -193,7 +192,7 @@ export const RequestCardPayoutToken = () => {
   return (
     <ContainerDemo>
       <div className={"items-content"}>
-        <h3 className={"title-demo"}>Request Device Token</h3>
+        <h3 className={"title-demo"}>Request Card Payout Token</h3>
         <InputConfigurationDemo
           disableInputPrev={false}
           setInputOption={setMerchantId}
@@ -202,7 +201,7 @@ export const RequestCardPayoutToken = () => {
         />
         <CardNumberHelper
           displayHostedFields={true}
-          cardNumberHelper={"5bdbaec2020f4d118db902f5799cfc24"}
+          cardNumberHelper={"6b71adafaa8e484d99dea25ec3a7f754"}
         />
         <button
           className={
@@ -211,7 +210,7 @@ export const RequestCardPayoutToken = () => {
           disabled={disableInitButton}
           onClick={onInitCardPayoutToken}
         >
-          Init SecureDeviceToken
+          Init CardPayoutToken
         </button>
       </div>
       <div className={"box-hosted-fields"}>
@@ -229,6 +228,12 @@ export const RequestCardPayoutToken = () => {
         <div className={"label-hosted-field-error"}>
           {getErrorMessage(InputModelEnum.CARD_NUMBER)}
         </div>
+        {cardService && (
+          <CardNumberHelper
+            displayHostedFields={true}
+            cardNumberHelper={"5102589999999913"}
+          />
+        )}
         <div id="isSubscription_id" />
         <div className={"label-hosted-field-error"}>
           {getErrorMessage(InputModelEnum.IS_SUBSCRIPTION)}
@@ -241,7 +246,7 @@ export const RequestCardPayoutToken = () => {
             disabled={disableRequestButton}
             onClick={onRequestCardPayoutToken}
           >
-            Request DeviceToken
+            Request CardPayoutToken
           </button>
         )}
       </div>

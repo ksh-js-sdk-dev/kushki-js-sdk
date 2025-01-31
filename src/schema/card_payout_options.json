@@ -64,7 +64,7 @@
           "type": "number"
         },
         "defaultValue": {
-          "type": ["string", "boolean"]
+          "type": "boolean"
         },
         "inputType": {
           "$ref": "#/definitions/inputType"

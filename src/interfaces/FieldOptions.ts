@@ -24,7 +24,7 @@ export interface FieldOptions {
   maxCardLength?: number;
   maxLength?: number;
   minLength?: number;
-  defaultValue?: string | boolean;
+  defaultValue?: boolean;
   preventAutofill?: boolean;
   label?: string;
   styles?: Styles;

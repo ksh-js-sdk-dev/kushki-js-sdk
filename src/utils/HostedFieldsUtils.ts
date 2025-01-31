@@ -282,7 +282,7 @@ export const getInitialFieldValidation = (
         isRequiredFlagInCvv(options, isSubscription) && !options.isRequired
       );
     case InputModelEnum.IS_SUBSCRIPTION:
-      return !options.isRequired;
+      return !options.isRequired || !!options.defaultValue;
     default:
       return false;
   }

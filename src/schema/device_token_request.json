@@ -94,11 +94,11 @@
       "type": ["string", "null"]
     },
     "amount": {
-      "description": "@typeParam string - (Optional) Object with amount values",
+      "description": "@typeParam string - (Optional) Object with amount values, required for 3DS transactions",
       "$ref": "#/definitions/amount"
     },
     "currency": {
-      "description": "@typeParam string - (Optional) Currency code for the payment",
+      "description": "@typeParam string - (Optional) Currency code for the payment, required for 3DS transactions",
       "$ref": "#/definitions/currency"
     }
   },
