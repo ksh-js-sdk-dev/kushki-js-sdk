@@ -19,11 +19,11 @@ We make it easier!
   - [Styling](#secure-device-token-styling)
   - [Events](#secure-device-token-events)
   - [Get Secure Device Token](#get-secure-device-token)
-- [Get a Secure Payout Card Token](#get-secure-payout-card-token)
-  - [Form initialization](#payout-token-initialization)
-  - [Styling](#payout-token-styling)
-  - [Events](#payout-token-events)
-  - [Get Payout Token](#get-payout-token)
+- [Get a Secure Card Payout Token](#get-secure-card-payout-token)
+  - [Form initialization](#card-payout-token-initialization)
+  - [Styling](#card-payout-token-styling)
+  - [Events](#card-payout-token-events)
+  - [Get Card Payout Token](#get-card-payout-token)
 - [Recurring Card Payment (Subscriptions)](#recurring-card-payment)
   - [Get Device Token](#get-device-token)
 - [Transfer Transactions](#transfer-transactions)
@@ -512,9 +512,9 @@ try {
 }
 ```
 
-#  Get a Secure Payout Card Token<a name="get-secure-payout-card-token"></a>
-## Form initialization <a name="payout-token-initialization"></a>
-The first step is define the container for the hosted fields required
+#  Get a Secure Card Payout Token<a name="get-secure-card-payout-token"></a>
+## Form initialization <a name="card-payout-token-initialization"></a>
+The first step defines the container for the required hosted fields
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -560,15 +560,15 @@ const initCardPayout = async () => {
   }
 }
 ```
-## Styling <a name="payout-token-styling"></a>
+## Styling <a name="card-payout-token-styling"></a>
 Consider the same methodology used on [Card Token Styles](#styling). The difference is that these styles target the specific fields for this tokenization method.
-It should also be noted that the isSubscription field is of type checkbox, so specific styles must be applied for that type of input. More details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/CardPayouts.initCardPayoutToken.html#md:definition-custom-styles)
+It should also be noted that the isSubscription field is checkbox's type, so specific styles must be applied for that type of input. More details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/CardPayouts.initCardPayoutToken.html#md:definition-custom-styles)
 
-## Events <a name="payout-token-events"></a>
+## Events <a name="card-payout-token-events"></a>
 Consider the same methodology used on [Card Token Events](#events). The difference is that these events target the specific fields for this tokenization method. More details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/CardPayouts.initCardPayoutToken.html#md:options-example)
 
-## Get Payout Token <a name="get-payout-token"></a>
-To get a payout token, you should call the [`requestCardPayoutToken`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/CardPayouts.ICardPayouts.html#requestCardPayoutToken) method on your card payout instance that was previously initialized, this method also validates if the fields have valid values, otherwise it will throw an exception
+## Get Card Payout Token <a name="get-card-payout-token"></a>
+To get a card payout token, you should call the [`requestCardPayoutToken`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/CardPayouts.ICardPayouts.html#requestCardPayoutToken) method on your card payout instance that was previously initialized, this method also validates if the fields have valid values, otherwise it will throw an exception
 
 This method returns a [`CardPayoutTokenResponse`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/types/CardPayouts.CardPayoutTokenResponse.html) object that you will send to you backend and proceed with the charge of payment or subscription.
 This type can be [`CardPayoutSubscriptionTokenResponse`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/CardPayouts.CardPayoutSubscriptionTokenResponse.html) when the isSubscription field is checked and create a subscriptionId, otherwise can be [`CardPayoutUniqueTokenResponse`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/CardPayouts.CardPayoutUniqueTokenResponse.html) when get one-time token

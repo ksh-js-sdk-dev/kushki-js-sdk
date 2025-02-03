@@ -346,7 +346,7 @@ describe("HostedFields utils - test", () => {
             selector: "cardNumber_id"
           },
           isSubscription: {
-            selector: "expirationDate_id"
+            selector: "isSubscription_id"
           }
         }
       };

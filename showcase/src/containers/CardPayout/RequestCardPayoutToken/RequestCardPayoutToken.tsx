@@ -13,6 +13,7 @@ import {
   InputModelEnum,
   Styles
 } from "Kushki/CardPayouts";
+import { ErrorLabelsSpanishEnum } from "../../../shared/enums/ErrorLabels.enum.ts";
 
 const cardPayoutStyles: Styles = {
   container: {
@@ -125,7 +126,7 @@ export const RequestCardPayoutToken = () => {
           selector: "isSubscription_id"
         }
       },
-      paymentType: "EC",
+      paymentType: "GP",
       styles: cardPayoutStyles
     };
 
@@ -163,9 +164,9 @@ export const RequestCardPayoutToken = () => {
       fieldsValidityDemo[field as keyof Fields]?.errorType
     ) {
       if (fieldsValidityDemo[field as keyof Fields]?.errorType === "empty")
-        return "Campo Requerido";
+        return ErrorLabelsSpanishEnum.REQUIRED_FIELD;
 
-      return "Campo Inválido";
+      return ErrorLabelsSpanishEnum.INVALID_FIELD;
     }
 
     return "";

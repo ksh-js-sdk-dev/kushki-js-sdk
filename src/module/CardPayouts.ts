@@ -124,6 +124,7 @@ import { CardPayoutOptions } from "types/card_payout_options";
  * - Consider the application of the same [definition custom styles](Card.initCardToken.html#md:definition-custom-styles) for card token, the difference is that the styles would be applied in payout hosted fields.
  * - Can use preventAutofill flag to enable or disable autofill with navigator data in all fields
  * - Can define the paymentType, this value is send in the token request, only accept two characters
+ * - The paymentType for Visa and Mastercard, the accepted value is 'GP'. For other brands, please refer to the list of allowed values.
  *
  * ```ts
  *
@@ -173,7 +174,7 @@ import { CardPayoutOptions } from "types/card_payout_options";
  *        selector: "isSubscription_id"
  *      }
  *    },
- *    paymentType: "EC",//optional, only two characters,
+ *    paymentType: "GP",//optional, please read the specification text
  *    preventAutofill: true,
  *    styles: hostedFieldsStyles,
  *  }

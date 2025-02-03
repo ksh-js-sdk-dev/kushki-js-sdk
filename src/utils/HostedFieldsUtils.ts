@@ -20,6 +20,8 @@ import {
 } from "types/form_validity";
 import { SecureDeviceTokenOptions } from "types/secure_device_token_request";
 
+const CARD_PAYOUT_PAYMENT_TYPE_MAX_LENGTH: number = 2;
+
 const _getContainers = (inputValues: CardFieldValues) => {
   return Object.values<FieldInstance>(inputValues).map(
     (fieldInstance: FieldInstance) =>
@@ -72,7 +74,10 @@ const _validateCardPayoutTokenOptions = (options: CardPayoutOptions): void => {
 
   _validateMissingFieldsOptions(requiredFields, options);
 
-  if (options.paymentType && options.paymentType.length > 2)
+  if (
+    options.paymentType &&
+    options.paymentType.length > CARD_PAYOUT_PAYMENT_TYPE_MAX_LENGTH
+  )
     throw new KushkiError(ERRORS.E011);
 };
 
