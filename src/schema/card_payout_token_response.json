@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "CardPayoutTokenResponse",
+  "description": "@public Contains the card payout token or subscriptionId",
+  "type": "object",
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "description": "@public Card payout one-time token",
+      "title": "CardPayoutUniqueTokenResponse",
+      "additionalProperties": false,
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "(@typeParam  string The unique use token"
+        }
+      },
+      "required": ["token"]
+    },
+    {
+      "description": "@public Card payout subscriptionId object when save the card data",
+      "title": "CardPayoutSubscriptionTokenResponse",
+      "additionalProperties": false,
+      "properties": {
+        "subscriptionId": {
+          "type": "string",
+          "description": "(@typeParam  string The unique subscriptionId of card data"
+        },
+        "maskedPan": {
+          "type": "string",
+          "description": "(@typeParam  string The masked card number"
+        },
+        "brand": {
+          "type": "string",
+          "description": "(@typeParam  string The card brand"
+        }
+      },
+      "required": ["subscriptionId", "maskedPan", "brand"]
+    }
+  ]
+}
