@@ -309,7 +309,9 @@ describe("Card Payouts - Test", () => {
   describe("requestCardPayoutToken - method", () => {
     let cardPayout: CardPayouts;
     const tokenMock: CardPayoutTokenResponse = {
-      token: "777"
+      brand: "visa",
+      maskedPan: "4242XXXXXXXX4242",
+      token: "12345"
     };
 
     const mockExportRequestTokenMethod = (isValid: boolean) => {
