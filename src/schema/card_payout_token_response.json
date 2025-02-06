@@ -13,9 +13,17 @@
         "token": {
           "type": "string",
           "description": "(@typeParam  string The unique use token"
+        },
+        "maskedPan": {
+          "type": "string",
+          "description": "(@typeParam  string The masked card number"
+        },
+        "brand": {
+          "type": "string",
+          "description": "(@typeParam  string The card brand"
         }
       },
-      "required": ["token"]
+      "required": ["token", "maskedPan", "brand"]
     },
     {
       "description": "@public Card payout subscriptionId object when save the card data",
