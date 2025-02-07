@@ -48,6 +48,10 @@
     "./CardAnimation": {
       "import": "./module/CardAnimation.js",
       "types": "./module/CardAnimation.d.ts"
+    },
+    "./CardPayouts": {
+      "import": "./module/CardPayouts.js",
+      "types": "./module/CardPayouts.d.ts"
     }
   },
   "engines": {
