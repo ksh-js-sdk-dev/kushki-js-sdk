@@ -24,7 +24,7 @@ export interface ICardPayouts {
    *
    * try {
    *    const token: CardPayoutTokenResponse = await cardPayouts.requestCardPayoutToken();
-   *    // On Success, can get one-time token response, ex. {token: "a2b74b7e3cf24e368a20380f16844d16"}
+   *    // On Success, can get one-time token response, ex. {token: "a2b74b7e3cf24e368a20380f16844d16", maskedPan: "5102********9913", brand: "MASTERCARD"}
    *    console.log("This is the Token", tokenResponse.token)
    *  } catch (error: any) {
    *      // On Error, catch response, ex. {code:"E002", message: "Error en solicitud de token"}
@@ -38,7 +38,7 @@ export interface ICardPayouts {
    *
    * try {
    *    const token: CardPayoutTokenResponse = await cardPayouts.requestCardPayoutToken();
-   *    // On Success, can get subscriptionId response, ex. {subscriptionId: "2029012912", maskedPan: "4242********4242", brand: "visa",}
+   *    // On Success, can get subscriptionId response, ex. {subscriptionId: "9750386377a9429ba945e8a68e6d3a23", maskedPan: "4242********4242", brand: "VISA"}
    *    console.log("This is the subscriptionId", tokenResponse.subscriptionId)
    *  } catch (error: any) {
    *      // On Error, catch response, ex. {code:"E002", message: "Error en solicitud de token"}
