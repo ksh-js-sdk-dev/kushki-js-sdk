@@ -1,5 +1,6 @@
 import { Kushki } from "class/Kushki.ts";
 import { CardSubscriptions } from "class/CardSubscriptions.ts";
+import { DeviceTokenRequest } from "types/device_token_request";
 import { SecureDeviceTokenOptions } from "types/secure_device_token_request";
 import * as HostedFields from "libs/zoid/HostedField.ts";
 
@@ -31,6 +32,9 @@ describe("CardSubscriptions - class - tests", () => {
   const kushkiInstance: Kushki = new Kushki({
     publicCredentialId: "12345678"
   });
+  const tokenrequest: DeviceTokenRequest = {
+    subscriptionId: "9999"
+  };
   const options: SecureDeviceTokenOptions = {
     body: {
       subscriptionId: "9999"
@@ -238,9 +242,7 @@ describe("CardSubscriptions - class - tests", () => {
     const mockCardService = () => {
       // @ts-ignore
       CardService.mockImplementation(() => ({
-        createDeviceTokenRequestBody: jest
-          .fn()
-          .mockResolvedValue({ subscriptionId: "9999" }),
+        createDeviceTokenRequestBody: jest.fn().mockResolvedValue(tokenrequest),
         validateToken: jest.fn().mockResolvedValue(tokenMock)
       }));
     };
@@ -263,11 +265,22 @@ describe("CardSubscriptions - class - tests", () => {
       mockExportValidityMethod(true);
     });
 
+    it("should throw error when not send DeviceTokenRequest param into initialization and requestDeviceToken method", async () => {
+      try {
+        // @ts-ignore
+        await cardSubscription.requestDeviceToken();
+      } catch (error: any) {
+        expect(error.message).toEqual(
+          "Error, configuración de campos requeridos no encontrada"
+        );
+      }
+    });
+
     it("should throw error when form is invalid", async () => {
       mockExportValidityMethod(false);
 
       try {
-        await cardSubscription.requestDeviceToken();
+        await cardSubscription.requestDeviceToken(tokenrequest);
       } catch (error: any) {
         expect(error.message).toEqual("Error en la validación del formulario");
       }
@@ -276,7 +289,9 @@ describe("CardSubscriptions - class - tests", () => {
     it("should return token when form is valid and hosted field return valid token", async () => {
       mockFormValidity(true);
 
-      const tokenResponse = await cardSubscription.requestDeviceToken();
+      const tokenResponse = await cardSubscription.requestDeviceToken(
+        tokenrequest
+      );
 
       expect(tokenResponse).toEqual(tokenMock);
     });
@@ -287,7 +302,7 @@ describe("CardSubscriptions - class - tests", () => {
       cardSubscription.inputValues.cvv.hostedField.requestSecureDeviceToken =
         jest.fn().mockRejectedValue("error");
       try {
-        await cardSubscription.requestDeviceToken();
+        await cardSubscription.requestDeviceToken(tokenrequest);
       } catch (error: any) {
         expect(error.code).toEqual("E002");
       }

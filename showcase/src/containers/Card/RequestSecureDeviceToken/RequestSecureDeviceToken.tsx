@@ -7,6 +7,7 @@ import { IKushki, init } from "Kushki";
 import {
   ICardSubscriptions,
   initSecureDeviceToken,
+  InputModelEnum,
   SecureDeviceTokenOptions,
   TokenResponse
 } from "Kushki/Card";
@@ -15,7 +16,6 @@ import {
   fieldsErrorEmpty,
   fieldsErrorInvalid
 } from "../../../shared/enums/ErrorLabels.enum.ts";
-import { InputModelEnum } from "Kushki/Card";
 
 export const RequestSecureDeviceToken = () => {
   const [merchantId, setMerchantId] = useState<string>("");
@@ -37,16 +37,16 @@ export const RequestSecureDeviceToken = () => {
       publicCredentialId: merchantId
     });
     const options: SecureDeviceTokenOptions = {
-      body: { subscriptionId },
       fields: {
         cvv: {
-          selector: "cvv_id",
           label: "CVV",
-          placeholder: "CVV"
+          placeholder: "CVV",
+          selector: "cvv_id"
         }
       },
       styles: hostedFieldsStyles
     };
+
     try {
       setCardService(await initSecureDeviceToken(kushkiInstance, options));
     } catch (error: any) {
@@ -62,7 +62,9 @@ export const RequestSecureDeviceToken = () => {
 
     if (cardService)
       try {
-        const token: TokenResponse = await cardService.requestDeviceToken();
+        const token: TokenResponse = await cardService.requestDeviceToken({
+          subscriptionId: subscriptionId
+        });
 
         setResponse(token.token);
       } catch (error: any) {
@@ -108,7 +110,7 @@ export const RequestSecureDeviceToken = () => {
         />
         <CardNumberHelper
           displayHostedFields={true}
-          cardNumberHelper={"5bdbaec2020f4d118db902f5799cfc24"}
+          cardNumberHelper={"eda2b0b0c5f3426483a678c82cc8a5ef"}
         />
         <InputConfigurationDemo
           disableInputPrev={false}
@@ -118,7 +120,7 @@ export const RequestSecureDeviceToken = () => {
         />
         <CardNumberHelper
           displayHostedFields={true}
-          cardNumberHelper={"1710517723209000"}
+          cardNumberHelper={"1739385464013734"}
         />
         <button
           className={
