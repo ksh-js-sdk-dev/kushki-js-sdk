@@ -30,7 +30,7 @@ export interface ICardSubscriptions {
    * - if merchant is configured with 3DS rule and error on 3DS authentication, then throw {@link ERRORS | ERRORS.E005}
    * - if merchant is configured with 3DS rule and error on 3DS session validation, then throw {@link ERRORS | ERRORS.E006}
    * - if cvv field is invalid, then throw {@link ERRORS | ERRORS.E007}
-   * - if `DeviceTokenRequest` body not defined, then throw {@link ERRORS | ERRORS.E020}
+   * - if `DeviceTokenRequest` body is not defined, then throw {@link ERRORS | ERRORS.E020}
    *
    *  @example
    * // Basic example

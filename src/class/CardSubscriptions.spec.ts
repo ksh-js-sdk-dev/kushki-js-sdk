@@ -265,7 +265,7 @@ describe("CardSubscriptions - class - tests", () => {
       mockExportValidityMethod(true);
     });
 
-    it("should throw error when not send DeviceTokenRequest param into initialization and requestDeviceToken method", async () => {
+    it("should throw error when DeviceTokenRequest param is not sent into requestDeviceToken method", async () => {
       try {
         // @ts-ignore
         await cardSubscription.requestDeviceToken();
