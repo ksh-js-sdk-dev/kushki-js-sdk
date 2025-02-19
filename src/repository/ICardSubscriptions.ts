@@ -67,7 +67,7 @@ export interface ICardSubscriptions {
    *      console.error("Catch error on request device Token", error.code, error.message);
    *  }
    */
-  requestDeviceToken(body: DeviceTokenRequest): Promise<TokenResponse>;
+  requestDeviceToken(body?: DeviceTokenRequest): Promise<TokenResponse>;
 
   /**
    * This function returns an {@link FormValidity} that represents the validation state of cvv field

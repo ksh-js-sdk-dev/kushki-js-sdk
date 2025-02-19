@@ -675,7 +675,8 @@ export type { DeviceTokenRequest } from "types/device_token_request";
  * Function to render cvv hosted field and init an instance of {@link ICardSubscriptions}
  * @group Methods
  * @param kushkiInstance - Object that implemented IKushki
- * @param options - You must define setup of cvv field
+ * @param {SecureDeviceTokenOptions} options - You must define setup of cvv field
+ * - Set body {@link DeviceTokenRequest} **deprecated**. This field has been deprecated and should not be used.
  * - if you want to  {@link SecureDeviceTokenOptions.preventAutofill | prevent autofill}  fields (default value is false), [example](#md:card-subscription-body-prevent-autofill-and-custom-field-example)
  * - Set Custom {@link Field | Fields} only for cvv, [example](#md:card-subscription-body-prevent-autofill-and-custom-field-example)
  * - Set custom {@link Styles | Styles} only for cvv, [example](#md:definition-custom-styles)
