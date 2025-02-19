@@ -43,10 +43,15 @@ import {
 
 export class CardSubscriptions implements ICardSubscriptions {
   private readonly kushkiInstance: IKushki;
+  private readonly options: SecureDeviceTokenOptions;
   private inputValues: CardFieldValues;
 
-  private constructor(kushkiInstance: IKushki) {
+  private constructor(
+    kushkiInstance: IKushki,
+    options: SecureDeviceTokenOptions
+  ) {
     this.kushkiInstance = kushkiInstance;
+    this.options = options;
     this.inputValues = {};
   }
 
@@ -64,7 +69,10 @@ export class CardSubscriptions implements ICardSubscriptions {
       FieldsMethodTypesEnum.DEVICE_TOKEN
     );
 
-    const payment: CardSubscriptions = new CardSubscriptions(kushkiInstance);
+    const payment: CardSubscriptions = new CardSubscriptions(
+      kushkiInstance,
+      options
+    );
 
     payment.initCvvField(options.fields.cvv, options.styles);
 
@@ -76,10 +84,13 @@ export class CardSubscriptions implements ICardSubscriptions {
   }
 
   public async requestDeviceToken(
-    body: DeviceTokenRequest
+    body?: DeviceTokenRequest
   ): Promise<TokenResponse> {
+    console.log(body, this.options.body);
     try {
-      if (!body) {
+      const finalOptions = body ? body : this.options.body;
+
+      if (!finalOptions) {
         throw new KushkiError(ERRORS.E020);
       }
 
@@ -93,7 +104,7 @@ export class CardSubscriptions implements ICardSubscriptions {
       const cardService = new CardService(this.kushkiInstance);
 
       const requestTokenBody: DeviceTokenRequest =
-        await cardService.createDeviceTokenRequestBody(body);
+        await cardService.createDeviceTokenRequestBody(finalOptions);
 
       const tokenResponse: CardTokenResponse =
         await this.inputValues.cvv!.hostedField!.requestSecureDeviceToken(

@@ -36,9 +36,6 @@ describe("CardSubscriptions - class - tests", () => {
     subscriptionId: "9999"
   };
   const options: SecureDeviceTokenOptions = {
-    body: {
-      subscriptionId: "9999"
-    },
     fields: {
       cvv: {
         selector: "cvv_id"
