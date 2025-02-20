@@ -86,7 +86,6 @@ export class CardSubscriptions implements ICardSubscriptions {
   public async requestDeviceToken(
     body?: DeviceTokenRequest
   ): Promise<TokenResponse> {
-    console.log(body, this.options.body);
     try {
       const finalOptions = body ? body : this.options.body;
 
