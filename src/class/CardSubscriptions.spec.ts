@@ -263,7 +263,7 @@ describe("CardSubscriptions - class - tests", () => {
       mockExportValidityMethod(true);
     });
 
-    it("should throw error when form is invalid", async () => {
+    it("should throw error when form is invalid ", async () => {
       mockExportValidityMethod(false);
 
       try {
