@@ -83,8 +83,16 @@ export class CardSubscriptions implements ICardSubscriptions {
     return payment;
   }
 
-  public async requestDeviceToken(): Promise<TokenResponse> {
+  public async requestDeviceToken(
+    body?: DeviceTokenRequest
+  ): Promise<TokenResponse> {
     try {
+      const finalOptions = body ? body : this.options.body;
+
+      if (!finalOptions) {
+        throw new KushkiError(ERRORS.E020);
+      }
+
       const isFormValid =
         await this.inputValues.cvv!.hostedField?.requestFormValidity();
 
@@ -95,7 +103,7 @@ export class CardSubscriptions implements ICardSubscriptions {
       const cardService = new CardService(this.kushkiInstance);
 
       const requestTokenBody: DeviceTokenRequest =
-        await cardService.createDeviceTokenRequestBody(this.options.body);
+        await cardService.createDeviceTokenRequestBody(finalOptions);
 
       const tokenResponse: CardTokenResponse =
         await this.inputValues.cvv!.hostedField!.requestSecureDeviceToken(

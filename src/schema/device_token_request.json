@@ -86,11 +86,11 @@
       "type": "string"
     },
     "userId": {
-      "description": "@typeParam string - (Optional) UserId if exist SiftScience implementation",
+      "description": "@typeParam string - (Optional) userId if you have your own SiftScience implementation",
       "type": ["string", "null"]
     },
     "sessionId": {
-      "description": "@typeParam string - (Optional) SubscriptionId if exist SiftScience implementation",
+      "description": "@typeParam string - (Optional) sessionId if you have your own SiftScience implementation",
       "type": ["string", "null"]
     },
     "amount": {

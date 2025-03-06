@@ -3,9 +3,6 @@
   "id": "SecureDeviceTokenOptions",
   "title": "SecureDeviceTokenOptions",
   "properties": {
-    "body": {
-      "$ref": "../../src/schema/device_token_request.json"
-    },
     "preventAutofill": {
       "type": "boolean"
     },
@@ -23,6 +20,6 @@
       "required": ["cvv"]
     }
   },
-  "required": ["subscriptionId", "fields", "body"],
+  "required": ["fields"],
   "type": "object"
 }

@@ -411,6 +411,7 @@ To use this method needs a `subscriptionId` that was previously created using [r
 with Token obtained on  [requestToken](#tokenization) with flag `isSubscription = true`
 
 This method provide one secure hosted field for `cvv` to collect that data and send it in device token request
+
 ## &#xa0;&#xa0;&bull; Form initialization  <a name="device-token-form-initialization"></a>
 The first step is define the container for the `cvv` hosted field
 ```html
@@ -425,6 +426,7 @@ The first step is define the container for the `cvv` hosted field
 ```
 Then you must define a [SecureDeviceTokenOptions](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.SecureDeviceTokenOptions.html) and call the method [initSecureDeviceToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initSecureDeviceToken.html), 
 this will render the hosted field in your side and the user will be able to enter the cvv value to later finish the tokenization, more examples [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initSecureDeviceToken.html)
+
 ```ts
 import { IKushki, init, KushkiError } from "@kushki/js-sdk";
 import {
@@ -434,9 +436,6 @@ import {
 } from "@kushki/js-sdk/Card";
 
 const options : SecureDeviceTokenOptions = {
-  body: {
-    subscriptionId: "subscriptionId",
-  },
   fields: {
     cvv: {
       selector: "cvv_id"
@@ -497,12 +496,18 @@ try {
 ## &#xa0;&#xa0;&bull; Get Secure Device Token <a name="get-secure-device-token"></a>
 To get a secure device token, you should call the [`requestDeviceToken`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICardSubscriptions.html#requestDeviceToken) method on your card subscription instance that was previously initialized, this method also validates if the cvv field is valid, otherwise it will throw an exception
 
+You need to define the [`DeviceTokenRequest`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.DeviceTokenRequest.html) body with `subscriptionId` and send it in this method.
+More details and examples [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.ICardSubscriptions.html#requestDeviceToken)
+
 This method returns a [`TokenResponse`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.TokenResponse.html) object that you will send to you backend and proceed with the charge of one-click payment or subscription on demand
+
 ### Basic Example
 If the subscription was created with merchant and card that needs 3DS validation or SiftScience service, this method launch and return token with all the required validations
 ```ts
 try {
-  const tokenResponse: TokenResponse = await cardSubscription.requestDeviceToken();
+  const tokenResponse: TokenResponse = await cardSubscription.requestDeviceToken({
+    subscriptionId: "{subscriptionId}"
+  });
   // On Success, can get card token response, ex. {token: "a2b74b7e3cf24e368a20380f16844d16"}
   console.log("This is a card subscription Token", tokenResponse.token)
 } catch (error: any) {
