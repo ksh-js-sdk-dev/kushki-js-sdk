@@ -9,6 +9,7 @@ import { HostedFieldUrlEnum } from "infrastructure/HostedFieldUrlEnum.ts";
 import { PathsHtmlSpaInputs } from "infrastructure/PathsHtmlSpaInputs.ts";
 import { DeviceTokenRequest } from "types/device_token_request";
 import { InputModelEnum } from "infrastructure/InputModel.enum.ts";
+import { CardPayoutTokenResponse } from "types/card_payout_token_response";
 
 const KushkiHostedFields = zoid.create({
   dimensions: {
@@ -17,6 +18,18 @@ const KushkiHostedFields = zoid.create({
   },
   exports: ({ getExports }: any) => {
     return {
+      requestCardPayoutToken: (
+        kushkiInstance: IKushki,
+        cardTokenHeaders: object,
+        paymentType: string
+      ): Promise<CardPayoutTokenResponse> =>
+        getExports().then((exports: any) =>
+          exports.requestCardPayoutToken({
+            cardTokenHeaders,
+            kushkiInstance,
+            paymentType
+          })
+        ),
       requestFormValidity: (isSubscription?: boolean): Promise<boolean> =>
         getExports().then((exports: any) =>
           exports.requestFormValidity(isSubscription)

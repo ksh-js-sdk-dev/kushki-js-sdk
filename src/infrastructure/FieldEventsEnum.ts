@@ -7,5 +7,6 @@ export enum FieldEventsEnum {
 
 export enum FieldsMethodTypesEnum {
   CARD_TOKEN = "card-token",
-  DEVICE_TOKEN = "device-token"
+  DEVICE_TOKEN = "device-token",
+  CARD_PAYOUT_TOKEN = "card-payout-token"
 }

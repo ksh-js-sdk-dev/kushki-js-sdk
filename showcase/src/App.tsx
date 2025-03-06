@@ -1,8 +1,9 @@
 import { RequestInitAntiFraud } from "./containers/AntiFraud/InitAntiFarud/RequestInitAntiFraud.tsx";
 import { RequestBrandingAnimation } from "./containers/Card/RequestBrandingAnimation/RequestBrandingAnimation.tsx";
 import { RequestBrandsByMerchant } from "./containers/Card/RequestBrandsByMerchant/RequestBrandsByMerchant.tsx";
-import { CheckoutContainer } from "./containers/Card/RequestCardToken/Checkout.tsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { CheckoutContainer } from "./containers/Card/RequestCardToken/Checkout.tsx";
+import { RequestCardPayoutToken } from "./containers/CardPayout/RequestCardPayoutToken/RequestCardPayoutToken.tsx";
 import { RoutesEnum } from "./shared/enums/Routes.enum.ts";
 import { GetBankList } from "./containers/Transfer/GetBankList/GetBankList.tsx";
 import { RequestCommissionConfiguration } from "./containers/Merchant/RequestCommissionConfiguration/RequestCommissionConfiguration.tsx";
@@ -39,6 +40,10 @@ function App() {
           element={<RequestBrandingAnimation />}
         />
         <Route path={RoutesEnum.BRANDS} element={<RequestBrandsByMerchant />} />
+        <Route
+          path={RoutesEnum.CARD_PAYOUT}
+          element={<RequestCardPayoutToken />}
+        />
       </Routes>
     </BrowserRouter>
   );

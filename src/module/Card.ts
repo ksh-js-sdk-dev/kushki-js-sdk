@@ -648,6 +648,12 @@ export { InputModelEnum } from "../infrastructure/InputModel.enum.ts";
  *       });
  *       const body: DeviceTokenRequest={
  *         subscriptionId: "subscriptionId"
+ *         amount:{ //amount and currency optionals, but required for 3DS transactions
+ *            subtotalIva: 20,
+ *            subtotalIva0: 0,
+ *            iva: 10,
+ *         },
+ *         currency: "USD",
  *       }
  *
  *       const response: TokenResponse = await requestDeviceToken(kushkiInstance, body);
@@ -734,7 +740,7 @@ export type { DeviceTokenRequest } from "types/device_token_request";
  * }
  * ```
  *
- * #### Card Subscription body, prevent autofill and custom field Example
+ * #### Card Subscription body with amount, currency, prevent autofill and custom field Example
  *
  * ##### Definition container in html
  * ```html
