@@ -675,8 +675,8 @@ export type { DeviceTokenRequest } from "types/device_token_request";
  * Function to render cvv hosted field and init an instance of {@link ICardSubscriptions}
  * @group Methods
  * @param kushkiInstance - Object that implemented IKushki
- * @param options - You must define setup of cvv field
- * - Define body - {@link DeviceTokenRequest} with subscriptionID [basic example](#md:basic-setup-to-secure-device-token)
+ * @param {SecureDeviceTokenOptions} options - You must define setup of cvv field
+ * - Set body {@link DeviceTokenRequest} **deprecated**. This field has been deprecated and should not be used.
  * - if you want to  {@link SecureDeviceTokenOptions.preventAutofill | prevent autofill}  fields (default value is false), [example](#md:card-subscription-body-prevent-autofill-and-custom-field-example)
  * - Set Custom {@link Field | Fields} only for cvv, [example](#md:card-subscription-body-prevent-autofill-and-custom-field-example)
  * - Set custom {@link Styles | Styles} only for cvv, [example](#md:definition-custom-styles)
@@ -701,7 +701,8 @@ export type { DeviceTokenRequest } from "types/device_token_request";
  * ```
  *
  * ##### Init subscription card instance
- *  - To enable subscription on demand or one click payment, you need to define an subscriptionId and fields. In background this method render the hosted field
+ *  - To enable subscription on demand or one click payment, you need to define the cvv field. In background this method render the hosted field
+ *
  * ```ts
  * import { IKushki, init, KushkiError } from "@kushki/js-sdk";
  * import {
@@ -716,9 +717,6 @@ export type { DeviceTokenRequest } from "types/device_token_request";
  * };
  *
  * const options : SecureDeviceTokenOptions = {
- *   body: {
- *     subscriptionId: "subscriptionId",
- *   },
  *   fields: {
  *       cvv: {
  *          selector: "cvv_id"
@@ -751,8 +749,8 @@ export type { DeviceTokenRequest } from "types/device_token_request";
  * ```
  *
  * ##### Init subscription card instance
- * - Can send aditional parameters in body param with properties from {@link DeviceTokenRequest}
  * - To enable prevent autofill in fields the `preventAutofill` flag must be true
+ * - Can define more properties for {@link Field} cvv param
  *
  * ```ts
  * import { IKushki, init, KushkiError } from "@kushki/js-sdk";
@@ -768,11 +766,6 @@ export type { DeviceTokenRequest } from "types/device_token_request";
  * };
  *
  * const options : SecureDeviceTokenOptions = {
- *   body: {
- *     subscriptionId: "subscriptionId",
- *     userId: "userId", //when use preloaded SiftScience service
- *     sessionId: "sessionId" //when use preloaded SiftScience service
- *   },
  *   fields: {
  *       cvv: {
  *          inputType: "password",
@@ -845,9 +838,6 @@ export type { DeviceTokenRequest } from "types/device_token_request";
  *     };
  *
  * const options : SecureDeviceTokenOptions = {
- *   body: {
- *     subscriptionId: "subscriptionId",
- *   },
  *   fields: {
  *       cvv: {
  *          selector: "cvv_id"

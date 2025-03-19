@@ -1,4 +1,8 @@
-import { FormValidity, TokenResponse } from "module/Card.ts";
+import {
+  DeviceTokenRequest,
+  FormValidity,
+  TokenResponse
+} from "module/Card.ts";
 import { FieldTypeEnum } from "types/form_validity";
 import { FieldValidity } from "types/card_fields_values";
 
@@ -16,6 +20,7 @@ export interface ICardSubscriptions {
    * If the merchant and subscription needs 3DS or SiftScience service, this method automatically do validations for each rule
    *
    * @group Methods
+   * @param {DeviceTokenRequest} body - object with subscriptionId and other params for specific cases, see Object documentation
    * @return TokenResponse object with token
    * @throws KushkiErrorResponse object with code and message of error
    * - if error on request device token endpoint then throw {@link ERRORS | ERRORS.E002}
@@ -25,11 +30,14 @@ export interface ICardSubscriptions {
    * - if merchant is configured with 3DS rule and error on 3DS authentication, then throw {@link ERRORS | ERRORS.E005}
    * - if merchant is configured with 3DS rule and error on 3DS session validation, then throw {@link ERRORS | ERRORS.E006}
    * - if cvv field is invalid, then throw {@link ERRORS | ERRORS.E007}
+   * - if `DeviceTokenRequest` body is not defined, then throw {@link ERRORS | ERRORS.E020}
    *
-   * @example
+   *  @example
    * // Basic example
    * try {
-   *    const tokenResponse: TokenResponse = await cardSubscription.requestDeviceToken();
+   *    const tokenResponse: TokenResponse = await cardSubscription.requestDeviceToken({
+   *           subscriptionId: "{subscriptionId}",
+   *    });
    *    // On Success, can get device token response, ex. {token: "a2b74b7e3cf24e368a20380f16844d16"}
    *    console.log("This is a device Token", tokenResponse.token)
    *  } catch (error: any) {
@@ -37,8 +45,29 @@ export interface ICardSubscriptions {
    *      // On Error, catch response, ex. {code:"E007", message: "Error en la validación del formulario"}
    *      console.error("Catch error on request device Token", error.code, error.message);
    *  }
+   *
+   *   @example
+   * // Body with params
+   * // For 3DS transactions, currency and amount are required
+   * try {
+   *    const tokenResponse: TokenResponse = await cardSubscription.requestDeviceToken({
+   *           amount: { //amount and currency required for 3DS transactions
+   *             iva: 10000,
+   *             subtotalIva: 0,
+   *             subtotalIva0: 0
+   *           },
+   *           currency: "{currency}",
+   *           subscriptionId: "{subscriptionId}",
+   *           userId: "{userId}", //when use preloaded SiftScience service
+   *           sessionId: "{sessionId}" //when use preloaded SiftScience service
+   *    });
+   *    // On Success, can get device token response, ex. {token: "a2b74b7e3cf24e368a20380f16844d16"}
+   *    console.log("This is a device Token", tokenResponse.token)
+   *  } catch (error: any) {
+   *      console.error("Catch error on request device Token", error.code, error.message);
+   *  }
    */
-  requestDeviceToken(): Promise<TokenResponse>;
+  requestDeviceToken(body?: DeviceTokenRequest): Promise<TokenResponse>;
 
   /**
    * This function returns an {@link FormValidity} that represents the validation state of cvv field
