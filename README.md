@@ -19,6 +19,11 @@ We make it easier!
   - [Styling](#secure-device-token-styling)
   - [Events](#secure-device-token-events)
   - [Get Secure Device Token](#get-secure-device-token)
+- [Get a Secure Card Payout Token](#get-secure-card-payout-token)
+  - [Form initialization](#card-payout-token-initialization)
+  - [Styling](#card-payout-token-styling)
+  - [Events](#card-payout-token-events)
+  - [Get Card Payout Token](#get-card-payout-token)
 - [Recurring Card Payment (Subscriptions)](#recurring-card-payment)
   - [Get Device Token](#get-device-token)
 - [Transfer Transactions](#transfer-transactions)
@@ -509,6 +514,80 @@ try {
   // On Error, catch response, ex. {code:"E002", message: "Error en solicitud de token"}
   // On Error, catch response, ex. {code:"E007", message: "Error en la validación del formulario"}
   console.error("Catch error on request card subscription Token", error.code, error.message);
+}
+```
+
+#  Get a Secure Card Payout Token<a name="get-secure-card-payout-token"></a>
+## Form initialization <a name="card-payout-token-initialization"></a>
+The first step defines the container for the required hosted fields
+```html
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <form>
+        <div id="cardHolderName_id"/>
+        <div id="cardNumber_id"/>
+        <div id="isSubscription_id"/>
+    </form>
+</body>
+</html>
+```
+Then you must define a [CardPayoutOptions](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/CardPayouts.CardPayoutOptions.html) and call the method [initCardPayoutToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/CardPayouts.initCardPayoutToken.html),
+this will render the hosted fields in your side and the user will be able to enter the values to later finish the tokenization, more examples [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/CardPayouts.initCardPayoutToken.html)
+```ts
+import { IKushki, init } from "@kushki/js-sdk";
+import {
+  CardPayoutOptions,
+  ICardPayouts,
+  initCardPayoutToken
+} from "@kushki/js-sdk/CardPayout";
+
+const options : CardPayoutOptions = {
+  fields: {
+    cardholderName: {
+      selector: "cardHolderName_id"
+    },
+    cardNumber: {
+      selector: "cardNumber_id"
+    },
+    isSubscription: {
+      selector: "isSubscription_id"
+    }
+  },
+}
+
+const initCardPayout = async () => {
+  try {
+    //  kushkiInstance must be previusly initialized 
+    const cardPayouts: ICardPayouts = await initCardPayoutToken(kushkiInstance, options)
+  } catch (e: any) {
+    console.error(e.message);
+  }
+}
+```
+## Styling <a name="card-payout-token-styling"></a>
+Consider the same methodology used on [Card Token Styles](#styling). The difference is that these styles target the specific fields for this tokenization method.
+It should also be noted that the isSubscription field is checkbox's type, so specific styles must be applied for that type of input. More details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/CardPayouts.initCardPayoutToken.html#md:definition-custom-styles)
+
+## Events <a name="card-payout-token-events"></a>
+Consider the same methodology used on [Card Token Events](#events). The difference is that these events target the specific fields for this tokenization method. More details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/CardPayouts.initCardPayoutToken.html#md:options-example)
+
+## Get Card Payout Token <a name="get-card-payout-token"></a>
+To get a card payout token, you should call the [`requestCardPayoutToken`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/CardPayouts.ICardPayouts.html#requestCardPayoutToken) method on your card payout instance that was previously initialized, this method also validates if the fields have valid values, otherwise it will throw an exception
+
+This method returns a [`CardPayoutTokenResponse`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/types/CardPayouts.CardPayoutTokenResponse.html) object that you will send to you backend and proceed with the charge of payment or subscription.
+This type can be [`CardPayoutSubscriptionTokenResponse`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/CardPayouts.CardPayoutSubscriptionTokenResponse.html) when the isSubscription field is checked and create a subscriptionId, otherwise can be [`CardPayoutUniqueTokenResponse`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/CardPayouts.CardPayoutUniqueTokenResponse.html) when get one-time token
+### Basic Example
+
+```ts
+try {
+  const response: CardPayoutTokenResponse = await cardPayouts.requestCardPayoutToken();
+  // On Success, can get card token response, ex. {token: "a2b74b7e3cf24e368a20380f16844d16"}
+  console.log("This is a card payout Token", tokenResponse.token)
+} catch (error: any) {
+  // On Error, catch response, ex. {code:"E002", message: "Error en solicitud de token"}
+  // On Error, catch response, ex. {code:"E007", message: "Error en la validación del formulario"}
+  console.error("Catch error on request card payout Token", error.code, error.message);
 }
 ```
 

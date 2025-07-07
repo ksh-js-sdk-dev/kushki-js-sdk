@@ -1,6 +1,6 @@
 {
   "name": "@kushki/js-sdk",
-  "version": "1.5.0-17708-alpha.1",
+  "version": "1.6.0-14693.1",
   "scripts": {
     "bootstrap": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev",
     "bootstrap:codesandbox": "yarn install && npm run tsc:interface && yarn build:npm && cd ./showcase && yarn install && yarn dev --mode codesandbox",
@@ -48,6 +48,10 @@
     "./CardAnimation": {
       "import": "./module/CardAnimation.js",
       "types": "./module/CardAnimation.d.ts"
+    },
+    "./CardPayouts": {
+      "import": "./module/CardPayouts.js",
+      "types": "./module/CardPayouts.d.ts"
     }
   },
   "engines": {

@@ -4,6 +4,7 @@
   "name": "kushki-js-sdk",
   "entryPoints": [
     "../../docs-json/Card.json",
+    "../../docs-json/CardPayouts.json",
     "../../docs-json/Kushki.json",
     "../../docs-json/Transfer.json",
     "../../docs-json/Merchant.json",

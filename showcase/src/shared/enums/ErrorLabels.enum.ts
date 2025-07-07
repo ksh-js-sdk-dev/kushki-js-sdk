@@ -11,7 +11,9 @@ export enum ErrorLabelsSpanishEnum {
   EXPIRATION_DATE_INVALID = "El formato es incorrecto",
   CVV_INVALID = "El código es incorrecto",
   DEFERRED_TYPE_REQUERED = "El tipo de diferido es requerido",
-  DEFERRED_MONTHS_REQUERED = "La cantidad de meses son requeridos"
+  DEFERRED_MONTHS_REQUERED = "La cantidad de meses son requeridos",
+  REQUIRED_FIELD = "Campo Requerido",
+  INVALID_FIELD = "Campo Inválido"
 }
 
 export const fieldsErrorEmpty: Record<string, string> = {
