@@ -8,6 +8,7 @@ import { KInfo } from "service/KushkiInfoService.ts";
 import { FieldOptions } from "src/interfaces/FieldOptions.ts";
 import { CardFieldValues } from "types/card_fields_values";
 import { CardOptions, Field } from "types/card_options";
+import { CardPayoutOptions } from "types/card_payout_options";
 import { FieldValidity, FormValidity } from "types/form_validity";
 import { SecureDeviceTokenOptions } from "types/secure_device_token_request";
 import {
@@ -308,6 +309,7 @@ describe("HostedFields utils - test", () => {
     const kushkiInstance = new Kushki({ publicCredentialId: "00000" });
     let cardOptionsMock: CardOptions;
     let deviceOptionsMock: SecureDeviceTokenOptions;
+    let cardPayoutOptionsMock: CardPayoutOptions;
 
     beforeEach(() => {
       cardOptionsMock = {
@@ -332,6 +334,19 @@ describe("HostedFields utils - test", () => {
         fields: {
           cvv: {
             selector: "cvv_id"
+          }
+        }
+      };
+      cardPayoutOptionsMock = {
+        fields: {
+          cardholderName: {
+            selector: "cardholderName_id"
+          },
+          cardNumber: {
+            selector: "cardNumber_id"
+          },
+          isSubscription: {
+            selector: "isSubscription_id"
           }
         }
       };
@@ -407,6 +422,31 @@ describe("HostedFields utils - test", () => {
         expect(error.code).toEqual("E020");
       }
     });
+
+    it("should throws E020 when not exist isSubscription field for CARD_PAYOUT_TOKEN", () => {
+      try {
+        validateInitParams(
+          kushkiInstance,
+          cardPayoutOptionsMock,
+          FieldsMethodTypesEnum.CARD_PAYOUT_TOKEN
+        );
+      } catch (error: any) {
+        expect(error.code).toEqual("E020");
+      }
+    });
+
+    it("should throws E011 when send paymentType with invalid format", () => {
+      cardPayoutOptionsMock.paymentType = "ECU";
+      try {
+        validateInitParams(
+          kushkiInstance,
+          cardPayoutOptionsMock,
+          FieldsMethodTypesEnum.CARD_PAYOUT_TOKEN
+        );
+      } catch (error: any) {
+        expect(error.code).toEqual("E011");
+      }
+    });
   });
 
   describe("isRequiredFlagInCvv - method", () => {
@@ -469,6 +509,44 @@ describe("HostedFields utils - test", () => {
     it("should return false when fieldKey is CVV, field is not required and isSubscription is true", () => {
       const optionsMock: FieldOptions = {
         fieldType: InputModelEnum.CVV,
+        isInTest: true,
+        isRequired: false
+      };
+
+      const response = getInitialFieldValidation(optionsMock, true);
+
+      expect(response).toBeTruthy();
+    });
+
+    it("should return true when field is type IS_SUBSCRIPTION and isRequired with defaultValue true", () => {
+      const optionsMock: FieldOptions = {
+        defaultValue: true,
+        fieldType: InputModelEnum.IS_SUBSCRIPTION,
+        isInTest: true,
+        isRequired: true
+      };
+
+      const response = getInitialFieldValidation(optionsMock, true);
+
+      expect(response).toBeTruthy();
+    });
+
+    it("should return false when field is type IS_SUBSCRIPTION and isRequired with defaultValue false", () => {
+      const optionsMock: FieldOptions = {
+        defaultValue: false,
+        fieldType: InputModelEnum.IS_SUBSCRIPTION,
+        isInTest: true,
+        isRequired: true
+      };
+
+      const response = getInitialFieldValidation(optionsMock, true);
+
+      expect(response).toBeFalsy();
+    });
+
+    it("should return true when field is type IS_SUBSCRIPTION and isRequired is false", () => {
+      const optionsMock: FieldOptions = {
+        fieldType: InputModelEnum.IS_SUBSCRIPTION,
         isInTest: true,
         isRequired: false
       };

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "CardOptions",
+  "title": "CardPayoutOptions",
   "additionalProperties": false,
   "definitions": {
     "styles": {
@@ -31,112 +31,21 @@
         "cardNumber": {
           "$ref": "#/definitions/cssProperties"
         },
-        "expirationDate": {
-          "$ref": "#/definitions/cssProperties"
-        },
-        "cvv": {
-          "$ref": "#/definitions/cssProperties"
-        },
-        "deferred": {
-          "$ref": "#/definitions/cssProperties"
-        },
-        "otp": {
+        "isSubscription": {
           "$ref": "#/definitions/cssProperties"
         }
       },
-      "type": "object"
-    },
-    "currency": {
-      "title": "Currency",
-      "type": "string",
-      "description": "@group Types",
-      "enum": [
-        "USD",
-        "COP",
-        "CLP",
-        "UF",
-        "PEN",
-        "MXN",
-        "CRC",
-        "GTQ",
-        "HNL",
-        "NIO",
-        "BRL"
-      ]
-    },
-    "amount": {
-      "title": "Amount",
-      "additionalProperties": false,
-      "properties": {
-        "subtotalIva": {
-          "type": "number",
-          "minimum": 0
-        },
-        "subtotalIva0": {
-          "type": "number",
-          "minimum": 0
-        },
-        "iva": {
-          "type": "number",
-          "minimum": 0
-        },
-        "ice": {
-          "minimum": 0,
-          "type": "number"
-        }
-      },
-      "required": ["subtotalIva", "subtotalIva0", "iva"],
       "type": "object"
     },
     "inputType": {
       "title": "InputTypeEnum",
       "type": "string",
-      "enum": ["number", "text", "password"]
+      "enum": ["text", "checkbox"]
     },
     "fieldType": {
       "title": "FieldTypeEnum",
       "type": "string",
-      "enum": [
-        "cardNumber",
-        "cardholderName",
-        "cvv",
-        "deferred",
-        "expirationDate",
-        "otp"
-      ]
-    },
-    "selectOptions": {
-      "title": "SelectOptions",
-      "additionalProperties": false,
-      "properties": {
-        "placeholder": {
-          "type": "string"
-        },
-        "hiddenLabel": {
-          "type": "string"
-        },
-        "label": {
-          "type": "string"
-        }
-      }
-    },
-    "deferredInputs": {
-      "title": "DeferredInputs",
-      "additionalProperties": false,
-      "properties": {
-        "deferredCheckbox": {
-          "$ref": "#/definitions/selectOptions"
-        },
-        "deferredType": {
-          "$ref": "#/definitions/selectOptions"
-        },
-        "months": {
-          "$ref": "#/definitions/selectOptions"
-        },
-        "graceMonths": {
-          "$ref": "#/definitions/selectOptions"
-        }
-      }
+      "enum": ["cardNumber", "cardholderName", "isSubscription"]
     },
     "field": {
       "title": "Field",
@@ -154,14 +63,14 @@
         "maxCardLength": {
           "type": "number"
         },
+        "defaultValue": {
+          "type": "boolean"
+        },
         "inputType": {
           "$ref": "#/definitions/inputType"
         },
         "label": {
           "type": "string"
-        },
-        "deferredInputs": {
-          "$ref": "#/definitions/deferredInputs"
         },
         "isRequired": {
           "type": "boolean"
@@ -324,20 +233,15 @@
     }
   },
   "properties": {
-    "amount": {
-      "$ref": "#/definitions/amount"
-    },
-    "currency": {
-      "$ref": "#/definitions/currency"
-    },
-    "isSubscription": {
-      "type": "boolean"
-    },
     "preventAutofill": {
       "type": "boolean"
     },
     "styles": {
       "$ref": "#/definitions/styles"
+    },
+    "paymentType": {
+      "type": "string",
+      "maxLength": 2
     },
     "fields": {
       "title": "",
@@ -349,25 +253,13 @@
         "cardNumber": {
           "$ref": "#/definitions/field"
         },
-        "expirationDate": {
-          "$ref": "#/definitions/field"
-        },
-        "cvv": {
-          "$ref": "#/definitions/field"
-        },
-        "deferred": {
-          "$ref": "#/definitions/field"
-        },
-        "otp": {
+        "isSubscription": {
           "$ref": "#/definitions/field"
         }
       },
-      "required": ["cardholderName", "cardNumber", "expirationDate"]
-    },
-    "fullResponse": {
-      "type": "boolean"
+      "required": ["cardholderName", "cardNumber"]
     }
   },
-  "required": ["publicCredentialId", "currency", "fields"],
+  "required": ["fields"],
   "type": "object"
 }
