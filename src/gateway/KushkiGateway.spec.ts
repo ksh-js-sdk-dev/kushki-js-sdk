@@ -165,7 +165,11 @@ describe("KushkiGateway - Test", () => {
 
       expect(jwtResponse).toEqual(mockCybersourceJwt);
       expect(getSpy).toHaveBeenCalledWith(
-        expect.stringContaining("?subscriptionId=12344"),
+        expect.stringContaining("subscriptionId=12344"),
+        expect.anything()
+      );
+      expect(getSpy).toHaveBeenCalledWith(
+        expect.stringContaining("?securityAuthConfiguration=true"),
         expect.anything()
       );
     });

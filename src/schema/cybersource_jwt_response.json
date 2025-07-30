@@ -11,6 +11,12 @@
     },
     "identifier": {
       "type": "string"
+    },
+    "songbirdUrl": {
+      "type": "string"
+    },
+    "songbirdIntegrityHashValue": {
+      "type": "string"
     }
   }
 }
