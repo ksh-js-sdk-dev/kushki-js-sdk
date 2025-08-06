@@ -87,9 +87,13 @@ export class KushkiGateway implements IKushkiGateway {
     kushkiInstance: IKushki,
     subscriptionId?: string
   ): Promise<CybersourceJwtResponse> => {
-    const url: string = `${kushkiInstance.getBaseUrl()}${
-      PathEnum.cybersource_jwt
-    }${subscriptionId ? `?subscriptionId=${subscriptionId}` : ""}`;
+    const baseUrl = `${kushkiInstance.getBaseUrl()}${PathEnum.cybersource_jwt}`;
+    const params = new URLSearchParams({ securityAuthConfiguration: "true" });
+
+    if (subscriptionId) {
+      params.append("subscriptionId", subscriptionId);
+    }
+    const url = `${baseUrl}?${params.toString()}`;
 
     try {
       const { data } = await axios.get<CybersourceJwtResponse>(url, {

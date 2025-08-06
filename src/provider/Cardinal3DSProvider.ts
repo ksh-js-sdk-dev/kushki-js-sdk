@@ -15,6 +15,7 @@ import {
   CardinalValidationCodeEnum,
   ICardinalValidation
 } from "infrastructure/CardinalValidationEnum.ts";
+import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 
 declare global {
   // tslint:disable-next-line
@@ -32,23 +33,27 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
 
   public async initCardinal(
     kushkiInstance: IKushki,
-    jwt: string,
+    cybersourceResponse: CybersourceJwtResponse,
     accountNumber: string
   ) {
     return new Promise<void>((resolve) => {
-      this._loadCardinalScript(kushkiInstance.isInTest(), async () => {
-        window.Cardinal.setup("init", {
-          jwt,
-          order: {
-            Consumer: {
-              Account: {
-                AccountNumber: accountNumber
+      this._loadCardinalScript(
+        kushkiInstance.isInTest(),
+        cybersourceResponse,
+        async () => {
+          window.Cardinal.setup("init", {
+            jwt: cybersourceResponse.jwt,
+            order: {
+              Consumer: {
+                Account: {
+                  AccountNumber: accountNumber
+                }
               }
             }
-          }
-        });
-        resolve();
-      });
+          });
+          resolve();
+        }
+      );
     });
   }
 
@@ -77,7 +82,11 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
     return Promise.reject(new KushkiError(ERRORS.E005));
   }
 
-  private _loadCardinalScript(isTest: boolean, onLoad: () => void) {
+  private _loadCardinalScript(
+    isTest: boolean,
+    cybersourceResponse: CybersourceJwtResponse,
+    onLoad: () => void
+  ) {
     const last_script = document.getElementById("cardinal_sc_id");
 
     if (last_script) last_script.remove();
@@ -89,6 +98,15 @@ export class Cardinal3DSProvider implements ICardinal3DSProvider {
     script.src = isTest
       ? "https://songbirdstag.cardinalcommerce.com/cardinalcruise/v1/songbird.js"
       : "https://songbird.cardinalcommerce.com/cardinalcruise/v1/songbird.js";
+
+    if (
+      cybersourceResponse.songbirdUrl !== undefined &&
+      cybersourceResponse.songbirdIntegrityHashValue !== undefined
+    ) {
+      script.src = cybersourceResponse.songbirdUrl!;
+      script.integrity = cybersourceResponse.songbirdIntegrityHashValue!;
+      script.crossOrigin = "anonymous";
+    }
 
     head.appendChild(script);
 

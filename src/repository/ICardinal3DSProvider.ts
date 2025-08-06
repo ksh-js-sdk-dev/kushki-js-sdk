@@ -3,6 +3,7 @@
  */
 import { CardTokenResponse } from "types/card_token_response";
 import { IKushki } from "Kushki";
+import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 
 export interface ICardinal3DSProvider {
   /**
@@ -10,7 +11,7 @@ export interface ICardinal3DSProvider {
    */
   initCardinal(
     kushkiInstance: IKushki,
-    jwt: string,
+    jwt: CybersourceJwtResponse,
     accountNumber: string
   ): Promise<void>;
 

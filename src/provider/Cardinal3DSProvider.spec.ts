@@ -9,6 +9,7 @@ import {
   ICardinalValidation
 } from "infrastructure/CardinalValidationEnum.ts";
 import { KushkiGateway } from "gateway/KushkiGateway.ts";
+import { CybersourceJwtResponse } from "types/cybersource_jwt_response";
 
 jest.mock("gateway/KushkiGateway.ts");
 
@@ -73,8 +74,21 @@ describe("Cardinal3DSProvider - Test", () => {
   });
 
   describe("initCardinal - method", () => {
+    const cybersourceResponse: CybersourceJwtResponse = {
+      jwt: "JWT",
+      songbirdIntegrityHashValue: "integrityHash",
+      songbirdUrl: "https://example.com/songbird"
+    };
+
+    const cardinalInit = () =>
+      cardinalProvider.initCardinal(
+        kushkiInstanceMock,
+        cybersourceResponse,
+        "4242 4242"
+      );
+
     it("should call setupCardinal for prod Lib", () => {
-      cardinalProvider.initCardinal(kushkiInstanceMock, "JWT", "4242 4242");
+      cardinalInit();
       executeLoadScript();
 
       expect(setUpMock).toBeCalledTimes(1);
@@ -83,7 +97,7 @@ describe("Cardinal3DSProvider - Test", () => {
     it("should call trigger for staging Lib", () => {
       initProvider(true);
 
-      cardinalProvider.initCardinal(kushkiInstanceMock, "JWT", "4242 4242");
+      cardinalInit();
 
       executeLoadScript();
 
