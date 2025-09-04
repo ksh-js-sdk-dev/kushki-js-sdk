@@ -1,5 +1,8 @@
+import { CardApplePay } from "class/CardApplePay.ts";
 import { IKushki } from "Kushki";
 import { Card } from "class/Card";
+import { ICardApplePay } from "repository/ICardApplePay.ts";
+import { ApplePayOptions } from "types/apple_pay_options";
 import {
   Amount,
   CardOptions,
@@ -914,3 +917,12 @@ const requestBrandsByMerchant = (
 
 export { requestBrandsByMerchant };
 export type { BrandByMerchantResponse } from "types/brand_by_merchant_response";
+
+const initApplePayButton = (
+  kushkiInstance: IKushki,
+  options: ApplePayOptions
+): Promise<ICardApplePay> =>
+  CardApplePay.initApplePayButton(kushkiInstance, options);
+
+export { initApplePayButton };
+export type { ICardApplePay, ApplePayOptions };

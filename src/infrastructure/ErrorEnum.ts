@@ -28,7 +28,10 @@ export enum ErrorCode {
   E020 = "E020",
   E021 = "E021",
   E022 = "E022",
-  E023 = "E023"
+  E023 = "E023",
+  E024 = "E024",
+  E025 = "E025",
+  E026 = "E026"
 }
 
 /**
@@ -224,5 +227,17 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E023]: {
     code: ErrorCode.E023,
     message: "Error al configurar sesión de Sift"
+  },
+  [ErrorCode.E024]: {
+    code: ErrorCode.E024,
+    message: "No se crearon los recursos de Apple Pay."
+  },
+  [ErrorCode.E025]: {
+    code: ErrorCode.E025,
+    message: "No es posible realizar pagos con Apple Pay."
+  },
+  [ErrorCode.E026]: {
+    code: ErrorCode.E026,
+    message: "Error en solicitud de token de apple pay."
   }
 };

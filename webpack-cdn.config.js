@@ -12,6 +12,7 @@ module.exports = {
   },
   mode: "production",
   output: {
+    clean: true,
     filename: () => "[name].min.js",
     libraryTarget: "umd",
     path: path.resolve(__dirname, "lib")
