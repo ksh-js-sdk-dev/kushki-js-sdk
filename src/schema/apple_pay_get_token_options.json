@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ApplePayGetTokenOptions",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "countryCode": {
+      "enum": [
+        "BR",
+        "CL",
+        "CO",
+        "CR",
+        "EC",
+        "SV",
+        "GT",
+        "HN",
+        "MX",
+        "NI",
+        "PA",
+        "PE"
+      ]
+    },
+    "currencyCode": {
+      "enum": [
+        "USD",
+        "COP",
+        "CLP",
+        "UF",
+        "PEN",
+        "MXN",
+        "BRL",
+        "CRC",
+        "GTQ",
+        "HNL",
+        "NIO"
+      ]
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "optionalApplePayFields": {
+      "type": "object"
+    }
+  },
+  "required": ["countryCode", "currencyCode", "displayName", "amount"]
+}
