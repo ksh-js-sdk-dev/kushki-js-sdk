@@ -926,3 +926,4 @@ const initApplePayButton = (
 
 export { initApplePayButton };
 export type { ICardApplePay, ApplePayOptions };
+export type { ApplePayGetTokenOptions } from "types/apple_pay_get_token_options";

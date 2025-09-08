@@ -1,5 +1,12 @@
+import { ApplePayGetTokenOptions } from "types/apple_pay_get_token_options";
+import { CardTokenResponse } from "types/card_token_response";
+
 export interface ICardApplePay {
   onClick(callback: () => void): void;
+
+  requestApplePayToken(
+    options: ApplePayGetTokenOptions
+  ): Promise<CardTokenResponse>;
 }
 
 /**
