@@ -12,14 +12,13 @@ import { ApplePayOptions } from "types/apple_pay_options";
 import { CardTokenResponse } from "types/card_token_response";
 
 declare global {
-  // tslint:disable-next-line
   interface Window {
-    // tslint:disable-next-line:no-any
     ApplePaySession: any;
   }
 }
 
 export class CardApplePay implements ICardApplePay {
+  private readonly _emptyContent: string = "";
   private readonly _appleSdkId: string = "apple-pay-sdk";
   private readonly _appleSdkCdn: string =
     "https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js";
@@ -27,6 +26,7 @@ export class CardApplePay implements ICardApplePay {
   private readonly _appleButtonElement: string = "apple-pay-button";
   private readonly _requiredMerchantCapabilities: string = "supports3DS";
   private readonly _maxCompatibleVersion: number = 16;
+  private readonly _minCompatibleVersion: number = 1;
   private readonly _kushkiInstance: IKushki;
   private readonly _gateway: IKushkiGateway;
   private readonly _buttonOptions: ApplePayOptions;
@@ -103,7 +103,11 @@ export class CardApplePay implements ICardApplePay {
   }
 
   private getSupportedApplePayVersion(): number {
-    for (let v = this._maxCompatibleVersion; v >= 1; v--)
+    for (
+      let v = this._maxCompatibleVersion;
+      v >= this._minCompatibleVersion;
+      v--
+    )
       if (window.ApplePaySession.supportsVersion(v)) return v;
 
     return 0;
@@ -133,7 +137,7 @@ export class CardApplePay implements ICardApplePay {
       this.onClickAppleButtonCallback();
     });
 
-    container.textContent = "";
+    container.textContent = this._emptyContent;
     container.appendChild(button);
   }
 
