@@ -1,3 +1,5 @@
+import { ApplePayGetTokenRequest } from "types/apple_pay_get_token_request";
+import { ApplePayStartSessionRequest } from "types/apple_pay_start_session_request";
 import { BrandByMerchantResponse } from "types/brand_by_merchant_response";
 import { KushkiGateway } from "./KushkiGateway";
 import axios, { AxiosError } from "axios";
@@ -402,6 +404,95 @@ describe("KushkiGateway - Test", () => {
         await kushkiGateway.requestBrandLogos(mockKushki);
       } catch (error: any) {
         expect(error.code).toEqual("E021");
+      }
+    });
+  });
+
+  describe("startApplePaySession - test", () => {
+    const appleSessionRequest: ApplePayStartSessionRequest = {
+      clientDomain: "test.com",
+      displayName: "test",
+      validationURL: "apple.com"
+    };
+
+    it("should return apple pay session data when call startApplePaySession success", async () => {
+      const appleSession = { success: true };
+      const axiosPostSpy = jest.fn(() => {
+        return Promise.resolve({
+          data: appleSession
+        });
+      });
+
+      jest.spyOn(axios, "post").mockImplementation(axiosPostSpy);
+
+      const appleSessionResponse: object =
+        await kushkiGateway.startApplePaySession(
+          mockKushki,
+          appleSessionRequest
+        );
+
+      expect(appleSessionResponse).toEqual(appleSession);
+      expect(axiosPostSpy).toBeCalledWith(expect.anything(), expect.anything());
+    });
+
+    it("should return E024 when throws error on request", async () => {
+      jest.spyOn(axios, "post").mockRejectedValue(new AxiosError(""));
+
+      try {
+        await kushkiGateway.startApplePaySession(
+          mockKushki,
+          appleSessionRequest
+        );
+      } catch (error: any) {
+        expect(error.code).toEqual("E024");
+      }
+    });
+  });
+
+  describe("startApplePaySession - test", () => {
+    const appleGetTokenRequest: ApplePayGetTokenRequest = {
+      data: "ascsacdatadfvvf",
+      header: {
+        ephemeralPublicKey: "ephemeralPublicKey",
+        publicKeyHash: "publicKeyHash",
+        transactionId: "transactionId"
+      },
+      signature: "signature",
+      version: "version"
+    };
+
+    it("should return card token when call getApplePayToken success", async () => {
+      const cardToken: CardTokenResponse = { token: "32b1hbj123bk213" };
+      const axiosPostSpy = jest.fn(() => {
+        return Promise.resolve({
+          data: cardToken
+        });
+      });
+
+      jest.spyOn(axios, "post").mockImplementation(axiosPostSpy);
+
+      const cardTokenResponse: CardTokenResponse =
+        await kushkiGateway.getApplePayToken(mockKushki, appleGetTokenRequest);
+
+      expect(cardTokenResponse).toEqual(cardToken);
+      expect(axiosPostSpy).toBeCalledWith(
+        expect.anything(),
+        expect.anything(),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            [KInfo.KUSHKI_INFO_HEADER]: KInfo.buildKushkiInfo()
+          })
+        })
+      );
+    });
+
+    it("should return E026 when throws error on request", async () => {
+      jest.spyOn(axios, "post").mockRejectedValue(new AxiosError(""));
+
+      try {
+        await kushkiGateway.getApplePayToken(mockKushki, appleGetTokenRequest);
+      } catch (error: any) {
+        expect(error.code).toEqual("E026");
       }
     });
   });

@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ApplePayOptions",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "style": {
+      "enum": ["black", "white"]
+    },
+    "locale": {
+      "enum": ["en-US", "es-ES", "es-MX", "pt-BR"]
+    },
+    "type": {
+      "enum": [
+        "add-money",
+        "book",
+        "buy",
+        "check-out",
+        "continue",
+        "contribute",
+        "donate",
+        "order",
+        "pay",
+        "plain",
+        "reload",
+        "rent",
+        "set-up",
+        "subscribe",
+        "support",
+        "tip",
+        "top-up"
+      ]
+    }
+  },
+  "required": ["style", "locale", "type"]
+}

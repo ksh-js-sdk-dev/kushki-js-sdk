@@ -1,3 +1,5 @@
+import { ApplePayGetTokenRequest } from "types/apple_pay_get_token_request";
+import { ApplePayStartSessionRequest } from "types/apple_pay_start_session_request";
 import { BinInfoResponse } from "types/bin_info_response";
 import { IKushki } from "Kushki";
 import { CardTokenResponse, DeferredByBinOptionsResponse } from "Kushki/Card";
@@ -90,4 +92,14 @@ export interface IKushkiGateway {
   requestBrandLogos(
     kushkiInstance: IKushki
   ): Promise<BrandByMerchantResponse[]>;
+
+  startApplePaySession(
+    kushkiInstance: IKushki,
+    body: ApplePayStartSessionRequest
+  ): Promise<object>;
+
+  getApplePayToken(
+    kushkiInstance: IKushki,
+    body: ApplePayGetTokenRequest
+  ): Promise<CardTokenResponse>;
 }

@@ -1,3 +1,5 @@
+import { ApplePayGetTokenRequest } from "types/apple_pay_get_token_request";
+import { ApplePayStartSessionRequest } from "types/apple_pay_start_session_request";
 import { BinBody } from "types/bin_body";
 import { BinInfoResponse } from "types/bin_info_response";
 import { PathEnum } from "infrastructure/PathEnum.ts";
@@ -217,6 +219,42 @@ export class KushkiGateway implements IKushkiGateway {
       return Promise.resolve(data);
     } catch (error: any) {
       return Promise.reject(new KushkiError(ERRORS.E021, error.message));
+    }
+  };
+
+  public startApplePaySession = async (
+    kushkiInstance: IKushki,
+    body: ApplePayStartSessionRequest
+  ): Promise<object> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${
+      PathEnum.start_apple_pay_session
+    }`;
+
+    try {
+      const { data } = await axios.post<object>(url, body);
+
+      return Promise.resolve(data);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E024, error.message));
+    }
+  };
+
+  public getApplePayToken = async (
+    kushkiInstance: IKushki,
+    body: ApplePayGetTokenRequest
+  ): Promise<CardTokenResponse> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${
+      PathEnum.get_apple_pay_token
+    }`;
+
+    try {
+      const { data } = await axios.post<CardTokenResponse>(url, body, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId(), true)
+      });
+
+      return Promise.resolve(data);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E026, error.message));
     }
   };
 

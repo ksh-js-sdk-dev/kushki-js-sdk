@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ApplePayStartSessionRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "validationURL": {
+      "type": "string"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "clientDomain": {
+      "type": "string"
+    }
+  },
+  "required": ["validationURL", "displayName", "clientDomain"]
+}
