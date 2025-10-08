@@ -7,9 +7,11 @@ import { IAppleSession, ICardApplePay } from "repository/ICardApplePay.ts";
 import { IKushki } from "repository/IKushki.ts";
 import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { ApplePayGetTokenOptions } from "types/apple_pay_get_token_options";
-import { ApplePaymentEvent } from "types/apple_pay_get_token_request";
+import {
+  ApplePaymentEvent,
+  AppleTokenResponse
+} from "types/apple_pay_get_token_events";
 import { ApplePayOptions } from "types/apple_pay_options";
-import { CardTokenResponse } from "types/card_token_response";
 
 declare global {
   interface Window {
@@ -31,12 +33,14 @@ export class CardApplePay implements ICardApplePay {
   private readonly _gateway: IKushkiGateway;
   private readonly _buttonOptions: ApplePayOptions;
   private onClickAppleButtonCallback: () => void;
+  private onCancelAppleButtonCallback: () => void;
 
   private constructor(kushkiInstance: IKushki, options: ApplePayOptions) {
     this._kushkiInstance = kushkiInstance;
     this._buttonOptions = options;
     this._gateway = new KushkiGateway();
     this.onClickAppleButtonCallback = () => {};
+    this.onCancelAppleButtonCallback = () => {};
   }
 
   public static async initApplePayButton(
@@ -45,6 +49,7 @@ export class CardApplePay implements ICardApplePay {
   ): Promise<ICardApplePay> {
     const payment = new CardApplePay(kushkiInstance, options);
 
+    await payment.validateDomain();
     await payment.loadApplePayScript();
     payment.buildAppleButton();
 
@@ -55,9 +60,13 @@ export class CardApplePay implements ICardApplePay {
     this.onClickAppleButtonCallback = callback;
   }
 
+  public onCancel(callback: () => void): void {
+    this.onCancelAppleButtonCallback = callback;
+  }
+
   public requestApplePayToken(
     options: ApplePayGetTokenOptions
-  ): Promise<CardTokenResponse> {
+  ): Promise<AppleTokenResponse> {
     if (this.isNotPaymentAvailable()) {
       throw new KushkiError(ERRORS.E025);
     }
@@ -79,15 +88,29 @@ export class CardApplePay implements ICardApplePay {
       sessionParams
     );
 
-    return new Promise<CardTokenResponse>((resolve, reject) => {
+    return new Promise<AppleTokenResponse>((resolve, reject) => {
       session.onvalidatemerchant = (event: ApplePaymentEvent) =>
         this.onValidateMerchant(event, session, options, reject);
 
       session.onpaymentauthorized = async (event: ApplePaymentEvent) =>
         this.onPaymentAuthorized(event, session, resolve, reject);
 
+      session.oncancel = () => {
+        this.onCancelAppleButtonCallback();
+        reject(new KushkiError(ERRORS.E027));
+      };
+
       session.begin();
     });
+  }
+
+  private async validateDomain(): Promise<void> {
+    const { isValid } = await this._gateway.validateAppleDomain(
+      this._kushkiInstance,
+      CardApplePay.getClientDomain()
+    );
+
+    if (!isValid) throw new KushkiError(ERRORS.E025);
   }
 
   private async loadApplePayScript(): Promise<void> {
@@ -167,7 +190,7 @@ export class CardApplePay implements ICardApplePay {
   private async onPaymentAuthorized(
     event: ApplePaymentEvent,
     session: IAppleSession,
-    resolve: (token: CardTokenResponse) => void,
+    resolve: (token: AppleTokenResponse) => void,
     reject: (reason: any) => void
   ): Promise<void> {
     try {
@@ -176,10 +199,16 @@ export class CardApplePay implements ICardApplePay {
         this._kushkiInstance,
         appleToken
       );
+      const billingContact = event.payment.billingContact;
+      const shippingContact = event.payment.shippingContact;
 
       session.completePayment(window.ApplePaySession.STATUS_SUCCESS);
 
-      resolve(kushkiToken);
+      resolve({
+        ...(billingContact ? { billingContact } : {}),
+        ...(shippingContact ? { shippingContact } : {}),
+        ...kushkiToken
+      });
     } catch (err) {
       session.abort();
       reject(err);

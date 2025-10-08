@@ -11,8 +11,9 @@ import { Mock } from "ts-mockery";
 import { ApplePayGetTokenOptions } from "types/apple_pay_get_token_options";
 import {
   ApplePayGetTokenRequest,
-  ApplePaymentEvent
-} from "types/apple_pay_get_token_request";
+  ApplePaymentEvent,
+  ApplePayPaymentContact
+} from "types/apple_pay_get_token_events";
 
 jest.mock("gateway/KushkiGateway.ts");
 
@@ -43,6 +44,7 @@ describe("CardApplePay - Test", () => {
 
       public onvalidatemerchant?: (event: ApplePaymentEvent) => void;
       public onpaymentauthorized?: (event: ApplePaymentEvent) => void;
+      public oncancel?: () => void;
 
       constructor(
         public version: number,
@@ -58,7 +60,7 @@ describe("CardApplePay - Test", () => {
         });
       }
 
-      public triggerOnPaymentAuthorized() {
+      public triggerOnPaymentAuthorized(withBillingShipping: boolean) {
         // @ts-ignore
         this.onpaymentauthorized({
           payment: {
@@ -66,13 +68,41 @@ describe("CardApplePay - Test", () => {
               paymentData: Mock.of<ApplePayGetTokenRequest>({
                 data: "test"
               })
-            }
+            },
+            ...(withBillingShipping
+              ? {
+                  billingContact: Mock.of<ApplePayPaymentContact>({
+                    givenName: "Santy"
+                  }),
+                  shippingContact: Mock.of<ApplePayPaymentContact>({
+                    givenName: "Santy"
+                  })
+                }
+              : {})
           }
         });
+      }
+
+      public triggerOnCancel() {
+        // @ts-ignore
+        this.oncancel();
       }
     }
 
     (<any>window).ApplePaySession = MockApplePaySession;
+  };
+
+  const mockKushkiGateway = (
+    validateMock?: jest.Mock,
+    sessionMock?: jest.Mock,
+    tokenMock?: jest.Mock
+  ) => {
+    // @ts-ignore
+    KushkiGateway.mockImplementation(() => ({
+      getApplePayToken: tokenMock,
+      startApplePaySession: sessionMock,
+      validateAppleDomain: validateMock
+    }));
   };
 
   beforeEach(async () => {
@@ -121,21 +151,11 @@ describe("CardApplePay - Test", () => {
     beforeEach(async () => {
       mockLoadScript();
       createKushkiAppleButtonContainer();
+      mockKushkiGateway(jest.fn().mockReturnValue({ isValid: true }));
     });
 
     afterEach(() => {
       removeKushkiAppleButtonContainer();
-    });
-
-    it("should create apple-pay-button when load Apple script and canMakePayments successfully", async () => {
-      const payment = await initApplePayButton(
-        kushkiInstance,
-        applePayButtonOptions
-      );
-      const button = document.querySelector("apple-pay-button");
-
-      expect(payment).toBeDefined();
-      expect(button).toBeDefined();
     });
 
     it("should call onClick callback when click  apple-pay-button", async () => {
@@ -152,6 +172,17 @@ describe("CardApplePay - Test", () => {
       payment.onClick(() => {
         expect(payment).toBeDefined();
       });
+    });
+
+    it("should throws error on promise with error E025 when domain validation is false", async () => {
+      mockKushkiGateway(jest.fn().mockResolvedValue({ isValid: false }));
+
+      try {
+        await initApplePayButton(kushkiInstance, applePayButtonOptions);
+      } catch (e: any) {
+        expect(e).toBeInstanceOf(Error);
+        expect(e.code).toEqual("E025");
+      }
     });
 
     it("should throws error on promise with error E024 when load script fails", async () => {
@@ -201,21 +232,16 @@ describe("CardApplePay - Test", () => {
       await session.triggerOnValidateMerchant();
     };
 
-    const runPaymentAuthorized = async () => {
+    const runPaymentAuthorized = async (withBillingShipping: boolean) => {
       const session = (<any>window)._appleSession;
 
-      await session.triggerOnPaymentAuthorized();
+      await session.triggerOnPaymentAuthorized(withBillingShipping);
     };
 
-    const mockKushkiGateway = (
-      sessionMock?: jest.Mock,
-      tokenMock?: jest.Mock
-    ) => {
-      // @ts-ignore
-      KushkiGateway.mockImplementation(() => ({
-        getApplePayToken: tokenMock,
-        startApplePaySession: sessionMock
-      }));
+    const runCancelPayment = async () => {
+      const session = (<any>window)._appleSession;
+
+      await session.triggerOnCancel();
     };
 
     beforeEach(() => {
@@ -251,7 +277,7 @@ describe("CardApplePay - Test", () => {
       const appleBeginSpy = jest.fn();
       const completeMerchantValidationSpy = jest.fn();
 
-      mockKushkiGateway(jest.fn().mockReturnValue({ ok: true }));
+      mockKushkiGateway(undefined, jest.fn().mockReturnValue({ ok: true }));
       mockApplePaySession(
         true,
         true,
@@ -272,7 +298,7 @@ describe("CardApplePay - Test", () => {
       const appleBeginSpy = jest.fn();
       const abortSessionSpy = jest.fn();
 
-      mockKushkiGateway(jest.fn().mockRejectedValue("error"));
+      mockKushkiGateway(undefined, jest.fn().mockRejectedValue("error"));
       mockApplePaySession(
         true,
         true,
@@ -298,6 +324,7 @@ describe("CardApplePay - Test", () => {
 
       mockKushkiGateway(
         undefined,
+        undefined,
         jest.fn().mockReturnValue({ token: "token" })
       );
 
@@ -312,9 +339,41 @@ describe("CardApplePay - Test", () => {
 
       const response = service.requestApplePayToken(options);
 
-      await runPaymentAuthorized();
+      await runPaymentAuthorized(false);
 
       await expect(response).resolves.toEqual({ token: "token" });
+      expect(appleBeginSpy).toBeCalled();
+      expect(completePaymentSpy).toBeCalled();
+    });
+
+    it("should execute completePayment and return token with billing and shipping data when complete apple payment auth with apple additional information", async () => {
+      const appleBeginSpy = jest.fn();
+      const completePaymentSpy = jest.fn();
+
+      mockKushkiGateway(
+        undefined,
+        undefined,
+        jest.fn().mockReturnValue({ token: "token" })
+      );
+
+      mockApplePaySession(
+        true,
+        false,
+        appleBeginSpy,
+        undefined,
+        completePaymentSpy
+      );
+      initService();
+
+      const response = service.requestApplePayToken(options);
+
+      await runPaymentAuthorized(true);
+
+      await expect(response).resolves.toMatchObject({
+        billingContact: { givenName: "Santy" },
+        shippingContact: { givenName: "Santy" },
+        token: "token"
+      });
       expect(appleBeginSpy).toBeCalled();
       expect(completePaymentSpy).toBeCalled();
     });
@@ -323,7 +382,11 @@ describe("CardApplePay - Test", () => {
       const appleBeginSpy = jest.fn();
       const abortSessionSpy = jest.fn();
 
-      mockKushkiGateway(undefined, jest.fn().mockRejectedValue("error"));
+      mockKushkiGateway(
+        undefined,
+        undefined,
+        jest.fn().mockRejectedValue("error")
+      );
 
       mockApplePaySession(
         true,
@@ -337,11 +400,26 @@ describe("CardApplePay - Test", () => {
 
       const response = service.requestApplePayToken(options);
 
-      await runPaymentAuthorized();
+      await runPaymentAuthorized(false);
 
       await expect(response).rejects.toEqual("error");
       expect(appleBeginSpy).toBeCalled();
       expect(abortSessionSpy).toBeCalled();
+    });
+
+    it("should execute onCancel event and reject with error E027 when throws Apple Session cancel event", async () => {
+      const appleBeginSpy = jest.fn();
+
+      mockApplePaySession(true, false, appleBeginSpy);
+      initService();
+      const response = service.requestApplePayToken(options);
+
+      await runCancelPayment();
+
+      service.onCancel(() => {
+        expect(appleBeginSpy).toBeCalled();
+      });
+      await expect(response).rejects.toMatchObject({ code: "E027" });
     });
   });
 

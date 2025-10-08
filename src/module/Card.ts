@@ -918,6 +918,93 @@ const requestBrandsByMerchant = (
 export { requestBrandsByMerchant };
 export type { BrandByMerchantResponse } from "types/brand_by_merchant_response";
 
+/**
+ * ## Introduction
+ * Function to render the Apple Pay button and initialize an instance of {@link ICardApplePay}.
+ *
+ * > ⚠️ To use the Apple Pay integration, you must first configure a secure domain in the Kushki Backoffice console
+ * and coordinate with Kushki to integrate the required certificates on your website for the payment flow to function properly.
+ *
+ * For this method to work correctly, you must include the following container
+ * in your project’s HTML:
+ *
+ * ```html
+ * <div id="kushki-apple-pay-button"></div>
+ * ```
+ *
+ * @group Methods
+ * @param kushkiInstance - Object that implements {@link IKushki}.
+ * @param {ApplePayOptions} options - Visual and behavioral options for the Apple Pay button:
+ * - **style**: `"black"` | `"white"` → button style.
+ * - **locale**: `"en-US"` | `"es-ES"` | `"es-MX"` | `"pt-BR"` → language/region for the button.
+ * - **type**: `"add-money" | "book" | "buy" | "check-out" | "continue" | "contribute" |
+ *   "donate" | "order" | "pay" | "plain" | "reload" | "rent" | "set-up" |
+ *   "subscribe" | "support" | "tip" | "top-up"` → defines the text/action displayed on the button.
+ *
+ * @returns {Promise<ICardApplePay>} Instance of {@link ICardApplePay}.
+ * @throws
+ * - {@link ERRORS | ERRORS.E024}: Apple Pay resources were not created.
+ * - {@link ERRORS | ERRORS.E025}: Apple Pay payments are not available.
+ *
+ * @example
+ * HTML container:
+ * ```html
+ * <div id="kushki-apple-pay-button"></div>
+ * ```
+ *
+ * Initialize Kushki instance:
+ * ```ts
+ * const kushkiOptions: KushkiOptions = {
+ *   publicCredentialId: 'public-merchant-id',
+ *   inTest: true
+ * };
+ * ```
+ *
+ * Initialize CardApplePay instance:
+ * ```ts
+ * const options: ApplePayOptions = {
+ *   style: "black",
+ *   locale: "es-MX",
+ *   type: "pay"
+ * };
+ *
+ * try {
+ *   const kushkiInstance: IKushki = await init(kushkiOptions);
+ *   const cardApplePay: ICardApplePay = await initApplePayButton(kushkiInstance, options);
+ * } catch (e: any) {
+ *   console.error(e.message);
+ * }
+ * ```
+ *
+ * @example
+ * Using events and requesting the Apple Pay token:
+ * ```ts
+ * try {
+ *   const cardApplePay: ICardApplePay = await initApplePayButton(kushkiInstance, options);
+ *
+ *   cardApplePay.onCancel(() => {
+ *     console.log("Payment canceled");
+ *   });
+ *
+ *   cardApplePay.onClick(async () => {
+ *     try {
+ *       const token = await cardApplePay.requestApplePayToken({
+ *         displayName: "DEMO",
+ *         countryCode: "EC",
+ *         currencyCode: "USD",
+ *         amount: 20
+ *       });
+ *
+ *       console.log(token);
+ *     } catch (error) {
+ *       console.log("Error requesting token: ", error);
+ *     }
+ *   });
+ * } catch (e: any) {
+ *   console.error(e.message);
+ * }
+ * ```
+ */
 const initApplePayButton = (
   kushkiInstance: IKushki,
   options: ApplePayOptions
@@ -927,3 +1014,7 @@ const initApplePayButton = (
 export { initApplePayButton };
 export type { ICardApplePay, ApplePayOptions };
 export type { ApplePayGetTokenOptions } from "types/apple_pay_get_token_options";
+export type {
+  AppleTokenResponse,
+  ApplePayPaymentContact
+} from "types/apple_pay_get_token_events";

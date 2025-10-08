@@ -1,4 +1,4 @@
-import { ApplePayGetTokenRequest } from "types/apple_pay_get_token_request";
+import { ApplePayGetTokenRequest } from "types/apple_pay_get_token_events";
 import { ApplePayStartSessionRequest } from "types/apple_pay_start_session_request";
 import { BrandByMerchantResponse } from "types/brand_by_merchant_response";
 import { KushkiGateway } from "./KushkiGateway";
@@ -404,6 +404,39 @@ describe("KushkiGateway - Test", () => {
         await kushkiGateway.requestBrandLogos(mockKushki);
       } catch (error: any) {
         expect(error.code).toEqual("E021");
+      }
+    });
+  });
+
+  describe("validateAppleDomain - test", () => {
+    const clientDomainMock = "test.com";
+
+    it("should return isValid = true when when appleDomain validation is success", async () => {
+      const validationMock = { isValid: true };
+      const axiosGetSpy = jest.fn(() => {
+        return Promise.resolve({
+          data: validationMock
+        });
+      });
+
+      jest.spyOn(axios, "get").mockImplementation(axiosGetSpy);
+
+      const { isValid } = await kushkiGateway.validateAppleDomain(
+        mockKushki,
+        clientDomainMock
+      );
+
+      expect(isValid).toEqual(true);
+      expect(axiosGetSpy).toBeCalledWith(expect.anything(), expect.anything());
+    });
+
+    it("should return E024 when throws error on domain validation request", async () => {
+      jest.spyOn(axios, "get").mockRejectedValue(new AxiosError(""));
+
+      try {
+        await kushkiGateway.validateAppleDomain(mockKushki, clientDomainMock);
+      } catch (error: any) {
+        expect(error.code).toEqual("E025");
       }
     });
   });

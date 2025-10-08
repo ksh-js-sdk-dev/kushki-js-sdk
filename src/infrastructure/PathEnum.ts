@@ -14,6 +14,7 @@ export enum PathEnum {
   subscriptions = "v1/subscriptions/",
   device_token = "subscriptions/v1/card/",
   brands_logos_by_merchant = "card/v1/merchant/brands-logos",
+  validate_apple_domain = "apple-pay/v1/validate",
   start_apple_pay_session = "apple-pay/v1/session/start",
   get_apple_pay_token = "apple-pay/v1/token"
 }
