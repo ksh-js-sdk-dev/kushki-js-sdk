@@ -1,4 +1,7 @@
-import { ApplePayGetTokenRequest } from "types/apple_pay_get_token_request";
+import {
+  AppleDomainValidation,
+  ApplePayGetTokenRequest
+} from "types/apple_pay_get_token_events";
 import { ApplePayStartSessionRequest } from "types/apple_pay_start_session_request";
 import { BinBody } from "types/bin_body";
 import { BinInfoResponse } from "types/bin_info_response";
@@ -219,6 +222,25 @@ export class KushkiGateway implements IKushkiGateway {
       return Promise.resolve(data);
     } catch (error: any) {
       return Promise.reject(new KushkiError(ERRORS.E021, error.message));
+    }
+  };
+
+  public validateAppleDomain = async (
+    kushkiInstance: IKushki,
+    domain: string
+  ): Promise<AppleDomainValidation> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${
+      PathEnum.validate_apple_domain
+    }?domain=${domain}`;
+
+    try {
+      const { data } = await axios.get<AppleDomainValidation>(url, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+      });
+
+      return Promise.resolve(data);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E025, error.message));
     }
   };
 

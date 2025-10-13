@@ -1,4 +1,7 @@
-import { ApplePayGetTokenRequest } from "types/apple_pay_get_token_request";
+import {
+  AppleDomainValidation,
+  ApplePayGetTokenRequest
+} from "types/apple_pay_get_token_events";
 import { ApplePayStartSessionRequest } from "types/apple_pay_start_session_request";
 import { BinInfoResponse } from "types/bin_info_response";
 import { IKushki } from "Kushki";
@@ -93,11 +96,25 @@ export interface IKushkiGateway {
     kushkiInstance: IKushki
   ): Promise<BrandByMerchantResponse[]>;
 
+  /**
+   * Validate if merchant domain is valid in Apple configuration
+   */
+  validateAppleDomain(
+    kushkiInstance: IKushki,
+    domain: string
+  ): Promise<AppleDomainValidation>;
+
+  /**
+   * Start Apple Pay Session
+   */
   startApplePaySession(
     kushkiInstance: IKushki,
     body: ApplePayStartSessionRequest
   ): Promise<object>;
 
+  /**
+   * Get Apple Pay Token from session
+   */
   getApplePayToken(
     kushkiInstance: IKushki,
     body: ApplePayGetTokenRequest
