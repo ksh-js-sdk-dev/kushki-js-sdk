@@ -1,3 +1,8 @@
+import {
+  AppleDomainValidation,
+  ApplePayGetTokenRequest
+} from "types/apple_pay_get_token_events";
+import { ApplePayStartSessionRequest } from "types/apple_pay_start_session_request";
 import { BinBody } from "types/bin_body";
 import { BinInfoResponse } from "types/bin_info_response";
 import { PathEnum } from "infrastructure/PathEnum.ts";
@@ -21,6 +26,7 @@ import { KInfo } from "service/KushkiInfoService.ts";
 
 export class KushkiGateway implements IKushkiGateway {
   private readonly _publicHeader: string = "Public-Merchant-Id";
+  private readonly _multiRegionEcommSwitch: string = "ecommerce";
 
   public requestBinInfo = async (
     kushkiInstance: IKushki,
@@ -217,6 +223,61 @@ export class KushkiGateway implements IKushkiGateway {
       return Promise.resolve(data);
     } catch (error: any) {
       return Promise.reject(new KushkiError(ERRORS.E021, error.message));
+    }
+  };
+
+  public validateAppleDomain = async (
+    kushkiInstance: IKushki,
+    domain: string
+  ): Promise<AppleDomainValidation> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${
+      PathEnum.validate_apple_domain
+    }?domain=${domain}&switch=${this._multiRegionEcommSwitch}`;
+
+    try {
+      const { data } = await axios.get<AppleDomainValidation>(url, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+      });
+
+      return Promise.resolve(data);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E025, error.message));
+    }
+  };
+
+  public startApplePaySession = async (
+    kushkiInstance: IKushki,
+    body: ApplePayStartSessionRequest
+  ): Promise<object> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${
+      PathEnum.start_apple_pay_session
+    }?switch=${this._multiRegionEcommSwitch}`;
+
+    try {
+      const { data } = await axios.post<object>(url, body);
+
+      return Promise.resolve(data);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E024, error.message));
+    }
+  };
+
+  public getApplePayToken = async (
+    kushkiInstance: IKushki,
+    body: ApplePayGetTokenRequest
+  ): Promise<CardTokenResponse> => {
+    const url: string = `${kushkiInstance.getBaseUrl()}${
+      PathEnum.get_apple_pay_token
+    }?switch=${this._multiRegionEcommSwitch}`;
+
+    try {
+      const { data } = await axios.post<CardTokenResponse>(url, body, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId(), true)
+      });
+
+      return Promise.resolve(data);
+    } catch (error: any) {
+      return Promise.reject(new KushkiError(ERRORS.E026, error.message));
     }
   };
 

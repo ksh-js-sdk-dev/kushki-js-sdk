@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "@public Define payment config for the Apple Pay process",
+  "title": "ApplePayGetTokenOptions",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "countryCode": {
+      "description": "@typeParam  string - Supported countries codes",
+      "enum": [
+        "BR",
+        "CL",
+        "CO",
+        "CR",
+        "EC",
+        "SV",
+        "GT",
+        "HN",
+        "MX",
+        "NI",
+        "PA",
+        "PE"
+      ]
+    },
+    "currencyCode": {
+      "description": "@typeParam  string - Supported currencies codes",
+      "enum": [
+        "USD",
+        "COP",
+        "CLP",
+        "UF",
+        "PEN",
+        "MXN",
+        "BRL",
+        "CRC",
+        "GTQ",
+        "HNL",
+        "NIO"
+      ]
+    },
+    "displayName": {
+      "description": "@typeParam  string - The merchant name displayed in the Apple Pay sheet",
+      "type": "string"
+    },
+    "amount": {
+      "description": "@typeParam  string - Transaction amount",
+      "type": "number"
+    },
+    "optionalApplePayFields": {
+      "description": "@typeParam  object - Additional Apple Pay configuration fields {@link https://developer.apple.com/documentation/applepayontheweb/applepaypaymentrequest}",
+      "type": "object"
+    }
+  },
+  "required": ["countryCode", "currencyCode", "displayName", "amount"]
+}

@@ -28,7 +28,11 @@ export enum ErrorCode {
   E020 = "E020",
   E021 = "E021",
   E022 = "E022",
-  E023 = "E023"
+  E023 = "E023",
+  E024 = "E024",
+  E025 = "E025",
+  E026 = "E026",
+  E027 = "E027"
 }
 
 /**
@@ -127,6 +131,22 @@ export enum ErrorCode {
  *   E023: {
  *     code: "E023",
  *     message: "Error al configurar sesión de Sift"
+ *   },
+ *   E024: {
+ *     code: "E024",
+ *     message: "No se crearon los recursos de Apple Pay"
+ *   },
+ *   E025: {
+ *     code: "E025",
+ *     message: "No es posible realizar pagos con Apple Pay"
+ *   },
+ *   E026: {
+ *     code: "E026",
+ *     message: "Error en solicitud de token de Apple Pay"
+ *   },
+ *   E027: {
+ *     code: "E027",
+ *     message: "Proceso de pago cancelado"
  *   }
  * }
  * ```
@@ -224,5 +244,21 @@ export const ERRORS: KushkiErrors = {
   [ErrorCode.E023]: {
     code: ErrorCode.E023,
     message: "Error al configurar sesión de Sift"
+  },
+  [ErrorCode.E024]: {
+    code: ErrorCode.E024,
+    message: "No se crearon los recursos de Apple Pay"
+  },
+  [ErrorCode.E025]: {
+    code: ErrorCode.E025,
+    message: "No es posible realizar pagos con Apple Pay"
+  },
+  [ErrorCode.E026]: {
+    code: ErrorCode.E026,
+    message: "Error en solicitud de token de Apple Pay"
+  },
+  [ErrorCode.E027]: {
+    code: ErrorCode.E027,
+    message: "Proceso de pago cancelado"
   }
 };

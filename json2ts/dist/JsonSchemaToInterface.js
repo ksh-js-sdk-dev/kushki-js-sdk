@@ -34,7 +34,7 @@ class JsonSchemaToInterface {
             try {
                 const inputPaths = ['../../src/schema'];
 
-                const outputPath = '../../types';
+                const outputPath = '../../src/types';
                 if (_.isEmpty(inputPaths) || _.isEmpty(outputPath)) {
                     console.info(chalk.yellow(`Nothing to process... ${emojic.confused}`));
                     process.exit(0);
