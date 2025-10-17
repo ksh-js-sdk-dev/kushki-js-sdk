@@ -26,6 +26,7 @@ import { KInfo } from "service/KushkiInfoService.ts";
 
 export class KushkiGateway implements IKushkiGateway {
   private readonly _publicHeader: string = "Public-Merchant-Id";
+  private readonly _multiRegionEcommSwitch: string = "ecommerce";
 
   public requestBinInfo = async (
     kushkiInstance: IKushki,
@@ -231,7 +232,7 @@ export class KushkiGateway implements IKushkiGateway {
   ): Promise<AppleDomainValidation> => {
     const url: string = `${kushkiInstance.getBaseUrl()}${
       PathEnum.validate_apple_domain
-    }?domain=${domain}`;
+    }?domain=${domain}&switch=${this._multiRegionEcommSwitch}`;
 
     try {
       const { data } = await axios.get<AppleDomainValidation>(url, {
@@ -250,7 +251,7 @@ export class KushkiGateway implements IKushkiGateway {
   ): Promise<object> => {
     const url: string = `${kushkiInstance.getBaseUrl()}${
       PathEnum.start_apple_pay_session
-    }`;
+    }?switch=${this._multiRegionEcommSwitch}`;
 
     try {
       const { data } = await axios.post<object>(url, body);
@@ -267,7 +268,7 @@ export class KushkiGateway implements IKushkiGateway {
   ): Promise<CardTokenResponse> => {
     const url: string = `${kushkiInstance.getBaseUrl()}${
       PathEnum.get_apple_pay_token
-    }`;
+    }?switch=${this._multiRegionEcommSwitch}`;
 
     try {
       const { data } = await axios.post<CardTokenResponse>(url, body, {

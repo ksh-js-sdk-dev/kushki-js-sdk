@@ -26,6 +26,8 @@ We make it easier!
   - [Get Card Payout Token](#get-card-payout-token)
 - [Recurring Card Payment (Subscriptions)](#recurring-card-payment)
   - [Get Device Token](#get-device-token)
+- [Apple Pay Integration](#apple-pay-integration)
+  - [Get card token from Apple Pay](#get-apple-token) 
 - [Transfer Transactions](#transfer-transactions)
   - [Request Bank List](#request-bank-list)
 - [Merchant Methods](#merchant-methods)
@@ -626,6 +628,7 @@ const onRequestDeviceToken = async () => {
 ```
 
 # Apple Pay Integration<a name="apple-pay-integration"></a>
+## Get Card Token from Apple Pay<a name="get-apple-token"></a>
 
 The `initApplePayButton` method allows you to easily render the Apple Pay button and initialize a payment session through Kushki’s API.
 
@@ -696,7 +699,7 @@ Before using the Apple Pay integration, make sure you have completed the followi
 - The button is automatically rendered inside the container `#kushki-apple-pay-button`.
 - The token returned by the `requestApplePayToken` method is a **Kushki card token**, not an Apple token.
   - This token is already processed and ready to be used in Kushki’s API to perform a **charge** card transaction.
-- For a complete reference, see the [Detailed documentation](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Transfer.requestBankList.html).
+- For a complete reference, see the [Detailed documentation](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initApplePayButton.html).
 
 
 #  Transfer Transactions <a name="transfer-transactions"></a>
