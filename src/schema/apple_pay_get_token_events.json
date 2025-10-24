@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ApplePaymentEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "ApplePayGetTokenRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "type": "string"
+        },
+        "header": {
+          "type": "object",
+          "additionalItems": false,
+          "properties": {
+            "ephemeralPublicKey": {
+              "type": "string"
+            },
+            "publicKeyHash": {
+              "type": "string"
+            },
+            "transactionId": {
+              "type": "string"
+            }
+          },
+          "required": ["ephemeralPublicKey", "publicKeyHash", "transactionId"]
+        },
+        "signature": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": ["data", "header", "signature", "version"]
+    },
+    "ApplePayPaymentContact": {
+      "description": "@typeParam object - Is the shipping or billing data of user configured in the wallet",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "phoneNumber": {
+          "type": "string"
+        },
+        "emailAddress": {
+          "type": "string"
+        },
+        "givenName": {
+          "type": "string"
+        },
+        "familyName": {
+          "type": "string"
+        },
+        "phoneticGivenName": {
+          "type": "string"
+        },
+        "phoneticFamilyName": {
+          "type": "string"
+        },
+        "subLocality": {
+          "type": "string"
+        },
+        "locality": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "subAdministrativeArea": {
+          "type": "string"
+        },
+        "administrativeArea": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "countryCode": {
+          "type": "string"
+        },
+        "addressLines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "phoneNumber",
+        "emailAddress",
+        "givenName",
+        "familyName",
+        "phoneticGivenName",
+        "phoneticFamilyName",
+        "subLocality",
+        "locality",
+        "postalCode",
+        "subAdministrativeArea",
+        "administrativeArea",
+        "country",
+        "countryCode",
+        "addressLines"
+      ]
+    },
+    "AppleTokenResponse": {
+      "description": "@public Contains the card token, and the billing or shipping data if it exists",
+      "type": "object",
+      "title": "AppleTokenResponse",
+      "additionalProperties": false,
+      "properties": {
+        "token": {
+          "description": "@typeParam string - Is the card token value for the payment process",
+          "type": "string"
+        },
+        "billingContact": {
+          "$ref": "#/definitions/ApplePayPaymentContact"
+        },
+        "shippingContact": {
+          "$ref": "#/definitions/ApplePayPaymentContact"
+        }
+      },
+      "required": ["token"]
+    },
+    "AppleDomainValidation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "isValid": {
+          "type": "boolean"
+        }
+      },
+      "required": ["isValid"]
+    }
+  },
+  "properties": {
+    "payment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "billingContact": { "$ref": "#/definitions/ApplePayPaymentContact" },
+        "shippingContact": { "$ref": "#/definitions/ApplePayPaymentContact" },
+        "token": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "paymentData": { "$ref": "#/definitions/ApplePayGetTokenRequest" }
+          },
+          "required": ["paymentData"]
+        }
+      },
+      "required": ["token"]
+    },
+    "validationURL": {
+      "type": "string"
+    },
+    "appleTokenResponse": { "$ref": "#/definitions/AppleTokenResponse" },
+    "appleDomainValidation": { "$ref": "#/definitions/AppleDomainValidation" }
+  },
+  "required": ["payment", "validationURL"]
+}
