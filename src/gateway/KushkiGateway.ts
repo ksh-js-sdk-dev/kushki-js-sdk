@@ -254,7 +254,9 @@ export class KushkiGateway implements IKushkiGateway {
     }?switch=${this._multiRegionEcommSwitch}`;
 
     try {
-      const { data } = await axios.post<object>(url, body);
+      const { data } = await axios.post<object>(url, body, {
+        headers: this._buildHeader(kushkiInstance.getPublicCredentialId())
+      });
 
       return Promise.resolve(data);
     } catch (error: any) {
