@@ -465,7 +465,11 @@ describe("KushkiGateway - Test", () => {
         );
 
       expect(appleSessionResponse).toEqual(appleSession);
-      expect(axiosPostSpy).toBeCalledWith(expect.anything(), expect.anything());
+      expect(axiosPostSpy).toBeCalledWith(
+        expect.anything(),
+        expect.anything(),
+        expect.anything()
+      );
     });
 
     it("should return E024 when throws error on request", async () => {
@@ -482,7 +486,7 @@ describe("KushkiGateway - Test", () => {
     });
   });
 
-  describe("startApplePaySession - test", () => {
+  describe("getApplePayToken - test", () => {
     const appleGetTokenRequest: ApplePayGetTokenRequest = {
       data: "ascsacdatadfvvf",
       header: {
