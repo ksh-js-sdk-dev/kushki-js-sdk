@@ -530,6 +530,7 @@ export class Card implements ICard {
       this.inputValues.deferred?.hostedField?.updateProps({
         deferredOptions: {
           bin: "",
+          brand: "",
           options: []
         }
       });
@@ -563,6 +564,7 @@ export class Card implements ICard {
           await this.inputValues.deferred?.hostedField?.updateProps({
             deferredOptions: {
               bin,
+              brand,
               options: deferredResponse
             }
           });
@@ -575,9 +577,12 @@ export class Card implements ICard {
         }
       } catch (error) {
         this.inputValues.cardNumber?.hostedField?.updateProps({
-          brandIcon: "",
+          brandIcon: ""
+        });
+        this.inputValues.deferred?.hostedField?.updateProps({
           deferredOptions: {
             bin,
+            brand: "",
             options: []
           }
         });
@@ -611,7 +616,11 @@ export class Card implements ICard {
         height: 110,
         width: this.deferredDefaultWidth
       });
-    } else if (deferredValues.isDeferred && deferredValues.creditType !== "") {
+    } else if (
+      deferredValues.isDeferred &&
+      deferredValues.creditType !== "" &&
+      !deferredValues.isMerchantInstallment
+    ) {
       this.inputValues.deferred?.hostedField?.resize({
         height: 160,
         width: this.deferredDefaultWidth
