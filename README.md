@@ -93,7 +93,7 @@ const buildKushkiInstance = async () => {
 ## &#xa0;&#xa0;&bull; Form initialization  <a name="form-initialization"></a>
 The following steps describes how you can init a card token instance
 #### Define the containers for the hosted fields
-Before you call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html), you need create div elements for each hosted field
+Before you call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html), you need to create 'div' elements for each hosted field
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -108,7 +108,7 @@ Before you call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kush
 </html>
 ```
 
-Then you must define a [CardOptions](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.CardOptions.html) and call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html), this will render the hosted fields in your side and the user will be able to enter the card details to later finish the tokenization
+Then you must define a [CardOptions](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.CardOptions.html) and call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html), this will render the hosted fields in your application, allowing the user to enter their card details and complete the tokenization process.
 ```ts
 import { IKushki, init, KushkiError } from "@kushki/js-sdk";
 import {
