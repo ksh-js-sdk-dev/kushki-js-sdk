@@ -69,7 +69,7 @@ Use a script tag inside your page to add the feature. When adding the following 
 
 # Library setup <a name="library-setup"></a>
 
-Begin calling the method init [`init`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Kushki.init.html#init), With an object of type [`KushkiOptions`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Kushki.KushkiOptions.html) 
+Begin calling the method init [`init`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Kushki.init.html#init), with an object of type [`KushkiOptions`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Kushki.KushkiOptions.html) 
 
 ```ts
 import { IKushki, init, KushkiError } from "@kushki/js-sdk";
