@@ -149,8 +149,8 @@ const buildCardInstance = async () => {
   }
 }
 ```
-If in `CardOptions` send the flag `isSubscription = true`, the library automatically get subscription token.
-If send the flag `fullResponse = true` the response will contain [CardInfo](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.CardInfo.html) object, only for subscriptions.
+Set isSubscription: true in CardOptions to automatically generate a subscription token during requestToken.
+If you also set fullResponse: true, the requestToken result will include a [CardInfo](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.CardInfo.html) object in addition to the token. This applies only to subscription flows.
 [More Examples](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html#md:examples)
 
 In subscriptions the cvv field can be required, optional or omitted. 
