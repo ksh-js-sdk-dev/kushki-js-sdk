@@ -4,7 +4,23 @@
   "type": "object",
   "additionalProperties": false,
   "definitions": {
-    "ApplePayGetTokenRequest": {
+    "ApplePayPaymentMethod": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": ["network", "displayName", "type"]
+    },
+    "ApplePayPaymentData": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -32,9 +48,19 @@
         },
         "version": {
           "type": "string"
-        }
+        },
+        "paymentMethod": { "$ref": "#/definitions/ApplePayPaymentMethod" }
       },
       "required": ["data", "header", "signature", "version"]
+    },
+    "ApplePayPaymentToken": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "paymentData": { "$ref": "#/definitions/ApplePayPaymentData" },
+        "paymentMethod": { "$ref": "#/definitions/ApplePayPaymentMethod" }
+      },
+      "required": ["paymentData", "paymentMethod"]
     },
     "ApplePayPaymentContact": {
       "description": "@typeParam object - Is the shipping or billing data of user configured in the wallet",
@@ -141,14 +167,7 @@
       "properties": {
         "billingContact": { "$ref": "#/definitions/ApplePayPaymentContact" },
         "shippingContact": { "$ref": "#/definitions/ApplePayPaymentContact" },
-        "token": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "paymentData": { "$ref": "#/definitions/ApplePayGetTokenRequest" }
-          },
-          "required": ["paymentData"]
-        }
+        "token": { "$ref": "#/definitions/ApplePayPaymentToken" }
       },
       "required": ["token"]
     },
