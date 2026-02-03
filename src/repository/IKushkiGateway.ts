@@ -1,6 +1,6 @@
 import {
   AppleDomainValidation,
-  ApplePayGetTokenRequest
+  ApplePayPaymentData
 } from "types/apple_pay_get_token_events";
 import { ApplePayStartSessionRequest } from "types/apple_pay_start_session_request";
 import { BinInfoResponse } from "types/bin_info_response";
@@ -117,6 +117,6 @@ export interface IKushkiGateway {
    */
   getApplePayToken(
     kushkiInstance: IKushki,
-    body: ApplePayGetTokenRequest
+    body: ApplePayPaymentData
   ): Promise<CardTokenResponse>;
 }

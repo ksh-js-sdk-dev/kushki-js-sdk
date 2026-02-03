@@ -9,6 +9,7 @@ import { IKushkiGateway } from "repository/IKushkiGateway.ts";
 import { ApplePayGetTokenOptions } from "types/apple_pay_get_token_options";
 import {
   ApplePaymentEvent,
+  ApplePayPaymentData,
   AppleTokenResponse
 } from "types/apple_pay_get_token_events";
 import { ApplePayOptions } from "types/apple_pay_options";
@@ -194,7 +195,10 @@ export class CardApplePay implements ICardApplePay {
     reject: (reason: any) => void
   ): Promise<void> {
     try {
-      const appleToken = event.payment.token.paymentData;
+      const appleToken: ApplePayPaymentData = {
+        ...event.payment.token.paymentData,
+        paymentMethod: event.payment.token.paymentMethod
+      };
       const kushkiToken = await this._gateway.getApplePayToken(
         this._kushkiInstance,
         appleToken

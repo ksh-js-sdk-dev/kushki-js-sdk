@@ -10,9 +10,9 @@ import { UtilsProvider } from "provider/UtilsProvider.ts";
 import { Mock } from "ts-mockery";
 import { ApplePayGetTokenOptions } from "types/apple_pay_get_token_options";
 import {
-  ApplePayGetTokenRequest,
   ApplePaymentEvent,
-  ApplePayPaymentContact
+  ApplePayPaymentContact,
+  ApplePayPaymentData
 } from "types/apple_pay_get_token_events";
 
 jest.mock("gateway/KushkiGateway.ts");
@@ -65,9 +65,14 @@ describe("CardApplePay - Test", () => {
         this.onpaymentauthorized({
           payment: {
             token: {
-              paymentData: Mock.of<ApplePayGetTokenRequest>({
+              paymentData: Mock.of<ApplePayPaymentData>({
                 data: "test"
-              })
+              }),
+              paymentMethod: {
+                displayName: "Visa 1234",
+                network: "Visa",
+                type: "debit"
+              }
             },
             ...(withBillingShipping
               ? {
