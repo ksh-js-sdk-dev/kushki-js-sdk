@@ -1,4 +1,3 @@
-import { ApplePayGetTokenRequest } from "types/apple_pay_get_token_events";
 import { ApplePayStartSessionRequest } from "types/apple_pay_start_session_request";
 import { BrandByMerchantResponse } from "types/brand_by_merchant_response";
 import { KushkiGateway } from "./KushkiGateway";
@@ -17,6 +16,7 @@ import { SubscriptionUserIdResponse } from "types/subscription_user_id_response"
 import { DeviceTokenRequest } from "types/device_token_request";
 import { CardTokenResponse } from "types/card_token_response";
 import { KInfo } from "service/KushkiInfoService.ts";
+import { ApplePayPaymentData } from "types/apple_pay_get_token_events";
 
 jest.mock("axios");
 
@@ -487,12 +487,17 @@ describe("KushkiGateway - Test", () => {
   });
 
   describe("getApplePayToken - test", () => {
-    const appleGetTokenRequest: ApplePayGetTokenRequest = {
+    const appleGetTokenRequest: ApplePayPaymentData = {
       data: "ascsacdatadfvvf",
       header: {
         ephemeralPublicKey: "ephemeralPublicKey",
         publicKeyHash: "publicKeyHash",
         transactionId: "transactionId"
+      },
+      paymentMethod: {
+        displayName: "Visa 1234",
+        network: "Visa",
+        type: "debit"
       },
       signature: "signature",
       version: "version"
