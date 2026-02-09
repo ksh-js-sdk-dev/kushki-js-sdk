@@ -1,6 +1,6 @@
 import {
   AppleDomainValidation,
-  ApplePayGetTokenRequest
+  ApplePayPaymentData
 } from "types/apple_pay_get_token_events";
 import { ApplePayStartSessionRequest } from "types/apple_pay_start_session_request";
 import { BinBody } from "types/bin_body";
@@ -266,7 +266,7 @@ export class KushkiGateway implements IKushkiGateway {
 
   public getApplePayToken = async (
     kushkiInstance: IKushki,
-    body: ApplePayGetTokenRequest
+    body: ApplePayPaymentData
   ): Promise<CardTokenResponse> => {
     const url: string = `${kushkiInstance.getBaseUrl()}${
       PathEnum.get_apple_pay_token
