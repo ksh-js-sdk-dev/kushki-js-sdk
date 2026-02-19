@@ -326,12 +326,9 @@ describe("CardApplePay - Test", () => {
     it("should execute completePayment and return token when complete apple payment auth", async () => {
       const appleBeginSpy = jest.fn();
       const completePaymentSpy = jest.fn();
+      const getTokenSpy = jest.fn().mockReturnValue({ token: "token" });
 
-      mockKushkiGateway(
-        undefined,
-        undefined,
-        jest.fn().mockReturnValue({ token: "token" })
-      );
+      mockKushkiGateway(undefined, undefined, getTokenSpy);
 
       mockApplePaySession(
         true,
@@ -346,9 +343,16 @@ describe("CardApplePay - Test", () => {
 
       await runPaymentAuthorized(false);
 
+      const getTokenArg = getTokenSpy.mock.calls[0][1];
+
       await expect(response).resolves.toEqual({ token: "token" });
       expect(appleBeginSpy).toBeCalled();
       expect(completePaymentSpy).toBeCalled();
+      expect(getTokenArg).toEqual(
+        expect.objectContaining({
+          isSubscription: false
+        })
+      );
     });
 
     it("should execute completePayment and return token with billing and shipping data when complete apple payment auth with apple additional information", async () => {
@@ -381,6 +385,42 @@ describe("CardApplePay - Test", () => {
       });
       expect(appleBeginSpy).toBeCalled();
       expect(completePaymentSpy).toBeCalled();
+    });
+
+    it("should execute completePayment and return a subscription token when complete apple payment auth for subscription", async () => {
+      const appleBeginSpy = jest.fn();
+      const completePaymentSpy = jest.fn();
+      const getTokenSpy = jest.fn().mockReturnValue({ token: "token" });
+      const optionsWithSubscription: ApplePayGetTokenOptions = {
+        ...options,
+        isSubscription: true
+      };
+
+      mockKushkiGateway(undefined, undefined, getTokenSpy);
+
+      mockApplePaySession(
+        true,
+        false,
+        appleBeginSpy,
+        undefined,
+        completePaymentSpy
+      );
+      initService();
+
+      const response = service.requestApplePayToken(optionsWithSubscription);
+
+      await runPaymentAuthorized(false);
+
+      const getTokenArg = getTokenSpy.mock.calls[0][1];
+
+      await expect(response).resolves.toEqual({ token: "token" });
+      expect(appleBeginSpy).toBeCalled();
+      expect(completePaymentSpy).toBeCalled();
+      expect(getTokenArg).toEqual(
+        expect.objectContaining({
+          isSubscription: true
+        })
+      );
     });
 
     it("should throw error and abort apple session when call requestApplePayToken and throws error on get apple pay token", async () => {

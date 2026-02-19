@@ -28,6 +28,7 @@ We make it easier!
   - [Get Device Token](#get-device-token)
 - [Apple Pay Integration](#apple-pay-integration)
   - [Get card token from Apple Pay](#get-apple-token) 
+  - [Get subscription token from Apple Pay](#get-apple-subscription-token) 
 - [Transfer Transactions](#transfer-transactions)
   - [Request Bank List](#request-bank-list)
 - [Merchant Methods](#merchant-methods)
@@ -628,7 +629,6 @@ const onRequestDeviceToken = async () => {
 ```
 
 # Apple Pay Integration<a name="apple-pay-integration"></a>
-## Get Card Token from Apple Pay<a name="get-apple-token"></a>
 
 The `initApplePayButton` method allows you to easily render the Apple Pay button and initialize a payment session through Kushki’s API.
 
@@ -642,8 +642,7 @@ Before using the Apple Pay integration, make sure you have completed the followi
 > ⚠️ These configurations are mandatory for the Apple Pay payment flow to function properly.
 
 ---
-
-## Quick Example
+## Get Card Token from Apple Pay<a name="get-apple-token"></a>
 
 ```html
 <!-- Add this container where you want to render the Apple Pay button -->
@@ -694,6 +693,29 @@ Before using the Apple Pay integration, make sure you have completed the followi
     console.error("Error on Apple Pay button initialization:", error);
   }
 ```
+
+## Get Subscription Token from Apple Pay<a name="get-apple-subscription-token"></a>
+You can make a subscription payment request by setting the `isSubscription` property to `true` in the options parameter.
+This will return a subscription token that can be used for recurring payments.
+
+```ts
+  cardApplePay.onClick(async () => {
+    try {
+      const token = await cardApplePay.requestApplePayToken({ 
+        displayName: "My Store",
+        countryCode: "EC",
+        currencyCode: "USD",
+        amount: 20,
+        isSubscription: true
+      });
+      
+      console.log("Kushki token:", token);
+    } catch (error) {
+      console.error("Error requesting token:", error);
+    }
+  });
+```
+
 ## Notes
 
 - The button is automatically rendered inside the container `#kushki-apple-pay-button`.
