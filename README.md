@@ -28,7 +28,7 @@ We make it easier!
   - [Get Device Token](#get-device-token)
 - [Apple Pay Integration](#apple-pay-integration)
   - [Get card token from Apple Pay](#get-apple-token) 
-  - [Get subscription token from Apple Pay](#get-apple-subcription-token) 
+  - [Get subscription token from Apple Pay](#get-apple-subscription-token) 
 - [Transfer Transactions](#transfer-transactions)
   - [Request Bank List](#request-bank-list)
 - [Merchant Methods](#merchant-methods)
@@ -694,7 +694,7 @@ Before using the Apple Pay integration, make sure you have completed the followi
   }
 ```
 
-## Get Subscription Token from Apple Pay<a name="get-apple-subcription-token"></a>
+## Get Subscription Token from Apple Pay<a name="get-apple-subscription-token"></a>
 You can make a subscription payment request by setting the `isSubscription` property to `true` in the options parameter.
 This will return a subscription token that can be used for recurring payments.
 
