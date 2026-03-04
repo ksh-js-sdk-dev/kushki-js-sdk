@@ -103,12 +103,31 @@ export interface ICardApplePay {
    *    console.error("Error requesting token:", error);
    * }
    * ```
+   * @example
+   * Subscription token Example usage:
+   * ```ts
+   * try{
+   *    const response = await cardApplePay.requestApplePayToken(
+   *      {
+   *        countryCode: "EC",
+   *        currencyCode: "USD",
+   *        displayName: "My Store",
+   *        amount: 5000,
+   *        isSubscription: true
+   *      });
+   *
+   *    console.log("Subscription token:", response.token);
+   * } catch(error){
+   *    console.error("Error requesting token:", error);
+   * }
+   * ```
    *
    * @param {ApplePayGetTokenOptions} options - Configuration options for the Apple Pay payment request.
    * - **countryCode**: Merchant’s country (e.g., `"BR"`, `"CL"`, `"CO"`, `"CR"`, `"EC"`, `"SV"`, `"GT"`, `"HN"`, `"MX"`, `"NI"`, `"PA"`, `"PE"`).
    * - **currencyCode**: Currency for the transaction (e.g., `"USD"`, `"COP"`, `"CLP"`, `"UF"`, `"PEN"`, `"MXN"`, `"BRL"`, `"CRC"`, `"GTQ"`, `"HNL"`, `"NIO"`).
    * - **displayName**: The merchant name displayed in the Apple Pay sheet.
    * - **amount**: Transaction amount.
+   * - **isSubscription**: Indicates if the payment is for a subscription. If `true`, the token will be a subscription token. If `false` or not provided, the token will be a card token.
    * - **optionalApplePayFields**: Additional Apple Pay configuration fields,
    *   following Apple’s specification:
    *   {@link https://developer.apple.com/documentation/applepayontheweb/applepaypaymentrequest}

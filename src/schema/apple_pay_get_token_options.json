@@ -46,6 +46,9 @@
       "description": "@typeParam  string - Transaction amount",
       "type": "number"
     },
+    "isSubscription": {
+      "type": "boolean"
+    },
     "optionalApplePayFields": {
       "description": "@typeParam  object - Additional Apple Pay configuration fields {@link https://developer.apple.com/documentation/applepayontheweb/applepaypaymentrequest}",
       "type": "object"
