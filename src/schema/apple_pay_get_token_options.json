@@ -47,6 +47,7 @@
       "type": "number"
     },
     "isSubscription": {
+      "description": "@typeParam  boolean - Indicates if the payment is for a subscription. If `true`, the token will be a subscription token. If `false` or not provided, the token will be a card token.",
       "type": "boolean"
     },
     "optionalApplePayFields": {
