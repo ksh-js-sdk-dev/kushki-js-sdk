@@ -13,3 +13,7 @@ yarn-error.log
 .env
 docs
 index.html
+
+
+showcase/src/dev
+.well-known/

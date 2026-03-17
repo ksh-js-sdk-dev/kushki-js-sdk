@@ -31,7 +31,7 @@
       "infrastructure/*": ["src/infrastructure/*"],
       "repository/*": ["src/repository/*"],
       "service/*": ["src/service/*"],
-      "types/*": ["types/*"],
+      "types/*": ["src/types/*"],
       "environment/*": ["src/environments/*"],
       "utils/*": ["src/utils/*"],
       "libs/*": ["src/libs/*"],

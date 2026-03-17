@@ -9,6 +9,9 @@
         "isDeferred": {
           "type": "boolean"
         },
+        "isMerchantInstallment": {
+          "type": "boolean"
+        },
         "graceMonths": {
           "type": "number"
         },

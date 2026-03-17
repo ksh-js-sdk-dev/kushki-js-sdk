@@ -2,6 +2,7 @@
  * SiftScienceProvider Unit Tests
  */
 import { IKushki } from "Kushki";
+import { UtilsProvider } from "provider/UtilsProvider.ts";
 import { Mock } from "ts-mockery";
 import { EnvironmentEnum } from "infrastructure/EnvironmentEnum.ts";
 import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
@@ -23,22 +24,16 @@ describe("SiftScience Gateway - ", () => {
     sandboxEnable: false
   };
 
-  const executeLoadScript = () => {
-    const script = document.getElementById("sift-script");
+  const mockLoadScript = (isError?: boolean) => {
+    if (isError) {
+      jest
+        .spyOn(UtilsProvider, "loadScript")
+        .mockRejectedValue(new Error("Error"));
 
-    if (script && script.onload) {
-      // @ts-ignore
-      script.onload();
+      return;
     }
-  };
 
-  const executeErrorScript = () => {
-    const script = document.getElementById("sift-script");
-
-    if (script && script.onerror) {
-      // @ts-ignore
-      script.onerror();
-    }
+    jest.spyOn(UtilsProvider, "loadScript").mockResolvedValue();
   };
 
   beforeEach(async () => {
@@ -50,6 +45,8 @@ describe("SiftScience Gateway - ", () => {
     });
 
     siftScienceService = new SiftScienceProvider(mockKushki);
+
+    mockLoadScript();
   });
 
   describe("createSiftScienceSession - method", () => {
@@ -59,8 +56,6 @@ describe("SiftScience Gateway - ", () => {
         clientIdentification,
         merchantSettingsResponse
       );
-
-      executeLoadScript();
 
       await expect(data).resolves.toHaveProperty("userId");
       await expect(data).resolves.toHaveProperty("sessionId");
@@ -79,20 +74,18 @@ describe("SiftScience Gateway - ", () => {
         merchantSettings
       );
 
-      executeLoadScript();
-
       await expect(data).resolves.toHaveProperty("userId", undefined);
       await expect(data).resolves.toHaveProperty("sessionId", undefined);
     });
 
     it("should throw error when load script fails", async () => {
+      mockLoadScript(true);
+
       const data = siftScienceService.createSiftScienceSession(
         processor,
         clientIdentification,
         merchantSettingsResponse
       );
-
-      executeErrorScript();
 
       await expect(data).rejects.toHaveProperty("code", "E023");
     });
@@ -106,8 +99,6 @@ describe("SiftScience Gateway - ", () => {
         userIdMock,
         merchantSettingsResponse
       );
-
-      executeLoadScript();
 
       await expect(data).resolves.toHaveProperty("userId");
       await expect(data).resolves.toHaveProperty("sessionId");
@@ -125,18 +116,16 @@ describe("SiftScience Gateway - ", () => {
         merchantSettings
       );
 
-      executeLoadScript();
-
       await expect(data).rejects.toHaveProperty("code", "E023");
     });
 
     it("should throw an error when load script fails", async () => {
+      mockLoadScript(true);
+
       const data = siftScienceService.createSiftScienceAntiFraudSession(
         userIdMock,
         merchantSettingsResponse
       );
-
-      executeErrorScript();
 
       await expect(data).rejects.toHaveProperty("code", "E023");
     });

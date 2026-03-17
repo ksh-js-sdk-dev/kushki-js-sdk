@@ -26,6 +26,8 @@ We make it easier!
   - [Get Card Payout Token](#get-card-payout-token)
 - [Recurring Card Payment (Subscriptions)](#recurring-card-payment)
   - [Get Device Token](#get-device-token)
+- [Apple Pay Integration](#apple-pay-integration)
+  - [Get card token from Apple Pay](#get-apple-token) 
 - [Transfer Transactions](#transfer-transactions)
   - [Request Bank List](#request-bank-list)
 - [Merchant Methods](#merchant-methods)
@@ -67,7 +69,7 @@ Use a script tag inside your page to add the feature. When adding the following 
 
 # Library setup <a name="library-setup"></a>
 
-Begin calling the method init [`init`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Kushki.init.html#init), With an object of type [`KushkiOptions`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Kushki.KushkiOptions.html) 
+Begin calling the method init [`init`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Kushki.init.html#init), with an object of type [`KushkiOptions`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Kushki.KushkiOptions.html) 
 
 ```ts
 import { IKushki, init, KushkiError } from "@kushki/js-sdk";
@@ -91,7 +93,7 @@ const buildKushkiInstance = async () => {
 ## &#xa0;&#xa0;&bull; Form initialization  <a name="form-initialization"></a>
 The following steps describes how you can init a card token instance
 #### Define the containers for the hosted fields
-Before you call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html), you need create div elements for each hosted field
+Before you call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html), you need to create 'div' elements for each hosted field
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -106,7 +108,7 @@ Before you call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kush
 </html>
 ```
 
-Then you must define a [CardOptions](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.CardOptions.html) and call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html), this will render the hosted fields in your side and the user will be able to enter the card details to later finish the tokenization
+Then you must define a [CardOptions](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.CardOptions.html) and call the method [initCardToken](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html), this will render the hosted fields in your application, allowing the user to enter their card details and complete the tokenization process.
 ```ts
 import { IKushki, init, KushkiError } from "@kushki/js-sdk";
 import {
@@ -147,8 +149,8 @@ const buildCardInstance = async () => {
   }
 }
 ```
-If in `CardOptions` send the flag `isSubscription = true`, the library automatically get subscription token.
-If send the flag `fullResponse = true` the response will contain [CardInfo](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.CardInfo.html) object, only for subscriptions.
+Set isSubscription: true in CardOptions to automatically generate a subscription token during requestToken.
+If you also set fullResponse: true, the requestToken result will include a [CardInfo](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/interfaces/Card.CardInfo.html) object in addition to the token. This applies only to subscription flows.
 [More Examples](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initCardToken.html#md:examples)
 
 In subscriptions the cvv field can be required, optional or omitted. 
@@ -625,9 +627,84 @@ const onRequestDeviceToken = async () => {
   };
 ```
 
+# Apple Pay Integration<a name="apple-pay-integration"></a>
+## Get Card Token from Apple Pay<a name="get-apple-token"></a>
+
+The `initApplePayButton` method allows you to easily render the Apple Pay button and initialize a payment session through Kushki’s API.
+
+## Prerequisites
+
+Before using the Apple Pay integration, make sure you have completed the following steps:
+
+1. **Configure a secure domain** in the **Kushki Backoffice console**.
+2. **Coordinate with Kushki** to integrate the **required Apple Pay certificates** for your website.
+
+> ⚠️ These configurations are mandatory for the Apple Pay payment flow to function properly.
+
+---
+
+## Quick Example
+
+```html
+<!-- Add this container where you want to render the Apple Pay button -->
+<div id="kushki-apple-pay-button"></div>
+```
+```ts
+  import { init } from "@kushki/js-sdk";
+  import {initApplePayButton} from "@kushki/js-sdk/Card";
+  
+  // Step 1: Define Kushki props
+  const kushkiOptions = {
+    publicCredentialId: "public-merchant-id",
+    inTest: true,
+  };
+
+  // Step 2: Initialize Kushki
+  const kushkiInstance = await init(kushkiOptions);
+
+  // Step 3: Define Apple Pay button options
+  const applePayOptions = {
+    style: "black",
+    locale: "es-MX",
+    type: "pay",
+  };
+  try {
+    // Step 4: Initialize and render the Apple Pay button
+    const cardApplePay = await initApplePayButton(kushkiInstance, applePayOptions);
+  
+    // Optional: Listen event
+    cardApplePay.onCancel(() => console.log("Payment canceled"));
+    
+    // Step 5: Listen button action and init Apple Pay flow
+    cardApplePay.onClick(async () => {
+      try {
+        const token = await cardApplePay.requestApplePayToken({
+          displayName: "My Store",
+          countryCode: "EC",
+          currencyCode: "USD",
+          amount: 20,
+        });
+  
+        console.log("Kushki token:", token);
+      } catch (error) {
+        console.error("Error requesting token:", error);
+      }
+    });
+  } catch (error) {
+    console.error("Error on Apple Pay button initialization:", error);
+  }
+```
+## Notes
+
+- The button is automatically rendered inside the container `#kushki-apple-pay-button`.
+- The token returned by the `requestApplePayToken` method is a **Kushki card token**, not an Apple token.
+  - This token is already processed and ready to be used in Kushki’s API to perform a **charge** card transaction.
+- For a complete reference, see the [Detailed documentation](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initApplePayButton.html).
+
+
 #  Transfer Transactions <a name="transfer-transactions"></a>
 ## Request Bank List <a name="request-bank-list"></a>
-To get Bank List for Transfer transactions, you should call [`requestBankList`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Transfer.requestBankList.html) method with Kushki instance that was previously initialized with [`init`](#library-setup) method
+To get Bank List for Transfer transactions, you should call [`requestBankList`](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Card.initApplePayButton.html) method with Kushki instance that was previously initialized with [`init`](#library-setup) method
 
 This method is useful in situations where the processor requires a list of banks and allows the customer to choose a specific bank to make their payment., more details [Click here](https://ksh-js-sdk-dev.github.io/kushki-js-sdk/functions/Transfer.requestBankList.html)
 ### Example

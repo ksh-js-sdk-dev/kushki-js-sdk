@@ -1,5 +1,6 @@
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
 import { KushkiError } from "infrastructure/KushkiError.ts";
+import { UtilsProvider } from "provider/UtilsProvider.ts";
 import { MasterCardBrandingRequest } from "types/card_branding_request";
 
 declare global {
@@ -50,20 +51,7 @@ export class MasterCardAnimationProvider {
     });
   }
 
-  private _loadScript = () => {
-    return new Promise<void>((resolve, reject) => {
-      const last_script = document.getElementById(this.MC_SCRIPT_ID);
-
-      if (last_script) last_script.remove();
-
-      const script = document.createElement("script");
-
-      script.id = this.MC_SCRIPT_ID;
-      script.src = this.MC_SCRIPT_URL;
-      script.onload = () => resolve();
-      script.onerror = () => reject();
-
-      document.head.appendChild(script);
-    });
+  private _loadScript = async (): Promise<void> => {
+    await UtilsProvider.loadScript(this.MC_SCRIPT_ID, this.MC_SCRIPT_URL);
   };
 }
