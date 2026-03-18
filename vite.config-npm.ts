@@ -15,7 +15,7 @@ export default defineConfig({
         Merchant: "src/module/Merchant.ts",
         Transfer: "src/module/Transfer.ts"
       },
-      formats: ["cjs"]
+      formats: ["es"]
     },
     rollupOptions: {
       output: {

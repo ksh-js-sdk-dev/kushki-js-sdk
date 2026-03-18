@@ -1,4 +1,5 @@
 import { MasterCardAnimationProvider } from "provider/MasterCardAnimationProvider.ts";
+import { UtilsProvider } from "provider/UtilsProvider.ts";
 import { MasterCardBrandingRequest } from "types/card_branding_request";
 
 describe("MasterCardAnimationProvider - class - test", () => {
@@ -35,22 +36,16 @@ describe("MasterCardAnimationProvider - class - test", () => {
     }
   };
 
-  const executeLoadScript = () => {
-    const script = document.getElementById("mc-sonic-script");
+  const mockLoadScript = (isError?: boolean) => {
+    if (isError) {
+      jest
+        .spyOn(UtilsProvider, "loadScript")
+        .mockRejectedValue(new Error("Error"));
 
-    if (script && script.onload) {
-      // @ts-ignore
-      script.onload();
+      return;
     }
-  };
 
-  const executeErrorScript = () => {
-    const script = document.getElementById("mc-sonic-script");
-
-    if (script && script.onerror) {
-      // @ts-ignore
-      script.onerror();
-    }
+    jest.spyOn(UtilsProvider, "loadScript").mockResolvedValue();
   };
 
   beforeEach(() => {
@@ -59,22 +54,21 @@ describe("MasterCardAnimationProvider - class - test", () => {
     };
     mockMCSonic();
     removeAnimationContainer();
+    mockLoadScript();
   });
 
   it("should throws error when call initAnimation without div html element", async () => {
     const mcProvider = new MasterCardAnimationProvider(optsMock);
     const response = mcProvider.initAnimation();
 
-    executeLoadScript();
-
     await expect(response).rejects.toHaveProperty("code", "E022");
   });
 
   it("should throw error when load script fails", async () => {
+    mockLoadScript(true);
+
     const mcProvider = new MasterCardAnimationProvider(optsMock);
     const response = mcProvider.initAnimation();
-
-    executeErrorScript();
 
     await expect(response).rejects.toHaveProperty("code", "E022");
   });
@@ -85,7 +79,6 @@ describe("MasterCardAnimationProvider - class - test", () => {
     const mcProvider = new MasterCardAnimationProvider(optsMock);
     const response = mcProvider.initAnimation();
 
-    executeLoadScript();
     dispatchEventComplete();
 
     await expect(response).resolves.toBeUndefined();
@@ -103,7 +96,6 @@ describe("MasterCardAnimationProvider - class - test", () => {
     const mcProvider = new MasterCardAnimationProvider(optsMock);
     const response = mcProvider.initAnimation();
 
-    executeLoadScript();
     dispatchEventComplete();
 
     await expect(response).resolves.toBeUndefined();

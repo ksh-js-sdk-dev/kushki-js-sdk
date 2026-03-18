@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "@public Define visual and behavioral options for the Apple Pay button",
+  "title": "ApplePayOptions",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "style": {
+      "description": "@typeParam  string - Color of the Apple Pay button",
+      "enum": ["black", "white"]
+    },
+    "locale": {
+      "description": "@typeParam  string - Locale of the Apple Pay label button",
+      "enum": ["en-US", "es-ES", "es-MX", "pt-BR"]
+    },
+    "type": {
+      "description": "@typeParam  string - Type of the Apple Pay label button",
+      "enum": [
+        "add-money",
+        "book",
+        "buy",
+        "check-out",
+        "continue",
+        "contribute",
+        "donate",
+        "order",
+        "pay",
+        "plain",
+        "reload",
+        "rent",
+        "set-up",
+        "subscribe",
+        "support",
+        "tip",
+        "top-up"
+      ]
+    }
+  },
+  "required": ["style", "locale", "type"]
+}

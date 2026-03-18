@@ -2,6 +2,7 @@
  * SiftScience Service file
  */
 import { ERRORS } from "infrastructure/ErrorEnum.ts";
+import { UtilsProvider } from "provider/UtilsProvider.ts";
 import { ISiftScienceProvider } from "repository/ISiftScienceProvider.ts";
 import { MerchantSettingsResponse } from "types/merchant_settings_response";
 import { IKushki } from "Kushki";
@@ -90,21 +91,8 @@ export class SiftScienceProvider implements ISiftScienceProvider {
     );
   }
 
-  private _initSiftScience(): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      const last_script = document.getElementById(this.SIFT_SCRIPT_ID);
-
-      if (last_script) last_script.remove();
-
-      const script = document.createElement("script");
-
-      script.src = this.SIFT_SCRIPT_URL;
-      script.id = this.SIFT_SCRIPT_ID;
-      script.onload = () => resolve();
-      script.onerror = () => reject();
-
-      document.body.appendChild(script);
-    });
+  private async _initSiftScience(): Promise<void> {
+    await UtilsProvider.loadScript(this.SIFT_SCRIPT_ID, this.SIFT_SCRIPT_URL);
   }
 
   private _setSiftProperties(
