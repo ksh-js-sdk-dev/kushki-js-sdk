@@ -73,7 +73,7 @@ export const getJwtIf3dsEnabled = async (
     } else {
       await props.cardinal3DS.initCardinal(
         props.kushkiInstance,
-        jwtResponse.jwt,
+        jwtResponse,
         bin
       );
 
