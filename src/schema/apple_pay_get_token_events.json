@@ -49,7 +49,10 @@
         "version": {
           "type": "string"
         },
-        "paymentMethod": { "$ref": "#/definitions/ApplePayPaymentMethod" }
+        "paymentMethod": { "$ref": "#/definitions/ApplePayPaymentMethod" },
+        "isSubscription": {
+          "type": "boolean"
+        }
       },
       "required": ["data", "header", "signature", "version"]
     },

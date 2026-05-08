@@ -94,7 +94,13 @@ export class CardApplePay implements ICardApplePay {
         this.onValidateMerchant(event, session, options, reject);
 
       session.onpaymentauthorized = async (event: ApplePaymentEvent) =>
-        this.onPaymentAuthorized(event, session, resolve, reject);
+        this.onPaymentAuthorized(
+          event,
+          options.isSubscription,
+          session,
+          resolve,
+          reject
+        );
 
       session.oncancel = () => {
         this.onCancelAppleButtonCallback();
@@ -190,6 +196,7 @@ export class CardApplePay implements ICardApplePay {
 
   private async onPaymentAuthorized(
     event: ApplePaymentEvent,
+    isSubscription: boolean = false,
     session: IAppleSession,
     resolve: (token: AppleTokenResponse) => void,
     reject: (reason: any) => void
@@ -197,6 +204,7 @@ export class CardApplePay implements ICardApplePay {
     try {
       const appleToken: ApplePayPaymentData = {
         ...event.payment.token.paymentData,
+        isSubscription,
         paymentMethod: event.payment.token.paymentMethod
       };
       const kushkiToken = await this._gateway.getApplePayToken(
